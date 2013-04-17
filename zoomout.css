@@ -1,0 +1,122 @@
+* {
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0px;
+  overflow: hidden;
+}
+
+.areacontent {
+  font-size: 15px;
+  border: yes;
+  width: 298px;
+  min-height: 200px;
+
+}
+
+.mod_area {
+  background: #f00;
+  width: 10px;
+}
+
+.mod_up {
+  height: 80%;
+}
+
+.mod_down {
+  background: #eee;
+  height: 20%;
+}
+
+
+.mod_down_elems {
+  position: relative;
+  left: 3%;
+  height: 25%;
+}
+
+.mod_filt {
+  position: relative;
+  width: 10%;
+  height: 100%;
+}
+
+.mod_filt_box {
+  position: relative;
+  left:10%;
+  width: 10%;
+  height: 100%;
+}
+
+
+.mod_filt_size {
+  position: relative;
+  left:20%;
+  width: 10%;
+  height: 100%;
+}
+
+
+
+.mod {
+  position: relative;
+  vertical-align: top;
+  height: 100%;
+}
+
+.mod_header {
+  padding: 4px 4px 4px 4px;
+  background: #eee;
+}
+
+.mod_title {
+  line-height: 14pt;
+  top: -10px;
+}
+
+.mod_title_box {
+  position: relative;
+  line-height: 14pt;
+  left:24%;
+}
+
+
+.mod_title a {
+  color: #aaa; 
+  cursor: pointer;
+  margin-right: 5px;
+}
+.mod_title a.active {
+  color: #000;
+}
+.mod_title a:hover {
+  color: #b00;
+}
+
+.mod_ctrls {
+  position: absolute;
+  right: 2px;
+  top: 1px;
+}
+
+#mod_vis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 70%;
+  height: 80%;
+}
+
+#mod_spec {
+  margin-left: 70%;
+}
+
+#vis div {
+  border: 1px dashed #ccc;
+}

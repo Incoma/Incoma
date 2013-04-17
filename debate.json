@@ -12,12 +12,12 @@
   ],
   "links":[
     {"source":1,"target":0,"evaluation":6,"type":1,"author":"Mike","time":"17-abr-2013"},
-    {"source":2,"target":0,"evaluation":6,"type":2,"author":"Mike","time":"17-abr-2013"},
+    {"source":2,"target":0,"evaluation":18,"type":2,"author":"Mike","time":"17-abr-2013"},
     {"source":3,"target":0,"evaluation":6,"type":2,"author":"Mike","time":"17-abr-2013"},
     {"source":4,"target":3,"evaluation":6,"type":3,"author":"Mike","time":"17-abr-2013"},
-    {"source":5,"target":0,"evaluation":6,"type":1,"author":"Mike","time":"17-abr-2013"},
+    {"source":5,"target":0,"evaluation":18,"type":1,"author":"Mike","time":"17-abr-2013"},
     {"source":6,"target":5,"evaluation":6,"type":4,"author":"Mike","time":"17-abr-2013"},
-    {"source":7,"target":6,"evaluation":6,"type":4,"author":"Mike","time":"17-abr-2013"},
+    {"source":7,"target":6,"evaluation":15,"type":4,"author":"Mike","time":"17-abr-2013"},
     {"source":8,"target":0,"evaluation":6,"type":4,"author":"Mike","time":"17-abr-2013"},
     {"source":2,"target":3,"evaluation":6,"type":6,"author":"Mike","time":"17-abr-2013"}
   ]
