@@ -1,0 +1,43 @@
+.body{
+	width: 1000px;
+}
+div.comment{
+	width: 260px;
+	height: 120px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #eee;
+	padding: 5px;
+	margin: 10px;
+	float: left;
+}
+textarea.comment{
+	float: left;
+	width: 240px;
+	height: 80px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #eee;
+	opacity:0.4;
+	filter:alpha(opacity=40);
+}
+div.button{
+	float: left;
+	margin-right: 20px;
+	padding: 5px;
+	background: #999;
+	margin: 5px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+
+}
+canvas
+{
+	background-color: #FFFFFF;
+	top:0;
+	left: 0;
+	position: absolute;
+  z-index: -10;
+	background: #999;
+}
+

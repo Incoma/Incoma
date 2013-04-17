@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC
+"-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<? 
+	include('auxiliares.php');
+?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+<title>SoundSequencer</title>
+<link rel="shortcut icon" href="url" type="image/x-icon"> 
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<script src="jquery-1.9.1.js"></script>
+<script>
+function canvas_arrow(context, fromx, fromy, tox, toy){
+    var headlen = 10;   // length of head in pixels
+    var angle = Math.atan2(toy-fromy,tox-fromx);
+    context.moveTo(fromx, fromy);
+    context.lineTo(tox, toy);
+    context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+    context.moveTo(tox, toy);
+    context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+}
+
+function createNewComment(element){
+		$(document.body).append("<div class='comment'><textarea class='comment' rows=4 cols=20 ondblClick=createNewComment(this)></textarea><div class='button reply' onClick=createNewComment($(this).parent())>reply</div><div class='button like'>like</div><div class='button nolike' >don't like</div></div>")
+	lastInsertedElement=$("div").last();
+	var source=($(element).offset());
+	var target=($(lastInsertedElement).offset());
+	var c=document.getElementById("html5CanvasId");
+	var ctx=c.getContext("2d");
+  ctx.beginPath();
+  canvas_arrow(ctx,source.left+250, source.top+80, target.left, target.top);
+	ctx.stroke();
+};
+</script>
+
+</head>
+<body>
+<canvas id="html5CanvasId" width="1000" height="600"></canvas>
+<div class="comment" ondblClick=createNewComment(this)>
+	<textarea class="comment">This is a new comment</textarea>
+	<div class="button reply" onClick=createNewComment($(this).parent())>
+	reply</div>
+	<div class="button like" >like</div>
+	<div class="button nolike" onClick="$(this).parent().fadeTo('slow', 0.5, function() {});">don't like</div>
+</div>
+</body>
+</html>
