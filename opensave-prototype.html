@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">        
+<head>                
+<title>opensave proto</title>
+                
+<meta charset="utf-8">                
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">                
+<style>                        
+</style>
+</head>
+<body>
+
+  <div id="importElem" style="width: 280px; height: 120px; background: #faa">
+	IMPORT<br/>
+  </div>
+  <div id="exportElem" style="width: 280px; height: 120px; background: #afa">
+	EXPORT<br/>
+  </div>
+  <div id="contentElem" contentEditable=true>
+	<p> soso <span style="color: #00A;"> lalala </span> aha</p>
+  </div> 
+
+<script src="opensave.js" ></script>
+<script src="xmlreadwrite.js" ></script>
+
+<script>
+
+ function dump(x) {
+                for (var i in x) {
+                alert(i + " = " + x[i]);
+                }
+  }
+
+function xmlDump(dom, node) {
+	for (var i = 0 ; i < dom.childNodes.length; ++i) {
+		var elem = dom.childNodes[i];
+		node.appendChild(document.createTextNode(elem.nodeType + ":" + elem.nodeName ));
+		if (elem.attributes) {
+			node.appendChild(document.createTextNode("   " ));
+		for (var j = 0 ; j < elem.attributes.length; ++j) {
+			var attr = elem.attributes[j];
+			node.appendChild(document.createTextNode(attr.nodeName + "=" + attr.nodeValue + "; "));
+		}
+		}
+		else {
+			node.appendChild(document.createTextNode("=" + elem.nodeValue));
+		}
+		node.appendChild(document.createElement("P"));
+		xmlDump(elem, node);
+		continue;
+		if (elem.nodeType == 1) {
+			var start = document.createTextNode("<" + elem.nodeName + ">");
+			var end = document.createTextNode("</" + elem.nodeName + ">");
+			node.appendChild(start);
+			xmlDump(elem, node);
+			node.appendChild(end);
+		}
+		else if (elem.nodeType == 3) {
+			node.appendChild(elem);
+		}
+	}
+}
+
+
+	var content = document.getElementById('contentElem');
+	content.addEventListener('blur', function () {
+  		// lame that we're hooking the blur event
+	
+		addExportListener( document.getElementById('exportElem'),
+			   "mydoc.xml",
+			   "mydoc.xml",
+			   function() {
+				return content;
+			   });
+  		document.designMode = 'off';
+	});
+
+	content.addEventListener('focus', function () {
+	addExportListener( document.getElementById('exportElem'),
+			   "(editing)",
+			   "",
+			   function() {
+				return null;
+			   });
+  		document.designMode = 'on';
+	});
+
+	addImportListener( document.getElementById('importElem'),
+			   null,
+			   function (file) {
+			   	blobToDom(file, function(dom) {
+					xmlDump(dom, content);
+					return;
+				while (content.childNodes.length > 0) {
+					content.removeChild(content.childNodes[0]);
+				}
+				for (var i in dom.childNodes) {
+					content.appendChild(dom.childNodes[i]);
+				}
+				});
+			   });
+
+
+</script>
+
+</body>
