@@ -43,7 +43,7 @@
 <div class="mod_down_elems">
 
           <div class="mod_filt" style="Float:left">
-   <b>Threads</b>         
+   <b>Threads</b> <br />         
 General: <input type="checkbox" checked="yes" name="filt_gen" value="general" /> <br /> 
 Agree: <input type="checkbox" checked="yes" name="filt_agr" value="agree" /> <br /> 
 Disagree: <input type="checkbox" checked="yes" name="filt_dis" value="disagree" /> <br /> 
@@ -57,7 +57,7 @@ Similar: <input type="checkbox" checked="yes" name="filt_sim" value="similar" />
           </div>
 
           <div class="mod_filt_box" style="Float:left" >
-   <b>Boxes</b>         
+   <b>Boxes</b> <br />         
 General: <input type="checkbox" checked="yes" name="filt_box_gen" value="general_box" /> <br /> 
 Question: <input type="checkbox" checked="yes" name="filt_box_que" value="question_box" /> <br /> 
 Answer: <input type="checkbox" checked="yes" name="filt_box_ans" value="answer_box" /> <br /> 
@@ -80,12 +80,13 @@ Threads: <input type="checkbox" checked="yes" name="filt_size_thread" value="siz
 
 var width = 712,
     height = 325;
+	count = 0;
 
 var color = d3.scale.category20();
 
 var force = d3.layout.force()
-    .charge(-120)
-    .linkDistance(60)
+    .charge(-400)
+    .linkDistance(40)
     .size([width, height]);
 
 var svg = d3.select(".visualization").append("svg")
@@ -100,7 +101,7 @@ d3.json("debate.json", function(error, graph) {
 
   var link = svg.selectAll(".link")
       .data(graph.links)
-    .enter().append("line")
+      .enter().append("line")
       .attr("class", "link")
       .style("stroke", function(d) { return  color(d.type); })
       .style("stroke-width", function(d) {
@@ -123,10 +124,10 @@ d3.json("debate.json", function(error, graph) {
       .text(function(d) { return d.content; });
 
   force.on("tick", function() {
-    link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+    link.attr("x1", function(d) { return d.source.x+10; })
+        .attr("y1", function(d) { return d.source.y+10; })
+        .attr("x2", function(d) { return d.target.x+10; })
+        .attr("y2", function(d) { return d.target.y+10; });
 
     node.attr("x", function(d) { return d.x; })
         .attr("y", function(d) { return d.y; });
@@ -138,15 +139,29 @@ function eraseText() {
 }
 
 function mouseover(d) {
+    svg.selectAll(".node")
+        .style("stroke-width", function(d) {return "1.5px";})    
+		.style("stroke","#af0");
 d3.select(this).transition()
 .duration(250)
+//why evaluation dependent?
 .attr("width",function(d) {
                 return 25*Math.sqrt(Math.sqrt(d.evaluation)); 
                 })
 .attr("height",  function(d) {
                 return 25*Math.sqrt(Math.sqrt(d.evaluation)); 
-                });
+                })
+.style("stroke-width", function(d){return "3px";})
+.style("stroke","#E9B");
+				
 document.getElementById("spec").value = d.content;
+
+
+
+
+
+force.friction([0.3]);
+
 //$('input[name=filt_ans]').attr('checked', false);
 }
 
@@ -162,6 +177,8 @@ d3.select(this).transition()
 .attr("height",  function(d) {
                 return 20*Math.sqrt(Math.sqrt(d.evaluation)); 
                 });
+//y borrar, no?
+//document.getElementById("spec").value = "";
 }
 
 
@@ -171,7 +188,7 @@ d3.select(this).transition()
         if (!$(this).is(':checked')) {
             svg.selectAll(".link")
             .filter(function(d){return d.type == 5;})
-            .style("stroke-width", function(d) {
+			.style("stroke-width", function(d) {
                  return 0;
                  });           
              }
@@ -184,10 +201,14 @@ d3.select(this).transition()
         }
     });
 
+	//crear funcion borrar
+//crear array
  $('input[name=filt_agr]').click(function() {
         if (!$(this).is(':checked')) {
             svg.selectAll(".link")
             .filter(function(d){return d.type == 4;})
+			.transition()
+			.duration(250)
             .style("stroke-width", function(d) {
                  return 0;
                  });           
@@ -275,21 +296,48 @@ d3.select(this).transition()
             svg.selectAll(".node")
             .filter(function(d){return d.type == 1;})
             .style("fill-opacity", function(d) {
+			
+				count = d.hash;	
+				svg.selectAll(".link")
+					.filter(function(d){return d.ssource == count;})
+					.style("stroke-width", function(d) {
+						return 0;
+					});
+				svg.selectAll(".link")
+					.filter(function(d){return d.ttarget == count;})
+					.style("stroke-width", function(d) {
+						return 0;
+					});	
+					
                  return "0";
                  });           
             svg.selectAll(".node")
             .filter(function(d){return d.type == 1;})
             .style("stroke-width", function(d) {
                  return "0px";
-                 });           
-             }
+                 });
+				 
+			}
         else {
             svg.selectAll(".node")
             .filter(function(d){return d.type == 1;})
             .style("fill-opacity", function(d) {
-                 return "1";
-                 });           
-            svg.selectAll(".node")
+			
+				 count = d.hash;
+				svg.selectAll(".link")
+					.filter(function(d){return d.ssource == count;})
+					.style("stroke-width", function(d) {
+						return Math.sqrt(d.evaluation);
+					});
+				svg.selectAll(".link")
+					.filter(function(d){return d.ttarget == count;})
+					.style("stroke-width", function(d) {
+						return Math.sqrt(d.evaluation);
+					});	
+        
+				return "1";
+			}); 
+			svg.selectAll(".node")
             .filter(function(d){return d.type == 1;})
             .style("stroke-width", function(d) {
                  return "1.5px";
@@ -303,8 +351,21 @@ d3.select(this).transition()
             svg.selectAll(".node")
             .filter(function(d){return d.type == 2;})
             .style("fill-opacity", function(d) {
-                 return "0";
-                 });           
+				 
+				 count = d.hash;	
+				svg.selectAll(".link")
+					.filter(function(d){return d.ssource == count;})
+					.style("stroke-width", function(d) {
+						return 0;
+					});
+				svg.selectAll(".link")
+					.filter(function(d){return d.ttarget == count;})
+					.style("stroke-width", function(d) {
+						return 0;
+					});	
+					
+				return "0";
+             });           
             svg.selectAll(".node")
             .filter(function(d){return d.type == 2;})
             .style("stroke-width", function(d) {
@@ -315,6 +376,19 @@ d3.select(this).transition()
             svg.selectAll(".node")
             .filter(function(d){return d.type == 2;})
             .style("fill-opacity", function(d) {
+			
+				 count = d.hash;
+				svg.selectAll(".link")
+					.filter(function(d){return d.ssource == count;})
+					.style("stroke-width", function(d) {
+						return Math.sqrt(d.evaluation);
+					});
+				svg.selectAll(".link")
+					.filter(function(d){return d.ttarget == count;})
+					.style("stroke-width", function(d) {
+						return Math.sqrt(d.evaluation);
+					});	
+					
                  return "1";
                  });           
             svg.selectAll(".node")
@@ -331,6 +405,19 @@ d3.select(this).transition()
             svg.selectAll(".node")
             .filter(function(d){return d.type == 3;})
             .style("fill-opacity", function(d) {
+			
+				count = d.hash;	
+				svg.selectAll(".link")
+					.filter(function(d){return d.ssource == count;})
+					.style("stroke-width", function(d) {
+						return 0;
+					});
+				svg.selectAll(".link")
+					.filter(function(d){return d.ttarget == count;})
+					.style("stroke-width", function(d) {
+						return 0;
+					});	
+					
                  return "0";
                  });           
             svg.selectAll(".node")
@@ -343,6 +430,19 @@ d3.select(this).transition()
             svg.selectAll(".node")
             .filter(function(d){return d.type == 3;})
             .style("fill-opacity", function(d) {
+			
+				count = d.hash;
+				svg.selectAll(".link")
+					.filter(function(d){return d.ssource == count;})
+					.style("stroke-width", function(d) {
+						return Math.sqrt(d.evaluation);
+					});
+				svg.selectAll(".link")
+					.filter(function(d){return d.ttarget == count;})
+					.style("stroke-width", function(d) {
+						return Math.sqrt(d.evaluation);
+					});	
+					
                  return "1";
                  });           
             svg.selectAll(".node")
