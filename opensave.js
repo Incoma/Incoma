@@ -12,6 +12,7 @@ function addImportListener(node, accept, fileselect, onerror) {
     }
     if (!control) {
         control = document.createElement("INPUT");
+        control.setAttribute("style", "display: inline;");
         node.appendChild(control);
     }
     control.setAttribute("type", "file");
@@ -52,7 +53,6 @@ function addExportListener(node, caption, name, getXml) {
         else {
             url = "data:application/x-incoma;charset=UTF8;base64," + btoa(domToText(getXml()));
         }
-        alert(url);
         lnk.setAttribute("href", url);
     }
     else {

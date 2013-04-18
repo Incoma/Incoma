@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="zoomout.css"/>
+<style>
+
+#headerMain {
+    background: #aaa;
+    text-align: right;
+    vertical-align: center;
+    width: 100%;
+    height: 30px;
+}
+
+#headerName, #headerExport, #headerImport {
+    display: inline-block;
+    margin: 5px;
+}
+
+#headerName {
+    position: absolute;
+    left: 0px;
+}
+
+#headerExport {
+    min-width: 200px;
+}
+
+#headerImport {
+    min-width: 200px;
+}
+
+#visualisationMain {
+    width: 100%;
+}
+
+</style>
+<body>
+    <script src="jquery-1.9.1.js"></script>
+
+<!-- HTML frame -->
+
+
+    <div id="headerMain">
+        <div id="headerName">Model</div>
+        <div id="headerImport"></div>
+        <div id="headerExport" ></div>
+    </div>
+    <div id="visualisationMain">
+        CONTENT
+    </div> 
+
+<!-- Javascript -->
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="opensave.js"></script>
+<script src="xmlreadwrite.js"></script>
+<!--script src="model.js"></script-->
+<!--script src="visualisation.js"></script-->
+
+<script>
+var Model = { importFile: function() {}, exportFile: function() {} };
+
+    var visualisations = [],
+    function registerVisualisation(obj) {
+        visualisations.append(obj);
+    }
+    addImportListener( $( "#headerImport" )[0], ".xml,.json", Model.importFile );
+    addExportListener( $( "#headerExport" )[0], "Export current model", "Incoma model.json", Model.exportFile );
+</script>
+</body>
+</html>
