@@ -16,9 +16,18 @@ body {
   font-size: 15px;
   border: yes;
   width: 298px;
-  min-height: 200px;
+  min-height: 150px;
 
 }
+
+.areareply {
+  font-size: 15px;
+  border: yes;
+  width: 298px;
+  min-height: 100px;
+
+}
+
 
 .mod_area {
   background: #f00;
@@ -104,6 +113,17 @@ body {
   right: 2px;
   top: 1px;
 }
+
+div.save{
+	width: 80px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #99f;
+	text-align: center;
+	margin: 5px;
+}
+
 
 #mod_vis {
   position: absolute;

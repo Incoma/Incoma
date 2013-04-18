@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node {
+  stroke: #999;
+  stroke-width: 1.0px;
+}
+
+.link {
+  stroke-opacity: .3;
+}
+#right {
+	float: left;
+	width: 300px;
+	height: 280px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #eee;
+	padding: 5px;
+	margin: 10px;
+	border: 1px dashed #444;
+	overflow: auto;
+}
+#right2 {
+	float: left;
+	width: 300px;
+	height: 280px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #eee;
+	padding: 5px;
+	margin: 10px;
+	margin-top: 18px;
+	border: 1px dashed #444;
+	overflow: auto;
+}
+
+svg{
+	width: 800px;
+	height: 600px;
+	float: left;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #eee;
+	padding: 5px;
+	margin: 10px;
+	border: 1px dashed #444;
+}
+textarea{
+	width: 280px;
+	height: 200px;	
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #eff;
+	margin: 5px;
+}
+
+div.save{
+	width: 80px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #99f;
+	text-align: center;
+	margin: 5px;
+}
+
+
+</style>
+<body>
+<script src="d3.v3.min.js"></script>
+<script src="jquery-1.9.1.js"></script>
+
+<script>
+
+//Defining globals variables so all functions can access it
+
+
+var width = 800,
+    height = 500;
+
+var color = d3.scale.category20();
+
+var force = d3.layout.force()
+    .charge(-500)
+    .linkDistance(100)
+    .size([width, height]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("debate.json", function(error, graph) {
+  force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
+
+  var link = svg.selectAll(".link")
+      .data(graph.links)
+      .enter().append("line")
+      .attr("class", "link")
+      .style("stroke", function(d) { return  color(d.type); })
+      .style("stroke-width", function(d) { return Math.sqrt(d.evaluation); });
+
+  var node = svg.selectAll(".node")
+      .data(graph.nodes)
+      .enter().append("text")
+      .attr("class", "node")
+      .attr("width", 50)
+      .attr("height", 50)
+      .style("fill", function(d) { return color(d.type); })
+			.text(function(d) {  return firstWords(d.content);  })
+			.on("mouseover", mouseover)
+			.on("click", click)
+			.on("dblclick",dblclick)
+			.on("mouseout",mouseout)
+      .call(force.drag);
+
+
+  //node.append("title")
+  //    .text(function(d) { return d.content; });
+
+  force.on("tick", function() {
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node.attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; });
+  });
+});
+
+function firstWords(text){
+	return text.substr(0,20)+"...";
+};
+function mouseover(d){
+	console.log('mouseover');
+	$('#right').html(d.content);
+};
+function click(){
+	console.log('click');
+	$('#right2').html("<select> <option value='general'>General</option><option value='opinion'>Opinion</option> <option value='proposal'>Proposal</option> <option value='question'>Question</option><option value='answer'>Answer</option><option value='info'>Info</option> </select><textarea></textarea><div class='save' onClick='save()'>Save</div>");
+}
+function dblclick(){
+	console.log('dblclick');
+}
+function mouseout(){
+	console.log('mouseout');
+}
+function save(){
+	console.log('save');
+	console.log(node);
+}
+</script>
+<div id="right">
+</div>
+<div id="right2">
+</div>

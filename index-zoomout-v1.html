@@ -34,6 +34,12 @@
         </div>
 
           <textarea id="spec" class="areacontent" spellcheck="false"></textarea>
+      
+<div id="replybox">
+</div>
+<div id="replybox2">
+</div>
+
    </div>
 
 </div>
@@ -82,6 +88,8 @@ var width = 712,
     height = 325;
 	count = 0;
 
+var isclicked = 0;
+
 var color = d3.scale.category20();
 
 var force = d3.layout.force()
@@ -118,6 +126,7 @@ d3.json("debate.json", function(error, graph) {
       .style("fill", function(d) { return color(d.type); })
       .on("mouseover", mouseover)
       .on("mouseout", mouseout)
+      .on("click", click)
       .call(force.drag);
 
   node.append("title")
@@ -155,7 +164,6 @@ d3.select(this).transition()
 .style("stroke","#E9B");
 				
 document.getElementById("spec").value = d.content;
-
 
 
 
@@ -497,6 +505,17 @@ d3.select(this).transition()
     });
 
 
+
+function click(){
+	console.log('click');
+	$('#replybox2').html("Reply: <select> <option value='general'>General</option><option value='opinion'>Opinion</option> <option value='proposal'>Proposal</option> <option value='question'>Question</option><option value='answer'>Answer</option><option value='info'>Info</option> </select><br><textarea id='spec2' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
+        isclicked = 1;
+}
+
+function save(){
+	console.log('save');
+	console.log(node);
+}
 
 
 </script>
