@@ -89,6 +89,7 @@ var width = 712,
 	count = 0;
 
 var isclicked = 0;
+var clickednodehash = "";
 
 var color = d3.scale.category20();
 
@@ -148,24 +149,39 @@ function eraseText() {
 }
 
 function mouseover(d) {
-    svg.selectAll(".node")
-        .style("stroke-width", function(d) {return "1.5px";})    
-		.style("stroke","#af0");
-d3.select(this).transition()
-.duration(250)
-//why evaluation dependent?
-.attr("width",function(d) {
+
+        if (isclicked == 0) {
+        
+              svg.selectAll(".node")
+             .style("stroke-width", function(d) {return "1.5px";})    
+	     .style("stroke","#af0");
+             d3.select(this).transition()
+             .duration(250)
+             //why evaluation dependent?
+             .attr("width",function(d) {
                 return 25*Math.sqrt(Math.sqrt(d.evaluation)); 
                 })
-.attr("height",  function(d) {
+             .attr("height",  function(d) {
                 return 25*Math.sqrt(Math.sqrt(d.evaluation)); 
                 })
-.style("stroke-width", function(d){return "3px";})
-.style("stroke","#E9B");
+             .style("stroke-width", function(d){return "3px";})
+             .style("stroke","#E9B");
 				
-document.getElementById("spec").value = d.content;
+             document.getElementById("spec").value = d.content;
+ 
+        }
+        else {
 
-
+             d3.select(this).transition()
+             .duration(250)
+             //why evaluation dependent?
+             .attr("width",function(d) {
+                return 25*Math.sqrt(Math.sqrt(d.evaluation)); 
+                })
+             .attr("height",  function(d) {
+                return 25*Math.sqrt(Math.sqrt(d.evaluation)); 
+                });                    
+        }
 
 
 force.friction([0.3]);
@@ -506,11 +522,45 @@ d3.select(this).transition()
 
 
 
-function click(){
+function click(d){
 	console.log('click');
-	$('#replybox2').html("Reply: <select> <option value='general'>General</option><option value='opinion'>Opinion</option> <option value='proposal'>Proposal</option> <option value='question'>Question</option><option value='answer'>Answer</option><option value='info'>Info</option> </select><br><textarea id='spec2' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
+
+        oldclickednodehash = clickednodehash;
+        clickednodehash = d.hash;
+
+        if (clickednodehash == oldclickednodehash) {
+        
+              svg.selectAll(".node")
+             .style("stroke-width", function(d) {return "1.5px";})    
+	     .style("stroke","#af0");
+        			
+             document.getElementById("spec").value = d.content;
+
+        isclicked = 0;
+
+	$('#replybox2').html(" ");
+ 
+        }
+        else {
+
+              svg.selectAll(".node")
+             .style("stroke-width", function(d) {return "1.5px";})    
+	     .style("stroke","#af0");
+             d3.select(this).transition()
+             .duration(250)
+             .style("stroke-width", function(d){return "3px";})
+             .style("stroke","#E9B");
+				
+             document.getElementById("spec").value = d.content;
+
         isclicked = 1;
+
+	$('#replybox2').html("Reply: <select> <option value='general'>General</option><option value='opinion'>Opinion</option> <option value='proposal'>Proposal</option> <option value='question'>Question</option><option value='answer'>Answer</option><option value='info'>Info</option> </select><br><textarea id='spec2' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
+
+        }
+
 }
+
 
 function save(){
 	console.log('save');
