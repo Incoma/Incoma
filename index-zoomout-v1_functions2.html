@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="zoomout.css"/>
+<style>
+
+.node {
+  stroke: #af0;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke-opacity: .6;
+}
+
+</style>
+<body>
+
+
+<div class="mod_up">
+
+   <div id="mod_vis" class="mod">
+     <div class='visualization'>  </div>
+   </div>
+
+   <div id="mod_spec" class="mod">
+
+        <div class="mod_header">
+          <div class="mod_ctrls">
+             <input type="button" value="Clear" onclick="javascript:eraseText();"> </input>
+          </div>
+          <div class="mod_title">
+            <a id="link_spec" class="active">Content:</a>         
+          </div>
+        </div>
+
+          <textarea id="spec" class="areacontent" spellcheck="false"></textarea>
+   </div>
+
+</div>
+
+<div class="mod_down">
+
+<div class="mod_down_elems">
+
+          <div class="mod_filt" style="Float:left">
+   <b>Threads</b> <br />         
+General: <input type="checkbox" checked="yes" name="filt_gen" value="general" /> <br /> 
+Agree: <input type="checkbox" checked="yes" name="filt_agr" value="agree" /> <br /> 
+Disagree: <input type="checkbox" checked="yes" name="filt_dis" value="disagree" /> <br /> 
+          </div>
+
+          <div class="mod_filt" style="Float:left" >
+   </br>         
+Question: <input type="checkbox" checked="yes" name="filt_que" value="question" /> <br /> 
+Answer: <input type="checkbox" checked="yes" name="filt_ans" value="answer" /> <br /> 
+Similar: <input type="checkbox" checked="yes" name="filt_sim" value="similar" /> <br /> 
+          </div>
+
+          <div class="mod_filt_box" style="Float:left" >
+   <b>Boxes</b> <br />         
+General: <input type="checkbox" checked="yes" name="filt_box_gen" value="general_box" /> <br /> 
+Question: <input type="checkbox" checked="yes" name="filt_box_que" value="question_box" /> <br /> 
+Answer: <input type="checkbox" checked="yes" name="filt_box_ans" value="answer_box" /> <br /> 
+          </div>
+
+          <div class="mod_filt_size" style="Float:left" >
+<b>Sizes</b> <br /> 
+Boxes: <input type="checkbox" checked="yes" name="filt_size_box" value="size_box" /> <br /> 
+Threads: <input type="checkbox" checked="yes" name="filt_size_thread" value="size_thread" /> <br /> 
+          </div>
+
+
+
+          </div>
+</div>
+
+<script src="jquery-1.9.1.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var width = 712,
+    height = 325;
+	count = 0;
+	
+var check1 = 'input[name=filt_box_gen]';
+
+var linksfilterlist = ['input[name=filt_gen]','input[name=filt_agr]','input[name=filt_dis]','input[name=filt_que]','input[name=filt_ans]','input[name=filt_sim]'];
+var linkstypelist = [5,4,1,2,3,6];
+var nodesfilterlist = ['input[name=filt_box_gen]','input[name=filt_box_que]','input[name=filt_box_ans]'];
+var nodestypelist = [1,2,3];
+
+var color = d3.scale.category20();
+
+var force = d3.layout.force()
+    .charge(-400)
+    .linkDistance(40)
+    .size([width, height]);
+
+var svg = d3.select(".visualization").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("debate.json", function(error, graph) {
+  force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
+
+  var link = svg.selectAll(".link")
+      .data(graph.links)
+      .enter().append("line")
+      .attr("class", "link")
+      .style("stroke", function(d) { return  color(d.type); })
+      .style("stroke-width", function(d) {
+        return Math.sqrt(d.evaluation); });
+
+  var node = svg.selectAll(".node")
+      .data(graph.nodes)
+    .enter().append("rect")
+      .attr("class", "node")
+      .attr("width", function(d) {
+        return 20*Math.sqrt(Math.sqrt(d.evaluation)); })
+      .attr("height", function(d) {
+        return 20*Math.sqrt(Math.sqrt(d.evaluation)); })
+      .style("fill", function(d) { return color(d.type); })
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout)
+      .call(force.drag);
+
+  node.append("title")
+      .text(function(d) { return d.content; });
+
+  force.on("tick", function() {
+    link.attr("x1", function(d) { return d.source.x+10; })
+        .attr("y1", function(d) { return d.source.y+10; })
+        .attr("x2", function(d) { return d.target.x+10; })
+        .attr("y2", function(d) { return d.target.y+10; });
+
+    node.attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; });
+  });
+});
+
+function eraseText() {
+    document.getElementById("spec").value = "";
+}
+
+function mouseover(d) {
+    svg.selectAll(".node")
+        .style("stroke-width", function(d) {return "1.5px";})    
+		.style("stroke","#af0");
+d3.select(this).transition()
+.duration(250)
+.attr("width",function(d) {
+                return 25*Math.sqrt(Math.sqrt(d.evaluation)); 
+                })
+.attr("height",  function(d) {
+                return 25*Math.sqrt(Math.sqrt(d.evaluation)); 
+                })
+.style("stroke-width", function(d){return "3px";})
+.style("stroke","#E9B");
+				
+document.getElementById("spec").value = d.content;
+
+force.friction([0.3]);
+
+//$('input[name=filt_ans]').attr('checked', false);
+}
+ 
+function mouseout() {
+d3.select(this).transition()
+.duration(250)
+.attr("width",function(d) {
+                return 20*Math.sqrt(Math.sqrt(d.evaluation)); 
+                })
+.attr("height",  function(d) {
+                return 20*Math.sqrt(Math.sqrt(d.evaluation)); 
+                });
+}
+
+
+$(linksfilterlist[0]).click(function() {
+	linkscheckclick(this,0);
+});
+
+$(linksfilterlist[1]).click(function() {
+	linkscheckclick(this,1);
+});
+
+$(linksfilterlist[2]).click(function() {
+	linkscheckclick(this,2);
+});
+
+$(linksfilterlist[3]).click(function() {
+	linkscheckclick(this,3);
+});
+
+$(linksfilterlist[4]).click(function() {
+	linkscheckclick(this,4);
+});
+
+$(linksfilterlist[5]).click(function() {
+	linkscheckclick(this,5);
+});
+
+function linkscheckclick(check,i){
+        if (!$(check).is(':checked')) {
+			 svg.selectAll(".link")
+            .filter(function(d){return d.type == linkstypelist[i];})
+			.style("stroke-width", function(d) {
+                 return 0;
+                 });           
+             }
+        else {
+			svg.selectAll(".link")
+            .filter(function(d){return d.type == linkstypelist[i];})
+            .style("stroke-width", function(d) {
+                 return Math.sqrt(d.evaluation);
+            });  
+        }
+    };
+
+	
+$(nodesfilterlist[0]).click(function() {
+	nodescheckclick(this,0);
+});
+
+$(nodesfilterlist[1]).click(function() {
+	nodescheckclick(this,1);
+});
+
+$(nodesfilterlist[2]).click(function() {
+	nodescheckclick(this,2);
+});
+
+function nodescheckclick(box,i){
+        if (!$(box).is(':checked')) {
+			hideboxes(i);
+			}
+        else {
+			showboxes(i);
+        }
+    };
+	
+function hideboxes(i){
+	svg.selectAll(".node")
+	.filter(function(d){return d.type == nodestypelist[i];})
+	.style("stroke-width", function(d) {
+        return "0px";
+    })
+    .style("fill-opacity", function(d) {
+		hidelinks(d.hash);					
+        return "0";
+    });           
+}
+
+function showboxes(i){
+    svg.selectAll(".node")
+        .filter(function(d){return d.type == nodestypelist[i];})
+		.style("stroke-width", function(d) {
+            return "1.5px";
+        })
+        .style("fill-opacity", function(d) {
+			showlinks(d.hash);
+			return "1";
+		}); 
+}
+	
+function hidelinks(i){
+	svg.selectAll(".link")
+		.filter(function(d){return d.ssource == i;})
+		.style("stroke-width", function(d) {
+			return 0;
+		});
+};
+
+function showlinks(i){
+	svg.selectAll(".link")
+		.filter(function(d){return d.ssource == i;})
+		.style("stroke-width", function(d) {
+			return Math.sqrt(d.evaluation);
+		});
+};
+
+
+ $('input[name=filt_size_box]').click(function() {
+        if (!$(this).is(':checked')) {
+            svg.selectAll(".node")
+            .attr("width", function(d) {
+                 return "20";
+                 });           
+            svg.selectAll(".node")
+            .attr("height", function(d) {
+                 return "20";
+                 });           
+            }
+        else {
+            svg.selectAll(".node")
+            .attr("width", function(d) {
+                return 20*Math.sqrt(Math.sqrt(d.evaluation)); 
+                })
+			            .attr("height", function(d) {
+                return 20*Math.sqrt(Math.sqrt(d.evaluation)); 
+                });
+        }
+    });
+
+ $('input[name=filt_size_thread]').click(function() {
+        if (!$(this).is(':checked')) {
+            svg.selectAll(".link")
+            .style("stroke-width", function(d) {
+                 return Math.sqrt(6);
+                 });           
+             }
+        else {
+            svg.selectAll(".link")
+            .style("stroke-width", function(d) {
+                 return Math.sqrt(d.evaluation);
+                 });           
+        }
+    });
+
+</script>
+
+
+</body>
+</html>
