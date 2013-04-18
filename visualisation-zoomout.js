@@ -1,5 +1,8 @@
 var ZoomOut = {
     name: "Zoom Out",
+
+
+// Start of abstraction = model and state of filters [abstraction initialized with (model)]
     
     abstraction: { model: null,
         linkFilters: { 
@@ -19,66 +22,79 @@ var ZoomOut = {
         }
                      
     },
+
+// End of abstraction
     
+// Start of presentation [initialized with (html5node, abstraction, control)]
+
     presentation: { container: null, 
+
+        // Start of init function = change the html code (.innerHTML) inside of the html5node (adding visualization, text areas, and filters) and calls with the abstraction as a parameter: initSVG, initLinkFilters, initNodeFilters, initSizeFilters (this four will create the filters and the svg and place it in the previous html code)
+
         init: function(html5node, abstraction, control) {
             this.container = html5node;
             this.abstraction = abstraction;
             html5node.innerHTML = '
-                <div class="mod_up">
+             <div class="mod_up">
 
-   <div id="mod_vis" class="mod">
-     <div class="visualization">  </div>
-   </div>
+                  <div id="mod_vis" class="mod">
+                    <div class="visualization">  </div>
+                  </div>
 
-   <div id="mod_spec" class="mod">
+                  <div id="mod_spec" class="mod">
+                    <div class="mod_header">
+                      <div class="mod_ctrls">
+                        <input type="button" value="Clear" onclick="javascript:eraseText();"> </input>
+                      </div>
+                      <div class="mod_title">
+                        <a id="link_spec" class="active">Content:</a>         
+                      </div>
+                    </div>
+ 
+                    <textarea id="spec" class="areacontent" spellcheck="false"></textarea>
+ 
+                  </div>
+ 
+             </div>
 
-        <div class="mod_header">
-          <div class="mod_ctrls">
-             <input type="button" value="Clear" onclick="javascript:eraseText();"> </input>
-          </div>
-          <div class="mod_title">
-            <a id="link_spec" class="active">Content:</a>         
-          </div>
-        </div>
+             <div class="mod_down">
 
-          <textarea id="spec" class="areacontent" spellcheck="false"></textarea>
-   </div>
+                  <div class="mod_down_elems">
+                    <div id="mod_filt_links1" class="mod_filt" style="Float:left">
+                      <b>Threads</b> <br />
+                    </div>
 
-</div>
+                    <div id="mod_filt_links2" class="mod_filt" style="Float:left" >
+                      </br>         
+                    </div>
 
-<div class="mod_down">
+                    <div id="mod_filt_nodes" class="mod_filt_box" style="Float:left" >
+                      <b>Boxes</b> <br />         
+                    </div>
 
-    <div class="mod_down_elems">
+                    <div id="mod_filt_sizes" class="mod_filt_size" style="Float:left" >
+                      <b>Sizes</b> <br /> 
+                    </div>
+                 </div>
 
-          <div id="mod_filt_links1" class="mod_filt" style="Float:left">
-            <b>Threads</b> <br />
-          </div>
+             </div>
 
-          <div id="mod_filt_links2" class="mod_filt" style="Float:left" >
-            </br>         
-          </div>
-
-          <div id="mod_filt_nodes" class="mod_filt_box" style="Float:left" >
-            <b>Boxes</b> <br />         
-          </div>
-
-          <div id="mod_filt_sizes" class="mod_filt_size" style="Float:left" >
-            <b>Sizes</b> <br /> 
-          </div>
-
-    </div>
-</div>
-        ' ; // end of innerHTML
+        ' ;   // end of innerHTML
         
             initSVG(712, 325, abstraction);
+              // 712, 325 = width and height of the visualization
 
             initLinkFilters( $( "#mod_filt_links1" ), $( "#mod_filt_links2" ), abstraction.linkFilters);
             initNodeFilters( $( "#mod_filt_nodes" ), abstraction.nodeFilters);
-            initSizeFilters( $( "mod_filt_sizes" ), abstraction.sizeFilters);
+            initSizeFilters( $( "#mod_filt_sizes" ), abstraction.sizeFilters);
+              // The initfilters take as an input parameter the id of the div where they will be placed (e.g "#mod_filt_links1"), with appendChild.
+
         },
+        // End of init function of presentation
         
+        // Start of initSVG = create the svg from the abstraction, and place it into the "visualization" html div tag inserted on the html5node
         initSVG: function(width, height) {
+
             this.force = d3.layout.force()
                 .charge(-400)
                 .linkDistance(40)
@@ -86,7 +102,7 @@ var ZoomOut = {
             this.svg = d3.select(".visualization").append("svg")
                     .attr("width", width)
                     .attr("height", height);
-            
+            // force and svg are local to "presentation" (defined as this.force); graph and link are local only to "initSVG" (var graph)             
             var graph = this.abstraction.model;
             
             this.force
@@ -99,7 +115,8 @@ var ZoomOut = {
                 .enter().append("line")
                 .attr("class", "link")
                 .style("stroke", this.linkStroke)
-                .style("stroke-width", this.linkStrokeWidth);
+                .style("stroke-width", this.linkStrokeWidth);          
+                //The attributes (as the strokewidth) are obtained from the fields of each node (as example d.evaluation) via functions (example linkStrokeWidth), taking in account if the filters are acting or not (this.abstraction.sizeFilter.links.state)
 
             var node = svg.selectAll(".node")
                 .data(graph.nodes)
@@ -125,7 +142,9 @@ var ZoomOut = {
                     .attr("y", function(d) { return d.y; });
             });
         },
+        // End of initSVG
 
+        // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
         initLinkFilters: function(columnLeft, columnRight, filterlist) {
             var half = (filterlist.length+1) / 2;
             for (var i = 0; i < filterlist.length; ++i) {
@@ -146,7 +165,8 @@ var ZoomOut = {
             }
         },
         
-        // making HTML
+
+        // functions that return the HTML (an input tag, a br tag, ...)
         
         makeFilterBox: function(filter) {
             var result = document.createElement("INPUT");
@@ -161,13 +181,13 @@ var ZoomOut = {
         },
         
         makeBR: function() {
-            return docuemnt.createElement("BR");
+            return document.createElement("BR");
         },
             
         color: d3.scale.category20();
 
 
-        // update styles
+        // functions that return the right style of each element (considering filters)
         
         nodeFill: function(d) {
             return this.color(d.type);
@@ -208,7 +228,7 @@ var ZoomOut = {
             }
         },
         
-        // update functions
+        // update functions (svg, nodes and links)
         
         updateLinks: function() {
             this.svg.selectAll(".link").style("stroke-width", this.linkStrokeWidth);
@@ -219,15 +239,23 @@ var ZoomOut = {
             updateNodes();
         },
     },
+// End of presentation
     
+// Start of control
+// ???????????????????? Check the brackets below
     control: {
     }
     init: function(html5node, model) {
         abstraction.init(model);
-        presentation.init(html5node, abstraction, control);
-        
+        presentation.init(html5node, abstraction, control);        
     }
+
     destroy: function() {}
 };
+// End of var ZoomOut
 
 Visualisations.register(ZoomOut);
+
+//// functions erasetext, mouseover, mouseout, hideboxes, showboxes, hidelinks, showlinks
+////  initNodeFilters, initSizeFilters
+           
