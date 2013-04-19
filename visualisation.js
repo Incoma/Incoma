@@ -8,6 +8,11 @@ var Visualisations = {
     
     // functions that return the HTML (an input tag, a br tag, ...)
         
+    /*
+     * filter needs these fields:
+     * "state": a boolean
+     * "name": a string
+     */
     makeFilterBox: function(filter) {
         var result = document.createElement("INPUT");
         result.type = "checkbox";

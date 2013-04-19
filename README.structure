@@ -1,0 +1,43 @@
+Files/Modules:
+
+"opensave.js"
+=============
+
+Defines methods for registering import/output listeners and provides functions to convert text <-> blobs
+
+
+"model.js"
+==========
+
+Defines the structure of a model. The namespace "Model" has these members:
+
+Model.model: the current model
+Model.model.nodes: an array of nodes
+Model.model.links: an array of edges
+Model.model.authors: an array of user names
+
+
+"visualisation.js"
+==================
+
+Introduces the namespace "Visualisations" has these members:
+
+Visualisations.register(aVisualisation): register a new visualisation object
+Visualisations.visualisations: the current list of visualisations
+
+A visualisation object needs to provide these methods:
+
+aVisualisation.init(html5node, model): (re-)init the visualisation with data from model and put the view elements beneath html5node
+aVisualisation.destroy(): tear down the current visualisation
+
+
+"visualisation-zoomout.js"
+==========================
+
+A sample visualisation using http://d3js.org/d3.v3.min.js
+
+
+"index-main.html"
+=================
+
+The html file which puts it all together
