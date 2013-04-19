@@ -8,8 +8,8 @@ function ZoomOut() {
     this.control = new ZoomOut_Control(this, this.abstraction, this.presentation);
     
     this.init = function(html5node, model) {
-        abstraction.init(model);
-        presentation.init(html5node);        
+        this.abstraction.init(model);
+        this.presentation.init(html5node);        
     }
 
     this.destroy = function() {}
@@ -105,7 +105,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
              </div>   \
         ' ;   // end of innerHTML
         
-            initSVG(this, ABSTR, width, height);
+            initSVG(this, ABSTR, this.width, this.height);
               // 712, 325 = width and height of the visualization
 
             initLinkFilters(this, $( "#mod_filt_links1" ), $( "#mod_filt_links2" ), ABSTR.linkFilters);
@@ -123,13 +123,20 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 .charge(-400)
                 .linkDistance(40)
                 .size([width, height]);
+            var force = PRES.force;
+
             PRES.svg = d3.select(".visualization").append("svg")
                     .attr("width", width)
                     .attr("height", height);
-            // force and svg are local to "presentation" (defined as this.force); graph and link are local only to "initSVG" (var graph)         
+            var svg = PRES.svg;
+            // force and svg are local to "presentation" (defined as this.force); 
+            // (but we define them locally as a shorthand)
+            // graph and link are local only to "initSVG" (var graph)
+            
+                
             var graph = ABSTR.model;
             
-            PRES.force
+            force
                 .nodes(graph.nodes)
                 .links(graph.links)
                 .start();

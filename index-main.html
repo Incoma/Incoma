@@ -44,6 +44,7 @@
         <div id="headerName">Model</div>
         <div id="headerImport"></div>
         <div id="headerExport" ></div>
+        <input type="button" id="buttonDump" name="dump" value="DUMP" onclick="alert(JSON.stringify(Model.model));" />
     </div>
     <div id="visualisationMain">
         CONTENT
@@ -69,22 +70,41 @@
 <script src="opensave.js"></script>
 <script src="model.js"></script>
 <script src="visualisation.js"></script>
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="visualisation-zoomout.js"></script>
 
 <script>
+    var currentVisualisation = null;
+
     Model.clear();
+    
+    //FIXME: define mouseover and mouseout in visualisation-zoomout.js
+    var NYI = function() {};
+    var mouseover = NYI;
+    var mouseout = NYI;
+    var initNodeFilters = NYI;
+    var initSizeFilters = NYI;
+    
+    reInit();
+        
+    function reInit() {
+        if (currentVisualisation) {
+            currentVisualisation.destroy();
+        }
+        else {
+            currentVisualisation = Visualisations.visualisations[0];
+        }
+        currentVisualisation.init( $( "#visualisationMain" ), Model.model);    
+    };
+    
+    var saveModelFile = function() { return Model.exportFile(); }
+
     var loadModelFile = function(file) {
                             var fileName = file.name || "current model" ;
-                            blobToText( file, 
-                                        function(text) {
-                                                Model.importFile(text); 
-                                                addExportListener( $( "#headerExport" )[0], "Export " + fileName, "Incoma model.json", Model.exportFile);
-                                        });
+                            blobToText( file, function(text) { Model.importFile(text); reInit(); } );
                         }; 
 
-    var saveModelFile = function() { return Model.exportFile(); }
-    
     addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
     addExportListener( $( "#headerExport" )[0], "Export current model", "Incoma model.json", saveModelFile );
 </script>

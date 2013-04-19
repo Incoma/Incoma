@@ -3,7 +3,7 @@ var Visualisations = {
     visualisations: [],
                             
     register: function(obj) {
-        this.visualisations.append(obj);
+        this.visualisations.push(obj);
     },
     
     // functions that return the HTML (an input tag, a br tag, ...)
