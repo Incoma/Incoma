@@ -58,6 +58,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     this.init = function(html5node) {
             this.container = html5node;
+            alert(html5node.id + "/" + html5node.name + "/" + html5node.innerHTML);
             html5node.innerHTML = 
             '   \
              <div class="mod_up">   \

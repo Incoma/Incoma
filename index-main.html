@@ -95,7 +95,7 @@
         else {
             currentVisualisation = Visualisations.visualisations[0];
         }
-        currentVisualisation.init( $( "#visualisationMain" ), Model.model);    
+        currentVisualisation.init( $( "#visualisationMain" )[0], Model.model);    
     };
     
     var saveModelFile = function() { return Model.exportFile(); }
