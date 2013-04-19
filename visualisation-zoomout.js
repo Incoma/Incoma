@@ -1,111 +1,135 @@
-var ZoomOut = {
-    name: "Zoom Out",
+Visualisations.register(new ZoomOut());
 
+function ZoomOut() {
 
-// Start of abstraction = model and state of filters [abstraction initialized with (model)]
+    this.name = "Zoom Out",
+    this.abstraction = new ZoomOut_Abstraction(this);
+    this.presentation = new ZoomOut_Presentation(this, this.abstraction);
+    this.control = new ZoomOut_Control(this, this.abstraction, this.presentation);
     
-    abstraction: { model: null,
-        linkFilters: { 
-                       5: { name: "General", state: true, typeId: 5 },
-                       4: { name: "Agree", state: true, typeId: 4 },
-                     },
-        nodeFilters: {
-                       1: { name: "General", state: true, typeId: 1 },
-                       2: { name: "Question", state: true, typeId: 2 },
-                     },
-        sizes:       {
-                       nodes: { name: "Boxes", state: true },
-                       links: { name: "Threads", state: true },
-                     },
-        init: function(model) {
-            this.model = model;
-        }
-                     
-    },
+    this.init = function(html5node, model) {
+        abstraction.init(model);
+        presentation.init(html5node);        
+    }
 
-// End of abstraction
+    this.destroy = function() {}
+
+}
+
+// Start of this == abstraction = model and state of filters [abstraction initialized with (model)]
     
-// Start of presentation [initialized with (html5node, abstraction, control)]
+function ZoomOut_Abstraction(VIS) {
+    this.model = null;
+    this.linkFilters = { 
+                   5: { name: "General", state: true, typeId: 5 },
+                   4: { name: "Agree", state: true, typeId: 4 },
+                 };
+    this.nodeFilters = {
+                   1: { name: "General", state: true, typeId: 1 },
+                   2: { name: "Question", state: true, typeId: 2 },
+                 };
+    this.sizeFilters = {
+                   nodes: { name: "Boxes", state: true },
+                   links: { name: "Threads", state: true },
+                 };
+    this.init = function(model) {
+        this.model = model;
+    }
+};
+    
+// End of this == abstraction
+    
+// Start of this == presentation [initialized with (html5node, abstraction)]
 
-    presentation: { container: null, 
+function ZoomOut_Presentation(VIS, ABSTR) {
+    // public interface
+    this.container = null;
+    this.width = 712;
+    this.height = 325;
+    this.svg = null;
+    this.color = d3.scale.category20();
+    this.liveAttributes = new LiveAttributes(this);
+    this.updateLinks = function() { this.definedBelow(); }
+    this.update = function() { this.definedBelow(); }
+    this.init = function(html5node) { this.definedBelow(); }
+    // end of public interface
 
         // Start of init function = change the html code (.innerHTML) inside of the html5node (adding visualization, text areas, and filters) and calls with the abstraction as a parameter: initSVG, initLinkFilters, initNodeFilters, initSizeFilters (this four will create the filters and the svg and place it in the previous html code)
 
-        init: function(html5node, abstraction, control) {
+    this.init = function(html5node) {
             this.container = html5node;
-            this.abstraction = abstraction;
-            html5node.innerHTML = '
-             <div class="mod_up">
-
-                  <div id="mod_vis" class="mod">
-                    <div class="visualization">  </div>
-                  </div>
-
-                  <div id="mod_spec" class="mod">
-                    <div class="mod_header">
-                      <div class="mod_ctrls">
-                        <input type="button" value="Clear" onclick="javascript:eraseText();"> </input>
-                      </div>
-                      <div class="mod_title">
-                        <a id="link_spec" class="active">Content:</a>         
-                      </div>
-                    </div>
- 
-                    <textarea id="spec" class="areacontent" spellcheck="false"></textarea>
- 
-                  </div>
- 
-             </div>
-
-             <div class="mod_down">
-
-                  <div class="mod_down_elems">
-                    <div id="mod_filt_links1" class="mod_filt" style="Float:left">
-                      <b>Threads</b> <br />
-                    </div>
-
-                    <div id="mod_filt_links2" class="mod_filt" style="Float:left" >
-                      </br>         
-                    </div>
-
-                    <div id="mod_filt_nodes" class="mod_filt_box" style="Float:left" >
-                      <b>Boxes</b> <br />         
-                    </div>
-
-                    <div id="mod_filt_sizes" class="mod_filt_size" style="Float:left" >
-                      <b>Sizes</b> <br /> 
-                    </div>
-                 </div>
-
-             </div>
-
+            html5node.innerHTML = 
+            '   \
+             <div class="mod_up">   \
+   \
+                  <div id="mod_vis" class="mod">   \
+                    <div class="visualization">  </div>   \
+                  </div>   \
+   \
+                  <div id="mod_spec" class="mod">   \
+                    <div class="mod_header">   \
+                      <div class="mod_ctrls">   \
+                        <input type="button" value="Clear" onclick="javascript:eraseText();"> </input>   \
+                      </div>   \
+                      <div class="mod_title">   \
+                        <a id="link_spec" class="active">Content:</a>           \
+                      </div>   \
+                    </div>   \
+    \
+                    <textarea id="spec" class="areacontent" spellcheck="false"></textarea>   \
+    \
+                  </div>   \
+    \
+             </div>   \
+   \
+             <div class="mod_down">   \
+   \
+                  <div class="mod_down_elems">   \
+                    <div id="mod_filt_links1" class="mod_filt" style="Float:left">   \
+                      <b>Threads</b> <br />   \
+                    </div>   \
+   \
+                    <div id="mod_filt_links2" class="mod_filt" style="Float:left" >   \
+                      </br>            \
+                    </div>   \
+   \
+                    <div id="mod_filt_nodes" class="mod_filt_box" style="Float:left" >   \
+                      <b>Boxes</b> <br />            \
+                    </div>   \
+   \
+                    <div id="mod_filt_sizes" class="mod_filt_size" style="Float:left" >   \
+                      <b>Sizes</b> <br />    \
+                    </div>   \
+                 </div>   \
+   \
+             </div>   \
         ' ;   // end of innerHTML
         
-            initSVG(712, 325, abstraction);
+            initSVG(this, ABSTR, width, height);
               // 712, 325 = width and height of the visualization
 
-            initLinkFilters( $( "#mod_filt_links1" ), $( "#mod_filt_links2" ), abstraction.linkFilters);
-            initNodeFilters( $( "#mod_filt_nodes" ), abstraction.nodeFilters);
-            initSizeFilters( $( "#mod_filt_sizes" ), abstraction.sizeFilters);
+            initLinkFilters(this, $( "#mod_filt_links1" ), $( "#mod_filt_links2" ), ABSTR.linkFilters);
+            initNodeFilters(this, $( "#mod_filt_nodes" ), ABSTR.nodeFilters);
+            initSizeFilters(this, $( "#mod_filt_sizes" ), ABSTR.sizeFilters);
               // The initfilters take as an input parameter the id of the div where they will be placed (e.g "#mod_filt_links1"), with appendChild.
 
-        },
+        };
         // End of init function of presentation
         
         // Start of initSVG = create the svg from the abstraction, and place it into the "visualization" html div tag inserted on the html5node
-        initSVG: function(width, height) {
+        function initSVG (PRES, ABSTR, width, height) {
 
-            this.force = d3.layout.force()
+            PRES.force = d3.layout.force()
                 .charge(-400)
                 .linkDistance(40)
                 .size([width, height]);
-            this.svg = d3.select(".visualization").append("svg")
+            PRES.svg = d3.select(".visualization").append("svg")
                     .attr("width", width)
                     .attr("height", height);
-            // force and svg are local to "presentation" (defined as this.force); graph and link are local only to "initSVG" (var graph)             
-            var graph = this.abstraction.model;
+            // force and svg are local to "presentation" (defined as this.force); graph and link are local only to "initSVG" (var graph)         
+            var graph = ABSTR.model;
             
-            this.force
+            PRES.force
                 .nodes(graph.nodes)
                 .links(graph.links)
                 .start();
@@ -114,17 +138,17 @@ var ZoomOut = {
                 .data(graph.links)
                 .enter().append("line")
                 .attr("class", "link")
-                .style("stroke", this.linkStroke)
-                .style("stroke-width", this.linkStrokeWidth);          
+                .style("stroke", PRES.liveAttributes.linkStroke)
+                .style("stroke-width", PRES.liveAttributes.linkStrokeWidth);          
                 //The attributes (as the strokewidth) are obtained from the fields of each node (as example d.evaluation) via functions (example linkStrokeWidth), taking in account if the filters are acting or not (this.abstraction.sizeFilter.links.state)
 
             var node = svg.selectAll(".node")
                 .data(graph.nodes)
                 .enter().append("rect")
                     .attr("class", "node")
-                    .attr("width", this.nodeWidth)
-                    .attr("height", this.nodeHeight)
-                    .style("fill", this.nodeFill)
+                    .attr("width", PRES.liveAttributes.nodeWidth)
+                    .attr("height", PRES.liveAttributes.nodeHeight)
+                    .style("fill", PRES.liveAttributes.nodeFill)
                     .on("mouseover", mouseover)
                     .on("mouseout", mouseout)
                     .call(force.drag);
@@ -141,120 +165,100 @@ var ZoomOut = {
                 node.attr("x", function(d) { return d.x; })
                     .attr("y", function(d) { return d.y; });
             });
-        },
+        };
         // End of initSVG
 
         // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
-        initLinkFilters: function(columnLeft, columnRight, filterlist) {
+        function initLinkFilters(PRES, columnLeft, columnRight, filterlist) {
             var half = (filterlist.length+1) / 2;
             for (var i = 0; i < filterlist.length; ++i) {
                 var filter = filterlist[i];
                 var checkbox = makeFilterBox(filter);
                 if (i < half) {
-                    columnLeft.appendChild(makeBR());
-                    columnLeft.appendChild(makeText(filter.name + ": "));
+                    columnLeft.appendChild(Visualisations.makeBR());
+                    columnLeft.appendChild(Visualisations.makeText(filter.name + ": "));
                     columnLeft.appendChild(checkbox);
                 }
                 else {
-                    columnRight.appendChild(makeBR());
-                    columnRight.appendChild(makeText(filter.name + ": "));
+                    columnRight.appendChild(Visualisations.makeBR());
+                    columnRight.appendChild(Visualisations.makeText(filter.name + ": "));
                     columnRight.appendChild(checkbox);
                 }
                 checkbox.click = function(e) { filter.state = !filter.state; 
-                                               this.updateLinks(); }
+                                               PRES.updateLinks(); }
             }
-        },
+        };
         
 
-        // functions that return the HTML (an input tag, a br tag, ...)
         
-        makeFilterBox: function(filter) {
-            var result = document.createElement("INPUT");
-            result.type = "checkbox";
-            result.checked = filter.state? "yes" : "no";
-            result.name = filter.name;
-            return result;
-        },
-        
-        makeText: function(txt) {
-            return document.createTextNode(txt);
-        },
-        
-        makeBR: function() {
-            return document.createElement("BR");
-        },
-            
-        color: d3.scale.category20();
-
-
         // functions that return the right style of each element (considering filters)
         
-        nodeFill: function(d) {
-            return this.color(d.type);
-        },
-        
-        nodeHeight: function(d) {
-                if (this.abstraction.sizeFilter.nodes.state) {
-                    return 20 * Math.sqrt(Math.sqrt(d.evaluation));
-                }
-                else {
-                    return 20;
-                }
-        },  
-        
-        nodeWidth: function(d) {
-                if (this.abstraction.sizeFilter.nodes.state) {
-                    return 20 * Math.sqrt(Math.sqrt(d.evaluation));
-                }
-                else {
-                    return 20;
-                }
-        },
+        function LiveAttributes(ABSTR, PRES) {
+            this.nodeFill = 
+                function(d) {
+                    return PRES.color(d.type);
+                };
                 
-        linkStroke: function(d) {
-            return this.color(d.type);
-        },
+            this.nodeHeight =
+                function(d) {
+                    if (ABSTR.sizeFilter.nodes.state) {
+                        return 20 * Math.sqrt(Math.sqrt(d.evaluation));
+                    }
+                    else {
+                        return 20;
+                    }
+                }; 
                 
-        linkStrokeWidth: function(d) {
-            if (this.abstraction.linkFilters[d.type].state) {
-                if (this.abstraction.sizeFilter.links.state)
-                    return Math.sqrt(d.evaluation);
-                else
-                    return Math.sqrt(6);
-            }
-            else
-            {
-                return 0;
-            }
-        },
+            this.nodeWidth =
+                function(d) {
+                    if (ABSTR.sizeFilter.nodes.state) {
+                        return 20 * Math.sqrt(Math.sqrt(d.evaluation));
+                    }
+                    else {
+                        return 20;
+                    }
+                };
+                        
+            this.linkStroke =
+                function(d) {
+                    return PRES.color(d.type);
+                };
+                        
+            this.linkStrokeWidth =
+                function(d) {
+                    if (ABSTR.linkFilters[d.type].state) {
+                        if (ABSTR.sizeFilter.links.state)
+                            return Math.sqrt(d.evaluation);
+                        else
+                            return Math.sqrt(6);
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                };
+        };
+        // end of this == LiveAttributes
         
         // update functions (svg, nodes and links)
         
-        updateLinks: function() {
-            this.svg.selectAll(".link").style("stroke-width", this.linkStrokeWidth);
-        },
+        this.updateLinks = function() {
+            this.svg.selectAll(".link").style("stroke-width", this.liveAttributes.linkStrokeWidth);
+        };
         
-        update: function() {
-            updateLinks();
-            updateNodes();
-        },
-    },
-// End of presentation
+        this.update = function() {
+            this.updateLinks();
+            this.updateNodes();
+        };
+    };
+// End of this == presentation
     
 // Start of control
-// ???????????????????? Check the brackets below
-    control: {
-    }
-    init: function(html5node, model) {
-        abstraction.init(model);
-        presentation.init(html5node, abstraction, control);        
-    }
 
-    destroy: function() {}
+function ZoomOut_Control(VIS, ABSTR, PRES) {
 };
 // End of var ZoomOut
 
-Visualisations.register(ZoomOut);
 
 //// functions erasetext, mouseover, mouseout, hideboxes, showboxes, hidelinks, showlinks
 ////  initNodeFilters, initSizeFilters

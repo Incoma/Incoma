@@ -1,7 +1,30 @@
-
+// browser differences
 var URL = window.URL || window.webkitURL;
 
 
+function textToBlob(text, mime) {
+    return new window.Blob( [text], {type: (mime || "application/octed-stream") } );
+}
+
+/*
+ * blob:    blob containg some text
+ * onready: function(text) { ... } is called when ready
+ */
+function blobToText(blob, onready, onerror) {
+    var reader = new FileReader();
+    reader.onerror = onerror;
+    reader.onload = function (evt) {
+        onready(evt.target.result);
+    };
+    reader.readAsText(blob);
+}
+
+
+/*
+ * node: an HTML node, possibly an <INPUT> or containg an <INPUT>
+ * accept: comma separated list of extensions and/or mime types
+ * fileselect: function(file) is called when file is imported
+ */
 function addImportListener(node, accept, fileselect, onerror) {
     var control = node.nodeName == "INPUT"? [node] : node.getElementsByTagName("INPUT");
     if (control && control.length >= 1) {
@@ -12,7 +35,6 @@ function addImportListener(node, accept, fileselect, onerror) {
     }
     if (!control) {
         control = document.createElement("INPUT");
-        control.setAttribute("style", "display: inline;");
         node.appendChild(control);
     }
     control.setAttribute("type", "file");
@@ -26,7 +48,14 @@ function addImportListener(node, accept, fileselect, onerror) {
     control.addEventListener('change', handleFileSelect, false);
 }
 
-function addExportListener(node, caption, name, getXml) {
+/*
+ * node: an HTML element, possibly an anchor or containing an anchor
+ * caption: what to display in the anchor
+ * name: suggestion for the file name (brwoser might ignore that)
+ * getText: function() should return the text to export or null to turn off export
+ *          if getText() is missing, just caption and name are changed for node
+ */
+function addExportListener(node, caption, name, getText) {
     var lnk = node.nodeName == "A"? [node] : node.getElementsByTagName("A");
     if (lnk && lnk.length >= 1) {
         lnk = lnk[0];
@@ -39,24 +68,31 @@ function addExportListener(node, caption, name, getXml) {
         node.appendChild(lnk);
     }
     var oldHref = lnk.getAttribute("href");
-    if (oldHref) {
+    if (oldHref && URL) {
         URL.revokeObjectURL(oldHref);
     }
     lnk.innerHTML = caption;
     lnk.setAttribute("download", name);
-    if (getXml) {
-        var url = "";
-        if (URL) {
-            var blob = domToBlob(getXml());
-            url = URL.createObjectURL(blob);
+    if (getText) {
+        var text = getText();
+        var mime = "application/octet-stream";
+        if (text && text.text && text.mime) {
+            mime = text.mime;
+            text = text.text;
         }
-        else {
-            url = "data:application/x-incoma;charset=UTF8;base64," + btoa(domToText(getXml()));
+        var url = "";
+        if (text) {
+            if (URL) {
+                var blob = textToBlob(text, mime);
+                if (!blob)
+                    alert("blob is null or undefined");
+                url = URL.createObjectURL(blob);
+            }
+            else {
+                url = "data:" + mime + ";base64," + btoa(text);
+            }
         }
         lnk.setAttribute("href", url);
-    }
-    else {
-        lnk.setAttribute("href", "");
     }
 //    lnk.addEventListener('click',         function(e) { lnk.setAttribute(); }, false);
 }

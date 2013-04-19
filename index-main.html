@@ -51,21 +51,42 @@
 
 <!-- Javascript -->
 
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+    // var x = new makeX("X");
+    // 
+    // function makeX(s) {
+    //     this.y = new makeY(s + "Y");
+    // 
+    //     function makeY(s) {
+    //         this.z = s + "Z";
+    //     }
+    // }
+    // 
+    // alert ("x = " + JSON.stringify(x)); // shows 'x = {"y": {"z": "XYZ"} }'
+</script>
+
+
 <script src="opensave.js"></script>
-<script src="xmlreadwrite.js"></script>
-<!--script src="model.js"></script-->
-<!--script src="visualisation.js"></script-->
+<script src="model.js"></script>
+<script src="visualisation.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="visualisation-zoomout.js"></script>
 
 <script>
-var Model = { importFile: function() {}, exportFile: function() {} };
+    Model.clear();
+    var loadModelFile = function(file) {
+                            var fileName = file.name || "current model" ;
+                            blobToText( file, 
+                                        function(text) {
+                                                Model.importFile(text); 
+                                                addExportListener( $( "#headerExport" )[0], "Export " + fileName, "Incoma model.json", Model.exportFile);
+                                        });
+                        }; 
 
-    var visualisations = [],
-    function registerVisualisation(obj) {
-        visualisations.append(obj);
-    }
-    addImportListener( $( "#headerImport" )[0], ".xml,.json", Model.importFile );
-    addExportListener( $( "#headerExport" )[0], "Export current model", "Incoma model.json", Model.exportFile );
+    var saveModelFile = function() { return Model.exportFile(); }
+    
+    addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
+    addExportListener( $( "#headerExport" )[0], "Export current model", "Incoma model.json", saveModelFile );
 </script>
 </body>
 </html>
