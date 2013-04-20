@@ -47,7 +47,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.width = 712;
     this.height = 325;
     this.svg = null;
-    this.color = d3.scale.category20();
     this.liveAttributes = new LiveAttributes(this);
     this.updateLinks = function() { this.definedBelow(); }
     this.update = function() { this.definedBelow(); }
@@ -58,7 +57,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     this.init = function(html5node) {
             this.container = html5node;
-            alert(html5node.id + "/" + html5node.name + "/" + html5node.innerHTML);
             html5node.innerHTML = 
             '   \
              <div class="mod_up">   \
@@ -120,6 +118,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         // Start of initSVG = create the svg from the abstraction, and place it into the "visualization" html div tag inserted on the html5node
         function initSVG (PRES, ABSTR, width, height) {
 
+            var color = d3.scale.category20();
+
+
             PRES.force = d3.layout.force()
                 .charge(-400)
                 .linkDistance(40)
@@ -142,24 +143,46 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 .links(graph.links)
                 .start();
 
-            var link = svg.selectAll(".link")
-                .data(graph.links)
-                .enter().append("line")
-                .attr("class", "link")
-                .style("stroke", PRES.liveAttributes.linkStroke)
-                .style("stroke-width", PRES.liveAttributes.linkStrokeWidth);          
+  var link = svg.selectAll(".link")
+      .data(graph.links)
+      .enter().append("line")
+      .attr("class", "link")
+      .style("stroke", function(d) { return  color(d.type); })
+      .style("stroke-width", function(d) {
+        return Math.sqrt(d.evaluation); });
+
+//***********************
+//            var link = svg.selectAll(".link")
+//                .data(graph.links)
+//                .enter().append("line")
+//                .attr("class", "link")
+//                .style("stroke", PRES.liveAttributes.linkStroke)
+//                .style("stroke-width", PRES.liveAttributes.linkStrokeWidth);          
                 //The attributes (as the strokewidth) are obtained from the fields of each node (as example d.evaluation) via functions (example linkStrokeWidth), taking in account if the filters are acting or not (this.abstraction.sizeFilter.links.state)
 
-            var node = svg.selectAll(".node")
-                .data(graph.nodes)
-                .enter().append("rect")
-                    .attr("class", "node")
-                    .attr("width", PRES.liveAttributes.nodeWidth)
-                    .attr("height", PRES.liveAttributes.nodeHeight)
-                    .style("fill", PRES.liveAttributes.nodeFill)
-                    .on("mouseover", mouseover)
-                    .on("mouseout", mouseout)
-                    .call(force.drag);
+
+  var node = svg.selectAll(".node")
+      .data(graph.nodes)
+    .enter().append("rect")
+      .attr("class", "node")
+      .attr("width", function(d) {
+        return 20*Math.sqrt(Math.sqrt(d.evaluation)); })
+      .attr("height", function(d) {
+        return 20*Math.sqrt(Math.sqrt(d.evaluation)); })
+      .style("fill", function(d) { return color(d.type); })
+      .call(force.drag);
+// mouseover and mouseout are deleted
+//**********************
+//            var node = svg.selectAll(".node")
+//                .data(graph.nodes)
+//                .enter().append("rect")
+//                    .attr("class", "node")
+//                    .attr("width", PRES.liveAttributes.nodeWidth)
+//                    .attr("height", PRES.liveAttributes.nodeHeight)
+//                    .style("fill", PRES.liveAttributes.nodeFill)
+//                    .on("mouseover", mouseover)
+//                    .on("mouseout", mouseout)
+//                    .call(force.drag);
 
             node.append("title")
                 .text(function(d) { return d.content; });
