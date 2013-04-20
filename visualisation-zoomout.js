@@ -23,10 +23,15 @@ function ZoomOut_Abstraction(VIS) {
     this.linkFilters = { 
                    5: { name: "General", state: true, typeId: 5 },
                    4: { name: "Agree", state: true, typeId: 4 },
+                   1: { name: "Disagree", state: true, typeId: 1 },
+                   2: { name: "Question", state: true, typeId: 2 },
+                   3: { name: "Answer", state: true, typeId: 3 },
+                   6: { name: "Similar", state: true, typeId: 6 },
                  };
     this.nodeFilters = {
                    1: { name: "General", state: true, typeId: 1 },
                    2: { name: "Question", state: true, typeId: 2 },
+                   3: { name: "Answer", state: true, typeId: 3 },
                  };
     this.sizeFilters = {
                    nodes: { name: "Boxes", state: true },
@@ -47,7 +52,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.width = 712;
     this.height = 325;
     this.svg = null;
-    this.liveAttributes = new LiveAttributes(this);
+    this.color = d3.scale.category20();
+    this.liveAttributes = new LiveAttributes(ABSTR, this);
     this.updateLinks = function() { this.definedBelow(); }
     this.update = function() { this.definedBelow(); }
     this.init = function(html5node) { this.definedBelow(); }
@@ -118,9 +124,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         // Start of initSVG = create the svg from the abstraction, and place it into the "visualization" html div tag inserted on the html5node
         function initSVG (PRES, ABSTR, width, height) {
 
-            var color = d3.scale.category20();
-
-
             PRES.force = d3.layout.force()
                 .charge(-400)
                 .linkDistance(40)
@@ -143,46 +146,27 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 .links(graph.links)
                 .start();
 
+                        
+
   var link = svg.selectAll(".link")
       .data(graph.links)
       .enter().append("line")
       .attr("class", "link")
-      .style("stroke", function(d) { return  color(d.type); })
-      .style("stroke-width", function(d) {
-        return Math.sqrt(d.evaluation); });
-
-//***********************
-//            var link = svg.selectAll(".link")
-//                .data(graph.links)
-//                .enter().append("line")
-//                .attr("class", "link")
-//                .style("stroke", PRES.liveAttributes.linkStroke)
-//                .style("stroke-width", PRES.liveAttributes.linkStrokeWidth);          
+      .style("stroke", PRES.liveAttributes.linkStroke)
+      .style("stroke-width", PRES.liveAttributes.linkStrokeWidth);          
                 //The attributes (as the strokewidth) are obtained from the fields of each node (as example d.evaluation) via functions (example linkStrokeWidth), taking in account if the filters are acting or not (this.abstraction.sizeFilter.links.state)
 
 
-  var node = svg.selectAll(".node")
-      .data(graph.nodes)
-    .enter().append("rect")
-      .attr("class", "node")
-      .attr("width", function(d) {
-        return 20*Math.sqrt(Math.sqrt(d.evaluation)); })
-      .attr("height", function(d) {
-        return 20*Math.sqrt(Math.sqrt(d.evaluation)); })
-      .style("fill", function(d) { return color(d.type); })
-      .call(force.drag);
-// mouseover and mouseout are deleted
-//**********************
-//            var node = svg.selectAll(".node")
-//                .data(graph.nodes)
-//                .enter().append("rect")
-//                    .attr("class", "node")
-//                    .attr("width", PRES.liveAttributes.nodeWidth)
-//                    .attr("height", PRES.liveAttributes.nodeHeight)
-//                    .style("fill", PRES.liveAttributes.nodeFill)
+            var node = svg.selectAll(".node")
+                .data(graph.nodes)
+                .enter().append("rect")
+                    .attr("class", "node")
+                    .attr("width", PRES.liveAttributes.nodeWidth)
+                    .attr("height", PRES.liveAttributes.nodeHeight)
+                    .style("fill", PRES.liveAttributes.nodeFill)
 //                    .on("mouseover", mouseover)
 //                    .on("mouseout", mouseout)
-//                    .call(force.drag);
+                    .call(force.drag);
 
             node.append("title")
                 .text(function(d) { return d.content; });
@@ -225,6 +209,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         // functions that return the right style of each element (considering filters)
         
         function LiveAttributes(ABSTR, PRES) {
+
             this.nodeFill = 
                 function(d) {
                     return PRES.color(d.type);
@@ -232,7 +217,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 
             this.nodeHeight =
                 function(d) {
-                    if (ABSTR.sizeFilter.nodes.state) {
+                    if (ABSTR.sizeFilters.nodes.state) {
                         return 20 * Math.sqrt(Math.sqrt(d.evaluation));
                     }
                     else {
@@ -242,7 +227,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 
             this.nodeWidth =
                 function(d) {
-                    if (ABSTR.sizeFilter.nodes.state) {
+                    if (ABSTR.sizeFilters.nodes.state) {
                         return 20 * Math.sqrt(Math.sqrt(d.evaluation));
                     }
                     else {
@@ -254,11 +239,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 function(d) {
                     return PRES.color(d.type);
                 };
-                        
+                       
+ 
             this.linkStrokeWidth =
                 function(d) {
                     if (ABSTR.linkFilters[d.type].state) {
-                        if (ABSTR.sizeFilter.links.state)
+                        if (ABSTR.sizeFilters.links.state)
                             return Math.sqrt(d.evaluation);
                         else
                             return Math.sqrt(6);
