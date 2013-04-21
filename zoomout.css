@@ -39,7 +39,10 @@ body {
 }
 
 .mod_down {
+  position: absolute;
+  bottom: 5px;
   background: #eee;
+  width: 100%;
   height: 20%;
 }
 

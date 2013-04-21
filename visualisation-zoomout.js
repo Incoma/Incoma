@@ -54,7 +54,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.svg = null;
     this.color = d3.scale.category20();
     this.liveAttributes = new LiveAttributes(ABSTR, this);
-    this.updateLinks = function() { this.definedBelow(); }
+//    this.updateLinks = function() { this.definedBelow(); }
     this.update = function() { this.definedBelow(); }
     this.init = function(html5node) { this.definedBelow(); }
     // end of public interface
@@ -90,32 +90,33 @@ function ZoomOut_Presentation(VIS, ABSTR) {
              <div class="mod_down">   \
    \
                   <div class="mod_down_elems">   \
-                    <div id="mod_filt_links1" class="mod_filt" style="Float:left">   \
-                      <b>Threads</b> <br />   \
+                    <div id="mod_filt_links1" class="mod_filt1" style="Float:left">   \
+                      <b>Threads</b>    \
                     </div>   \
    \
-                    <div id="mod_filt_links2" class="mod_filt" style="Float:left" >   \
+                    <div id="mod_filt_links2" class="mod_filt2" style="Float:left" >   \
                       </br>            \
                     </div>   \
    \
                     <div id="mod_filt_nodes" class="mod_filt_box" style="Float:left" >   \
-                      <b>Boxes</b> <br />            \
+                      <b>Boxes</b>             \
                     </div>   \
    \
                     <div id="mod_filt_sizes" class="mod_filt_size" style="Float:left" >   \
-                      <b>Sizes</b> <br />    \
+                      <b>Sizes</b>     \
                     </div>   \
                  </div>   \
    \
              </div>   \
         ' ;   // end of innerHTML
+
         
             initSVG(this, ABSTR, this.width, this.height);
               // 712, 325 = width and height of the visualization
 
-            initLinkFilters(this, $( "#mod_filt_links1" ), $( "#mod_filt_links2" ), ABSTR.linkFilters);
-            initNodeFilters(this, $( "#mod_filt_nodes" ), ABSTR.nodeFilters);
-            initSizeFilters(this, $( "#mod_filt_sizes" ), ABSTR.sizeFilters);
+            initLinkFilters(this, "mod_filt_links1", "mod_filt_links2", ABSTR.linkFilters);
+            initNodeFilters(this, "mod_filt_nodes", ABSTR.nodeFilters);
+            initSizeFilters(this, "mod_filt_sizes", ABSTR.sizeFilters);
               // The initfilters take as an input parameter the id of the div where they will be placed (e.g "#mod_filt_links1"), with appendChild.
 
         };
@@ -146,7 +147,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 .links(graph.links)
                 .start();
 
-                        
 
   var link = svg.selectAll(".link")
       .data(graph.links)
@@ -184,30 +184,111 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         // End of initSVG
 
         // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
-        function initLinkFilters(PRES, columnLeft, columnRight, filterlist) {
-            var half = (filterlist.length+1) / 2;
-            for (var i = 0; i < filterlist.length; ++i) {
+    function initLinkFilters(PRES, columnLeftId, columnRightId, filterlist) {
+
+           var numfilts = 6 ;
+           var filtspercol = 3 ;
+
+    	   var columnLeft = document.getElementById(columnLeftId);
+	   var columnRight = document.getElementById(columnRightId);
+
+
+	    var checkbox = new Array();
+            for (var i = 1; i < numfilts+1; ++i) {
                 var filter = filterlist[i];
-                var checkbox = makeFilterBox(filter);
-                if (i < half) {
-                    columnLeft.appendChild(Visualisations.makeBR());
-                    columnLeft.appendChild(Visualisations.makeText(filter.name + ": "));
-                    columnLeft.appendChild(checkbox);
+                 checkbox[i] = Visualisations.makeFilterBox(filter); 
+              if (i < filtspercol+1) {
+                 columnLeft.appendChild(Visualisations.makeBR());
+                 columnLeft.appendChild(Visualisations.makeText(filter.name + ": "));
+                 columnLeft.appendChild(checkbox[i]);
                 }
                 else {
-                    columnRight.appendChild(Visualisations.makeBR());
-                    columnRight.appendChild(Visualisations.makeText(filter.name + ": "));
-                    columnRight.appendChild(checkbox);
+                 columnRight.appendChild(Visualisations.makeText(filter.name + ": "));
+                 columnRight.appendChild(checkbox[i]);
+                 columnRight.appendChild(Visualisations.makeBR());
+
                 }
-                checkbox.click = function(e) { filter.state = !filter.state; 
-                                               PRES.updateLinks(); }
+                checkbox[i].onclick = function() { 
+			  for (var j = 1; j < numfilts+1; ++j) {
+			      switch (filterlist[j].name) {
+			      case this.name:
+				  filterlist[j].state = !filterlist[j].state; 				   
+				  break
+			      default:
+			      }
+			  };			  
+                    updateLinks(PRES); 
+		}
+
             }
         };
         
+       
+        // Start of initNodeFilters
+    function initNodeFilters(PRES, columnId, filterlist) {
 
+           var numfilts = 3 ;
+           var filtspercol = 3 ;
+
+    	   var column = document.getElementById(columnId);
+
+	    var checkbox = new Array();
+            for (var i = 1; i < numfilts+1; ++i) {
+                var filter = filterlist[i];
+                 checkbox[i] = Visualisations.makeFilterBox(filter); 
+              if (i < filtspercol+1) {
+                 column.appendChild(Visualisations.makeBR());
+                 column.appendChild(Visualisations.makeText(filter.name + ": "));
+                 column.appendChild(checkbox[i]);
+                }
+                checkbox[i].onclick = function() { 
+			  for (var j = 1; j < numfilts+1; ++j) {
+			      switch (filterlist[j].name) {
+			      case this.name:
+				  filterlist[j].state = !filterlist[j].state; 				   
+				  break
+			      default:
+			      }
+			  };	
+ 
+                    PRES.update(); 
+		}
+
+            }
+        };
+
+
+        // Start of initNodeFilters
+    function initSizeFilters(PRES, columnId, filterlist) {
+
+    	var column = document.getElementById(columnId);
+	var checkbox = new Array();
+
+        var filter = filterlist.nodes;
+        checkbox[1] = Visualisations.makeFilterBox(filter); 
+        column.appendChild(Visualisations.makeBR());
+        column.appendChild(Visualisations.makeText(filter.name + ": "));
+        column.appendChild(checkbox[1]);
+        checkbox[1].onclick = function() { 
+   	    filterlist.nodes.state = !filterlist.nodes.state; 				   
+            PRES.update(); 
+	}
+
+        var filter = filterlist.links;
+        checkbox[2] = Visualisations.makeFilterBox(filter); 
+        column.appendChild(Visualisations.makeBR());
+        column.appendChild(Visualisations.makeText(filter.name + ": "));
+        column.appendChild(checkbox[2]);
+	checkbox[2].onclick = function() { 
+   	    filterlist.links.state = !filterlist.links.state; 				   
+            PRES.update(); 
+	}
+
+
+        };
         
-        // functions that return the right style of each element (considering filters)
         
+        // functions that return the right style of each element (considering filters)        
         function LiveAttributes(ABSTR, PRES) {
 
             this.nodeFill = 
@@ -234,6 +315,17 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                         return 20;
                     }
                 };
+
+            this.nodeOpacity =
+                function(d) {
+                    if (ABSTR.nodeFilters[d.type].state) {
+                        return "1";
+                    }
+                    else {
+                        return "0";
+                    }
+                };
+
                         
             this.linkStroke =
                 function(d) {
@@ -258,14 +350,20 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         // end of this == LiveAttributes
         
         // update functions (svg, nodes and links)
-        
-        this.updateLinks = function() {
-            this.svg.selectAll(".link").style("stroke-width", this.liveAttributes.linkStrokeWidth);
+        function updateLinks (PRES) {
+            PRES.svg.selectAll(".link").style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
         };
-        
+
+        function updateNodes (PRES) {
+            PRES.svg.selectAll(".node").style("fill-opacity", PRES.liveAttributes.nodeOpacity);
+            PRES.svg.selectAll(".node").attr("width", PRES.liveAttributes.nodeWidth);
+            PRES.svg.selectAll(".node").attr("height", PRES.liveAttributes.nodeHeight);
+        };
+
+
         this.update = function() {
-            this.updateLinks();
-            this.updateNodes();
+            updateLinks(this);
+            updateNodes(this);
         };
     };
 // End of this == presentation
@@ -278,5 +376,4 @@ function ZoomOut_Control(VIS, ABSTR, PRES) {
 
 
 //// functions erasetext, mouseover, mouseout, hideboxes, showboxes, hidelinks, showlinks
-////  initNodeFilters, initSizeFilters
            

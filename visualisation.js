@@ -13,10 +13,12 @@ var Visualisations = {
      * "state": a boolean
      * "name": a string
      */
+
+
     makeFilterBox: function(filter) {
         var result = document.createElement("INPUT");
         result.type = "checkbox";
-        result.checked = filter.state? "yes" : "no";
+        result.checked = filter.state;
         result.name = filter.name;
         return result;
     },
