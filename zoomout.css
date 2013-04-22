@@ -14,9 +14,8 @@ body {
 
 .areacontent {
   font-size: 15px;
-  border: yes;
   width: 298px;
-  min-height: 150px;
+  min-height: 130px;
 
 }
 
@@ -24,7 +23,7 @@ body {
   font-size: 15px;
   border: yes;
   width: 298px;
-  min-height: 100px;
+  min-height: 60px;
 
 }
 
@@ -131,12 +130,14 @@ div.save{
 #mod_vis {
   position: absolute;
   left: 0;
-  top: 0;
+  top: 40px;
   width: 70%;
   height: 80%;
 }
 
 #mod_spec {
+  position: relative;
+  top: 0px;
   margin-left: 70%;
 }
 

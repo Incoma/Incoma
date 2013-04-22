@@ -48,6 +48,9 @@ function ZoomOut_Abstraction(VIS) {
 
 function ZoomOut_Presentation(VIS, ABSTR) {
     // public interface
+
+    this.isclicked = 0;
+    this.clickednodehash = "";
     this.container = null;
     this.width = 712;
     this.height = 325;
@@ -73,16 +76,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
    \
                   <div id="mod_spec" class="mod">   \
                     <div class="mod_header">   \
-                      <div class="mod_ctrls">   \
-                        <input type="button" value="Clear" onclick="javascript:eraseText();"> </input>   \
-                      </div>   \
                       <div class="mod_title">   \
                         <a id="link_spec" class="active">Content:</a>           \
                       </div>   \
                     </div>   \
     \
                     <textarea id="spec" class="areacontent" spellcheck="false"></textarea>   \
-    \
+     <div id="replybox"> \
+</div> \
+<div id="replybox2">  \
+</div> \
                   </div>   \
     \
              </div>   \
@@ -125,6 +128,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         // Start of initSVG = create the svg from the abstraction, and place it into the "visualization" html div tag inserted on the html5node
         function initSVG (PRES, ABSTR, width, height) {
 
+
             PRES.force = d3.layout.force()
                 .charge(-400)
                 .linkDistance(40)
@@ -164,8 +168,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     .attr("width", PRES.liveAttributes.nodeWidth)
                     .attr("height", PRES.liveAttributes.nodeHeight)
                     .style("fill", PRES.liveAttributes.nodeFill)
-//                    .on("mouseover", mouseover)
-//                    .on("mouseout", mouseout)
+                    .on("mouseover", PRES.liveAttributes.mouseover)
+                    .on("mouseout", PRES.liveAttributes.mouseout)
+		    .on("click", PRES.liveAttributes.click)
                     .call(force.drag);
 
             node.append("title")
@@ -180,6 +185,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 node.attr("x", function(d) { return d.x; })
                     .attr("y", function(d) { return d.y; });
             });
+
         };
         // End of initSVG
 
@@ -316,17 +322,61 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     }
                 };
 
-            this.nodeOpacity =
+            this.nodeHeightLarge =
+                function(d) {
+                    if (ABSTR.sizeFilters.nodes.state) {
+                        return 25 * Math.sqrt(Math.sqrt(d.evaluation));
+                    }
+                    else {
+                        return 25;
+                    }
+                }; 
+
+            this.nodeWidthLarge =
+                function(d) {
+                    if (ABSTR.sizeFilters.nodes.state) {
+                        return 25 * Math.sqrt(Math.sqrt(d.evaluation));
+                    }
+                    else {
+                        return 25;
+                    }
+                };
+
+
+            this.nodeOpacityAndSetConnectedLinkOpacity =
                 function(d) {
                     if (ABSTR.nodeFilters[d.type].state) {
+
                         return "1";
                     }
                     else {
+				nodehash = d.hash;
+				PRES.svg.selectAll(".link")
+					.filter(function(d){return d.ssource == nodehash;})
+					.style("stroke-width", function(d) {
+						return 0;
+					});
+				PRES.svg.selectAll(".link")
+					.filter(function(d){return d.ttarget == nodehash;})
+					.style("stroke-width", function(d) {
+						return 0;
+					});	
                         return "0";
                     }
                 };
 
-                        
+
+            this.nodeStrokeWidth =
+                function(d) {
+                    if (ABSTR.nodeFilters[d.type].state) {
+                        return "1.5px";
+                    }
+                    else {
+                        return "0px";
+                    }
+                };
+
+
             this.linkStroke =
                 function(d) {
                     return PRES.color(d.type);
@@ -346,6 +396,81 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                         return 0;
                     }
                 };
+
+
+
+            this.mouseover =
+                function(d) {
+
+		    if (PRES.isclicked == 0) {       		
+			PRES.svg.selectAll(".node")
+			    .style("stroke-width", function(d) {return "1.5px";})    
+			    .style("stroke","#af0");
+			d3.select(this).transition()
+			    .duration(250)
+			    .attr("width",PRES.liveAttributes.nodeWidthLarge)
+			    .attr("height",  PRES.liveAttributes.nodeHeightLarge)
+			    .style("stroke-width", function(d){return "3px";})
+			    .style("stroke","#E9B");
+				
+			document.getElementById("spec").value = d.content;
+ 
+		    }
+		    else {
+			d3.select(this).transition()
+			    .duration(250)
+			    .attr("width",PRES.liveAttributes.nodeWidthLarge)
+			    .attr("height",PRES.liveAttributes.nodeHeightLarge);
+		    }
+
+//force.friction([0.3]);
+
+		};
+
+
+            this.mouseout =
+                function(d) {
+		    d3.select(this).transition()
+			.duration(250)
+			.attr("width",PRES.liveAttributes.nodeWidth)			   
+			.attr("height",PRES.liveAttributes.nodeHeight);
+		};
+
+
+            this.click =
+                function(d) {
+
+		    console.log('click');
+
+		    oldclickednodehash = PRES.clickednodehash;
+		    PRES.clickednodehash = d.hash;
+
+		    if (PRES.clickednodehash == oldclickednodehash) {        
+			PRES.svg.selectAll(".node")
+			    .style("stroke-width", function(d) {return "1.5px";})    
+			    .style("stroke","#af0");        			
+			document.getElementById("spec").value = d.content;
+			PRES.isclicked = 0;			
+			$('#replybox2').html(" "); 
+		    }
+		    else {
+			PRES.svg.selectAll(".node")
+			    .style("stroke-width", function(d) {return "1.5px";})    
+			    .style("stroke","#af0");
+			d3.select(this).transition()
+			    .duration(250)
+			    .style("stroke-width", function(d){return "3px";})
+			    .style("stroke","#E9B");				
+			document.getElementById("spec").value = d.content;
+			PRES.isclicked = 1;
+			$('#replybox2').html("Reply:  <select> <option value='general'>General</option><option value='opinion'>Opinion</option> <option value='proposal'>Proposal</option> <option value='question'>Question</option><option value='answer'>Answer</option><option value='info'>Info</option> </select> <br><textarea id='spec2' class='areareply' spellcheck='false'></textarea> <div class='save' onClick='save()'>Save</div> ");
+		    }
+
+
+		};
+
+
+
         };
         // end of this == LiveAttributes
         
@@ -355,7 +480,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 
         function updateNodes (PRES) {
-            PRES.svg.selectAll(".node").style("fill-opacity", PRES.liveAttributes.nodeOpacity);
+            PRES.svg.selectAll(".node").style("fill-opacity", PRES.liveAttributes.nodeOpacityAndSetConnectedLinkOpacity);
+            PRES.svg.selectAll(".node").style("stroke-width", PRES.liveAttributes.nodeStrokeWidth);
             PRES.svg.selectAll(".node").attr("width", PRES.liveAttributes.nodeWidth);
             PRES.svg.selectAll(".node").attr("height", PRES.liveAttributes.nodeHeight);
         };
@@ -375,5 +501,3 @@ function ZoomOut_Control(VIS, ABSTR, PRES) {
 // End of var ZoomOut
 
 
-//// functions erasetext, mouseover, mouseout, hideboxes, showboxes, hidelinks, showlinks
-           
