@@ -6,44 +6,86 @@ function ZoomOut() {
     this.abstraction = new ZoomOut_Abstraction(this);
     this.presentation = new ZoomOut_Presentation(this, this.abstraction);
     this.control = new ZoomOut_Control(this, this.abstraction, this.presentation);
-    
-    this.init = function(html5node, model) {
+
+    this.init = function (html5node, model) {
         this.abstraction.init(model);
-        this.presentation.init(html5node);        
+        this.presentation.init(html5node);
     }
 
-    this.destroy = function() {}
+    this.destroy = function () {}
 
 }
 
 // Start of this == abstraction = model and state of filters [abstraction initialized with (model)]
-    
+
 function ZoomOut_Abstraction(VIS) {
     this.model = null;
-    this.linkFilters = { 
-                   5: { name: "General", state: true, typeId: 5 },
-                   4: { name: "Agree", state: true, typeId: 4 },
-                   1: { name: "Disagree", state: true, typeId: 1 },
-                   2: { name: "Question", state: true, typeId: 2 },
-                   3: { name: "Answer", state: true, typeId: 3 },
-                   6: { name: "Similar", state: true, typeId: 6 },
-                 };
+    this.linkFilters = {
+        5: {
+            name: "General",
+            state: true,
+            typeId: 5
+        },
+        4: {
+            name: "Agree",
+            state: true,
+            typeId: 4
+        },
+        1: {
+            name: "Disagree",
+            state: true,
+            typeId: 1
+        },
+        2: {
+            name: "Question",
+            state: true,
+            typeId: 2
+        },
+        3: {
+            name: "Answer",
+            state: true,
+            typeId: 3
+        },
+        6: {
+            name: "Similar",
+            state: true,
+            typeId: 6
+        },
+    };
     this.nodeFilters = {
-                   1: { name: "General", state: true, typeId: 1 },
-                   2: { name: "Question", state: true, typeId: 2 },
-                   3: { name: "Answer", state: true, typeId: 3 },
-                 };
+        1: {
+            name: "General",
+            state: true,
+            typeId: 1
+        },
+        2: {
+            name: "Question",
+            state: true,
+            typeId: 2
+        },
+        3: {
+            name: "Answer",
+            state: true,
+            typeId: 3
+        },
+    };
     this.sizeFilters = {
-                   nodes: { name: "Boxes", state: true },
-                   links: { name: "Threads", state: true },
-                 };
-    this.init = function(model) {
+        nodes: {
+            name: "Boxes",
+            state: true
+        },
+        links: {
+            name: "Threads",
+            state: true
+        },
+    };
+    this.init = function (model) {
         this.model = model;
     }
 };
-    
+
 // End of this == abstraction
-    
+
 // Start of this == presentation [initialized with (html5node, abstraction)]
 
 function ZoomOut_Presentation(VIS, ABSTR) {
@@ -54,19 +96,36 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.container = null;
     this.width = 712;
     this.height = 325;
+
+    this.bordercolor = {
+        "normal": "#af0",
+        "clicked": "#255",
+        "over": "#E9B"
+    };
+
     this.svg = null;
     this.color = d3.scale.category20();
     this.liveAttributes = new LiveAttributes(ABSTR, this);
-//    this.updateLinks = function() { this.definedBelow(); }
-    this.update = function() { this.definedBelow(); }
-    this.init = function(html5node) { this.definedBelow(); }
+    //    this.updateLinks = function() { this.definedBelow(); }
+    this.update = function () {
+        this.definedBelow();
+    }
+	
+	    function save2() {
+			createnode(this);
+			//+ call to export fuctions
+        };
+		
+    this.init = function (html5node) {
+        this.definedBelow();
+    }
     // end of public interface
 
-        // Start of init function = change the html code (.innerHTML) inside of the html5node (adding visualization, text areas, and filters) and calls with the abstraction as a parameter: initSVG, initLinkFilters, initNodeFilters, initSizeFilters (this four will create the filters and the svg and place it in the previous html code)
+    // Start of init function = change the html code (.innerHTML) inside of the html5node (adding visualization, text areas, and filters) and calls with the abstraction as a parameter: initSVG, initLinkFilters, initNodeFilters, initSizeFilters (this four will create the filters and the svg and place it in the previous html code)
 
-    this.init = function(html5node) {
-            this.container = html5node;
-            html5node.innerHTML = 
+    this.init = function (html5node) {
+        this.container = html5node;
+        html5node.innerHTML =
             '   \
              <div class="mod_up">   \
    \
@@ -111,393 +170,457 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                  </div>   \
    \
              </div>   \
-        ' ;   // end of innerHTML
-
-        
-            initSVG(this, ABSTR, this.width, this.height);
-              // 712, 325 = width and height of the visualization
-
-            initLinkFilters(this, "mod_filt_links1", "mod_filt_links2", ABSTR.linkFilters);
-            initNodeFilters(this, "mod_filt_nodes", ABSTR.nodeFilters);
-            initSizeFilters(this, "mod_filt_sizes", ABSTR.sizeFilters);
-              // The initfilters take as an input parameter the id of the div where they will be placed (e.g "#mod_filt_links1"), with appendChild.
-
-        };
-        // End of init function of presentation
-        
-        // Start of initSVG = create the svg from the abstraction, and place it into the "visualization" html div tag inserted on the html5node
-        function initSVG (PRES, ABSTR, width, height) {
+        '; // end of innerHTML
 
 
-            PRES.force = d3.layout.force()
-                .charge(-400)
-                .linkDistance(40)
-                .size([width, height]);
-            var force = PRES.force;
+        initSVG(this, ABSTR, this.width, this.height);
+        // 712, 325 = width and height of the visualization
 
-            PRES.svg = d3.select(".visualization").append("svg")
-                    .attr("width", width)
-                    .attr("height", height);
-            var svg = PRES.svg;
-            // force and svg are local to "presentation" (defined as this.force); 
-            // (but we define them locally as a shorthand)
-            // graph and link are local only to "initSVG" (var graph)
-            
-                
-            var graph = ABSTR.model;
-            
-            force
-                .nodes(graph.nodes)
-                .links(graph.links)
-                .start();
+        initLinkFilters(this, "mod_filt_links1", "mod_filt_links2", ABSTR.linkFilters);
+        initNodeFilters(this, "mod_filt_nodes", ABSTR.nodeFilters);
+        initSizeFilters(this, "mod_filt_sizes", ABSTR.sizeFilters);
+        // The initfilters take as an input parameter the id of the div where they will be placed (e.g "#mod_filt_links1"), with appendChild.
+
+    };
+    // End of init function of presentation
+
+    // Start of initSVG = create the svg from the abstraction, and place it into the "visualization" html div tag inserted on the html5node
+
+    function initSVG(PRES, ABSTR, width, height) {
 
 
-  var link = svg.selectAll(".link")
-      .data(graph.links)
-      .enter().append("line")
-      .attr("class", "link")
-      .style("stroke", PRES.liveAttributes.linkStroke)
-      .style("stroke-width", PRES.liveAttributes.linkStrokeWidth);          
-                //The attributes (as the strokewidth) are obtained from the fields of each node (as example d.evaluation) via functions (example linkStrokeWidth), taking in account if the filters are acting or not (this.abstraction.sizeFilter.links.state)
+        PRES.force = d3.layout.force()
+            .charge(-400)
+            .linkDistance(40)
+            .size([width, height]);
+        var force = PRES.force;
+
+        PRES.svg = d3.select(".visualization").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+			.on("mousedown", PRES.liveAttributes.mousedown);
+			
+        var svg = PRES.svg;
+        // force and svg are local to "presentation" (defined as this.force); 
+        // (but we define them locally as a shorthand)
+        // graph and link are local only to "initSVG" (var graph)
 
 
-            var node = svg.selectAll(".node")
-                .data(graph.nodes)
-                .enter().append("rect")
-                    .attr("class", "node")
-                    .attr("width", PRES.liveAttributes.nodeWidth)
-                    .attr("height", PRES.liveAttributes.nodeHeight)
-                    .style("fill", PRES.liveAttributes.nodeFill)
-                    .on("mouseover", PRES.liveAttributes.mouseover)
-                    .on("mouseout", PRES.liveAttributes.mouseout)
-		    .on("click", PRES.liveAttributes.click)
-                    .call(force.drag);
+        var graph = ABSTR.model;
 
-            node.append("title")
-                .text(function(d) { return d.content; });
+        force
+            .nodes(graph.nodes)
+            .links(graph.links)
+            .start();
 
-            force.on("tick", function() {
-                link.attr("x1", function(d) { return d.source.x+10; })
-                    .attr("y1", function(d) { return d.source.y+10; })
-                    .attr("x2", function(d) { return d.target.x+10; })
-                    .attr("y2", function(d) { return d.target.y+10; });
 
-                node.attr("x", function(d) { return d.x; })
-                    .attr("y", function(d) { return d.y; });
+        var link = svg.selectAll(".link")
+            .data(graph.links)
+            .enter().append("line")
+            .attr("class", "link")
+            .style("stroke", PRES.liveAttributes.linkStroke)
+            .style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+        //The attributes (as the strokewidth) are obtained from the fields of each node (as example d.evaluation) via functions (example linkStrokeWidth), taking in account if the filters are acting or not (this.abstraction.sizeFilter.links.state)
+
+
+        var node = svg.selectAll(".node")
+            .data(graph.nodes)
+            .enter().append("rect")
+            .attr("class", "node")
+            .attr("width", PRES.liveAttributes.nodeWidth)
+            .attr("height", PRES.liveAttributes.nodeHeight)
+            .style("fill", PRES.liveAttributes.nodeFill)
+            .on("mouseover", PRES.liveAttributes.mouseover)
+            .on("mouseout", PRES.liveAttributes.mouseout)
+            .on("mousedown", PRES.liveAttributes.mousedown)
+            .on("click", PRES.liveAttributes.click)
+            .call(force.drag);
+
+        node.append("title")
+            .text(function (d) {
+            return d.content;
+        });
+
+        force.on("tick", function () {
+		
+			var zz = 5;
+		
+		    nodez = PRES.force.nodes();
+            linkz = PRES.force.links();
+				
+            PRES.svg.selectAll(".link")
+			.attr("x1", function (d) {
+                return d.source.x + 10;
+            })
+                .attr("y1", function (d) {
+                return d.source.y + 10;
+            })
+                .attr("x2", function (d) {
+                return d.target.x + 10;
+            })
+                .attr("y2", function (d) {
+                return d.target.y + 10;
             });
 
-        };
-        // End of initSVG
+            PRES.svg.selectAll(".node")
+			.attr("x", function (d) {
+                return d.x;
+            })
+                .attr("y", function (d) {
+                return d.y;
+            });
+        });
 
-        // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
+    };
+    // End of initSVG
+
+    // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
+
     function initLinkFilters(PRES, columnLeftId, columnRightId, filterlist) {
 
-           var numfilts = 6 ;
-           var filtspercol = 3 ;
+        var numfilts = 6;
+        var filtspercol = 3;
 
-    	   var columnLeft = document.getElementById(columnLeftId);
-	   var columnRight = document.getElementById(columnRightId);
+        var columnLeft = document.getElementById(columnLeftId);
+        var columnRight = document.getElementById(columnRightId);
 
 
-	    var checkbox = new Array();
-            for (var i = 1; i < numfilts+1; ++i) {
-                var filter = filterlist[i];
-                 checkbox[i] = Visualisations.makeFilterBox(filter); 
-              if (i < filtspercol+1) {
-                 columnLeft.appendChild(Visualisations.makeBR());
-                 columnLeft.appendChild(Visualisations.makeText(filter.name + ": "));
-                 columnLeft.appendChild(checkbox[i]);
-                }
-                else {
-                 columnRight.appendChild(Visualisations.makeText(filter.name + ": "));
-                 columnRight.appendChild(checkbox[i]);
-                 columnRight.appendChild(Visualisations.makeBR());
-
-                }
-                checkbox[i].onclick = function() { 
-			  for (var j = 1; j < numfilts+1; ++j) {
-			      switch (filterlist[j].name) {
-			      case this.name:
-				  filterlist[j].state = !filterlist[j].state; 				   
-				  break
-			      default:
-			      }
-			  };			  
-                    updateLinks(PRES); 
-		}
-
+        var checkbox = new Array();
+        for (var i = 1; i < numfilts + 1; ++i) {
+            var filter = filterlist[i];
+            checkbox[i] = Visualisations.makeFilterBox(filter);
+            if (i < filtspercol + 1) {
+                columnLeft.appendChild(Visualisations.makeBR());
+                columnLeft.appendChild(Visualisations.makeText(filter.name + ": "));
+                columnLeft.appendChild(checkbox[i]);
+            } else {
+                columnRight.appendChild(Visualisations.makeText(filter.name + ": "));
+                columnRight.appendChild(checkbox[i]);
+                columnRight.appendChild(Visualisations.makeBR());
             }
-        };
-        
-       
-        // Start of initNodeFilters
+            checkbox[i].onclick = function () {
+                for (var j = 1; j < numfilts + 1; ++j) {
+                    switch (filterlist[j].name) {
+                    case this.name:
+                        filterlist[j].state = !filterlist[j].state;
+                        break
+                    default:
+                    }
+                };
+                updateLinks(PRES);
+            }
+
+        }
+    };
+
+
+    // Start of initNodeFilters
+
     function initNodeFilters(PRES, columnId, filterlist) {
 
-           var numfilts = 3 ;
-           var filtspercol = 3 ;
+        var numfilts = 3;
+        var filtspercol = 3;
 
-    	   var column = document.getElementById(columnId);
+        var column = document.getElementById(columnId);
 
-	    var checkbox = new Array();
-            for (var i = 1; i < numfilts+1; ++i) {
-                var filter = filterlist[i];
-                 checkbox[i] = Visualisations.makeFilterBox(filter); 
-              if (i < filtspercol+1) {
-                 column.appendChild(Visualisations.makeBR());
-                 column.appendChild(Visualisations.makeText(filter.name + ": "));
-                 column.appendChild(checkbox[i]);
-                }
-                checkbox[i].onclick = function() { 
-			  for (var j = 1; j < numfilts+1; ++j) {
-			      switch (filterlist[j].name) {
-			      case this.name:
-				  filterlist[j].state = !filterlist[j].state; 				   
-				  break
-			      default:
-			      }
-			  };	
- 
-                    PRES.update(); 
-		}
-
+        var checkbox = new Array();
+        for (var i = 1; i < numfilts + 1; ++i) {
+            var filter = filterlist[i];
+            checkbox[i] = Visualisations.makeFilterBox(filter);
+            if (i < filtspercol + 1) {
+                column.appendChild(Visualisations.makeBR());
+                column.appendChild(Visualisations.makeText(filter.name + ": "));
+                column.appendChild(checkbox[i]);
             }
-        };
+            checkbox[i].onclick = function () {
+                for (var j = 1; j < numfilts + 1; ++j) {
+                    switch (filterlist[j].name) {
+                    case this.name:
+                        filterlist[j].state = !filterlist[j].state;
+                        break
+                    default:
+                    }
+                };
+
+                PRES.update();
+            }
+
+        }
+    };
 
 
-        // Start of initNodeFilters
+    // Start of initNodeFilters
+
     function initSizeFilters(PRES, columnId, filterlist) {
 
-    	var column = document.getElementById(columnId);
-	var checkbox = new Array();
+        var column = document.getElementById(columnId);
+        var checkbox = new Array();
 
         var filter = filterlist.nodes;
-        checkbox[1] = Visualisations.makeFilterBox(filter); 
+        checkbox[1] = Visualisations.makeFilterBox(filter);
         column.appendChild(Visualisations.makeBR());
         column.appendChild(Visualisations.makeText(filter.name + ": "));
         column.appendChild(checkbox[1]);
-        checkbox[1].onclick = function() { 
-   	    filterlist.nodes.state = !filterlist.nodes.state; 				   
-            PRES.update(); 
-	}
+        checkbox[1].onclick = function () {
+            filterlist.nodes.state = !filterlist.nodes.state;
+            PRES.update();
+        }
 
         var filter = filterlist.links;
-        checkbox[2] = Visualisations.makeFilterBox(filter); 
+        checkbox[2] = Visualisations.makeFilterBox(filter);
         column.appendChild(Visualisations.makeBR());
         column.appendChild(Visualisations.makeText(filter.name + ": "));
         column.appendChild(checkbox[2]);
-	checkbox[2].onclick = function() { 
-   	    filterlist.links.state = !filterlist.links.state; 				   
-            PRES.update(); 
-	}
+        checkbox[2].onclick = function () {
+            filterlist.links.state = !filterlist.links.state;
+            PRES.update();
+        }
 
 
+    };
+
+
+    // functions that return the right style of each element (considering filters)        
+
+    function LiveAttributes(ABSTR, PRES) {
+
+        this.nodeFill = function (d) {
+            return PRES.color(d.type);
         };
-        
-        
-        // functions that return the right style of each element (considering filters)        
-        function LiveAttributes(ABSTR, PRES) {
 
-            this.nodeFill = 
-                function(d) {
-                    return PRES.color(d.type);
-                };
-                
-            this.nodeHeight =
-                function(d) {
-                    if (ABSTR.sizeFilters.nodes.state) {
-                        return 20 * Math.sqrt(Math.sqrt(d.evaluation));
-                    }
-                    else {
-                        return 20;
-                    }
-                }; 
-                
-            this.nodeWidth =
-                function(d) {
-                    if (ABSTR.sizeFilters.nodes.state) {
-                        return 20 * Math.sqrt(Math.sqrt(d.evaluation));
-                    }
-                    else {
-                        return 20;
-                    }
-                };
+        this.nodeHeight = function (d) {
+            if (ABSTR.sizeFilters.nodes.state) {
+                return 20 * Math.sqrt(Math.sqrt(d.evaluation));
+            } else {
+                return 20;
+            }
+        };
 
-            this.nodeHeightLarge =
-                function(d) {
-                    if (ABSTR.sizeFilters.nodes.state) {
-                        return 25 * Math.sqrt(Math.sqrt(d.evaluation));
-                    }
-                    else {
-                        return 25;
-                    }
-                }; 
+        this.nodeWidth = function (d) {
+            if (ABSTR.sizeFilters.nodes.state) {
+                return 20 * Math.sqrt(Math.sqrt(d.evaluation));
+            } else {
+                return 20;
+            }
+        };
 
-            this.nodeWidthLarge =
-                function(d) {
-                    if (ABSTR.sizeFilters.nodes.state) {
-                        return 25 * Math.sqrt(Math.sqrt(d.evaluation));
-                    }
-                    else {
-                        return 25;
-                    }
-                };
+        this.nodeHeightLarge = function (d) {
+            if (ABSTR.sizeFilters.nodes.state) {
+                return 25 * Math.sqrt(Math.sqrt(d.evaluation));
+            } else {
+                return 25;
+            }
+        };
+
+        this.nodeWidthLarge = function (d) {
+            if (ABSTR.sizeFilters.nodes.state) {
+                return 25 * Math.sqrt(Math.sqrt(d.evaluation));
+            } else {
+                return 25;
+            }
+        };
 
 
-            this.nodeOpacityAndSetConnectedLinkOpacity =
-                function(d) {
-                    if (ABSTR.nodeFilters[d.type].state) {
+        this.nodeOpacityAndSetConnectedLinkOpacity = function (d) {
+            if (ABSTR.nodeFilters[d.type].state) {
 
-                        return "1";
-                    }
-                    else {
-				nodehash = d.hash;
-				PRES.svg.selectAll(".link")
-					.filter(function(d){return d.ssource == nodehash;})
-					.style("stroke-width", function(d) {
-						return 0;
-					});
-				PRES.svg.selectAll(".link")
-					.filter(function(d){return d.ttarget == nodehash;})
-					.style("stroke-width", function(d) {
-						return 0;
-					});	
-                        return "0";
-                    }
-                };
-
-
-            this.nodeStrokeWidth =
-                function(d) {
-                    if (ABSTR.nodeFilters[d.type].state) {
-                        return "1.5px";
-                    }
-                    else {
-                        return "0px";
-                    }
-                };
+                return "1";
+            } else {
+                nodehash = d.hash;
+                PRES.svg.selectAll(".link")
+                    .filter(function (d) {
+                    return d.ssource == nodehash;
+                })
+                    .style("stroke-width", function (d) {
+                    return 0;
+                });
+                PRES.svg.selectAll(".link")
+                    .filter(function (d) {
+                    return d.ttarget == nodehash;
+                })
+                    .style("stroke-width", function (d) {
+                    return 0;
+                });
+                return "0";
+            }
+        };
 
 
-            this.linkStroke =
-                function(d) {
-                    return PRES.color(d.type);
-                };
-                       
- 
-            this.linkStrokeWidth =
-                function(d) {
-                    if (ABSTR.linkFilters[d.type].state) {
-                        if (ABSTR.sizeFilters.links.state)
-                            return Math.sqrt(d.evaluation);
-                        else
-                            return Math.sqrt(6);
-                    }
-                    else
-                    {
-                        return 0;
-                    }
-                };
+        this.nodeStrokeWidth = function (d) {
+            if (ABSTR.nodeFilters[d.type].state) {
+                return "1.5px";
+            } else {
+                return "0px";
+            }
+        };
+
+
+        this.linkStroke = function (d) {
+            return PRES.color(d.type);
+        };
+
+
+        this.linkStrokeWidth = function (d) {
+            if (ABSTR.linkFilters[d.type].state) {
+                if (ABSTR.sizeFilters.links.state)
+                    return Math.sqrt(d.evaluation);
+                else
+                    return Math.sqrt(6);
+            } else {
+                return 0;
+            }
+        };
 
 
 
-            this.mouseover =
-                function(d) {
+        this.mouseover = function (d) {
 
-		    if (PRES.isclicked == 0) {       		
+		    if (PRES.clickednodehash === "") {
+                PRES.svg.selectAll(".node")
+                    .style("stroke-width", function (d) {return "2px";})
+                    .style("stroke", PRES.bordercolor.normal);
+					
+				d3.select(this)
+//					.transition().duration(250)
+					.style("stroke-width", function (d) {return "2px";})
+                    .style("stroke", PRES.bordercolor.over);
+
+                document.getElementById("spec").value = d.content;
+            }
+        };
+
+        this.mousedown = function (d) {
 			PRES.svg.selectAll(".node")
-			    .style("stroke-width", function(d) {return "1.5px";})    
-			    .style("stroke","#af0");
-			d3.select(this).transition()
-			    .duration(250)
-			    .attr("width",PRES.liveAttributes.nodeWidthLarge)
-			    .attr("height",  PRES.liveAttributes.nodeHeightLarge)
-			    .style("stroke-width", function(d){return "3px";})
-			    .style("stroke","#E9B");
+                .style("stroke", PRES.bordercolor.normal);
 				
-			document.getElementById("spec").value = d.content;
- 
-		    }
-		    else {
-			d3.select(this).transition()
-			    .duration(250)
-			    .attr("width",PRES.liveAttributes.nodeWidthLarge)
-			    .attr("height",PRES.liveAttributes.nodeHeightLarge);
-		    }
+			PRES.clickednodehash = "";
+			
+			document.getElementById("spec").value = "";
+			document.getElementById("spec2").value = "";
+			$('#replybox2').html(" ");
+        };
 
-//force.friction([0.3]);
-
-		};
+        this.mouseout = function (d) {};
 
 
-            this.mouseout =
-                function(d) {
-		    d3.select(this).transition()
-			.duration(250)
-			.attr("width",PRES.liveAttributes.nodeWidth)			   
-			.attr("height",PRES.liveAttributes.nodeHeight);
-		};
-
-
-            this.click =
-                function(d) {
-
-		    console.log('click');
-
-		    oldclickednodehash = PRES.clickednodehash;
-		    PRES.clickednodehash = d.hash;
-
-		    if (PRES.clickednodehash == oldclickednodehash) {        
+        this.click = function (d) {
 			PRES.svg.selectAll(".node")
-			    .style("stroke-width", function(d) {return "1.5px";})    
-			    .style("stroke","#af0");        			
+                .filter(function (d) {return d.hash == PRES.clickednodehash;})
+                .style("stroke", PRES.bordercolor.normal);
+			
+			d3.select(this)
+                .style("stroke", PRES.bordercolor.clicked);
+			
+			PRES.clickednodehash = d.hash;
+
 			document.getElementById("spec").value = d.content;
-			PRES.isclicked = 0;			
-			$('#replybox2').html(" "); 
-		    }
-		    else {
-			PRES.svg.selectAll(".node")
-			    .style("stroke-width", function(d) {return "1.5px";})    
-			    .style("stroke","#af0");
-			d3.select(this).transition()
-			    .duration(250)
-			    .style("stroke-width", function(d){return "3px";})
-			    .style("stroke","#E9B");				
-			document.getElementById("spec").value = d.content;
-			PRES.isclicked = 1;
-			$('#replybox2').html("Reply:  <select> <option value='general'>General</option><option value='opinion'>Opinion</option> <option value='proposal'>Proposal</option> <option value='question'>Question</option><option value='answer'>Answer</option><option value='info'>Info</option> </select> <br><textarea id='spec2' class='areareply' spellcheck='false'></textarea> <div class='save' onClick='save()'>Save</div> ");
-		    }
-
-
-		};
-
-
-
-        };
-        // end of this == LiveAttributes
-        
-        // update functions (svg, nodes and links)
-        function updateLinks (PRES) {
-            PRES.svg.selectAll(".link").style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
-        };
-
-        function updateNodes (PRES) {
-            PRES.svg.selectAll(".node").style("fill-opacity", PRES.liveAttributes.nodeOpacityAndSetConnectedLinkOpacity);
-            PRES.svg.selectAll(".node").style("stroke-width", PRES.liveAttributes.nodeStrokeWidth);
-            PRES.svg.selectAll(".node").attr("width", PRES.liveAttributes.nodeWidth);
-            PRES.svg.selectAll(".node").attr("height", PRES.liveAttributes.nodeHeight);
-        };
-
-
-        this.update = function() {
-            updateLinks(this);
-            updateNodes(this);
+			
+            $('#replybox2').html("Box type: <select id=\"replynodetype\"> <option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Opinion</option><option value=5>Proposal</option><option value=6>Info</option></select>    Thread: <select id=\"replylinktype\"> <option value=5>General</option><option value=4>Agree</option><option value=1>Disagree</option> <option value=2>Question</option><option value=3>Answer</option><option value=6>Similar</option></select><br><textarea id='spec2' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
         };
     };
+    // end of this == LiveAttributes
+
+    // update functions (svg, nodes and links)
+
+    function updateLinks(PRES) {
+        PRES.svg.selectAll(".link").style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+    };
+
+    function updateNodes(PRES) {
+        PRES.svg.selectAll(".node").style("fill-opacity", PRES.liveAttributes.nodeOpacityAndSetConnectedLinkOpacity);
+        PRES.svg.selectAll(".node").style("stroke-width", PRES.liveAttributes.nodeStrokeWidth);
+        PRES.svg.selectAll(".node").attr("width", PRES.liveAttributes.nodeWidth);
+        PRES.svg.selectAll(".node").attr("height", PRES.liveAttributes.nodeHeight);
+    };
+
+
+    this.update = function () {
+        updateLinks(this);
+        updateNodes(this);
+    };
+	
+
+
+	
+};
 // End of this == presentation
-    
+        function save() {
+			var PRES = Visualisations.visualisations[0].presentation;
+			createnode(PRES);
+			//+ call to export fuctions
+        };
+		
+		function createnode(PRES){
+		    
+			var nodes = PRES.force.nodes();
+            var links = PRES.force.links();
+
+            var content = document.getElementById("spec2").value;
+			var nodetype = document.getElementById("replynodetype").value;
+			var linktype = document.getElementById("replylinktype").value;
+			
+			var targetindex = searchhash(nodes, PRES.clickednodehash), 
+				targetnode = nodes[targetindex];
+				
+            var newnode = {
+                x: targetnode.x,
+                y: targetnode.y,
+                "hash": nodes.length + 2,
+                "content": content,
+                "evaluation": 1,
+                "type": nodetype,
+                "author": "Mike",
+                "time": "17-abr-2013"
+            };
+			
+            nodes.push(newnode);
+            links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
+
+			document.getElementById("spec2").value = "";
+			
+            restart(PRES);
+		}
+		
+		function searchhash(elements, objective){
+			for (i=0;i<elements.length;i++){
+				if (elements[i].hash == objective){return i;}
+			};
+		}
+		
+		 function restart(PRES) {
+
+			var nodes = PRES.force.nodes();
+            var links = PRES.force.links();
+
+            var link = PRES.svg.selectAll(".link")
+                .data(links)
+                .enter().append("line")
+                .attr("class", "link")
+				.style("stroke", PRES.liveAttributes.linkStroke)
+				.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+
+            var node = PRES.svg.selectAll(".node")
+                .data(nodes)
+                .enter().append("rect")
+                .attr("class", "node")
+                .attr("x", function (d) {return d.x;})
+                .attr("y", function (d) {return d.y;})
+				.attr("width", PRES.liveAttributes.nodeWidth)
+				.attr("height", PRES.liveAttributes.nodeHeight)
+				.style("fill", PRES.liveAttributes.nodeFill)
+				.on("mouseover", PRES.liveAttributes.mouseover)
+				.on("mouseout", PRES.liveAttributes.mouseout)
+				.on("mousedown", PRES.liveAttributes.mousedown)
+				.on("click", PRES.liveAttributes.click)
+                .call(PRES.force.drag);
+					
+			PRES.svg.selectAll(".node")
+				.on('mousedown.drag', null);
+
+            PRES.force.start();
+        };
+
 // Start of control
 
-function ZoomOut_Control(VIS, ABSTR, PRES) {
-};
+function ZoomOut_Control(VIS, ABSTR, PRES) {};
 // End of var ZoomOut
-
-
