@@ -152,12 +152,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
              <div class="mod_down">   \
    \
                   <div class="mod_down_elems">   \
-                    <div id="mod_filt_links1" class="mod_filt1" style="Float:left">   \
+                    <div id="mod_filt_links" class="mod_filt" style="Float:left">   \
                       <b>Threads</b>    \
-                    </div>   \
-   \
-                    <div id="mod_filt_links2" class="mod_filt2" style="Float:left" >   \
-                      </br>            \
                     </div>   \
    \
                     <div id="mod_filt_nodes" class="mod_filt_box" style="Float:left" >   \
@@ -176,7 +172,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         initSVG(this, ABSTR, this.width, this.height);
         // 712, 325 = width and height of the visualization
 
-        initLinkFilters(this, "mod_filt_links1", "mod_filt_links2", ABSTR.linkFilters);
+        initLinkFilters(this, "mod_filt_links", ABSTR.linkFilters);
         initNodeFilters(this, "mod_filt_nodes", ABSTR.nodeFilters);
         initSizeFilters(this, "mod_filt_sizes", ABSTR.sizeFilters);
         // The initfilters take as an input parameter the id of the div where they will be placed (e.g "#mod_filt_links1"), with appendChild.
@@ -276,41 +272,54 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
 
-    function initLinkFilters(PRES, columnLeftId, columnRightId, filterlist) {
+    function initLinkFilters(PRES, columnId, filterlist) {
 
-        var numfilts = 6;
-        var filtspercol = 3;
+        var numfilts = 6 ;
+        var filtspercol = 3 ;
+        var filtsperrow = Math.ceil(numfilts/filtspercol);
 
-        var columnLeft = document.getElementById(columnLeftId);
-        var columnRight = document.getElementById(columnRightId);
+    	var column = document.getElementById(columnId);
 
+	var table  = document.createElement("table");
+	table.style.width = "100%";
+	table.setAttribute('border','0');
+	table.setAttribute('cellpadding','0');
+	table.setAttribute('cellspacing','0');
+	tb = document.createElement("tbody");
 
-        var checkbox = new Array();
-        for (var i = 1; i < numfilts + 1; ++i) {
+	var checkbox = new Array();
+        for (var i = 1; i < numfilts+1; ++i) {
             var filter = filterlist[i];
-            checkbox[i] = Visualisations.makeFilterBox(filter);
-            if (i < filtspercol + 1) {
-                columnLeft.appendChild(Visualisations.makeBR());
-                columnLeft.appendChild(Visualisations.makeText(filter.name + ": "));
-                columnLeft.appendChild(checkbox[i]);
-            } else {
-                columnRight.appendChild(Visualisations.makeText(filter.name + ": "));
-                columnRight.appendChild(checkbox[i]);
-                columnRight.appendChild(Visualisations.makeBR());
-            }
-            checkbox[i].onclick = function () {
-                for (var j = 1; j < numfilts + 1; ++j) {
-                    switch (filterlist[j].name) {
-                    case this.name:
-                        filterlist[j].state = !filterlist[j].state;
-                        break
-                    default:
-                    }
-                };
-                updateLinks(PRES);
-            }
+            checkbox[i] = Visualisations.makeFilterBox(filter); 
+            if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
+		tr = document.createElement("tr");
+	    }
+	    tdname = document.createElement("td");
+	    tdbox = document.createElement("td");
+            tdname.appendChild(Visualisations.makeText(filter.name + ": "));
+            tdbox.appendChild(checkbox[i]);
+            checkbox[i].onclick = function() { 
+		for (var j = 1; j < numfilts+1; ++j) {
+		    switch (filterlist[j].name) {
+		    case this.name:
+			filterlist[j].state = !filterlist[j].state; 				   
+			break
+		    default:
+		    }
+		};			  
+                updateLinks(PRES); 
+	    }    
+	    tr.appendChild(tdname);
+	    tr.appendChild(tdbox);      
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow ) {
+		tb.appendChild(tr);
+		table.appendChild(tb);
+	    }
 
         }
+
+	column.appendChild(table);
+
     };
 
 
@@ -318,34 +327,52 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     function initNodeFilters(PRES, columnId, filterlist) {
 
-        var numfilts = 3;
-        var filtspercol = 3;
+        var numfilts = 3 ;
+        var filtspercol = 3 ;
+        var filtsperrow = Math.ceil(numfilts/filtspercol);
 
-        var column = document.getElementById(columnId);
+    	var column = document.getElementById(columnId);
 
-        var checkbox = new Array();
-        for (var i = 1; i < numfilts + 1; ++i) {
+	var table  = document.createElement("table");
+	table.style.width = "100%";
+	table.setAttribute('border','0');
+	table.setAttribute('cellpadding','0');
+	table.setAttribute('cellspacing','0');
+	tb = document.createElement("tbody");
+
+	var checkbox = new Array();
+        for (var i = 1; i < numfilts+1; ++i) {
             var filter = filterlist[i];
-            checkbox[i] = Visualisations.makeFilterBox(filter);
-            if (i < filtspercol + 1) {
-                column.appendChild(Visualisations.makeBR());
-                column.appendChild(Visualisations.makeText(filter.name + ": "));
-                column.appendChild(checkbox[i]);
-            }
-            checkbox[i].onclick = function () {
-                for (var j = 1; j < numfilts + 1; ++j) {
-                    switch (filterlist[j].name) {
-                    case this.name:
-                        filterlist[j].state = !filterlist[j].state;
-                        break
-                    default:
-                    }
-                };
-
-                PRES.update();
-            }
+	    checkbox[i] = Visualisations.makeFilterBox(filter);                         
+	    if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
+		tr = document.createElement("tr");
+	    }
+	    tdname = document.createElement("td");
+	    tdbox = document.createElement("td");
+            tdname.appendChild(Visualisations.makeText(filter.name + ": "));
+            tdbox.appendChild(checkbox[i]);
+            checkbox[i].onclick = function() { 
+		for (var j = 1; j < numfilts+1; ++j) {
+		    switch (filterlist[j].name) {
+		    case this.name:
+			filterlist[j].state = !filterlist[j].state; 				   
+			break
+		    default:
+		    }
+		}; 
+                PRES.update(); 
+	    }
+	    tr.appendChild(tdname);
+	    tr.appendChild(tdbox);
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow ) {
+		tb.appendChild(tr);
+		table.appendChild(tb);
+	    }
 
         }
+
+	column.appendChild(table);
+
     };
 
 
@@ -353,28 +380,49 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     function initSizeFilters(PRES, columnId, filterlist) {
 
-        var column = document.getElementById(columnId);
-        var checkbox = new Array();
+    	var column = document.getElementById(columnId);
+
+	var checkbox = new Array();
+
+	var table  = document.createElement("table");
+	table.style.width = "100%";
+	table.setAttribute('border','0');
+	table.setAttribute('cellpadding','0');
+	table.setAttribute('cellspacing','0');
+	tb = document.createElement("tbody");
 
         var filter = filterlist.nodes;
-        checkbox[1] = Visualisations.makeFilterBox(filter);
-        column.appendChild(Visualisations.makeBR());
-        column.appendChild(Visualisations.makeText(filter.name + ": "));
-        column.appendChild(checkbox[1]);
-        checkbox[1].onclick = function () {
-            filterlist.nodes.state = !filterlist.nodes.state;
-            PRES.update();
-        }
+	tr = document.createElement("tr");
+	tdname = document.createElement("td");
+	tdbox = document.createElement("td");
+        checkbox[1] = Visualisations.makeFilterBox(filter); 
+        tdname.appendChild(Visualisations.makeText(filter.name + ": "));
+        tdbox.appendChild(checkbox[1]);
+        checkbox[1].onclick = function() { 
+   	    filterlist.nodes.state = !filterlist.nodes.state; 				   
+            PRES.update(); 
+	}
+	tr.appendChild(tdname);
+	tr.appendChild(tdbox);
+	tb.appendChild(tr);
 
         var filter = filterlist.links;
-        checkbox[2] = Visualisations.makeFilterBox(filter);
-        column.appendChild(Visualisations.makeBR());
-        column.appendChild(Visualisations.makeText(filter.name + ": "));
-        column.appendChild(checkbox[2]);
-        checkbox[2].onclick = function () {
-            filterlist.links.state = !filterlist.links.state;
-            PRES.update();
-        }
+	tr = document.createElement("tr");
+	tdname = document.createElement("td");
+	tdbox = document.createElement("td");
+        checkbox[2] = Visualisations.makeFilterBox(filter); 
+        tdname.appendChild(Visualisations.makeText(filter.name + ": "));
+        tdbox.appendChild(checkbox[2]);
+	checkbox[2].onclick = function() { 
+   	    filterlist.links.state = !filterlist.links.state; 				   
+            PRES.update(); 
+	}
+	tr.appendChild(tdname);
+	tr.appendChild(tdbox);
+	tb.appendChild(tr);
+
+	table.appendChild(tb);
+	column.appendChild(table);
 
 
     };

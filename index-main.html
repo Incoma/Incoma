@@ -1,49 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="zoomout.css"/>
-<style>
-
-#headerMain {
-    background: #aaa;
-    text-align: right;
-    vertical-align: center;
-    width: 100%;
-    min-height: 40px;
-}
-
-#headerName, #headerExport, #headerImport {
-    display: inline-block;
-    margin: 5px;
-}
-
-#headerName {
-    position: absolute;
-    left: 0px;
-}
-
-#headerExport {
-    min-width: 200px;
-}
-
-#headerImport {
-    min-width: 200px;
-}
-
-#visualisationMain {
-    width: 100%;
-}
-
-.node {
-  stroke: #af0;
-  stroke-width: 1.5px;
-}
-
-.link {
-  stroke-opacity: .6;
-}
-
-
-</style>
 <body>
     <script src="jquery-1.9.1.js"></script>
 
@@ -51,13 +8,12 @@
 
 
     <div id="headerMain">
-        <div id="headerName">Model</div>
+        <div id="headerName">Incoma</div>
         <div id="headerImport"></div>
         <div id="headerExport" ></div>
         <input type="button" id="buttonDump" name="dump" value="DUMP" onclick="alert(JSON.stringify(Model.model));" />
     </div>
     <div id="visualisationMain">
-        CONTENT
     </div> 
 
 <!-- Javascript -->
@@ -80,8 +36,7 @@
 <script src="opensave.js"></script>
 <script src="modelb.js"></script>
 <script src="visualisation.js"></script>
-
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3.v3.min.js"></script>
 <script src="visualisation-zoomout.js"></script>
 
 <script>
@@ -116,7 +71,7 @@
                         }; 
 
     addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
-    addExportListener( $( "#headerExport" )[0], "Export current model", "Incoma model.json", saveModelFile );
+    addExportListener( $( "#headerExport" )[0], "Export current model", "Incoma-debate.json", saveModelFile );
 </script>
 </body>
 </html>

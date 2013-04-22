@@ -144,3 +144,51 @@ div.save{
 #vis div {
   border: 1px dashed #ccc;
 }
+
+
+
+#headerMain {
+    background: #aaa;
+    text-align: right;
+    vertical-align: center;
+    width: 100%;
+    min-height: 40px;
+}
+
+#headerName {
+    display: inline-block;
+    margin: 5px;
+    font-size: 20pt;
+}
+
+#headerExport, #headerImport {
+    display: inline-block;
+    margin: 5px;
+}
+
+#headerName {
+    position: absolute;
+    left: 0px;
+}
+
+#headerExport {
+    min-width: 200px;
+}
+
+#headerImport {
+    min-width: 200px;
+}
+
+#visualisationMain {
+    width: 100%;
+}
+
+.node {
+  stroke: #af0;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke-opacity: .6;
+}
+
