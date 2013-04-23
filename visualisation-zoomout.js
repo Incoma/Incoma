@@ -661,7 +661,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
             var link = PRES.svg.selectAll(".link")
                 .data(links)
-                .enter().append("line")
+                .enter().insert("line",".node")
                 .attr("class", "link")
 				.style("stroke", PRES.liveAttributes.linkStroke)
 				.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
@@ -681,8 +681,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				.on("click", PRES.liveAttributes.click)
                 .call(PRES.force.drag);
 					
-			PRES.svg.selectAll(".node")
-				.on('mousedown.drag', null);
+//			PRES.svg.selectAll(".node").on('mousedown.drag', null);
 
             PRES.force.start();
         };
