@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="style.css"/>
 <link rel="stylesheet" type="text/css" href="zoomout.css"/>
 <body>
     <script src="jquery-1.9.1.js"></script>
@@ -9,12 +10,12 @@
 
     <div id="headerMain">
         <div id="headerName">Incoma</div>
-        <div id="headerImport"></div>
+        <div id="headerImport">Import debate: </div>
         <div id="headerExport" ></div>
         <input type="button" id="buttonDump" name="dump" value="DUMP" onclick="alert(JSON.stringify(Model.model));" />
     </div>
     <div id="visualisationMain">
-    </div> 
+    </div>  
 
 <!-- Javascript -->
 
@@ -66,12 +67,12 @@
     var saveModelFile = function() { return Model.exportFile(); }
 
     var loadModelFile = function(file) {
-                            var fileName = file.name || "current model" ;
+                            var fileName = file.name || "current debate" ;
                             blobToText( file, function(text) { Model.importFile(text); reInit(); } );
                         }; 
 
     addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
-    addExportListener( $( "#headerExport" )[0], "Export current model", "Incoma-debate.json", saveModelFile );
+    addExportListener( $( "#headerExport" )[0], "Export current debate", "Incoma-debate.json", saveModelFile );
 </script>
 </body>
 </html>

@@ -21,35 +21,46 @@ function ZoomOut() {
 function ZoomOut_Abstraction(VIS) {
     this.model = null;
     this.linkFilters = {
-        5: {
-            name: "General",
-            state: true,
-            typeId: 5
-        },
-        4: {
-            name: "Agree",
-            state: true,
-            typeId: 4
-        },
         1: {
-            name: "Disagree",
+            name: "General",
             state: true,
             typeId: 1
         },
         2: {
-            name: "Question",
+            name: "Consequence",
             state: true,
             typeId: 2
         },
         3: {
-            name: "Answer",
+            name: "Agree",
             state: true,
             typeId: 3
         },
+        4: {
+            name: "Disagree",
+            state: true,
+            typeId: 4
+        },
+        5: {
+            name: "Related",
+            state: true,
+            typeId: 5
+        },
         6: {
-            name: "Similar",
+            name: "Contradiction",
             state: true,
             typeId: 6
+        },
+        7: {
+            name: "Alternative",
+            state: true,
+            typeId: 7
+        },
+
+        8: {
+            name: "Answer",
+            state: true,
+            typeId: 8
         },
     };
     this.nodeFilters = {
@@ -67,6 +78,16 @@ function ZoomOut_Abstraction(VIS) {
             name: "Answer",
             state: true,
             typeId: 3
+        },
+        4: {
+            name: "Proposal",
+            state: true,
+            typeId: 4
+        },
+        5: {
+            name: "Info",
+            state: true,
+            typeId: 5
         },
     };
     this.sizeFilters = {
@@ -127,40 +148,38 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.container = html5node;
         html5node.innerHTML =
             '   \
-             <div class="mod_up">   \
+             <div class="svg_and_right_bar">   \
    \
-                  <div id="mod_vis" class="mod">   \
-                    <div class="visualization">  </div>   \
+                  <div id="svg" class="mod">   \
+                    <div class="svg">  </div>   \
                   </div>   \
    \
-                  <div id="mod_spec" class="mod">   \
-                    <div class="mod_header">   \
-                      <div class="mod_title">   \
-                        <a id="link_spec" class="active">Content:</a>           \
+                  <div id="right_bar" class="mod">   \
+                    <div class="right_bar_header">   \
+                      <div class="right_bar_title">   \
+                        Content:           \
                       </div>   \
                     </div>   \
     \
-                    <textarea id="spec" class="areacontent" spellcheck="false"></textarea>   \
-     <div id="replybox"> \
-</div> \
-<div id="replybox2">  \
+                    <textarea id="contbox" class="areacontent" spellcheck="false"></textarea>   \
+<div id="replybox">  \
 </div> \
                   </div>   \
     \
              </div>   \
    \
-             <div class="mod_down">   \
+             <div class="lower_bar">   \
    \
-                  <div class="mod_down_elems">   \
-                    <div id="mod_filt_links" class="mod_filt" style="Float:left">   \
+                  <div class="lower_bar_elems">   \
+                    <div id="filt_links" class="filt_links" style="Float:left">   \
                       <b>Threads</b>    \
                     </div>   \
    \
-                    <div id="mod_filt_nodes" class="mod_filt_box" style="Float:left" >   \
+                    <div id="filt_nodes" class="filt_nodes" style="Float:left" >   \
                       <b>Boxes</b>             \
                     </div>   \
    \
-                    <div id="mod_filt_sizes" class="mod_filt_size" style="Float:left" >   \
+                    <div id="filt_sizes" class="filt_sizes" style="Float:left" >   \
                       <b>Sizes</b>     \
                     </div>   \
                  </div>   \
@@ -172,10 +191,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         initSVG(this, ABSTR, this.width, this.height);
         // 712, 325 = width and height of the visualization
 
-        initLinkFilters(this, "mod_filt_links", ABSTR.linkFilters);
-        initNodeFilters(this, "mod_filt_nodes", ABSTR.nodeFilters);
-        initSizeFilters(this, "mod_filt_sizes", ABSTR.sizeFilters);
-        // The initfilters take as an input parameter the id of the div where they will be placed (e.g "#mod_filt_links1"), with appendChild.
+        initLinkFilters(this, "filt_links", ABSTR.linkFilters);
+        initNodeFilters(this, "filt_nodes", ABSTR.nodeFilters);
+        initSizeFilters(this, "filt_sizes", ABSTR.sizeFilters);
+        // The initfilters take as an input parameter the id of the div where they will be placed (e.g "filt_links"), with appendChild.
 
     };
     // End of init function of presentation
@@ -191,7 +210,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .size([width, height]);
         var force = PRES.force;
 
-        PRES.svg = d3.select(".visualization").append("svg")
+        PRES.svg = d3.select(".svg").append("svg")
             .attr("width", width)
             .attr("height", height)
 			.on("mousedown", PRES.liveAttributes.mousedown);
@@ -274,7 +293,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     function initLinkFilters(PRES, columnId, filterlist) {
 
-        var numfilts = 6 ;
+        var numfilts = 8 ;
         var filtspercol = 3 ;
         var filtsperrow = Math.ceil(numfilts/filtspercol);
 
@@ -311,7 +330,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    }    
 	    tr.appendChild(tdname);
 	    tr.appendChild(tdbox);      
-            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow ) {
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
 		tb.appendChild(tr);
 		table.appendChild(tb);
 	    }
@@ -327,7 +346,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     function initNodeFilters(PRES, columnId, filterlist) {
 
-        var numfilts = 3 ;
+        var numfilts = 5;
         var filtspercol = 3 ;
         var filtsperrow = Math.ceil(numfilts/filtspercol);
 
@@ -364,7 +383,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    }
 	    tr.appendChild(tdname);
 	    tr.appendChild(tdbox);
-            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow ) {
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
 		tb.appendChild(tr);
 		table.appendChild(tb);
 	    }
@@ -533,7 +552,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.style("stroke-width", function (d) {return "2px";})
                     .style("stroke", PRES.bordercolor.over);
 
-                document.getElementById("spec").value = d.content;
+                document.getElementById("contbox").value = d.content;
             }
         };
 
@@ -543,9 +562,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				
 			PRES.clickednodehash = "";
 			
-			document.getElementById("spec").value = "";
-			document.getElementById("spec2").value = "";
-			$('#replybox2').html(" ");
+			document.getElementById("contbox").value = "";
+			document.getElementById("replbox").value = "";
+			$('#replybox').html(" ");
         };
 
         this.mouseout = function (d) {};
@@ -561,9 +580,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			
 			PRES.clickednodehash = d.hash;
 
-			document.getElementById("spec").value = d.content;
+			document.getElementById("contbox").value = d.content;
 			
-            $('#replybox2').html("Box type: <select id=\"replynodetype\"> <option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Opinion</option><option value=5>Proposal</option><option value=6>Info</option></select>    Thread: <select id=\"replylinktype\"> <option value=5>General</option><option value=4>Agree</option><option value=1>Disagree</option> <option value=2>Question</option><option value=3>Answer</option><option value=6>Similar</option></select><br><textarea id='spec2' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
+            $('#replybox').html("Box: <select id=\"replynodetype\"> <option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread: <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replbox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
         };
     };
     // end of this == LiveAttributes
@@ -603,7 +622,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			var nodes = PRES.force.nodes();
             var links = PRES.force.links();
 
-            var content = document.getElementById("spec2").value;
+            var content = document.getElementById("replbox").value;
 			var nodetype = document.getElementById("replynodetype").value;
 			var linktype = document.getElementById("replylinktype").value;
 			
@@ -624,7 +643,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             nodes.push(newnode);
             links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
 
-			document.getElementById("spec2").value = "";
+			document.getElementById("replbox").value = "";
 			
             restart(PRES);
 		}
