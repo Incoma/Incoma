@@ -710,7 +710,7 @@ function evalposnode(PRES){
     }    
     if (targetnode.evaluatedby !== "anon") {
     targetnode.evaluation = targetnode.evaluation+1;    
-    targetnode.evaluatedby = "anon";    
+//    targetnode.evaluatedby = "anon";    
     }    
 
 }
@@ -731,7 +731,7 @@ function evalnegnode(PRES){
     }    
     if (targetnode.evaluation !== 1 && targetnode.evaluatedby !== "anon") {
 	targetnode.evaluation = targetnode.evaluation-1;    
-	targetnode.evaluatedby = "anon";    
+//	targetnode.evaluatedby = "anon";    
     }    
     
 }
