@@ -258,11 +258,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         force.on("tick", function () {
 		
-			var zz = 5;
-		
-		    nodez = PRES.force.nodes();
-            linkz = PRES.force.links();
-				
             PRES.svg.selectAll(".link")
 			.attr("x1", function (d) {
                 return d.source.x + 10;
@@ -581,8 +576,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			PRES.clickednodehash = d.hash;
 
 			document.getElementById("contbox").value = d.content;
-			
-            $('#replybox').html("Box: <select id=\"replynodetype\"> <option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread: <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replbox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
+
+            $('#replybox').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replbox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
         };
     };
     // end of this == LiveAttributes
@@ -611,80 +606,136 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	
 };
 // End of this == presentation
-        function save() {
-			var PRES = Visualisations.visualisations[0].presentation;
-			createnode(PRES);
-			//+ call to export fuctions
-        };
+
+function save() {
+    var PRES = Visualisations.visualisations[0].presentation;
+    createnode(PRES);
+    //+ call to export fuctions
+};
 		
-		function createnode(PRES){
+function createnode(PRES){
 		    
-			var nodes = PRES.force.nodes();
-            var links = PRES.force.links();
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
 
-            var content = document.getElementById("replbox").value;
-			var nodetype = document.getElementById("replynodetype").value;
-			var linktype = document.getElementById("replylinktype").value;
-			
-			var targetindex = searchhash(nodes, PRES.clickednodehash), 
-				targetnode = nodes[targetindex];
-				
-            var newnode = {
-                x: targetnode.x,
-                y: targetnode.y,
-                "hash": nodes.length + 2,
-                "content": content,
-                "evaluation": 1,
-                "type": nodetype,
-                "author": "Mike",
-                "time": "17-abr-2013"
-            };
-			
-            nodes.push(newnode);
-            links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
+    var content = document.getElementById("replbox").value;
+    var nodetype = document.getElementById("replynodetype").value;
+    var linktype = document.getElementById("replylinktype").value;
+    
+    var targetindex = searchhash(nodes, PRES.clickednodehash), 
+    targetnode = nodes[targetindex];
+    
+    var newnode = {
+        x: targetnode.x,
+        y: targetnode.y,
+        "hash": nodes.length + 2,
+        "content": content,
+        "evaluation": 1,
+        "type": nodetype,
+        "author": "Mike",
+        "time": "17-abr-2013"
+    };
+    
+    nodes.push(newnode);
+    links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
+    
+    document.getElementById("replbox").value = "";
+    
+    drawnewnodes(PRES);
+}
 
-			document.getElementById("replbox").value = "";
-			
-            restart(PRES);
-		}
-		
-		function searchhash(elements, objective){
-			for (i=0;i<elements.length;i++){
-				if (elements[i].hash == objective){return i;}
-			};
-		}
-		
-		 function restart(PRES) {
+function searchhash(elements, objective){
+    for (i=0;i<elements.length;i++){
+	if (elements[i].hash == objective){return i;}
+    };
+}
 
-			var nodes = PRES.force.nodes();
-            var links = PRES.force.links();
+function drawnewnodes(PRES) {
+    
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+    
+    var link = PRES.svg.selectAll(".link")
+        .data(links)
+        .enter().insert("line",".node")
+        .attr("class", "link")
+	.style("stroke", PRES.liveAttributes.linkStroke)
+	.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+    
+    var node = PRES.svg.selectAll(".node")
+        .data(nodes)
+        .enter().append("rect")
+        .attr("class", "node")
+        .attr("x", function (d) {return d.x;})
+        .attr("y", function (d) {return d.y;})
+	.attr("width", PRES.liveAttributes.nodeWidth)
+	.attr("height", PRES.liveAttributes.nodeHeight)
+	.style("fill", PRES.liveAttributes.nodeFill)
+	.on("mouseover", PRES.liveAttributes.mouseover)
+	.on("mouseout", PRES.liveAttributes.mouseout)
+	.on("mousedown", PRES.liveAttributes.mousedown)
+	.on("click", PRES.liveAttributes.click)
+        .call(PRES.force.drag);
+    
+    //			PRES.svg.selectAll(".node").on('mousedown.drag', null);
+    
+    PRES.force.start();
+};
 
-            var link = PRES.svg.selectAll(".link")
-                .data(links)
-                .enter().insert("line",".node")
-                .attr("class", "link")
-				.style("stroke", PRES.liveAttributes.linkStroke)
-				.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+function evalpos() {
+    var PRES = Visualisations.visualisations[0].presentation;
+    evalposnode(PRES);    
+    PRES.update();
+};
 
-            var node = PRES.svg.selectAll(".node")
-                .data(nodes)
-                .enter().append("rect")
-                .attr("class", "node")
-                .attr("x", function (d) {return d.x;})
-                .attr("y", function (d) {return d.y;})
-				.attr("width", PRES.liveAttributes.nodeWidth)
-				.attr("height", PRES.liveAttributes.nodeHeight)
-				.style("fill", PRES.liveAttributes.nodeFill)
-				.on("mouseover", PRES.liveAttributes.mouseover)
-				.on("mouseout", PRES.liveAttributes.mouseout)
-				.on("mousedown", PRES.liveAttributes.mousedown)
-				.on("click", PRES.liveAttributes.click)
-                .call(PRES.force.drag);
-					
-//			PRES.svg.selectAll(".node").on('mousedown.drag', null);
+function evalneg() {
+    var PRES = Visualisations.visualisations[0].presentation;
+    evalnegnode(PRES);    
+    PRES.update();
+};
 
-            PRES.force.start();
-        };
+function evalposnode(PRES){		    
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+    
+    var content = document.getElementById("replbox").value;
+    var nodetype = document.getElementById("replynodetype").value;
+    var linktype = document.getElementById("replylinktype").value;
+    
+    var targetindex = searchhash(nodes, PRES.clickednodehash);
+    targetnode = nodes[targetindex];
+
+    if (targetnode.evaluatedby == "anon") {
+	alert ("You can't vote more than once to the same box!");
+    }    
+    if (targetnode.evaluatedby !== "anon") {
+    targetnode.evaluation = targetnode.evaluation+1;    
+    targetnode.evaluatedby = "anon";    
+    }    
+
+}
+
+function evalnegnode(PRES){		    
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+    
+    var content = document.getElementById("replbox").value;
+    var nodetype = document.getElementById("replynodetype").value;
+    var linktype = document.getElementById("replylinktype").value;
+    
+    var targetindex = searchhash(nodes, PRES.clickednodehash);
+    targetnode = nodes[targetindex];
+
+    if (targetnode.evaluatedby == "anon") {
+	alert ("You can't vote more than once to the same box!");
+    }    
+    if (targetnode.evaluation !== 1 && targetnode.evaluatedby !== "anon") {
+	targetnode.evaluation = targetnode.evaluation-1;    
+	targetnode.evaluatedby = "anon";    
+    }    
+    
+}
+
 
 // Start of control
 

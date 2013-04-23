@@ -29,8 +29,7 @@ body {
 
 .areacontent {
   width: 98%;
-  min-height: 130px;
-
+  min-height: 70px;
 }
 
 .areareply {
@@ -76,6 +75,28 @@ body {
 
 
 div.save{
+	width: 80px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #99f;
+	text-align: center;
+	margin: 5px;
+}
+
+div.evalpos{
+        display:inline-block;
+	width: 80px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #99f;
+	text-align: center;
+	margin: 5px;
+}
+
+div.evalneg{
+        display:inline-block;
 	width: 80px;
 	height: 20px;
 	-moz-border-radius: 3px;
