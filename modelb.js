@@ -39,10 +39,25 @@ var Model = {
         }
     }, 
     
+ //   exportFile: function() {
+ //       alert("exportFile: " + this.model.nodes + "-" + this.model.links);
+ //       return { text: JSON.stringify(this.model),
+ //                mime: "application/x-incoma+json" };
+ //   },
+    // remove the data that is added by the presentation level to abstraction level model
+    // by the initSVG function in the ZoomOut_Presentation function in visualisation-zoomout.js
+    expurgeModelText: function(modelText) {
+	text = modelText.replace(/"source":{"hash":(\d+),[^\}]+}/g, "\"source\":$1");
+	text = text.replace(/"target":{"hash":(\d+),[^\}]+}/g, "\"target\":$1");
+	 return text.replace(/,"x"[^\}]+}/g, "}");
+	
+    }, 
+    
     exportFile: function() {
-        alert("exportFile: " + this.model.nodes + "-" + this.model.links);
-        return { text: JSON.stringify(this.model),
-                 mime: "application/x-incoma+json" };
+         return { text: this.expurgeModelText(JSON.stringify(this.model)),
+		    mime: "application/x-incoma+json" };
     },
-        
+      
 };
+
+  
