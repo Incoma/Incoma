@@ -39,23 +39,28 @@ var Model = {
         }
     }, 
     
- //   exportFile: function() {
- //       alert("exportFile: " + this.model.nodes + "-" + this.model.links);
- //       return { text: JSON.stringify(this.model),
- //                mime: "application/x-incoma+json" };
- //   },
+//    exportFile: function() {	
+//       return { text: JSON.stringify(this.model),
+//                 mime: "application/x-incoma+json" };
+//   },
+    
     // remove the data that is added by the presentation level to abstraction level model
     // by the initSVG function in the ZoomOut_Presentation function in visualisation-zoomout.js
+    // done by regular expressions, so dependent on the order of the elements, 
+    // at least for the coordinates removed by the last replace : "x" ...
     expurgeModelText: function(modelText) {
 	text = modelText.replace(/"source":{"hash":(\d+),[^\}]+}/g, "\"source\":$1");
+	text = text.replace(/"ssource":{"hash":(\d+),[^\}]+}/g, "\"ssource\":$1");
 	text = text.replace(/"target":{"hash":(\d+),[^\}]+}/g, "\"target\":$1");
-	 return text.replace(/,"x"[^\}]+}/g, "}");
+	text = text.replace(/"ttarget":{"hash":(\d+),[^\}]+}/g, "\"ttarget\":$1");
+	return text.replace(/,"x"[^\}]+}/g, "}");
 	
     }, 
     
     exportFile: function() {
-         return { text: this.expurgeModelText(JSON.stringify(this.model)),
-		    mime: "application/x-incoma+json" };
+         return { 
+	    text: this.expurgeModelText(JSON.stringify(this.model)),
+	    mime: "application/x-incoma+json" };
     },
       
 };

@@ -626,18 +626,23 @@ function createnode(PRES){
     targetnode = nodes[targetindex];
     
     var newnode = {
-        x: targetnode.x,
-        y: targetnode.y,
-        "hash": nodes.length + 2,
+ // elements and order adapted to be the same as in modelb.js
+ //       "hash": nodes.length + 2,  // produced a gap
+        "hash": nodes.length,
         "content": content,
         "evaluation": 1,
+        "evaluatedby": "",
         "type": nodetype,
-        "author": "Mike",
-        "time": "17-abr-2013"
+        "author": "new",
+        "time": "17-abr-2013",
+        x: targetnode.x,
+        y: targetnode.y
     };
     
     nodes.push(newnode);
-    links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
+//    links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
+// elements and order adapted to be the same as in modelb.js
+    links.push({source: newnode, target: targetnode,ssource: newnode, ttarget: targetnode,"evaluation":6,"evaluatedby": "","type":linktype,"author": "new","time": "17-abr-2013"});
     
     document.getElementById("replbox").value = "";
     
