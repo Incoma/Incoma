@@ -19,7 +19,7 @@ body {
 
 .right_bar_header {
   padding: 4px 4px 4px 4px;
-  background: #eee;
+  background: #cce;
 }
 
 .right_bar_title {
@@ -38,10 +38,16 @@ body {
   min-height: 60px;
 }
 
+.areaname {
+  border: yes;
+  width: 10%;
+  height: 17px;
+}
+
 .lower_bar {
   position: absolute;
   bottom: 5px;
-  background: #eee;
+  background: #cce;
   width: 100%;
   height: 20%;
 }
@@ -74,7 +80,7 @@ body {
 }
 
 
-div.save{
+div.new{
 	width: 80px;
 	height: 20px;
 	-moz-border-radius: 3px;
@@ -84,24 +90,44 @@ div.save{
 	margin: 5px;
 }
 
-div.evalpos{
-        display:inline-block;
+div.save{
 	width: 80px;
 	height: 20px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	background: #99f;
+	background: #396;
+	text-align: center;
+	margin: 5px;
+}
+
+div.cancel{
+	width: 80px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #c93;
+	text-align: center;
+	margin: 5px;
+}
+
+div.evalpos{
+    display:inline-block;
+	width: 30px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #3c3;
 	text-align: center;
 	margin: 5px;
 }
 
 div.evalneg{
         display:inline-block;
-	width: 80px;
+	width: 30px;
 	height: 20px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	background: #99f;
+	background: #f63;
 	text-align: center;
 	margin: 5px;
 }
@@ -131,6 +157,6 @@ div.evalneg{
 }
 
 .link {
-  stroke-opacity: .6;
+  stroke-opacity: .8;
 }
 

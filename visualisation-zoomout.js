@@ -254,7 +254,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .on("mousedown", PRES.liveAttributes.mousedown_node)
             .on("click", PRES.liveAttributes.click)
             .call(force.drag)
-			.append("title").text(function (d) {return d.content;});	
+			.append("title").text(function (d) {return d.content+"\n"+"("+d.author+")";});	
 			
 		PRES.prelink = svg.append("line")
 			.attr("x1", 0)
@@ -611,9 +611,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			
 				PRES.clickednodehash = d.hash;
 
-				document.getElementById("contbox").value = d.content;
+				document.getElementById("contbox").value = d.content+"\n"+"("+d.author+")";
 				
-				$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><br><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br></select><div class='save' onClick='showcreatelink()'>New link</div>");
+				$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div>Name:<textarea id='namebox' class='areaname' spellcheck='false'></textarea><br></select><div class='new' onClick='showcreatelink()'>New link</div>");
 			};
         
 		};
@@ -658,6 +658,9 @@ function createnode(PRES){
     
     var targetindex = searchhash(nodes, PRES.clickednodehash), 
     targetnode = nodes[targetindex];
+	
+	var author = document.getElementById("namebox").value;
+	if (author == ""){author = "anonymous";};
     
     var newnode = {
  // elements and order adapted to be the same as in modelb.js
@@ -667,7 +670,7 @@ function createnode(PRES){
         "evaluation": 1,
         "evaluatedby": "",
         "type": nodetype,
-        "author": "new",
+        "author": author,
         "time": "17-abr-2013",
         x: targetnode.x,
         y: targetnode.y
@@ -676,7 +679,7 @@ function createnode(PRES){
     nodes.push(newnode);
 //    links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
 // elements and order adapted to be the same as in modelb.js
-    links.push({source: newnode, target: targetnode,ssource: newnode, ttarget: targetnode,"evaluation":6,"evaluatedby": "","type":linktype,"author": "new","time": "17-abr-2013"});
+    links.push({source: newnode, target: targetnode,ssource: newnode, ttarget: targetnode,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
     
     document.getElementById("replybox").value = "";
     
@@ -715,7 +718,7 @@ function drawnewnodes(PRES) {
 		.on("mousedown", PRES.liveAttributes.mousedown_node)
 		.on("click", PRES.liveAttributes.click)
         .call(PRES.force.drag)
-		.append("title").text(function (d) {return d.content;});	
+		.append("title").text(function (d) {return d.content+"\n"+"("+d.author+")";});	
     
     //PRES.svg.selectAll(".node").on('mousedown.drag', null);
     
@@ -744,14 +747,10 @@ function evalposnode(PRES){
     
     var targetindex = searchhash(nodes, PRES.clickednodehash);
     targetnode = nodes[targetindex];
-
-    if (targetnode.evaluatedby == "anon") {
-	alert ("You can't vote more than once to the same box!");
-    }    
-    if (targetnode.evaluatedby !== "anon") {
+    
     targetnode.evaluation = targetnode.evaluation+1;    
-//    targetnode.evaluatedby = "anon";    
-    }    
+    targetnode.evaluatedby = document.getElementById("namebox").value;    
+	if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};    
 
 }
 
@@ -766,24 +765,20 @@ function evalnegnode(PRES){
     var targetindex = searchhash(nodes, PRES.clickednodehash);
     targetnode = nodes[targetindex];
 
-    if (targetnode.evaluatedby == "anon") {
-	alert ("You can't vote more than once to the same box!");
-    }    
-    if (targetnode.evaluation !== 1 && targetnode.evaluatedby !== "anon") {
 	targetnode.evaluation = targetnode.evaluation-1;    
-//	targetnode.evaluatedby = "anon";    
-    }    
-    
+	targetnode.evaluatedby = document.getElementById("namebox").value; 
+	if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};
+        
 }
 
 function showcreatelink(){
-	$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><br><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br><b>Create a new thread:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='save' onClick='cancellink()'>Cancel</div>");
+	$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><br><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br><b>Create a new thread:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
 	
 	creatinglink = true;
 }
 
 function cancellink(){
-	$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><br><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br></select><div class='save' onClick='showcreatelink()'>New link</div>");
+	$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><br><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br></select><div class='new' onClick='showcreatelink()'>New link</div>");
 	
 	var PRES = Visualisations.visualisations[0].presentation;
 	PRES.prelink 
@@ -807,7 +802,10 @@ function savelink(d){
     var sourceindex = searchhash(nodes, PRES.clickednodehash);
     sourcenode = nodes[sourceindex];
 	
-	links.push({source: sourcenode, target: d, ssource: sourceindex, ttarget: d.index,"evaluation":6,"evaluatedby": "","type":linktype,"author": "new","time": "17-abr-2013"});
+	var author = document.getElementById("namebox").value;
+	if (author == ""){author = "anonymous";};
+	
+	links.push({source: sourcenode, target: d, ssource: sourceindex, ttarget: d.index,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
 	
 	var link = PRES.svg.selectAll(".link")
         .data(links)
