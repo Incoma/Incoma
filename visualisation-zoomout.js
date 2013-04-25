@@ -213,17 +213,34 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .size([width, height]);
         var force = PRES.force;
 
-        PRES.svg = d3.select(".svg").append("svg")
+        PRES.svgg = d3.select(".svg").append("svg")
             .attr("width", width)
             .attr("height", height)
-			.on("mousedown", PRES.liveAttributes.mousedown)
-			.on("mousemove", PRES.liveAttributes.mousemove);
 			
-        var svg = PRES.svg;
+        var svgg = PRES.svgg;
         // force and svg are local to "presentation" (defined as this.force); 
         // (but we define them locally as a shorthand)
         // graph and link are local only to "initSVG" (var graph)
 
+		PRES.svg = svgg
+			.append('svg:g')
+			.call(d3.behavior.zoom().scaleExtent([0.15,1.5]).on("zoom", rescale))
+			.on("dblclick.zoom", null)
+			.append('svg:g')
+			.on("mousedown", PRES.liveAttributes.mousedown)
+			.on("mousemove", PRES.liveAttributes.mousemove);
+		
+		var svg = PRES.svg;
+		
+		svg.append('svg:rect')
+			.attr('width', width*11)
+			.attr('height', height*11)
+			.attr("x",-5*width)
+			.attr("y",-5*height)
+			.attr('fill', "white")
+			.style("stroke-width", "15px")
+            .style("stroke", "blue")
+			.style("stroke-opacity",0);
 
         var graph = ABSTR.model;
 
@@ -283,6 +300,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     // End of initSVG
 
     // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
+
+
 
     function initLinkFilters(PRES, columnId, filterlist) {
 
@@ -575,9 +594,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 
         this.mousedown = function (d) {
-			if (creatinglink){
-				cancellink();
-			}else{
+			if (!creatinglink){
 				PRES.svg.selectAll(".node")
 					.style("stroke", PRES.bordercolor.normal);
 				
@@ -829,6 +846,26 @@ function changelinktype(){
 }
 
 // Start of control
+
+function rescale() {
+	
+	var PRES = Visualisations.visualisations[0].presentation;
+	
+	trans=d3.event.translate;
+	scale=d3.event.scale;
+
+	PRES.svg.attr("transform",
+      "translate(" + trans + ")"
+      + " scale(" + scale + ")");
+	  
+	  document.getElementById("contbox").value = "hola" + zoom.scale;
+}
+
+function mousemove(){}
+
+function mousedown(){}
+
+function mouseup(){}
 
 function ZoomOut_Control(VIS, ABSTR, PRES) {};
 // End of var ZoomOut
