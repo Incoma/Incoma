@@ -58,19 +58,18 @@ body {
   height: 25%;
 }
 
-.filt_links {
-  position: relative;
-  width: 40%;
-  height: 100%;
-}
-
 .filt_nodes {
   position: relative;
-  left:5%;
-  width: 20%;
+  width: 19%;
   height: 100%;
 }
 
+.filt_links {
+  position: relative;
+  left:5%;
+  width: 36%;
+  height: 100%;
+}
 
 .filt_sizes {
   position: relative;

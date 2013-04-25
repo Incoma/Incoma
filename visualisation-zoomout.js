@@ -170,12 +170,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
              <div class="lower_bar">   \
    \
                   <div class="lower_bar_elems">   \
-                    <div id="filt_links" class="filt_links" style="Float:left">   \
-                      <b>Threads</b>    \
-                    </div>   \
-   \
                     <div id="filt_nodes" class="filt_nodes" style="Float:left" >   \
                       <b>Boxes</b>             \
+                    </div>   \
+   \
+                    <div id="filt_links" class="filt_links" style="Float:left">   \
+                      <b>Threads</b>    \
                     </div>   \
    \
                     <div id="filt_sizes" class="filt_sizes" style="Float:left" >   \
