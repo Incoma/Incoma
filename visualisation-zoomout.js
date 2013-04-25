@@ -126,6 +126,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         "over": "#E9B"
     };
 
+    this.hidefilters = 0;
+
     this.svg = null;
     this.color = d3.scale.category20();
     this.liveAttributes = new LiveAttributes(ABSTR, this);
@@ -167,7 +169,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     \
              </div>   \
    \
-             <div class="lower_bar">   \
+             <div id= "lower_bar" class="lower_bar">   \
    \
                   <div class="lower_bar_elems">   \
                     <div id="filt_nodes" class="filt_nodes" style="Float:left" >   \
@@ -180,6 +182,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
    \
                     <div id="filt_sizes" class="filt_sizes" style="Float:left" >   \
                       <b>Sizes</b>     \
+                    </div>   \
+                    <div id="filt_hide" class="filt_hide"  style="Float:left" >   \
+                      <div class="filt_hide_button" onClick="hideshowfilters()">Hide/show filters</div>   \
                     </div>   \
                  </div>   \
    \
@@ -665,7 +670,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		document.getElementById("contbox").value = d.content+"\n"+"("+d.author+")";
 				
-		$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br></select><div class='new' onClick='showcreatelink()'>New link</div>");
+		$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div></select><div class='new' onClick='showcreatelink()'>New link</div>");
 	    };
         
 	};
@@ -698,7 +703,25 @@ function savenode() {
     createnode(PRES);
     //+ call to export fuctions
 };
-		
+
+function hideshowfilters() {
+
+    var PRES = Visualisations.visualisations[0].presentation;
+    var lower_bar = document.getElementById("lower_bar");
+
+    if (PRES.hidefilters) {
+	lower_bar.style.height = "20%";
+    } else {    
+	lower_bar.style.height = "20px";
+    }
+
+    PRES.hidefilters = !PRES.hidefilters;
+
+};
+	
+
+
+	
 function createnode(PRES){
 		    
     var nodes = PRES.force.nodes();
@@ -824,13 +847,13 @@ function evalnegnode(PRES){
 }
 
 function showcreatelink(){
-	$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br><b>Create a new thread:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
+	$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><b>Create a new thread:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
 	
 	creatinglink = true;
 }
 
 function cancellink(){
-	$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br></select><div class='new' onClick='showcreatelink()'>New link</div>");
+	$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div></select><div class='new' onClick='showcreatelink()'>New link</div>");
 	
 	var PRES = Visualisations.visualisations[0].presentation;
 	PRES.prelink 
