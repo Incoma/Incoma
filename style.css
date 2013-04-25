@@ -29,11 +29,22 @@ body {
     left: 0px;
 }
 
-#headerExport, #headerImport {
+#headerUserName {
+    display: inline-block;
+}
+
+#headerImport {
     display: inline-block;
     margin: 5px;
     min-width: 200px;
 }
+
+#headerExport {
+    display: inline-block;
+    margin: 5px;
+    min-width: 200px;
+}
+
 
 #visualisationMain {
     width: 100%;

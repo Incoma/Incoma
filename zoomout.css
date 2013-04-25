@@ -40,7 +40,7 @@ body {
 
 .areaname {
   border: yes;
-  width: 10%;
+  width: 20%;
   height: 17px;
 }
 
@@ -60,13 +60,13 @@ body {
 
 .filt_links {
   position: relative;
-  width: 10%;
+  width: 40%;
   height: 100%;
 }
 
 .filt_nodes {
   position: relative;
-  left:25%;
+  left:5%;
   width: 20%;
   height: 100%;
 }
@@ -74,7 +74,7 @@ body {
 
 .filt_sizes {
   position: relative;
-  left:28%;
+  left:8%;
   width: 10%;
   height: 100%;
 }

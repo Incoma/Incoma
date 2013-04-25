@@ -135,10 +135,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.definedBelow();
     }
 	
-	    function save2() {
-			createnode(this);
-			//+ call to export fuctions
-        };
 		
     this.init = function (html5node) {
         this.definedBelow();
@@ -319,6 +315,19 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	tb = document.createElement("tbody");
 
 	var checkbox = new Array();
+	var threadslegend = new Array();
+
+	var threadslegendcolors = new Array();
+	threadslegendcolors[1] = "#4b92c3";
+	threadslegendcolors[2] = "#bed2ed";
+	threadslegendcolors[3] = "#ff983e";
+	threadslegendcolors[4] = "#ffc993";
+	threadslegendcolors[5] = "#ade6a1";
+	threadslegendcolors[6] = "#56b356";
+	threadslegendcolors[7] = "#de5253";
+	threadslegendcolors[8] = "#ffadab";
+	threadslegendcolors[9] = "#FF0000";
+
         for (var i = 1; i < numfilts+1; ++i) {
             var filter = filterlist[i];
             checkbox[i] = Visualisations.makeFilterBox(filter); 
@@ -327,7 +336,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    }
 	    tdname = document.createElement("td");
 	    tdbox = document.createElement("td");
-            tdname.appendChild(Visualisations.makeText(filter.name + ": "));
+	    threadslegend[i] = document.createElement("canvas");
+	    threadslegend[i].width  = 6; // in pixels
+	    threadslegend[i].height = 10;
+	    threadslegend[i].style.backgroundColor  = threadslegendcolors[i];
+            tdname.appendChild(threadslegend[i]);
+
+            tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
             tdbox.appendChild(checkbox[i]);
             checkbox[i].onclick = function() { 
 		for (var j = 1; j < numfilts+1; ++j) {
@@ -372,6 +387,19 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	tb = document.createElement("tbody");
 
 	var checkbox = new Array();
+	var boxeslegend = new Array();
+
+	var boxeslegendcolors = new Array();
+	boxeslegendcolors[1] = "#1f77b4";
+	boxeslegendcolors[2] = "#aec7e8";
+	boxeslegendcolors[3] = "#ff7f0e";
+	boxeslegendcolors[4] = "#ffbb78";
+	boxeslegendcolors[5] = "#98df8a";
+	boxeslegendcolors[6] = "#FF0000";
+	boxeslegendcolors[7] = "#FF0000";
+	boxeslegendcolors[8] = "#FF0000";
+	boxeslegendcolors[9] = "#FF0000";
+
         for (var i = 1; i < numfilts+1; ++i) {
             var filter = filterlist[i];
 	    checkbox[i] = Visualisations.makeFilterBox(filter);                         
@@ -380,7 +408,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    }
 	    tdname = document.createElement("td");
 	    tdbox = document.createElement("td");
-            tdname.appendChild(Visualisations.makeText(filter.name + ": "));
+	    boxeslegend[i] = document.createElement("canvas");
+	    boxeslegend[i].width  = 10; // in pixels
+	    boxeslegend[i].height = 10;
+	    boxeslegend[i].style.backgroundColor  = boxeslegendcolors[i];
+            tdname.appendChild(boxeslegend[i]);
+
+            tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
             tdbox.appendChild(checkbox[i]);
             checkbox[i].onclick = function() { 
 		for (var j = 1; j < numfilts+1; ++j) {
@@ -499,7 +533,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             }
         };
 
-//wtf?
         this.nodeOpacityAndSetConnectedLinkOpacity = function (d) {
             if (ABSTR.nodeFilters[d.type].state) {
 
@@ -579,14 +612,15 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
         this.mouseover = function (d) {
 
-		    if (PRES.clickednodehash === "") {
+	    if (PRES.clickednodehash === "") {
                 PRES.svg.selectAll(".node")
                     .style("stroke-width", function (d) {return "2px";})
                     .style("stroke", PRES.bordercolor.normal);
-					
-				d3.select(this)
+
+		// this line below is the node where the mouse is over			
+		d3.select(this)
 //					.transition().duration(250)
-					.style("stroke-width", function (d) {return "2px";})
+		    .style("stroke-width", function (d) {return "2px";})
                     .style("stroke", PRES.bordercolor.over);
 
                 document.getElementById("contbox").value = d.content;
@@ -594,16 +628,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 
         this.mousedown = function (d) {
-			if (!creatinglink){
-				PRES.svg.selectAll(".node")
-					.style("stroke", PRES.bordercolor.normal);
+	    if (!creatinglink){
+		PRES.svg.selectAll(".node")
+		    .style("stroke", PRES.bordercolor.normal);
 				
-				PRES.clickednodehash = "";
+		PRES.clickednodehash = "";
 			
-				document.getElementById("contbox").value = "";
-				document.getElementById("replybox").value = "";
-				$('#rightpanel').html(" ");
-			};
+		document.getElementById("contbox").value = "";
+		document.getElementById("replybox").value = "";
+		$('#rightpanel').html(" ");
+	    };
         };
 		
 		this.mousedown_node = function (d) {
@@ -614,27 +648,28 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 
         this.click = function (d) {
-			if (creatinglink){
-				if (d.hash !== PRES.clickednodehash){
-					savelink(d);
-				}
-			}else{
-				PRES.svg.selectAll(".node")
-					.filter(function (d) {return d.hash == PRES.clickednodehash;})
-					.style("stroke", PRES.bordercolor.normal);
-				
-				d3.select(this)
-					.style("stroke", PRES.bordercolor.clicked);
-			
-				PRES.clickednodehash = d.hash;
+	    if (creatinglink){
+		if (d.hash !== PRES.clickednodehash){
+		    savelink(d);
+		}
+	    }else{
+		PRES.svg.selectAll(".node")
+		    .filter(function (d) {return d.hash == PRES.clickednodehash;})
+		    .style("stroke", PRES.bordercolor.normal);
 
-				document.getElementById("contbox").value = d.content+"\n"+"("+d.author+")";
+		// this line below is the clicked node
+		d3.select(this)
+		    .style("stroke", PRES.bordercolor.clicked);
+		
+		PRES.clickednodehash = d.hash;
+
+		document.getElementById("contbox").value = d.content+"\n"+"("+d.author+")";
 				
-				$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br></select><div class='new' onClick='showcreatelink()'>New link</div>");
-			};
+		$('#rightpanel').html("<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div><br></select><div class='new' onClick='showcreatelink()'>New link</div>");
+	    };
         
-		};
 	};
+    };
 		// end of this == LiveAttributes
 
     // update functions (svg, nodes and links)
@@ -809,31 +844,31 @@ function cancellink(){
 	
 function savelink(d){
 
-	var PRES = Visualisations.visualisations[0].presentation;
+    var PRES = Visualisations.visualisations[0].presentation;
 
-	var nodes = PRES.force.nodes();
-	var links = PRES.force.links();
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
 
     var linktype = document.getElementById("replylinktype2").value;
     
     var sourceindex = searchhash(nodes, PRES.clickednodehash);
     sourcenode = nodes[sourceindex];
 	
-	var author = document.getElementById("namebox").value;
-	if (author == ""){author = "anonymous";};
+    var author = document.getElementById("namebox").value;
+    if (author == ""){author = "anonymous";};
 	
-	links.push({source: sourcenode, target: d, ssource: sourceindex, ttarget: d.index,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
+    links.push({source: sourcenode, target: d, ssource: sourceindex, ttarget: d.index,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
 	
-	var link = PRES.svg.selectAll(".link")
+    var link = PRES.svg.selectAll(".link")
         .data(links)
         .enter().insert("line",".node")
         .attr("class", "link")
-		.style("stroke", PRES.liveAttributes.linkStroke)
-		.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+	.style("stroke", PRES.liveAttributes.linkStroke)
+	.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
 		
-		cancellink();
+    cancellink();
 		
-		PRES.force.start();
+    PRES.force.start();
 		
 }
 
@@ -849,16 +884,16 @@ function changelinktype(){
 
 function rescale() {
 	
-	var PRES = Visualisations.visualisations[0].presentation;
+    var PRES = Visualisations.visualisations[0].presentation;
 	
-	trans=d3.event.translate;
-	scale=d3.event.scale;
+    trans=d3.event.translate;
+    scale=d3.event.scale;
 
-	PRES.svg.attr("transform",
-      "translate(" + trans + ")"
-      + " scale(" + scale + ")");
+    PRES.svg.attr("transform",
+		  "translate(" + trans + ")"
+		  + " scale(" + scale + ")");
 	  
-	  document.getElementById("contbox").value = "hola" + zoom.scale;
+    document.getElementById("contbox").value = "hola" + zoom.scale;
 }
 
 function mousemove(){}
