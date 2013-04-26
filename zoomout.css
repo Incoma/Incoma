@@ -46,12 +46,21 @@ body {
 
 .lower_bar {
   position: absolute;
-  bottom: 1px;
+  bottom: 0px;
   background: #cce;
   width: 100%;
-  height: 20%;
+  height: 100px;
 }
 /* HEIGHT IS DEFINED ALSO IN hideshowfilters() function !!!  */
+
+.legend_bar {
+  position: absolute;
+  bottom: 100px;
+  background: #cce;
+  width: 100%;
+  height: 100px;
+}
+/* HEIGHT IS DEFINED ALSO IN hideshowlegend() function !!!  */
 
 .lower_bar_elems {
   position: relative;
@@ -59,14 +68,28 @@ body {
   height: 25%;
 }
 
+.legend_bar_elems {
+  position: relative;
+  left: 3%;
+  height: 25%;
+}
+
+.filters_title {
+  position: relative;
+  width: 10%;
+  height: 100%;
+}
+
 .filt_nodes {
   position: relative;
+  top:15px;
   width: 19%;
   height: 100%;
 }
 
 .filt_links {
   position: relative;
+  top:15px;
   left:5%;
   width: 36%;
   height: 100%;
@@ -74,12 +97,43 @@ body {
 
 .filt_sizes {
   position: relative;
+  top:15px;
   left:8%;
   width: 10%;
   height: 100%;
 }
 
+.legend_title {
+  position: relative;
+  width: 10%;
+  height: 100%;
+}
+
+.legend_nodes {
+  position: relative;
+  top:15px;
+  width: 19%;
+  height: 100%;
+}
+
+.legend_links {
+  position: relative;
+  top:15px;
+  left:5%;
+  width: 36%;
+  height: 100%;
+}
+
+
 .filt_hide {
+  position: relative;
+  left:6%;
+  width: 20%;
+  height: 100%;
+}
+
+
+.legend_hide {
   position: relative;
   left:16%;
   width: 20%;
@@ -112,6 +166,10 @@ div.filt_hide_button{
 	margin: 5px;
 }
 
+div.legend_hide_button{
+	text-align: center;
+	margin: 5px;
+}
 
 div.cancel{
 	width: 80px;

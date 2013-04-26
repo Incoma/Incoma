@@ -133,10 +133,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         "over": "#E9B"
     };
 
-    this.hidefilters = 0;
+    this.showfilters = 1;
+    this.showlegend = 1;
 
     this.svg = null;
     this.color = d3.scale.category20();
+
     this.liveAttributes = new LiveAttributes(ABSTR, this);
     //    this.updateLinks = function() { this.definedBelow(); }
 	
@@ -176,9 +178,29 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     \
              </div>   \
    \
+             <div id= "legend_bar" class="legend_bar">   \
+                  <div class="legend_bar_elems">   \
+                    <div id="legend_title" class="legend_title" style="Float:left" >   \
+                      <b>Legend</b>\
+                    </div>   \
+                    <div id="legend_nodes" class="legend_nodes" style="Float:left" >   \
+                      <b>Boxes</b>             \
+                    </div>   \
+   \
+                    <div id="legend_links" class="legend_links" style="Float:left">   \
+                      <b>Threads</b>    \
+                    </div>   \
+                    <div id="legend_hide" class="legend_hide"  style="Float:left" >   \
+                      <div class="legend_hide_button" onClick="hideshowlegend()">Hide/show legend</div>   \
+                    </div>   \
+                 </div>   \
+             </div>   \
              <div id= "lower_bar" class="lower_bar">   \
    \
                   <div class="lower_bar_elems">   \
+                    <div id="filters_title" class="filters_title" style="Float:left" >   \
+                      <b>Filters</b>\
+                    </div>   \
                     <div id="filt_nodes" class="filt_nodes" style="Float:left" >   \
                       <b>Boxes</b>             \
                     </div>   \
@@ -202,8 +224,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         initSVG(this, ABSTR, this.width, this.height);
         // 712, 325 = width and height of the visualization
 
-        initLinkFilters(this, "filt_links", ABSTR.linkFilters);
+        initNodeLegend(this, "legend_nodes", ABSTR.nodeFilters);
+        initLinkLegend(this, "legend_links", ABSTR.linkFilters);
+
         initNodeFilters(this, "filt_nodes", ABSTR.nodeFilters);
+        initLinkFilters(this, "filt_links", ABSTR.linkFilters);
         initSizeFilters(this, "filt_sizes", ABSTR.sizeFilters);
         // The initfilters take as an input parameter the id of the div where they will be placed (e.g "filt_links"), with appendChild.
 
@@ -331,17 +356,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	var checkbox = new Array();
 	var threadslegend = new Array();
 
-	var threadslegendcolors = new Array();
-	threadslegendcolors[1] = "#4b92c3";
-	threadslegendcolors[2] = "#bed2ed";
-	threadslegendcolors[3] = "#ff983e";
-	threadslegendcolors[4] = "#ffc993";
-	threadslegendcolors[5] = "#ade6a1";
-	threadslegendcolors[6] = "#56b356";
-	threadslegendcolors[7] = "#de5253";
-	threadslegendcolors[8] = "#ffadab";
-	threadslegendcolors[9] = "#FF0000";
-
         for (var i = 1; i < numfilts+1; ++i) {
             var filter = filterlist[i];
             checkbox[i] = Visualisations.makeFilterBox(filter); 
@@ -353,7 +367,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    threadslegend[i] = document.createElement("canvas");
 	    threadslegend[i].width  = 6; // in pixels
 	    threadslegend[i].height = 10;
-	    threadslegend[i].style.backgroundColor  = threadslegendcolors[i];
+	    threadslegend[i].style.backgroundColor  = PRES.color(i);
             tdname.appendChild(threadslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
@@ -369,6 +383,50 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		};			  
                 updateLinks(PRES); 
 	    }    
+	    tr.appendChild(tdname);
+	    tr.appendChild(tdbox);      
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
+		tb.appendChild(tr);
+		table.appendChild(tb);
+	    }
+
+        }
+
+	column.appendChild(table);
+
+    };
+
+    function initLinkLegend(PRES, columnId, filterlist) {
+
+        var numfilts = 8 ;
+        var filtspercol = 3 ;
+        var filtsperrow = Math.ceil(numfilts/filtspercol);
+
+    	var column = document.getElementById(columnId);
+
+	var table  = document.createElement("table");
+	table.style.width = "100%";
+	table.setAttribute('border','0');
+	table.setAttribute('cellpadding','0');
+	table.setAttribute('cellspacing','0');
+	tb = document.createElement("tbody");
+
+	var threadslegend = new Array();
+
+        for (var i = 1; i < numfilts+1; ++i) {
+            var filter = filterlist[i];
+            if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
+		tr = document.createElement("tr");
+	    }
+	    tdname = document.createElement("td");
+	    tdbox = document.createElement("td");
+	    threadslegend[i] = document.createElement("canvas");
+	    threadslegend[i].width  = 6; // in pixels
+	    threadslegend[i].height = 10;
+	    threadslegend[i].style.backgroundColor  = PRES.color(i);
+            tdname.appendChild(threadslegend[i]);
+
+            tdname.appendChild(Visualisations.makeText(" " + filter.name));
 	    tr.appendChild(tdname);
 	    tr.appendChild(tdbox);      
             if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
@@ -403,17 +461,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	var checkbox = new Array();
 	var boxeslegend = new Array();
 
-	var boxeslegendcolors = new Array();
-	boxeslegendcolors[1] = "#1f77b4";
-	boxeslegendcolors[2] = "#aec7e8";
-	boxeslegendcolors[3] = "#ff7f0e";
-	boxeslegendcolors[4] = "#ffbb78";
-	boxeslegendcolors[5] = "#98df8a";
-	boxeslegendcolors[6] = "#FF0000";
-	boxeslegendcolors[7] = "#FF0000";
-	boxeslegendcolors[8] = "#FF0000";
-	boxeslegendcolors[9] = "#FF0000";
-
         for (var i = 1; i < numfilts+1; ++i) {
             var filter = filterlist[i];
 	    checkbox[i] = Visualisations.makeFilterBox(filter);                         
@@ -425,7 +472,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    boxeslegend[i] = document.createElement("canvas");
 	    boxeslegend[i].width  = 10; // in pixels
 	    boxeslegend[i].height = 10;
-	    boxeslegend[i].style.backgroundColor  = boxeslegendcolors[i];
+	    boxeslegend[i].style.backgroundColor  = PRES.color(i);
             tdname.appendChild(boxeslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
@@ -454,8 +501,54 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     };
 
+    function initNodeLegend(PRES, columnId, filterlist) {
 
-    // Start of initNodeFilters
+        var numfilts = 5;
+        var filtspercol = 3 ;
+        var filtsperrow = Math.ceil(numfilts/filtspercol);
+
+    	var column = document.getElementById(columnId);
+
+	var table  = document.createElement("table");
+	table.style.width = "100%";
+	table.setAttribute('border','0');
+	table.setAttribute('cellpadding','0');
+	table.setAttribute('cellspacing','0');
+	tb = document.createElement("tbody");
+
+	var checkbox = new Array();
+	var boxeslegend = new Array();
+
+        for (var i = 1; i < numfilts+1; ++i) {
+            var filter = filterlist[i];
+	    if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
+		tr = document.createElement("tr");
+	    }
+	    tdname = document.createElement("td");
+	    tdbox = document.createElement("td");
+	    boxeslegend[i] = document.createElement("canvas");
+	    boxeslegend[i].width  = 10; // in pixels
+	    boxeslegend[i].height = 10;
+	    boxeslegend[i].style.backgroundColor  = PRES.color(i);
+            tdname.appendChild(boxeslegend[i]);
+
+            tdname.appendChild(Visualisations.makeText(" " + filter.name));
+	    tr.appendChild(tdname);
+	    tr.appendChild(tdbox);
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
+		tb.appendChild(tr);
+		table.appendChild(tb);
+	    }
+
+        }
+
+	column.appendChild(table);
+
+    };
+
+
+
+    // Start of initSizeFilters
 
     function initSizeFilters(PRES, columnId, filterlist) {
 
@@ -713,22 +806,54 @@ function savenode() {
     //+ call to export fuctions
 };
 
+
+function hideshowlegend() {
+
+    var PRES = Visualisations.visualisations[0].presentation;
+    var legend_bar = document.getElementById("legend_bar");
+
+    PRES.showlegend = !PRES.showlegend;
+
+    this.legendfiltersupdate();
+
+};
+
+
 function hideshowfilters() {
 
     var PRES = Visualisations.visualisations[0].presentation;
     var lower_bar = document.getElementById("lower_bar");
 
-    if (PRES.hidefilters) {
-	lower_bar.style.height = "20%";
-    } else {    
-	lower_bar.style.height = "20px";
+    PRES.showfilters = !PRES.showfilters;
+
+    this.legendfiltersupdate();
+};
+
+function legendfiltersupdate() {
+
+    var PRES = Visualisations.visualisations[0].presentation;
+    var lower_bar = document.getElementById("lower_bar");
+    var legend_bar = document.getElementById("legend_bar");
+
+    if (PRES.showfilters && PRES.showlegend) {
+	legend_bar.style.height = "100px";
+	lower_bar.style.height = "100px";
+	legend_bar.style.bottom = "100px";
+    } else if (!PRES.showfilters && PRES.showlegend) {    
+	legend_bar.style.height = "100px";
+	lower_bar.style.height = "19px";
+	legend_bar.style.bottom = "19px";
+    } else if (PRES.showfilters && !PRES.showlegend) {    
+	legend_bar.style.height = "19px";
+	lower_bar.style.height = "100px";
+	legend_bar.style.bottom = "100px";
+    } else  {   
+	legend_bar.style.height = "19px";
+	lower_bar.style.height = "19px";
+	legend_bar.style.bottom = "19px";
     }
 
-    PRES.hidefilters = !PRES.hidefilters;
-
 };
-	
-
 
 	
 function createnode(PRES){
