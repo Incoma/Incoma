@@ -142,8 +142,8 @@ body {
 
 
 div.new{
-	width: 80px;
-	height: 20px;
+	width: 160px;
+	height: 40px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	background: #99f;
@@ -152,8 +152,19 @@ div.new{
 }
 
 div.save{
+    display:inline-block;
 	width: 80px;
 	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #396;
+	text-align: center;
+	margin: 5px;
+}
+
+div.showreplypanel{
+	width: 160px;
+	height: 40px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	background: #396;
@@ -172,6 +183,7 @@ div.legend_hide_button{
 }
 
 div.cancel{
+    display:inline-block;
 	width: 80px;
 	height: 20px;
 	-moz-border-radius: 3px;
@@ -215,7 +227,7 @@ div.evalneg{
 #right_bar {
   position: relative;
   top: 0px;
-  margin-left: 70%;
+  margin-left: 58%;
 }
 
 #vis div {

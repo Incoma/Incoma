@@ -3,7 +3,13 @@ var y0 = 0;
 var despx = 0;
 var despy = 0;
 var zoomval = 1;
-var rightpanelhtml = "<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center><b>Reply:</b><br> Box <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>    Thread <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><div class='save' onClick='savenode()'>Save</div>";
+var rightpanelhtmleval = "<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center>";
+
+var rightpanelhtmlreply = "<b>Reply:</b><br> Type of reply: <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br> Type of connection with the previous comment: <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><center><div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
+
+var rightpanelhtmlprereply = "<br><center><div class='showreplypanel' onClick='showreplypanel()'>Reply to the comment above</div></center>";
+
+var rightpanelhtmllink = "<br><center><div class='new' onClick='showcreatelink()'>Connect this comment with another</div></center>";
 
 Visualisations.register(new ZoomOut());
 
@@ -188,7 +194,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     </div>   \
    \
                     <div id="legend_links" class="legend_links" style="Float:left">   \
-                      <b>Threads</b>    \
+                      <b>Connections</b>    \
                     </div>   \
                     <div id="legend_hide" class="legend_hide"  style="Float:left" >   \
                       <div class="legend_hide_button" onClick="hideshowlegend()">Hide/show legend</div>   \
@@ -206,7 +212,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     </div>   \
    \
                     <div id="filt_links" class="filt_links" style="Float:left">   \
-                      <b>Threads</b>    \
+                      <b>Connections</b>    \
                     </div>   \
    \
                     <div id="filt_sizes" class="filt_sizes" style="Float:left" >   \
@@ -772,7 +778,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		document.getElementById("contbox").value = d.content+"\n"+"("+d.author+")";
 				
-		$('#rightpanel').html(rightpanelhtml + "<br><div class='new' onClick='showcreatelink()'>New link</div>");
+		$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
 	    };
         
 	};
@@ -980,14 +986,23 @@ function evalnegnode(PRES){
         
 }
 
+function showreplypanel(){
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreply + rightpanelhtmllink);	
+}
+
+function hidereplypanel(){
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);	
+}
+
+
 function showcreatelink(){
-	$('#rightpanel').html(rightpanelhtml+"<br><b>Create a new thread:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply+"<br><b>Type of relation between the comments:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
 	
 	creatinglink = true;
 }
 
 function cancellink(){
-	$('#rightpanel').html(rightpanelhtml+"<br><div class='new' onClick='showcreatelink()'>New link</div>");
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
 	
 	var PRES = Visualisations.visualisations[0].presentation;
 	PRES.prelink 
