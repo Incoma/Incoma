@@ -177,7 +177,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                       </div>   \
                     </div>   \
     \
-                    <textarea id="contbox" class="areacontent" spellcheck="false"></textarea>   \
+                    <textarea id="contbox" class="areacontent" spellcheck="false" readonly></textarea>   \
 <div id="rightpanel">  \
 </div> \
                   </div>   \
@@ -953,36 +953,32 @@ function evalneg() {
 };
 
 function evalposnode(PRES){		    
+
     var nodes = PRES.force.nodes();
     var links = PRES.force.links();
-    
- var content = document.getElementById("replybox").value;
-    var nodetype = document.getElementById("replynodetype").value;
-    var linktype = document.getElementById("replylinktype").value;
-    
+  
     var targetindex = searchhash(nodes, PRES.clickednodehash);
     targetnode = nodes[targetindex];
-    
+
     targetnode.evaluation = targetnode.evaluation+1;    
     targetnode.evaluatedby = document.getElementById("namebox").value;    
-	if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};    
-
+    if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};    
+    
 }
 
 function evalnegnode(PRES){		    
     var nodes = PRES.force.nodes();
-    var links = PRES.force.links();
-    
-    // var content = document.getElementById("replybox").value;
-    // var nodetype = document.getElementById("replynodetype").value;
-    // var linktype = document.getElementById("replylinktype").value;
-    
+    var links = PRES.force.links();  
+  
     var targetindex = searchhash(nodes, PRES.clickednodehash);
     targetnode = nodes[targetindex];
 
+    if (targetnode.evaluation !== 1 ) {
 	targetnode.evaluation = targetnode.evaluation-1;    
 	targetnode.evaluatedby = document.getElementById("namebox").value; 
 	if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};
+    }   
+
         
 }
 
