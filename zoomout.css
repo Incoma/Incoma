@@ -49,13 +49,13 @@ body {
   bottom: 0px;
   background: #cce;
   width: 100%;
-  height: 100px;
+  height: 19px;
 }
 /* HEIGHT IS DEFINED ALSO IN hideshowfilters() function !!!  */
 
 .legend_bar {
   position: absolute;
-  bottom: 100px;
+  bottom: 19px;
   background: #cce;
   width: 100%;
   height: 100px;

@@ -133,7 +133,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         "over": "#E9B"
     };
 
-    this.showfilters = 1;
+    this.showfilters = 0;
     this.showlegend = 1;
 
     this.svg = null;
