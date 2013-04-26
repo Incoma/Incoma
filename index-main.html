@@ -13,7 +13,6 @@
         <div id="headerUserName">nickname:&nbsp<textarea id='namebox' class='areaname' spellcheck='false'></textarea></div>
         <div id="headerImport">&nbsp&nbsp&nbspImport debate:&nbsp</div>
         <div id="headerExport" ></div>
-        <input type="button" id="buttonDump" name="dump" value="DUMP" onclick="alert(JSON.stringify(Model.model));" />
     </div>
     <div id="visualisationMain">
     </div>  
@@ -73,7 +72,7 @@
                         }; 
 
     addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
-    addExportListener( $( "#headerExport" )[0], "Export current debate", "Incoma-debate.json", saveModelFile );
+    addExportListener( $( "#headerExport" )[0], "Export", "Incoma-debate.json", saveModelFile );
 </script>
 </body>
 </html>

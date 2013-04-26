@@ -1,11 +1,9 @@
-var x0 = 0;
-var y0 = 0;
 var despx = 0;
 var despy = 0;
 var zoomval = 1;
 var rightpanelhtmleval = "<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center>";
 
-var rightpanelhtmlreply = "<b>Reply:</b><br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea><center><div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
+var rightpanelhtmlreply = "<b>Reply:</b><br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><<option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea><center><div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
 
 var rightpanelhtmlprereply = "<br><center><div class='showreplypanel' onClick='showreplypanel()'>Reply to the comment above</div></center>";
 
@@ -130,13 +128,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.isclicked = 0;
     this.clickednodehash = "";
     this.container = null;
-    this.width = 712;
-    this.height = 325;
+    this.width = 900;
+    this.height = 500;
 
     this.bordercolor = {
         "normal": "#af0",
         "clicked": "#255",
-        "over": "#E9B"
+        "over": "#E9B",
+		"origin": "#c33"
     };
 
     this.showfilters = 0;
@@ -245,9 +244,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     function initSVG(PRES, ABSTR, width, height) {
 
-		x0 = -5*width;
-		y0 = -5*height;
-
         PRES.force = d3.layout.force()
             .charge(-400)
             .linkDistance(40)
@@ -265,7 +261,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		PRES.svg = svgg
 			.append('svg:g')
-			.call(d3.behavior.zoom().scaleExtent([0.15,1.5]).on("zoom", rescale))
+			.call(d3.behavior.zoom().scaleExtent([0.05,1.5]).on("zoom", rescale))
 			.on("dblclick.zoom", null)
 			.append('svg:g')
 			.on("mousedown", PRES.liveAttributes.mousedown)
@@ -276,8 +272,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		PRES.background = svg.append('svg:rect')
 			.attr('width', width*11)
 			.attr('height', height*11)
-			.attr("x",x0)
-			.attr("y",y0)
+			.attr("x",-5*height)
+			.attr("y",-5*height)
 			.attr('fill', "white")
 			.style("stroke-width", "15px")
             .style("stroke", "blue")
@@ -311,8 +307,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .on("mouseout", PRES.liveAttributes.mouseout)
             .on("mousedown", PRES.liveAttributes.mousedown_node)
             .on("click", PRES.liveAttributes.click)
-            .call(force.drag)
-			.append("title").text(function (d) {return d.content+"\n"+"("+d.author+")";});	
+            .call(force.drag);
+			
+		PRES.svg.selectAll(".node")
+			.filter(function (d) {return d.origin == "1";})
+			.style("stroke",PRES.bordercolor.origin);
 			
 		PRES.prelink = svg.append("line")
 			.attr("x1", 0)
@@ -615,32 +614,32 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 
         this.nodeHeight = function (d) {
-            if (ABSTR.sizeFilters.nodes.state) {
-                return 20 * Math.sqrt(Math.sqrt(d.evaluation));
+            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
+                return 20 * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
             } else {
                 return 20;
             }
         };
 
         this.nodeWidth = function (d) {
-            if (ABSTR.sizeFilters.nodes.state) {
-                return 20 * Math.sqrt(Math.sqrt(d.evaluation));
+            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
+                return 20 * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
             } else {
                 return 20;
             }
         };
 
         this.nodeHeightLarge = function (d) {
-            if (ABSTR.sizeFilters.nodes.state) {
-                return 25 * Math.sqrt(Math.sqrt(d.evaluation));
+            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
+                return 25 * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
             } else {
                 return 25;
             }
         };
 
         this.nodeWidthLarge = function (d) {
-            if (ABSTR.sizeFilters.nodes.state) {
-                return 25 * Math.sqrt(Math.sqrt(d.evaluation));
+            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
+                return 25 * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
             } else {
                 return 25;
             }
@@ -729,14 +728,18 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 PRES.svg.selectAll(".node")
                     .style("stroke-width", function (d) {return "2px";})
                     .style("stroke", PRES.bordercolor.normal);
+				
+				PRES.svg.selectAll(".node")
+					.filter(function (d) {return d.origin == "1";})
+					.style("stroke",PRES.bordercolor.origin);
 
 		// this line below is the node where the mouse is over			
 		d3.select(this)
 //					.transition().duration(250)
 		    .style("stroke-width", function (d) {return "2px";})
-                    .style("stroke", PRES.bordercolor.over);
+            .style("stroke", PRES.bordercolor.over);
 
-                document.getElementById("contbox").value = d.content;
+            document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
             }
         };
 
@@ -744,6 +747,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    if (!creatinglink){
 		PRES.svg.selectAll(".node")
 		    .style("stroke", PRES.bordercolor.normal);
+			
+		PRES.svg.selectAll(".node")
+			.filter(function (d) {return d.origin == "1";})
+			.style("stroke",PRES.bordercolor.origin);
 				
 		PRES.clickednodehash = "";
 			
@@ -767,8 +774,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		}
 	    }else{
 		PRES.svg.selectAll(".node")
-		    .filter(function (d) {return d.hash == PRES.clickednodehash;})
 		    .style("stroke", PRES.bordercolor.normal);
+		
+		PRES.svg.selectAll(".node")
+			.filter(function (d) {return d.origin == "1";})
+			.style("stroke",PRES.bordercolor.origin);
 
 		// this line below is the clicked node
 		d3.select(this)
@@ -776,7 +786,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
 		PRES.clickednodehash = d.hash;
 
-		document.getElementById("contbox").value = d.content+"\n"+"("+d.author+")";
+		document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
 				
 		$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
 	    };
@@ -882,7 +892,8 @@ function createnode(PRES){
  //       "hash": nodes.length + 2,  // produced a gap
         "hash": nodes.length,
         "content": content,
-        "evaluation": 1,
+        "evalpos": 0,
+		"evalneg": 0,
         "evaluatedby": "",
         "type": nodetype,
         "author": author,
@@ -933,7 +944,6 @@ function drawnewnodes(PRES) {
 		.on("mousedown", PRES.liveAttributes.mousedown_node)
 		.on("click", PRES.liveAttributes.click)
         .call(PRES.force.drag)
-		.append("title").text(function (d) {return d.content+"\n"+"("+d.author+")";});	
     
     //PRES.svg.selectAll(".node").on('mousedown.drag', null);
     
@@ -960,7 +970,7 @@ function evalposnode(PRES){
     var targetindex = searchhash(nodes, PRES.clickednodehash);
     targetnode = nodes[targetindex];
 
-    targetnode.evaluation = targetnode.evaluation+1;    
+    targetnode.evalpos = targetnode.evalpos+1;    
     targetnode.evaluatedby = document.getElementById("namebox").value;    
     if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};    
     
@@ -973,12 +983,9 @@ function evalnegnode(PRES){
     var targetindex = searchhash(nodes, PRES.clickednodehash);
     targetnode = nodes[targetindex];
 
-    if (targetnode.evaluation !== 1 ) {
-	targetnode.evaluation = targetnode.evaluation-1;    
+	targetnode.evalneg = targetnode.evalneg+1;    
 	targetnode.evaluatedby = document.getElementById("namebox").value; 
 	if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};
-    }   
-
         
 }
 
@@ -1065,7 +1072,6 @@ function rescale() {
 		  "translate(" + trans + ")"
 		  + " scale(" + scale + ")");
 	  
-    document.getElementById("contbox").value = "hola" + zoom.scale;
 }
 
 function mousemove(){}
