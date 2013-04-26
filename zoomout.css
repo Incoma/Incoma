@@ -148,6 +148,7 @@ div.new{
 	border-radius: 3px;
 	background: #99f;
 	text-align: center;
+	vertical-Align: center;
 	margin: 5px;
 }
 
@@ -169,6 +170,7 @@ div.showreplypanel{
 	border-radius: 3px;
 	background: #396;
 	text-align: center;
+	vertical-Align: center;
 	margin: 5px;
 }
 

@@ -311,6 +311,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			
 		PRES.svg.selectAll(".node")
 			.filter(function (d) {return d.origin == "1";})
+			.style("stroke-width", 3)
 			.style("stroke",PRES.bordercolor.origin);
 			
 		PRES.prelink = svg.append("line")
@@ -320,7 +321,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.attr("y2", 0)
 			.style("stroke-width", 2)
 			.style("stroke", "black")
-			.style("stroke-opacity",0.3);
+			.style("stroke-opacity",0.5);
 
 
         force.on("tick", function () {
@@ -726,7 +727,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 	    if (PRES.clickednodehash === "") {
                 PRES.svg.selectAll(".node")
-                    .style("stroke-width", function (d) {return "2px";})
                     .style("stroke", PRES.bordercolor.normal);
 				
 				PRES.svg.selectAll(".node")
@@ -736,7 +736,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		// this line below is the node where the mouse is over			
 		d3.select(this)
 //					.transition().duration(250)
-		    .style("stroke-width", function (d) {return "2px";})
             .style("stroke", PRES.bordercolor.over);
 
             document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
@@ -817,6 +816,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 // End of this == presentation
 
 function savenode() {
+	if (document.getElementById("replybox").value == ""){
+		alert("And empty reply can not be saved");
+		return;
+	}
     var PRES = Visualisations.visualisations[0].presentation;
     createnode(PRES);
     //+ call to export fuctions
