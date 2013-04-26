@@ -5,7 +5,7 @@ var despy = 0;
 var zoomval = 1;
 var rightpanelhtmleval = "<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center>";
 
-var rightpanelhtmlreply = "<b>Reply:</b><br> Type of reply: <select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br> Type of connection with the previous comment: <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select><br><textarea id='replybox' class='areareply' spellcheck='false'></textarea><center><div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
+var rightpanelhtmlreply = "<b>Reply:</b><br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea><center><div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
 
 var rightpanelhtmlprereply = "<br><center><div class='showreplypanel' onClick='showreplypanel()'>Reply to the comment above</div></center>";
 
@@ -996,7 +996,7 @@ function hidereplypanel(){
 
 
 function showcreatelink(){
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply+"<br><b>Type of relation between the comments:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply+"<br><b>Type of relation:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
 	
 	creatinglink = true;
 }
