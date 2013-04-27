@@ -744,18 +744,17 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.mousedown = function (d) {
 	    if (!creatinglink){
-		PRES.svg.selectAll(".node")
-		    .style("stroke", PRES.bordercolor.normal);
+			PRES.svg.selectAll(".node")
+				.style("stroke", PRES.bordercolor.normal);
 			
-		PRES.svg.selectAll(".node")
-			.filter(function (d) {return d.origin == "1";})
-			.style("stroke",PRES.bordercolor.origin);
+			PRES.svg.selectAll(".node")
+				.filter(function (d) {return d.origin == "1";})
+				.style("stroke",PRES.bordercolor.origin);
 				
-		PRES.clickednodehash = "";
+			PRES.clickednodehash = "";
 			
-		document.getElementById("contbox").value = "";
-		document.getElementById("replybox").value = "";
-		$('#rightpanel').html(" ");
+			document.getElementById("contbox").value = "";
+			$('#rightpanel').html(" ");
 	    };
         };
 		
@@ -768,29 +767,29 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.click = function (d) {
 	    if (creatinglink){
-		if (d.hash !== PRES.clickednodehash){
-		    savelink(d);
-		}
-	    }else{
-		PRES.svg.selectAll(".node")
-		    .style("stroke", PRES.bordercolor.normal);
-		
-		PRES.svg.selectAll(".node")
-			.filter(function (d) {return d.origin == "1";})
-			.style("stroke",PRES.bordercolor.origin);
+			if (d.hash !== PRES.clickednodehash){
+				savelink(d);
+			}
+		}else{
+			PRES.svg.selectAll(".node")
+				.style("stroke", PRES.bordercolor.normal);
+	
+			PRES.svg.selectAll(".node")
+				.filter(function (d) {return d.origin == "1";})
+				.style("stroke",PRES.bordercolor.origin);
 
-		// this line below is the clicked node
-		d3.select(this)
-		    .style("stroke", PRES.bordercolor.clicked);
-		
-		PRES.clickednodehash = d.hash;
+			// this line below is the clicked node
+			d3.select(this)
+				.style("stroke", PRES.bordercolor.clicked);
+	
+			PRES.clickednodehash = d.hash;
 
-		document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
-				
-		$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
-	    };
+			document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
+			
+			$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
+		};
         
-	};
+		};
     };
 		// end of this == LiveAttributes
 
@@ -997,6 +996,7 @@ function showreplypanel(){
 }
 
 function hidereplypanel(){
+	$('#rightpanel').html(" ");
 	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);	
 }
 
