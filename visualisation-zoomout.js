@@ -96,7 +96,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.container = null;
     this.width = 712;
     this.height = 325;
-
+    this.nodeSizeDefault = 20;
+    
     this.bordercolor = {
         "normal": "#af0",
         "clicked": "#255",
@@ -438,17 +439,17 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.nodeHeight = function (d) {
             if (ABSTR.sizeFilters.nodes.state) {
-                return 20 * Math.sqrt(Math.sqrt(d.evaluation));
+                return nodeSizeDefault * Math.sqrt(Math.sqrt(d.evaluation));
             } else {
-                return 20;
+                return nodeSizeDefault;
             }
         };
 
         this.nodeWidth = function (d) {
             if (ABSTR.sizeFilters.nodes.state) {
-                return 20 * Math.sqrt(Math.sqrt(d.evaluation));
+                return nodeSizeDefault * Math.sqrt(Math.sqrt(d.evaluation));
             } else {
-                return 20;
+                return nodeSizeDefault;
             }
         };
 
@@ -544,7 +545,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			PRES.clickednodehash = "";
 			
 			document.getElementById("spec").value = "";
-			document.getElementById("spec2").value = "";
+           document.getElementById("spec2").value = "";
 			$('#replybox2').html(" ");
         };
 
