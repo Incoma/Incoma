@@ -14,7 +14,7 @@ var despyzb = 0;
 var despxp = 0;
 var despyp = 0;
 
-var rightpanelhtmleval = "<center><b>Evaluate:</b><div class='evalpos' onClick='evalpos()'>+</div><div id='posvotes' class='posvotes'>0</div><div class='evalneg' onClick='evalneg()'>-</div><div id='negvotes' class='negvotes'>0</div></center>";
+var rightpanelhtmleval = "<center><b>Evaluate:</b><div class='evalpos' onClick='evalpos()'>+</div><div id='posvotes' class='posvotes'></div><div class='evalneg' onClick='evalneg()'>-</div><div id='negvotes' class='negvotes'></div></center>";
 
 var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><<option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
 
@@ -195,6 +195,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     </div>   \
     \
                     <textarea id="contbox" class="areacontent" spellcheck="false" readonly></textarea>   \
+					<div id="rightpaneleval">  \
+					</div> \
 					<div id="rightpanel">  \
 					</div> \
                   </div>   \
@@ -762,6 +764,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				PRES.clickednodehash = "";
 				
 				document.getElementById("contbox").value = "";
+				$('#rightpaneleval').html(" ");
 				$('#rightpanel').html(" ");
 				replying = false;
 			};
@@ -792,7 +795,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	
 			PRES.clickednodehash = d.hash;
 			
-			$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink);
+			$('#rightpaneleval').html(rightpanelhtmleval);
+			$('#rightpanel').html(rightpanelhtmlreplyandlink);
 			
 			document.getElementById("contbox").value = "[" + ABSTR.nodeFilters[d.type].name + "]" + "\n\n" + d.content+"\n\n" + "[by " +d.author +"]";
 			document.getElementById("posvotes").innerHTML = d.evalpos;
@@ -1004,19 +1008,15 @@ function evalnode(vote) {
 
 function showreplypanel(){
 	cancellink();
-	if (replying){
-		hidereplypanel();
-	} else {
-		$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
+		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
 		replying = true;
 		document.getElementById("namebox2").value = document.getElementById("namebox").value;
-	}
 }
 
 function hidereplypanel(){
 	document.getElementById("replybox").value = "";
 	replying = false; 
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink);	
+	$('#rightpanel').html(rightpanelhtmlreplyandlink);	
 }
 
 
@@ -1024,13 +1024,13 @@ function showcreatelink(){
 	if (creatinglink){
 		cancellink();
 	}else{
-		$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink + rightpanelhtmllink);
+		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmllink);
 		creatinglink = true;
 	}
 }
 
 function cancellink(){
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink);
+	$('#rightpanel').html(rightpanelhtmlreplyandlink);
 	
 	var PRES = Visualisations.visualisations[0].presentation;
 	PRES.prelink 
