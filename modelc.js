@@ -1,0 +1,49 @@
+
+var Model = { 
+    model: null,
+
+
+//    clear: function() {
+//        this.model = { nodes: [], links: [], authors: []}
+//    },
+
+    clear: function() {
+        this.model = {nodes:[{"hash":0,"content":"node 1 of 10","evalpos":0,"evalneg":1,"evaluatedby":[],"type":3,"author":"Anonymous","time":"1367293798786"},{"hash":1,"content":"node 2 of 10","evalpos":2,"evalneg":3,"evaluatedby":[],"type":5,"author":"Anonymous","time":"1367293798786"},{"hash":2,"content":"node 3 of 10","evalpos":6,"evalneg":3,"evaluatedby":[],"type":5,"author":"Anonymous","time":"1367293798786"},{"hash":3,"content":"node 4 of 10","evalpos":3,"evalneg":0,"evaluatedby":[],"type":1,"author":"Anonymous","time":"1367293798786"},{"hash":4,"content":"node 5 of 10","evalpos":4,"evalneg":0,"evaluatedby":[],"type":1,"author":"Anonymous","time":"1367293798786"},{"hash":5,"content":"node 6 of 10","evalpos":5,"evalneg":0,"evaluatedby":[],"type":3,"author":"Anonymous","time":"1367293798786"},{"hash":6,"content":"node 7 of 10","evalpos":5,"evalneg":3,"evaluatedby":[],"type":1,"author":"Anonymous","time":"1367293798786"},{"hash":7,"content":"node 8 of 10","evalpos":8,"evalneg":1,"evaluatedby":[],"type":2,"author":"Anonymous","time":"1367293798786"},{"hash":8,"content":"node 9 of 10","evalpos":5,"evalneg":2,"evaluatedby":[],"type":1,"author":"Anonymous","time":"1367293798786"},{"hash":9,"content":"node 10 of 10","evalpos":9,"evalneg":3,"evaluatedby":[],"type":4,"author":"Anonymous","time":"1367293798786"},{"hash":10,"content":"node 11 of 10","evalpos":7,"evalneg":1,"evaluatedby":[],"type":1,"author":"Anonymous","time":"1367293798786"}],links:[{"source":0,"target":1,"ssource":0,"ttarget":1,"evalpos":12,"evalneg":6,"evaluatedby":[],"type":"3","author":"anonymous","time":"17-abr-2013"},{"source":1,"target":0,"ssource":1,"ttarget":0,"evalpos":10,"evalneg":4,"evaluatedby":[],"type":"1","author":"anonymous","time":"17-abr-2013"},{"source":2,"target":1,"ssource":2,"ttarget":1,"evalpos":14,"evalneg":8,"evaluatedby":[],"type":"5","author":"anonymous","time":"17-abr-2013"},{"source":3,"target":0,"ssource":3,"ttarget":0,"evalpos":13,"evalneg":7,"evaluatedby":[],"type":"3","author":"anonymous","time":"17-abr-2013"},{"source":4,"target":1,"ssource":4,"ttarget":1,"evalpos":15,"evalneg":9,"evaluatedby":[],"type":"2","author":"anonymous","time":"17-abr-2013"},{"source":5,"target":4,"ssource":5,"ttarget":4,"evalpos":11,"evalneg":5,"evaluatedby":[],"type":"2","author":"anonymous","time":"17-abr-2013"},{"source":6,"target":3,"ssource":6,"ttarget":3,"evalpos":10,"evalneg":4,"evaluatedby":[],"type":"2","author":"anonymous","time":"17-abr-2013"},{"source":7,"target":1,"ssource":7,"ttarget":1,"evalpos":11,"evalneg":5,"evaluatedby":[],"type":"4","author":"anonymous","time":"17-abr-2013"},{"source":8,"target":6,"ssource":8,"ttarget":6,"evalpos":14,"evalneg":8,"evaluatedby":[],"type":"1","author":"anonymous","time":"17-abr-2013"},{"source":9,"target":6,"ssource":9,"ttarget":6,"evalpos":11,"evalneg":5,"evaluatedby":[],"type":"2","author":"anonymous","time":"17-abr-2013"},{"source":10,"target":5,"ssource":10,"ttarget":5,"evalpos":15,"evalneg":9,"evaluatedby":[],"type":"6","author":"anonymous","time":"17-abr-2013"}], authors: []}
+		},
+    
+    importFile: function(text, mime) {
+        // TODO: check mime for other formats
+        switch (mime) {
+            case "application/x-incoma+json":
+            default:
+                this.model = JSON.parse(text);
+        }
+    }, 
+    
+//    exportFile: function() {	
+//       return { text: JSON.stringify(this.model),
+//                 mime: "application/x-incoma+json" };
+//   },
+    
+    // remove the data that is added by the presentation level to abstraction level model
+    // by the initSVG function in the ZoomOut_Presentation function in visualisation-zoomout.js
+    // done by regular expressions, so dependent on the order of the elements, 
+    // at least for the coordinates removed by the last replace : "x" ...
+    expurgeModelText: function(modelText) {
+	text = modelText.replace(/"source":{"hash":(\d+),[^\}]+}/g, "\"source\":$1");
+	text = text.replace(/"ssource":{"hash":(\d+),[^\}]+}/g, "\"ssource\":$1");
+	text = text.replace(/"target":{"hash":(\d+),[^\}]+}/g, "\"target\":$1");
+	text = text.replace(/"ttarget":{"hash":(\d+),[^\}]+}/g, "\"ttarget\":$1");
+	return text.replace(/,"x"[^\}]+}/g, "}");
+	
+    }, 
+    
+    exportFile: function() {
+         return { 
+	    text: this.expurgeModelText(JSON.stringify(this.model)),
+	    mime: "application/x-incoma+json" };
+    },
+      
+};
+
+  

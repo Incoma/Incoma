@@ -2,6 +2,9 @@
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="style.css"/>
 <link rel="stylesheet" type="text/css" href="zoomout.css"/>
+<head>
+<title>INCOMA v0.1 -sandbox-</title>
+</head>
 <body>
     <script src="jquery-1.9.1.js"></script>
 
@@ -9,9 +12,10 @@
 
 
     <div id="headerMain" style="color:#ccc;">
-        <div id="headerName" style="color:#ffc;">&nbsp&nbspINCOMA&nbspv0.1</div>
+        <div id="headerName" style="color:#fff;">&nbsp&nbspINCOMA&nbspv0.1&nbsp&nbsp&nbsp-&nbspsandbox&nbsp-</div>
+		<a href="http://incomaproject.org" style="color:#fff;">http://incomaproject.org</a>
         <div id="headerUserName">nickname:&nbsp<textarea id='namebox' class='areaname' spellcheck='false'></textarea></div>
-        <div id="headerImport">&nbsp&nbsp&nbspImport debate:&nbsp</div>
+        <div id="headerImport">&nbsp&nbsp&nbspImport:&nbsp</div>
         <div id="headerExport" ></div>
     </div>
     <div id="visualisationMain">
@@ -34,10 +38,10 @@
 </script>
 
 
-<script src="opensave.js"></script>
-<script src="modelb.js"></script>
-<script src="visualisation.js"></script>
 <script src="d3.v3.min.js"></script>
+<script src="opensave.js"></script>
+<script src="modelc.js"></script>
+<script src="visualisation.js"></script>
 <script src="visualisation-zoomout.js"></script>
 
 <script>
@@ -67,12 +71,12 @@
     var saveModelFile = function() { return Model.exportFile(); }
 
     var loadModelFile = function(file) {
-                            var fileName = file.name || "current debate" ;
+                            var fileName = file.name || "current conversation" ;
                             blobToText( file, function(text) { Model.importFile(text); reInit(); } );
                         }; 
 
     addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
-    addExportListener( $( "#headerExport" )[0], "Export", "Incoma-debate.json", saveModelFile );
+    addExportListener( $( "#headerExport" )[0], "Export", "Incoma-conversation.json", saveModelFile );
 </script>
 </body>
 </html>

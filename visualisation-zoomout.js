@@ -1,13 +1,30 @@
 var despx = 0;
 var despy = 0;
+
 var zoomval = 1;
-var rightpanelhtmleval = "<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center>";
+var zoomvalb = 1;
+var zoomvalm = 1;
 
-var rightpanelhtmlreply = "<b>Reply:</b><br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><<option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea><center><div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
+var despxzm = 0;
+var despyzm = 0;
 
-var rightpanelhtmlprereply = "<br><center><div class='showreplypanel' onClick='showreplypanel()'>Reply to the comment above</div></center>";
+var despxzb = 0;
+var despyzb = 0;
 
-var rightpanelhtmllink = "<br><center><div class='new' onClick='showcreatelink()'>Connect this comment with another</div></center>";
+var despxp = 0;
+var despyp = 0;
+
+var rightpanelhtmleval = "<center><b>Evaluate:</b><div class='evalpos' onClick='evalpos()'>+</div><div id='posvotes' class='posvotes'>0</div><div class='evalneg' onClick='evalneg()'>-</div><div id='negvotes' class='negvotes'>0</div></center>";
+
+var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><<option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
+
+// var rightpanelhtmlprereply = "<br><div class='showreplypanel' onClick='showreplypanel()'>Reply</div>";
+
+// var rightpanelhtmllink = "<div class='showconnectpanel' onClick='showcreatelink()'>Connect</div>";
+
+var rightpanelhtmlreplyandlink = "<br><center><div class='showreplypanel' onClick='showreplypanel()'>Reply</div>&nbsp&nbsp&nbsp&nbsp<div class='showconnectpanel' onClick='showcreatelink()'>Connect</div></center>";
+
+var rightpanelhtmllink = "<br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>";
 
 Visualisations.register(new ZoomOut());
 
@@ -30,6 +47,7 @@ function ZoomOut() {
 // Start of this == abstraction = model and state of filters [abstraction initialized with (model)]
 
 var creatinglink = false;
+var replying = false;
 
 function ZoomOut_Abstraction(VIS) {
     this.model = null;
@@ -142,7 +160,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.showlegend = 1;
 
     this.svg = null;
-    this.color = d3.scale.category20();
+	this.color = d3.scale.category20();
 
     this.liveAttributes = new LiveAttributes(ABSTR, this);
     //    this.updateLinks = function() { this.definedBelow(); }
@@ -163,22 +181,22 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.container = html5node;
         html5node.innerHTML =
             '   \
-             <div class="svg_and_right_bar">   \
+              <div class="svg_and_right_bar">   \
    \
                   <div id="svg" class="mod">   \
                     <div class="svg">  </div>   \
                   </div>   \
-   \
+	 \
                   <div id="right_bar" class="mod">   \
                     <div class="right_bar_header">   \
                       <div class="right_bar_title">   \
-                        Content:           \
+                        Content:\
                       </div>   \
                     </div>   \
     \
                     <textarea id="contbox" class="areacontent" spellcheck="false" readonly></textarea>   \
-<div id="rightpanel">  \
-</div> \
+					<div id="rightpanel">  \
+					</div> \
                   </div>   \
     \
              </div>   \
@@ -246,7 +264,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         PRES.force = d3.layout.force()
             .charge(-400)
+			.gravity(0.1)
             .linkDistance(40)
+			.theta(0.95)
             .size([width, height]);
         var force = PRES.force;
 
@@ -261,7 +281,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		PRES.svg = svgg
 			.append('svg:g')
-			.call(d3.behavior.zoom().scaleExtent([0.05,1.5]).on("zoom", rescale))
+			.call(d3.behavior.zoom().scaleExtent([0.1,2]).on("zoom", rescale))
 			.on("dblclick.zoom", null)
 			.append('svg:g')
 			.on("mousedown", PRES.liveAttributes.mousedown)
@@ -304,8 +324,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .attr("height", PRES.liveAttributes.nodeHeight)
             .style("fill", PRES.liveAttributes.nodeFill)
             .on("mouseover", PRES.liveAttributes.mouseover)
-            .on("mouseout", PRES.liveAttributes.mouseout)
-            .on("mousedown", PRES.liveAttributes.mousedown_node)
             .on("click", PRES.liveAttributes.click)
             .call(force.drag);
 			
@@ -327,10 +345,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         force.on("tick", function () {
 		
             PRES.svg.selectAll(".link")
-				.attr("x1", function (d) {return d.source.x + 10;})
-                .attr("y1", function (d) {return d.source.y + 10;})
-                .attr("x2", function (d) {return d.target.x + 10;})
-                .attr("y2", function (d) {return d.target.y + 10;});
+				.attr("x1", function (d) {return d.source.x+10;})
+                .attr("y1", function (d) {return d.source.y+10;})
+                .attr("x2", function (d) {return d.target.x+10;})
+                .attr("y2", function (d) {return d.target.y+10;});
 
             PRES.svg.selectAll(".node")
 				.attr("x", function (d) {return d.x;})
@@ -630,22 +648,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             }
         };
 
-        this.nodeHeightLarge = function (d) {
-            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
-                return 25 * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
-            } else {
-                return 25;
-            }
-        };
-
-        this.nodeWidthLarge = function (d) {
-            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
-                return 25 * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
-            } else {
-                return 25;
-            }
-        };
-
         this.nodeOpacityAndSetConnectedLinkOpacity = function (d) {
             if (ABSTR.nodeFilters[d.type].state) {
 
@@ -654,14 +656,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 nodehash = d.hash;
                 PRES.svg.selectAll(".link")
                     .filter(function (d) {
-                    return d.ssource == nodehash;
+                    return d.source.hash == nodehash;
                 })
                     .style("stroke-width", function (d) {
                     return 0;
                 });
                 PRES.svg.selectAll(".link")
                     .filter(function (d) {
-                    return d.ttarget == nodehash;
+                    return d.target.hash == nodehash;
                 })
                     .style("stroke-width", function (d) {
                     return 0;
@@ -688,7 +690,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.linkStrokeWidth = function (d) {
             if (ABSTR.linkFilters[d.type].state) {
                 if (ABSTR.sizeFilters.links.state)
-                    return Math.sqrt(d.evaluation);
+                    return Math.sqrt(d.evalpos-d.evalneg);
                 else
                     return Math.sqrt(6);
             } else {
@@ -725,7 +727,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
         this.mouseover = function (d) {
 
-	    if (PRES.clickednodehash === "") {
+			var fillopacity = 	PRES.svg.selectAll(".node")
+						.filter(function (e) {return e.hash == d.hash;})
+						.style("fill-opacity");	
+								
+			if (fillopacity == 0){return};
+			
+			if (PRES.clickednodehash === "") {
                 PRES.svg.selectAll(".node")
                     .style("stroke", PRES.bordercolor.normal);
 				
@@ -733,37 +741,31 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.filter(function (d) {return d.origin == "1";})
 					.style("stroke",PRES.bordercolor.origin);
 
-		// this line below is the node where the mouse is over			
-		d3.select(this)
+				// this line below is the node where the mouse is over			
+				d3.select(this)
 //					.transition().duration(250)
-            .style("stroke", PRES.bordercolor.over);
-
-            document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
-            }
+					.style("stroke", PRES.bordercolor.over);
+						
+				document.getElementById("contbox").value = "[" + ABSTR.nodeFilters[d.type].name + "]" + "\n\n" + d.content + "\n\n" +"[by " +d.author+"]";
+			}
         };
 
         this.mousedown = function (d) {
-	    if (!creatinglink){
-			PRES.svg.selectAll(".node")
-				.style("stroke", PRES.bordercolor.normal);
-			
-			PRES.svg.selectAll(".node")
-				.filter(function (d) {return d.origin == "1";})
-				.style("stroke",PRES.bordercolor.origin);
+			if (!creatinglink){
+				PRES.svg.selectAll(".node")
+					.style("stroke", PRES.bordercolor.normal);
 				
-			PRES.clickednodehash = "";
-			
-			document.getElementById("contbox").value = "";
-			$('#rightpanel').html(" ");
-	    };
+				PRES.svg.selectAll(".node")
+					.filter(function (d) {return d.origin == "1";})
+					.style("stroke",PRES.bordercolor.origin);
+					
+				PRES.clickednodehash = "";
+				
+				document.getElementById("contbox").value = "";
+				$('#rightpanel').html(" ");
+				replying = false;
+			};
         };
-		
-		this.mousedown_node = function (d) {
-			if (creatinglink){savelink();};
-        };
-
-        this.mouseout = function (d) {};
-
 
         this.click = function (d) {
 	    if (creatinglink){
@@ -771,22 +773,31 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				savelink(d);
 			}
 		}else{
+			var fillopacity = 	PRES.svg.selectAll(".node")
+								.filter(function (e) {return e.hash == d.hash;})
+								.style("fill-opacity");	
+								
+			if (fillopacity == 0){return};
+
 			PRES.svg.selectAll(".node")
 				.style("stroke", PRES.bordercolor.normal);
 	
 			PRES.svg.selectAll(".node")
 				.filter(function (d) {return d.origin == "1";})
 				.style("stroke",PRES.bordercolor.origin);
-
+			
 			// this line below is the clicked node
 			d3.select(this)
 				.style("stroke", PRES.bordercolor.clicked);
 	
 			PRES.clickednodehash = d.hash;
-
-			document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
 			
-			$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
+			$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink);
+			
+			document.getElementById("contbox").value = "[" + ABSTR.nodeFilters[d.type].name + "]" + "\n\n" + d.content+"\n\n" + "[by " +d.author +"]";
+			document.getElementById("posvotes").innerHTML = d.evalpos;
+			document.getElementById("negvotes").innerHTML = d.evalneg;
+			
 		};
         
 		};
@@ -891,25 +902,22 @@ function createnode(PRES){
     
     var newnode = {
  // elements and order adapted to be the same as in modelb.js
- //       "hash": nodes.length + 2,  // produced a gap
         "hash": nodes.length,
         "content": content,
         "evalpos": 0,
 		"evalneg": 0,
-        "evaluatedby": "",
+        "evaluatedby": [],
         "type": nodetype,
         "author": author,
-        "time": "17-abr-2013",
+        "time": Date.now(),
         x: targetnode.x,
         y: targetnode.y
     };
     
     nodes.push(newnode);
-//    links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
-// elements and order adapted to be the same as in modelb.js
-    links.push({source: newnode, target: targetnode,ssource: newnode, ttarget: targetnode,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
+    links.push({source: newnode, target: targetnode,"evalpos":6,"evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": "17-abr-2013"});
     
-    document.getElementById("replybox").value = "";
+	hidereplypanel();
     
     drawnewnodes(PRES);
 }
@@ -942,8 +950,6 @@ function drawnewnodes(PRES) {
 		.attr("height", PRES.liveAttributes.nodeHeight)
 		.style("fill", PRES.liveAttributes.nodeFill)
 		.on("mouseover", PRES.liveAttributes.mouseover)
-		.on("mouseout", PRES.liveAttributes.mouseout)
-		.on("mousedown", PRES.liveAttributes.mousedown_node)
 		.on("click", PRES.liveAttributes.click)
         .call(PRES.force.drag)
     
@@ -952,63 +958,79 @@ function drawnewnodes(PRES) {
     PRES.force.start();
 };
 
-function evalpos() {
-    var PRES = Visualisations.visualisations[0].presentation;
-    evalposnode(PRES);    
-    PRES.update();
-};
+function evalpos(){
+	evalnode("pos");
+}
 
-function evalneg() {
-    var PRES = Visualisations.visualisations[0].presentation;
-    evalnegnode(PRES);    
-    PRES.update();
-};
+function evalneg(){
+	evalnode("neg");
+}
 
-function evalposnode(PRES){		    
-
-    var nodes = PRES.force.nodes();
+function evalnode(vote) {
+    var PRES = Visualisations.visualisations[0].presentation;   
+	
+	var nodes = PRES.force.nodes();
     var links = PRES.force.links();
   
     var targetindex = searchhash(nodes, PRES.clickednodehash);
     targetnode = nodes[targetindex];
-
-    targetnode.evalpos = targetnode.evalpos+1;    
-    targetnode.evaluatedby = document.getElementById("namebox").value;    
-    if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};    
-    
-}
-
-function evalnegnode(PRES){		    
-    var nodes = PRES.force.nodes();
-    var links = PRES.force.links();  
-  
-    var targetindex = searchhash(nodes, PRES.clickednodehash);
-    targetnode = nodes[targetindex];
-
-	targetnode.evalneg = targetnode.evalneg+1;    
-	targetnode.evaluatedby = document.getElementById("namebox").value; 
-	if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};
-        
-}
+	
+    var name = document.getElementById("namebox").value;    
+    if (name == ""){name = "anon";}
+	
+	if($.inArray(name, targetnode.evaluatedby) > -1){
+	
+		alert("You have already voted this node");
+		
+	} else{
+	
+		targetnode.evaluatedby.push(name);
+		
+		if (vote=="pos"){
+			targetnode.evalpos = targetnode.evalpos+1; 
+			document.getElementById("posvotes").innerHTML = targetnode.evalpos;
+		}else{
+			targetnode.evalneg = targetnode.evalneg+1;
+			document.getElementById("negvotes").innerHTML = targetnode.evalneg;
+		}
+	
+		PRES.svg.selectAll(".node")
+			.filter(function (d) {return d.hash == PRES.clickednodehash;})
+			.transition().duration(1000).ease("elastic")
+			.attr("width", PRES.liveAttributes.nodeWidth)
+			.attr("height", PRES.liveAttributes.nodeHeight);   
+	}
+};
 
 function showreplypanel(){
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreply + rightpanelhtmllink);	
+	cancellink();
+	if (replying){
+		hidereplypanel();
+	} else {
+		$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
+		replying = true;
+		document.getElementById("namebox2").value = document.getElementById("namebox").value;
+	}
 }
 
 function hidereplypanel(){
-	$('#rightpanel').html(" ");
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);	
+	document.getElementById("replybox").value = "";
+	replying = false; 
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink);	
 }
 
 
 function showcreatelink(){
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply+"<br><b>Type of relation:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
-	
-	creatinglink = true;
+	if (creatinglink){
+		cancellink();
+	}else{
+		$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink + rightpanelhtmllink);
+		creatinglink = true;
+	}
 }
 
 function cancellink(){
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreplyandlink);
 	
 	var PRES = Visualisations.visualisations[0].presentation;
 	PRES.prelink 
@@ -1035,7 +1057,7 @@ function savelink(d){
     var author = document.getElementById("namebox").value;
     if (author == ""){author = "anonymous";};
 	
-    links.push({source: sourcenode, target: d, ssource: sourceindex, ttarget: d.index,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
+    links.push({source: sourcenode, target: d, "evalpos":6, "evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": Date.now()});
 	
     var link = PRES.svg.selectAll(".link")
         .data(links)
@@ -1067,13 +1089,29 @@ function rescale() {
     trans=d3.event.translate;
     scale=d3.event.scale;
 	
-	despx = trans[0];
-	despy = trans[1];
-	zoomval = scale;
+	document.getElementById("contbox").value = (trans) + "  " + scale;
 	
-    PRES.svg.attr("transform",
-		  "translate(" + trans + ")"
-		  + " scale(" + scale + ")");
+	if (zoomvalm == scale){ //no ha habido zoom
+	
+		despxp = trans[0]-despxzm;
+		despyp = trans[1]-despyzm;
+		
+	} else {	
+	
+		despxzm = trans[0]*zoomvalb-despxp;
+		despyzm = trans[1]*zoomvalb-despyp;
+		
+		cambiox = despxzm-despxp;
+		
+	}
+	
+	despx = despxzb + despxzm + despxp;
+	despy = despyzb + despyzm + despyp;
+	
+	zoomvalm = scale;
+	zoomval = zoomvalb*zoomvalm;
+	
+    PRES.svg.attr("transform", "translate(" + despx + ',' + despy + ") scale(" + zoomval + ")");
 	  
 }
 
