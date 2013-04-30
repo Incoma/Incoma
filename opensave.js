@@ -1,6 +1,9 @@
 // browser differences
 var URL = window.URL || window.webkitURL;
 
+//blob : objects in memory
+//text : string of characters that are, or can be in a text file
+
 
 function textToBlob(text, mime) {
     return new window.Blob( [text], {type: (mime || "application/octed-stream") } );
@@ -26,7 +29,7 @@ function blobToText(blob, onready, onerror) {
  * fileselect: function(file) is called when file is imported
  */
 function addImportListener(node, accept, fileselect, onerror) {
-    var control = node.nodeName == "INPUT"? [node] : node.getElementsByTagName("INPUT");
+   var control = node.nodeName == "INPUT"? [node] : node.getElementsByTagName("INPUT");
     if (control && control.length >= 1) {
         control = control[0];
     }
@@ -35,15 +38,16 @@ function addImportListener(node, accept, fileselect, onerror) {
     }
     if (!control) {
         control = document.createElement("INPUT");
-        node.appendChild(control);
+           node.appendChild(control);
     }
     control.setAttribute("type", "file");
     if (accept) {
         control.setAttribute("accept", accept);
     }
+   
     var handleFileSelect = function(evt) {
-        var file = evt.target.files[0];
-        fileselect(file);
+      var file = evt.target.files[0];
+      fileselect(file);
     };
     control.addEventListener('change', handleFileSelect, false);
 }
@@ -56,6 +60,7 @@ function addImportListener(node, accept, fileselect, onerror) {
  *          if getText() is missing, just caption and name are changed for node
  */
 function addExportListener(node, caption, name, getText) {
+  // modified such that the model is saved when the caption is clicked on, instead of at the creation of the caption
     var lnk = node.nodeName == "A"? [node] : node.getElementsByTagName("A");
     if (lnk && lnk.length >= 1) {
         lnk = lnk[0];
@@ -73,15 +78,17 @@ function addExportListener(node, caption, name, getText) {
     }
     lnk.innerHTML = caption;
     lnk.setAttribute("download", name);
-    if (getText) {
-        var text = getText();
-        var mime = "application/octet-stream";
-        if (text && text.text && text.mime) {
-            mime = text.mime;
-            text = text.text;
-        }
-        var url = "";
-        if (text) {
+    
+    node.onclick = function() { 
+	if (getText) {
+	  var text = getText();
+	  var mime = "application/octet-stream";
+	  if (text && text.text && text.mime) {
+	      mime = text.mime;
+	      text = text.text;
+	  }
+	  var url = "";
+	  if (text) {
             if (URL) {
                 var blob = textToBlob(text, mime);
                 if (!blob)
@@ -91,9 +98,10 @@ function addExportListener(node, caption, name, getText) {
             else {
                 url = "data:" + mime + ";base64," + btoa(text);
             }
-        }
-        lnk.setAttribute("href", url);
+	  }
+	  lnk.setAttribute("href", url);
+	}
+	return Model.exportFile();
     }
-//    lnk.addEventListener('click',         function(e) { lnk.setAttribute(); }, false);
 }
 

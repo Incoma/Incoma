@@ -12,122 +12,213 @@ body {
   overflow: hidden;
 }
 
-.areacontent {
-  font-size: 15px;
-  width: 298px;
-  min-height: 130px;
 
-}
-
-.areareply {
-  font-size: 15px;
-  border: yes;
-  width: 298px;
-  min-height: 60px;
-
-}
-
-
-.mod_area {
-  background: #f00;
-  width: 10px;
-}
-
-.mod_up {
+.svg_and_right_bar {
   height: 80%;
 }
 
-.mod_down {
-  position: absolute;
-  bottom: 5px;
-  background: #eee;
-  width: 100%;
-  height: 20%;
+.right_bar_header {
+  padding: 4px 4px 4px 4px;
+  background: #cce;
 }
 
+.right_bar_title {
+  line-height: 14pt;
+  top: -10px;
+}
 
-.mod_down_elems {
+.areacontent {
+  width: 98%;
+  min-height: 70px;
+}
+
+.areareply {
+  border: yes;
+  width: 98%;
+  min-height: 60px;
+}
+
+.areaname {
+  border: yes;
+  width: 40%;
+  height: 17px;
+}
+
+.lower_bar {
+  position: absolute;
+  bottom: 0px;
+  background: #cce;
+  width: 100%;
+  height: 19px;
+}
+/* HEIGHT IS DEFINED ALSO IN hideshowfilters() function !!!  */
+
+.legend_bar {
+  position: absolute;
+  bottom: 19px;
+  background: #cce;
+  width: 100%;
+  height: 100px;
+}
+/* HEIGHT IS DEFINED ALSO IN hideshowlegend() function !!!  */
+
+.lower_bar_elems {
   position: relative;
   left: 3%;
   height: 25%;
 }
 
-.mod_filt {
+.legend_bar_elems {
+  position: relative;
+  left: 3%;
+  height: 25%;
+}
+
+.filters_title {
   position: relative;
   width: 10%;
   height: 100%;
 }
 
-.mod_filt_box {
+.filt_nodes {
   position: relative;
-  left:10%;
+  top:15px;
+  width: 19%;
+  height: 100%;
+}
+
+.filt_links {
+  position: relative;
+  top:15px;
+  left:5%;
+  width: 36%;
+  height: 100%;
+}
+
+.filt_sizes {
+  position: relative;
+  top:15px;
+  left:8%;
   width: 10%;
   height: 100%;
 }
 
-
-.mod_filt_size {
+.legend_title {
   position: relative;
-  left:20%;
   width: 10%;
   height: 100%;
 }
 
-
-
-.mod {
+.legend_nodes {
   position: relative;
-  vertical-align: top;
+  top:15px;
+  width: 19%;
   height: 100%;
 }
 
-.mod_header {
-  padding: 4px 4px 4px 4px;
-  background: #eee;
-}
-
-.mod_title {
-  line-height: 14pt;
-  top: -10px;
-}
-
-.mod_title_box {
+.legend_links {
   position: relative;
-  line-height: 14pt;
-  left:24%;
+  top:15px;
+  left:5%;
+  width: 36%;
+  height: 100%;
 }
 
 
-.mod_title a {
-  color: #aaa; 
-  cursor: pointer;
-  margin-right: 5px;
-}
-.mod_title a.active {
-  color: #000;
-}
-.mod_title a:hover {
-  color: #b00;
+.filt_hide {
+  position: relative;
+  left:6%;
+  width: 20%;
+  height: 100%;
 }
 
-.mod_ctrls {
-  position: absolute;
-  right: 2px;
-  top: 1px;
+
+.legend_hide {
+  position: relative;
+  left:16%;
+  width: 20%;
+  height: 100%;
+}
+
+
+div.new{
+	width: 160px;
+	height: 40px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #99f;
+	text-align: center;
+	vertical-Align: center;
+	margin: 5px;
 }
 
 div.save{
+    display:inline-block;
 	width: 80px;
 	height: 20px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	background: #99f;
+	background: #396;
+	text-align: center;
+	margin: 5px;
+}
+
+div.showreplypanel{
+	width: 160px;
+	height: 40px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #396;
+	text-align: center;
+	vertical-Align: center;
+	margin: 5px;
+}
+
+div.filt_hide_button{
+	text-align: center;
+	margin: 5px;
+}
+
+div.legend_hide_button{
+	text-align: center;
+	margin: 5px;
+}
+
+div.cancel{
+    display:inline-block;
+	width: 80px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #c93;
+	text-align: center;
+	margin: 5px;
+}
+
+div.evalpos{
+    display:inline-block;
+	width: 30px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #3c3;
+	text-align: center;
+	margin: 5px;
+}
+
+div.evalneg{
+        display:inline-block;
+	width: 30px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #f63;
 	text-align: center;
 	margin: 5px;
 }
 
 
-#mod_vis {
+#svg {
   position: absolute;
   left: 0;
   top: 40px;
@@ -135,7 +226,7 @@ div.save{
   height: 80%;
 }
 
-#mod_spec {
+#right_bar {
   position: relative;
   top: 0px;
   margin-left: 70%;
@@ -145,50 +236,12 @@ div.save{
   border: 1px dashed #ccc;
 }
 
-
-
-#headerMain {
-    background: #aaa;
-    text-align: right;
-    vertical-align: center;
-    width: 100%;
-    min-height: 40px;
-}
-
-#headerName {
-    display: inline-block;
-    margin: 5px;
-    font-size: 20pt;
-}
-
-#headerExport, #headerImport {
-    display: inline-block;
-    margin: 5px;
-}
-
-#headerName {
-    position: absolute;
-    left: 0px;
-}
-
-#headerExport {
-    min-width: 200px;
-}
-
-#headerImport {
-    min-width: 200px;
-}
-
-#visualisationMain {
-    width: 100%;
-}
-
 .node {
   stroke: #af0;
   stroke-width: 1.5px;
 }
 
 .link {
-  stroke-opacity: .6;
+  stroke-opacity: .8;
 }
 

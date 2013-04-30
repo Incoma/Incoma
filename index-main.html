@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="style.css"/>
 <link rel="stylesheet" type="text/css" href="zoomout.css"/>
 <body>
     <script src="jquery-1.9.1.js"></script>
@@ -7,14 +8,25 @@
 <!-- HTML frame -->
 
 
-    <div id="headerMain">
-        <div id="headerName">Incoma</div>
-        <div id="headerImport"></div>
-        <div id="headerExport" ></div>
-        <input type="button" id="buttonDump" name="dump" value="DUMP" onclick="alert(JSON.stringify(Model.model));" />
+    <div id="headerMain" style="color:#ccc;">
+        <div id="headerName" class="header">
+            &nbsp;&nbsp;INCOMA&nbsp;v0.1
+        </div>
+        <div id="headerUserName" class="header">
+            Nickname:&nbsp;
+            <textarea id='namebox' class='areaname' spellcheck='false'></textarea>
+        </div>
+        <div id="headerChangeVis" class="header" >
+            <select id="visChoice" name="visualisationChoice"size="1">
+            </select>
+        </div>
+        <div id="headerImport" class="header">
+            &nbsp;&nbsp;&nbsp;Import debate:&nbsp;
+        </div>
+        <div id="headerExport"  class="header"></div>
     </div>
     <div id="visualisationMain">
-    </div> 
+    </div>  
 
 <!-- Javascript -->
 
@@ -40,38 +52,43 @@
 <script src="visualisation-zoomout.js"></script>
 
 <script>
-    var currentVisualisation = null;
-
     Model.clear();
     
-    //FIXME: define mouseover and mouseout in visualisation-zoomout.js
-    var NYI = function() {};
-    var mouseover = NYI;
-    var mouseout = NYI;
-    var initNodeFilters = NYI;
-    var initSizeFilters = NYI;
+    var currentVisualisation = null;
+    var chooseVisualisation = $("#visChoice")[0];
+    for (var i = 0; i < Visualisations.visualisations.length; ++i) {
+        var vis = Visualisations.visualisations[i];
+        var option = Visualisations.makeOption(vis.name, i);
+        chooseVisualisation.appendChild(option);
+    }
+    chooseVisualisation.onchange = function (e) {
+        var i = chooseVisualisation.options[chooseVisualisation.selectedIndex].value;
+        reInit(Visualisations.visualisations[i]);
+    };
     
-    reInit();
+    reInit(Visualisations.visualisations[0]);
         
-    function reInit() {
+    function reInit(newVisualisation) {
         if (currentVisualisation) {
             currentVisualisation.destroy();
         }
-        else {
-            currentVisualisation = Visualisations.visualisations[0];
+        if (newVisualisation) {
+            currentVisualisation = newVisualisation;
         }
-        currentVisualisation.init( $( "#visualisationMain" )[0], Model.model);    
+        if (currentVisualisation) {
+            currentVisualisation.init( $( "#visualisationMain" )[0], Model.model);
+        }
     };
     
     var saveModelFile = function() { return Model.exportFile(); }
 
     var loadModelFile = function(file) {
-                            var fileName = file.name || "current model" ;
+                            var fileName = file.name || "current debate" ;
                             blobToText( file, function(text) { Model.importFile(text); reInit(); } );
                         }; 
 
     addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
-    addExportListener( $( "#headerExport" )[0], "Export current model", "Incoma-debate.json", saveModelFile );
+    addExportListener( $( "#headerExport" )[0], "Export", "Incoma-debate.json", saveModelFile );
 </script>
 </body>
 </html>

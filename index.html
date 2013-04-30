@@ -24,7 +24,7 @@ function canvas_arrow(context, fromx, fromy, tox, toy){
 }
 
 function createNewComment(element){
-		$(document.body).append("<div class='comment'><textarea class='comment' rows=4 cols=20 ondblClick=createNewComment(this)></textarea><div class='button reply' onClick=createNewComment($(this).parent())>reply</div><div class='button like'>like</div><div class='button nolike' >don't like</div></div>")
+		$(document.body).append("<div class='comment'><textarea class='comment' rows=98 cols=20 ondblClick=createNewComment(this)></textarea><div class='button reply' onClick=createNewComment($(this).parent())>reply</div><div class='button like'>like</div><div class='button nolike' >don't like</div></div>")
 	lastInsertedElement=$("div").last();
 	var source=($(element).offset());
 	var target=($(lastInsertedElement).offset());

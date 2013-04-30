@@ -1,3 +1,14 @@
+var despx = 0;
+var despy = 0;
+var zoomval = 1;
+var rightpanelhtmleval = "<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center>";
+
+var rightpanelhtmlreply = "<b>Reply:</b><br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><<option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea><center><div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
+
+var rightpanelhtmlprereply = "<br><center><div class='showreplypanel' onClick='showreplypanel()'>Reply to the comment above</div></center>";
+
+var rightpanelhtmllink = "<br><center><div class='new' onClick='showcreatelink()'>Connect this comment with another</div></center>";
+
 Visualisations.register(new ZoomOut());
 
 function ZoomOut() {
@@ -18,38 +29,51 @@ function ZoomOut() {
 
 // Start of this == abstraction = model and state of filters [abstraction initialized with (model)]
 
+var creatinglink = false;
+
 function ZoomOut_Abstraction(VIS) {
     this.model = null;
     this.linkFilters = {
-        5: {
-            name: "General",
-            state: true,
-            typeId: 5
-        },
-        4: {
-            name: "Agree",
-            state: true,
-            typeId: 4
-        },
         1: {
-            name: "Disagree",
+            name: "General",
             state: true,
             typeId: 1
         },
         2: {
-            name: "Question",
+            name: "Consequence",
             state: true,
             typeId: 2
         },
         3: {
-            name: "Answer",
+            name: "Agree",
             state: true,
             typeId: 3
         },
+        4: {
+            name: "Disagree",
+            state: true,
+            typeId: 4
+        },
+        5: {
+            name: "Related",
+            state: true,
+            typeId: 5
+        },
         6: {
-            name: "Similar",
+            name: "Contradiction",
             state: true,
             typeId: 6
+        },
+        7: {
+            name: "Alternative",
+            state: true,
+            typeId: 7
+        },
+
+        8: {
+            name: "Answer",
+            state: true,
+            typeId: 8
         },
     };
     this.nodeFilters = {
@@ -67,6 +91,16 @@ function ZoomOut_Abstraction(VIS) {
             name: "Answer",
             state: true,
             typeId: 3
+        },
+        4: {
+            name: "Proposal",
+            state: true,
+            typeId: 4
+        },
+        5: {
+            name: "Info",
+            state: true,
+            typeId: 5
         },
     };
     this.sizeFilters = {
@@ -94,28 +128,30 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.isclicked = 0;
     this.clickednodehash = "";
     this.container = null;
-    this.width = 712;
-    this.height = 325;
     this.nodeSizeDefault = 20;
-    
+    this.width = 900;
+    this.height = 500;
+
     this.bordercolor = {
         "normal": "#af0",
         "clicked": "#255",
-        "over": "#E9B"
+        "over": "#E9B",
+		"origin": "#c33"
     };
+
+    this.showfilters = 0;
+    this.showlegend = 1;
 
     this.svg = null;
     this.color = d3.scale.category20();
+
     this.liveAttributes = new LiveAttributes(ABSTR, this);
     //    this.updateLinks = function() { this.definedBelow(); }
+	
     this.update = function () {
         this.definedBelow();
     }
 	
-	    function save2() {
-			createnode(this);
-			//+ call to export fuctions
-        };
 		
     this.init = function (html5node) {
         this.definedBelow();
@@ -128,41 +164,62 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.container = html5node;
         html5node.innerHTML =
             '   \
-             <div class="mod_up">   \
+             <div class="svg_and_right_bar">   \
    \
-                  <div id="mod_vis" class="mod">   \
-                    <div class="visualization">  </div>   \
+                  <div id="svg" class="mod">   \
+                    <div class="svg">  </div>   \
                   </div>   \
    \
-                  <div id="mod_spec" class="mod">   \
-                    <div class="mod_header">   \
-                      <div class="mod_title">   \
-                        <a id="link_spec" class="active">Content:</a>           \
+                  <div id="right_bar" class="mod">   \
+                    <div class="right_bar_header">   \
+                      <div class="right_bar_title">   \
+                        Content:           \
                       </div>   \
                     </div>   \
     \
-                    <textarea id="spec" class="areacontent" spellcheck="false"></textarea>   \
-     <div id="replybox"> \
-</div> \
-<div id="replybox2">  \
+                    <textarea id="contbox" class="areacontent" spellcheck="false" readonly></textarea>   \
+<div id="rightpanel">  \
 </div> \
                   </div>   \
     \
              </div>   \
    \
-             <div class="mod_down">   \
-   \
-                  <div class="mod_down_elems">   \
-                    <div id="mod_filt_links" class="mod_filt" style="Float:left">   \
-                      <b>Threads</b>    \
+             <div id= "legend_bar" class="legend_bar">   \
+                  <div class="legend_bar_elems">   \
+                    <div id="legend_title" class="legend_title" style="Float:left" >   \
+                      <b>Legend</b>\
                     </div>   \
-   \
-                    <div id="mod_filt_nodes" class="mod_filt_box" style="Float:left" >   \
+                    <div id="legend_nodes" class="legend_nodes" style="Float:left" >   \
                       <b>Boxes</b>             \
                     </div>   \
    \
-                    <div id="mod_filt_sizes" class="mod_filt_size" style="Float:left" >   \
+                    <div id="legend_links" class="legend_links" style="Float:left">   \
+                      <b>Connections</b>    \
+                    </div>   \
+                    <div id="legend_hide" class="legend_hide"  style="Float:left" >   \
+                      <div class="legend_hide_button" onClick="hideshowlegend()">Hide/show legend</div>   \
+                    </div>   \
+                 </div>   \
+             </div>   \
+             <div id= "lower_bar" class="lower_bar">   \
+   \
+                  <div class="lower_bar_elems">   \
+                    <div id="filters_title" class="filters_title" style="Float:left" >   \
+                      <b>Filters</b>\
+                    </div>   \
+                    <div id="filt_nodes" class="filt_nodes" style="Float:left" >   \
+                      <b>Boxes</b>             \
+                    </div>   \
+   \
+                    <div id="filt_links" class="filt_links" style="Float:left">   \
+                      <b>Connections</b>    \
+                    </div>   \
+   \
+                    <div id="filt_sizes" class="filt_sizes" style="Float:left" >   \
                       <b>Sizes</b>     \
+                    </div>   \
+                    <div id="filt_hide" class="filt_hide"  style="Float:left" >   \
+                      <div class="filt_hide_button" onClick="hideshowfilters()">Hide/show filters</div>   \
                     </div>   \
                  </div>   \
    \
@@ -173,10 +230,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         initSVG(this, ABSTR, this.width, this.height);
         // 712, 325 = width and height of the visualization
 
-        initLinkFilters(this, "mod_filt_links", ABSTR.linkFilters);
-        initNodeFilters(this, "mod_filt_nodes", ABSTR.nodeFilters);
-        initSizeFilters(this, "mod_filt_sizes", ABSTR.sizeFilters);
-        // The initfilters take as an input parameter the id of the div where they will be placed (e.g "#mod_filt_links1"), with appendChild.
+        initNodeLegend(this, "legend_nodes", ABSTR.nodeFilters);
+        initLinkLegend(this, "legend_links", ABSTR.linkFilters);
+
+        initNodeFilters(this, "filt_nodes", ABSTR.nodeFilters);
+        initLinkFilters(this, "filt_links", ABSTR.linkFilters);
+        initSizeFilters(this, "filt_sizes", ABSTR.sizeFilters);
+        // The initfilters take as an input parameter the id of the div where they will be placed (e.g "filt_links"), with appendChild.
 
     };
     // End of init function of presentation
@@ -185,24 +245,41 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     function initSVG(PRES, ABSTR, width, height) {
 
-
         PRES.force = d3.layout.force()
             .charge(-400)
             .linkDistance(40)
             .size([width, height]);
         var force = PRES.force;
 
-        PRES.svg = d3.select(".visualization").append("svg")
+        PRES.svgg = d3.select(".svg").append("svg")
             .attr("width", width)
-            .attr("height", height)
-			.on("mousedown", PRES.liveAttributes.mousedown);
+            .attr("height", height);
 			
-        var svg = PRES.svg;
+        var svgg = PRES.svgg;
         // force and svg are local to "presentation" (defined as this.force); 
         // (but we define them locally as a shorthand)
         // graph and link are local only to "initSVG" (var graph)
 
-
+		PRES.svg = svgg
+			.append('svg:g')
+			.call(d3.behavior.zoom().scaleExtent([0.05,1.5]).on("zoom", rescale))
+			.on("dblclick.zoom", null)
+			.append('svg:g')
+			.on("mousedown", PRES.liveAttributes.mousedown)
+			.on("mousemove", PRES.liveAttributes.mousemove);
+		
+		var svg = PRES.svg;
+		
+		PRES.background = svg.append('svg:rect')
+			.attr('width', width*11)
+			.attr('height', height*11)
+			.attr("x",-5*height)
+			.attr("y",-5*height)
+			.attr('fill', "white")
+			.style("stroke-width", "15px")
+            .style("stroke", "blue")
+			.style("stroke-opacity",0);
+		
         var graph = ABSTR.model;
 
         force
@@ -229,43 +306,36 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .style("fill", PRES.liveAttributes.nodeFill)
             .on("mouseover", PRES.liveAttributes.mouseover)
             .on("mouseout", PRES.liveAttributes.mouseout)
-            .on("mousedown", PRES.liveAttributes.mousedown)
+            .on("mousedown", PRES.liveAttributes.mousedown_node)
             .on("click", PRES.liveAttributes.click)
             .call(force.drag);
+			
+		PRES.svg.selectAll(".node")
+			.filter(function (d) {return d.origin == "1";})
+			.style("stroke-width", 3)
+			.style("stroke",PRES.bordercolor.origin);
+			
+		PRES.prelink = svg.append("line")
+			.attr("x1", 0)
+			.attr("y1", 0)
+			.attr("x2", 0)
+			.attr("y2", 0)
+			.style("stroke-width", 2)
+			.style("stroke", "black")
+			.style("stroke-opacity",0.5);
 
-        node.append("title")
-            .text(function (d) {
-            return d.content;
-        });
 
         force.on("tick", function () {
 		
-			var zz = 5;
-		
-		    nodez = PRES.force.nodes();
-            linkz = PRES.force.links();
-				
             PRES.svg.selectAll(".link")
-			.attr("x1", function (d) {
-                return d.source.x + 10;
-            })
-                .attr("y1", function (d) {
-                return d.source.y + 10;
-            })
-                .attr("x2", function (d) {
-                return d.target.x + 10;
-            })
-                .attr("y2", function (d) {
-                return d.target.y + 10;
-            });
+				.attr("x1", function (d) {return d.source.x + 10;})
+                .attr("y1", function (d) {return d.source.y + 10;})
+                .attr("x2", function (d) {return d.target.x + 10;})
+                .attr("y2", function (d) {return d.target.y + 10;});
 
             PRES.svg.selectAll(".node")
-			.attr("x", function (d) {
-                return d.x;
-            })
-                .attr("y", function (d) {
-                return d.y;
-            });
+				.attr("x", function (d) {return d.x;})
+                .attr("y", function (d) {return d.y;});
         });
 
     };
@@ -273,9 +343,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
 
+
+
     function initLinkFilters(PRES, columnId, filterlist) {
 
-        var numfilts = 6 ;
+        var numfilts = 8 ;
         var filtspercol = 3 ;
         var filtsperrow = Math.ceil(numfilts/filtspercol);
 
@@ -289,6 +361,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	tb = document.createElement("tbody");
 
 	var checkbox = new Array();
+	var threadslegend = new Array();
+
         for (var i = 1; i < numfilts+1; ++i) {
             var filter = filterlist[i];
             checkbox[i] = Visualisations.makeFilterBox(filter); 
@@ -297,7 +371,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    }
 	    tdname = document.createElement("td");
 	    tdbox = document.createElement("td");
-            tdname.appendChild(Visualisations.makeText(filter.name + ": "));
+	    threadslegend[i] = document.createElement("canvas");
+	    threadslegend[i].width  = 6; // in pixels
+	    threadslegend[i].height = 10;
+	    threadslegend[i].style.backgroundColor  = PRES.color(i);
+            tdname.appendChild(threadslegend[i]);
+
+            tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
             tdbox.appendChild(checkbox[i]);
             checkbox[i].onclick = function() { 
 		for (var j = 1; j < numfilts+1; ++j) {
@@ -312,7 +392,51 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    }    
 	    tr.appendChild(tdname);
 	    tr.appendChild(tdbox);      
-            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow ) {
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
+		tb.appendChild(tr);
+		table.appendChild(tb);
+	    }
+
+        }
+
+	column.appendChild(table);
+
+    };
+
+    function initLinkLegend(PRES, columnId, filterlist) {
+
+        var numfilts = 8 ;
+        var filtspercol = 3 ;
+        var filtsperrow = Math.ceil(numfilts/filtspercol);
+
+    	var column = document.getElementById(columnId);
+
+	var table  = document.createElement("table");
+	table.style.width = "100%";
+	table.setAttribute('border','0');
+	table.setAttribute('cellpadding','0');
+	table.setAttribute('cellspacing','0');
+	tb = document.createElement("tbody");
+
+	var threadslegend = new Array();
+
+        for (var i = 1; i < numfilts+1; ++i) {
+            var filter = filterlist[i];
+            if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
+		tr = document.createElement("tr");
+	    }
+	    tdname = document.createElement("td");
+	    tdbox = document.createElement("td");
+	    threadslegend[i] = document.createElement("canvas");
+	    threadslegend[i].width  = 6; // in pixels
+	    threadslegend[i].height = 10;
+	    threadslegend[i].style.backgroundColor  = PRES.color(i);
+            tdname.appendChild(threadslegend[i]);
+
+            tdname.appendChild(Visualisations.makeText(" " + filter.name));
+	    tr.appendChild(tdname);
+	    tr.appendChild(tdbox);      
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
 		tb.appendChild(tr);
 		table.appendChild(tb);
 	    }
@@ -328,7 +452,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     function initNodeFilters(PRES, columnId, filterlist) {
 
-        var numfilts = 3 ;
+        var numfilts = 5;
         var filtspercol = 3 ;
         var filtsperrow = Math.ceil(numfilts/filtspercol);
 
@@ -342,6 +466,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	tb = document.createElement("tbody");
 
 	var checkbox = new Array();
+	var boxeslegend = new Array();
+
         for (var i = 1; i < numfilts+1; ++i) {
             var filter = filterlist[i];
 	    checkbox[i] = Visualisations.makeFilterBox(filter);                         
@@ -350,7 +476,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    }
 	    tdname = document.createElement("td");
 	    tdbox = document.createElement("td");
-            tdname.appendChild(Visualisations.makeText(filter.name + ": "));
+	    boxeslegend[i] = document.createElement("canvas");
+	    boxeslegend[i].width  = 10; // in pixels
+	    boxeslegend[i].height = 10;
+	    boxeslegend[i].style.backgroundColor  = PRES.color(i);
+            tdname.appendChild(boxeslegend[i]);
+
+            tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
             tdbox.appendChild(checkbox[i]);
             checkbox[i].onclick = function() { 
 		for (var j = 1; j < numfilts+1; ++j) {
@@ -365,7 +497,52 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    }
 	    tr.appendChild(tdname);
 	    tr.appendChild(tdbox);
-            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow ) {
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
+		tb.appendChild(tr);
+		table.appendChild(tb);
+	    }
+
+        }
+
+	column.appendChild(table);
+
+    };
+
+    function initNodeLegend(PRES, columnId, filterlist) {
+
+        var numfilts = 5;
+        var filtspercol = 3 ;
+        var filtsperrow = Math.ceil(numfilts/filtspercol);
+
+    	var column = document.getElementById(columnId);
+
+	var table  = document.createElement("table");
+	table.style.width = "100%";
+	table.setAttribute('border','0');
+	table.setAttribute('cellpadding','0');
+	table.setAttribute('cellspacing','0');
+	tb = document.createElement("tbody");
+
+	var checkbox = new Array();
+	var boxeslegend = new Array();
+
+        for (var i = 1; i < numfilts+1; ++i) {
+            var filter = filterlist[i];
+	    if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
+		tr = document.createElement("tr");
+	    }
+	    tdname = document.createElement("td");
+	    tdbox = document.createElement("td");
+	    boxeslegend[i] = document.createElement("canvas");
+	    boxeslegend[i].width  = 10; // in pixels
+	    boxeslegend[i].height = 10;
+	    boxeslegend[i].style.backgroundColor  = PRES.color(i);
+            tdname.appendChild(boxeslegend[i]);
+
+            tdname.appendChild(Visualisations.makeText(" " + filter.name));
+	    tr.appendChild(tdname);
+	    tr.appendChild(tdbox);
+            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
 		tb.appendChild(tr);
 		table.appendChild(tb);
 	    }
@@ -377,11 +554,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     };
 
 
-    // Start of initNodeFilters
+
+    // Start of initSizeFilters
 
     function initSizeFilters(PRES, columnId, filterlist) {
 
-    	var column = document.getElementById(columnId);
+    var column = document.getElementById(columnId);
 
 	var checkbox = new Array();
 
@@ -438,34 +616,18 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 
         this.nodeHeight = function (d) {
-            if (ABSTR.sizeFilters.nodes.state) {
-                return nodeSizeDefault * Math.sqrt(Math.sqrt(d.evaluation));
+            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
+                return PRES.nodeSizeDefault * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
             } else {
-                return nodeSizeDefault;
+                return PRES.nodeSizeDefault;
             }
         };
 
         this.nodeWidth = function (d) {
-            if (ABSTR.sizeFilters.nodes.state) {
-                return nodeSizeDefault * Math.sqrt(Math.sqrt(d.evaluation));
+            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
+                return PRES.nodeSizeDefault * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
             } else {
-                return nodeSizeDefault;
-            }
-        };
-
-        this.nodeHeightLarge = function (d) {
-            if (ABSTR.sizeFilters.nodes.state) {
-                return 25 * Math.sqrt(Math.sqrt(d.evaluation));
-            } else {
-                return 25;
-            }
-        };
-
-        this.nodeWidthLarge = function (d) {
-            if (ABSTR.sizeFilters.nodes.state) {
-                return 25 * Math.sqrt(Math.sqrt(d.evaluation));
-            } else {
-                return 25;
+                return PRES.nodeSizeDefault;
             }
         };
 
@@ -521,53 +683,101 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 
 
+        this.mousemove = function (d) {
+			if (creatinglink){
+				var nodes = PRES.force.nodes();
+				var index = searchhash(nodes,PRES.clickednodehash);
+				var linecolor = PRES.color(document.getElementById("replylinktype2").value);
+				
+				var x1 = nodes[index].x+10,
+					y1 = nodes[index].y+10,
+					x2 = (d3.mouse(svg)[0]-despx)/zoomval,
+					y2 = (d3.mouse(svg)[1]-despy)/zoomval;
+					
+				var cutx = 5*(x2-x1)/(Math.abs(x2-x1)+1),
+					cuty = 5*(y2-y1)/(Math.abs(y2-y1)+1);
+				
+				PRES.prelink
+					.attr("x1", x1)
+					.attr("y1", y1)
+					.attr("x2", x2-cutx)
+					.attr("y2", y2-cuty)
+					.style("stroke", linecolor);
+					
+			}
+		};
 
+		
+		
         this.mouseover = function (d) {
 
-		    if (PRES.clickednodehash === "") {
+	    if (PRES.clickednodehash === "") {
                 PRES.svg.selectAll(".node")
-                    .style("stroke-width", function (d) {return "2px";})
                     .style("stroke", PRES.bordercolor.normal);
-					
-				d3.select(this)
-//					.transition().duration(250)
-					.style("stroke-width", function (d) {return "2px";})
-                    .style("stroke", PRES.bordercolor.over);
+				
+				PRES.svg.selectAll(".node")
+					.filter(function (d) {return d.origin == "1";})
+					.style("stroke",PRES.bordercolor.origin);
 
-                document.getElementById("spec").value = d.content;
+		// this line below is the node where the mouse is over			
+		d3.select(this)
+//					.transition().duration(250)
+            .style("stroke", PRES.bordercolor.over);
+
+            document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
             }
         };
 
         this.mousedown = function (d) {
+	    if (!creatinglink){
 			PRES.svg.selectAll(".node")
-                .style("stroke", PRES.bordercolor.normal);
+				.style("stroke", PRES.bordercolor.normal);
+			
+			PRES.svg.selectAll(".node")
+				.filter(function (d) {return d.origin == "1";})
+				.style("stroke",PRES.bordercolor.origin);
 				
 			PRES.clickednodehash = "";
 			
-			document.getElementById("spec").value = "";
-           document.getElementById("spec2").value = "";
-			$('#replybox2').html(" ");
+			document.getElementById("contbox").value = "";
+			$('#rightpanel').html(" ");
+	    };
+        };
+		
+		this.mousedown_node = function (d) {
+			//if (creatinglink){savelink(d);};
         };
 
         this.mouseout = function (d) {};
 
 
         this.click = function (d) {
+	    if (creatinglink){
+			if (d.hash !== PRES.clickednodehash){
+				savelink(d);
+			}
+		}else{
 			PRES.svg.selectAll(".node")
-                .filter(function (d) {return d.hash == PRES.clickednodehash;})
-                .style("stroke", PRES.bordercolor.normal);
-			
+				.style("stroke", PRES.bordercolor.normal);
+	
+			PRES.svg.selectAll(".node")
+				.filter(function (d) {return d.origin == "1";})
+				.style("stroke",PRES.bordercolor.origin);
+
+			// this line below is the clicked node
 			d3.select(this)
-                .style("stroke", PRES.bordercolor.clicked);
-			
+				.style("stroke", PRES.bordercolor.clicked);
+	
 			PRES.clickednodehash = d.hash;
 
-			document.getElementById("spec").value = d.content;
+			document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
 			
-            $('#replybox2').html("Box type: <select id=\"replynodetype\"> <option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Opinion</option><option value=5>Proposal</option><option value=6>Info</option></select>    Thread: <select id=\"replylinktype\"> <option value=5>General</option><option value=4>Agree</option><option value=1>Disagree</option> <option value=2>Question</option><option value=3>Answer</option><option value=6>Similar</option></select><br><textarea id='spec2' class='areareply' spellcheck='false'></textarea><div class='save' onClick='save()'>Save</div>");
-        };
+			$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
+		};
+        
+		};
     };
-    // end of this == LiveAttributes
+		// end of this == LiveAttributes
 
     // update functions (svg, nodes and links)
 
@@ -582,94 +792,282 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         PRES.svg.selectAll(".node").attr("height", PRES.liveAttributes.nodeHeight);
     };
 
-
     this.update = function () {
         updateLinks(this);
         updateNodes(this);
     };
 	
-
-
-	
 };
 // End of this == presentation
-        function save() {
-			var PRES = Visualisations.visualisations[0].presentation;
-			createnode(PRES);
-			//+ call to export fuctions
-        };
-		
-		function createnode(PRES){
+
+function savenode() {
+	if (document.getElementById("replybox").value == ""){
+		alert("And empty reply can not be saved");
+		return;
+	}
+    var PRES = Visualisations.visualisations[0].presentation;
+    createnode(PRES);
+    //+ call to export fuctions
+};
+
+
+function hideshowlegend() {
+
+    var PRES = Visualisations.visualisations[0].presentation;
+    var legend_bar = document.getElementById("legend_bar");
+
+    PRES.showlegend = !PRES.showlegend;
+
+    this.legendfiltersupdate();
+
+};
+
+
+function hideshowfilters() {
+
+    var PRES = Visualisations.visualisations[0].presentation;
+    var lower_bar = document.getElementById("lower_bar");
+
+    PRES.showfilters = !PRES.showfilters;
+
+    this.legendfiltersupdate();
+};
+
+function legendfiltersupdate() {
+
+    var PRES = Visualisations.visualisations[0].presentation;
+    var lower_bar = document.getElementById("lower_bar");
+    var legend_bar = document.getElementById("legend_bar");
+
+    if (PRES.showfilters && PRES.showlegend) {
+	legend_bar.style.height = "100px";
+	lower_bar.style.height = "100px";
+	legend_bar.style.bottom = "100px";
+    } else if (!PRES.showfilters && PRES.showlegend) {    
+	legend_bar.style.height = "100px";
+	lower_bar.style.height = "19px";
+	legend_bar.style.bottom = "19px";
+    } else if (PRES.showfilters && !PRES.showlegend) {    
+	legend_bar.style.height = "19px";
+	lower_bar.style.height = "100px";
+	legend_bar.style.bottom = "100px";
+    } else  {   
+	legend_bar.style.height = "19px";
+	lower_bar.style.height = "19px";
+	legend_bar.style.bottom = "19px";
+    }
+
+};
+
+	
+function createnode(PRES){
 		    
-			var nodes = PRES.force.nodes();
-            var links = PRES.force.links();
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
 
-            var content = document.getElementById("spec2").value;
-			var nodetype = document.getElementById("replynodetype").value;
-			var linktype = document.getElementById("replylinktype").value;
-			
-			var targetindex = searchhash(nodes, PRES.clickednodehash), 
-				targetnode = nodes[targetindex];
-				
-            var newnode = {
-                x: targetnode.x,
-                y: targetnode.y,
-                "hash": nodes.length + 2,
-                "content": content,
-                "evaluation": 1,
-                "type": nodetype,
-                "author": "Mike",
-                "time": "17-abr-2013"
-            };
-			
-            nodes.push(newnode);
-            links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
+    var content = document.getElementById("replybox").value;
+    var nodetype = document.getElementById("replynodetype").value;
+    var linktype = document.getElementById("replylinktype").value;
+    
+    var targetindex = searchhash(nodes, PRES.clickednodehash), 
+    targetnode = nodes[targetindex];
+	
+	var author = document.getElementById("namebox").value;
+	if (author == ""){author = "anonymous";};
+    
+    var newnode = {
+ // elements and order adapted to be the same as in modelb.js
+ //       "hash": nodes.length + 2,  // produced a gap
+        "hash": nodes.length,
+        "content": content,
+        "evalpos": 0,
+		"evalneg": 0,
+        "evaluatedby": "",
+        "type": nodetype,
+        "author": author,
+        "time": "17-abr-2013",
+        x: targetnode.x,
+        y: targetnode.y
+    };
+    
+    nodes.push(newnode);
+//    links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
+// elements and order adapted to be the same as in modelb.js
+    links.push({source: newnode, target: targetnode,ssource: newnode, ttarget: targetnode,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
+    
+    document.getElementById("replybox").value = "";
+    
+    drawnewnodes(PRES);
+}
 
-			document.getElementById("spec2").value = "";
-			
-            restart(PRES);
-		}
+function searchhash(elements, objective){
+    for (i=0;i<elements.length;i++){
+	if (elements[i].hash == objective){return i;}
+    };
+}
+
+function drawnewnodes(PRES) {
+    
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+    
+    var link = PRES.svg.selectAll(".link")
+        .data(links)
+        .enter().insert("line",".node")
+        .attr("class", "link")
+	.style("stroke", PRES.liveAttributes.linkStroke)
+	.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+    
+    var node = PRES.svg.selectAll(".node")
+        .data(nodes)
+        .enter().append("rect")
+        .attr("class", "node")
+        .attr("x", function (d) {return d.x;})
+        .attr("y", function (d) {return d.y;})
+		.attr("width", PRES.liveAttributes.nodeWidth)
+		.attr("height", PRES.liveAttributes.nodeHeight)
+		.style("fill", PRES.liveAttributes.nodeFill)
+		.on("mouseover", PRES.liveAttributes.mouseover)
+		.on("mouseout", PRES.liveAttributes.mouseout)
+		.on("mousedown", PRES.liveAttributes.mousedown_node)
+		.on("click", PRES.liveAttributes.click)
+        .call(PRES.force.drag)
+    
+    //PRES.svg.selectAll(".node").on('mousedown.drag', null);
+    
+    PRES.force.start();
+};
+
+function evalpos() {
+    var PRES = Visualisations.visualisations[0].presentation;
+    evalposnode(PRES);    
+    PRES.update();
+};
+
+function evalneg() {
+    var PRES = Visualisations.visualisations[0].presentation;
+    evalnegnode(PRES);    
+    PRES.update();
+};
+
+function evalposnode(PRES){		    
+
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+  
+    var targetindex = searchhash(nodes, PRES.clickednodehash);
+    targetnode = nodes[targetindex];
+
+    targetnode.evalpos = targetnode.evalpos+1;    
+    targetnode.evaluatedby = document.getElementById("namebox").value;    
+    if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};    
+    
+}
+
+function evalnegnode(PRES){		    
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();  
+  
+    var targetindex = searchhash(nodes, PRES.clickednodehash);
+    targetnode = nodes[targetindex];
+
+	targetnode.evalneg = targetnode.evalneg+1;    
+	targetnode.evaluatedby = document.getElementById("namebox").value; 
+	if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};
+        
+}
+
+function showreplypanel(){
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreply + rightpanelhtmllink);	
+}
+
+function hidereplypanel(){
+	$('#rightpanel').html(" ");
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);	
+}
+
+
+function showcreatelink(){
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply+"<br><b>Type of relation:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
+	
+	creatinglink = true;
+}
+
+function cancellink(){
+	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
+	
+	var PRES = Visualisations.visualisations[0].presentation;
+	PRES.prelink 
+		.attr("x1", 0)
+		.attr("y1", 0)
+		.attr("x2", 0)
+		.attr("y2", 0);
 		
-		function searchhash(elements, objective){
-			for (i=0;i<elements.length;i++){
-				if (elements[i].hash == objective){return i;}
-			};
-		}
+	creatinglink = false;
+}
+	
+function savelink(d){
+
+    var PRES = Visualisations.visualisations[0].presentation;
+
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+
+    var linktype = document.getElementById("replylinktype2").value;
+    
+    var sourceindex = searchhash(nodes, PRES.clickednodehash);
+    sourcenode = nodes[sourceindex];
+	
+    var author = document.getElementById("namebox").value;
+    if (author == ""){author = "anonymous";};
+	
+    links.push({source: sourcenode, target: d, ssource: sourceindex, ttarget: d.index,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
+	
+    var link = PRES.svg.selectAll(".link")
+        .data(links)
+        .enter().insert("line",".node")
+        .attr("class", "link")
+	.style("stroke", PRES.liveAttributes.linkStroke)
+	.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
 		
-		 function restart(PRES) {
+    cancellink();
+		
+    PRES.force.start();
+		
+}
 
-			var nodes = PRES.force.nodes();
-            var links = PRES.force.links();
+function changelinktype(){
 
-            var link = PRES.svg.selectAll(".link")
-                .data(links)
-                .enter().append("line")
-                .attr("class", "link")
-				.style("stroke", PRES.liveAttributes.linkStroke)
-				.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+	var PRES = Visualisations.visualisations[0].presentation;
+	var linecolor = PRES.color(document.getElementById("replylinktype2").value);
 
-            var node = PRES.svg.selectAll(".node")
-                .data(nodes)
-                .enter().append("rect")
-                .attr("class", "node")
-                .attr("x", function (d) {return d.x;})
-                .attr("y", function (d) {return d.y;})
-				.attr("width", PRES.liveAttributes.nodeWidth)
-				.attr("height", PRES.liveAttributes.nodeHeight)
-				.style("fill", PRES.liveAttributes.nodeFill)
-				.on("mouseover", PRES.liveAttributes.mouseover)
-				.on("mouseout", PRES.liveAttributes.mouseout)
-				.on("mousedown", PRES.liveAttributes.mousedown)
-				.on("click", PRES.liveAttributes.click)
-                .call(PRES.force.drag);
-					
-			PRES.svg.selectAll(".node")
-				.on('mousedown.drag', null);
-
-            PRES.force.start();
-        };
+	PRES.prelink.style("stroke", linecolor);
+}
 
 // Start of control
+
+function rescale() {
+	
+    var PRES = Visualisations.visualisations[0].presentation;
+	
+    trans=d3.event.translate;
+    scale=d3.event.scale;
+	
+	despx = trans[0];
+	despy = trans[1];
+	zoomval = scale;
+	
+    PRES.svg.attr("transform",
+		  "translate(" + trans + ")"
+		  + " scale(" + scale + ")");
+	  
+}
+
+function mousemove(){}
+
+function mousedown(){}
+
+function mouseup(){}
 
 function ZoomOut_Control(VIS, ABSTR, PRES) {};
 // End of var ZoomOut
