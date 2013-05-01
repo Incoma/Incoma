@@ -15,11 +15,20 @@ body {
 
 .svg_and_right_bar {
   height: 80%;
+  cursor: default;
+}
+
+.left_bar_header {
+  padding: 4px 4px 4px 4px;
+  background: rgba(0,0,0,0);
 }
 
 .right_bar_header {
   padding: 4px 4px 4px 4px;
-  background: #cce;
+  background: #ccf;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #336;
 }
 
 .right_bar_title {
@@ -28,56 +37,110 @@ body {
 }
 
 .areacontent {
-  width: 98%;
-  min-height: 120px;
+  width: 98.5%;
+  min-height: 60px;
+  height: 120px;
+  resize: vertical;
 }
 
 .areareply {
   border: yes;
-  width: 98%;
-  min-height: 90px;
+  width: 98.5%;
+  min-height: 60px;
+  height: 100px;
+  resize: vertical;
 }
 
 .areaname {
+  position: relative;
+  top: 3px;
   border: yes;
   width: 30%;
   height: 17px;
+  resize: none;
 }
-
-.lower_bar {
-  position: absolute;
-  bottom: 0px;
-  background: #cce;
-  width: 100%;
-  height: 19px;
-}
-/* HEIGHT IS DEFINED ALSO IN hideshowfilters() function !!!  */
 
 .legend_bar {
   position: absolute;
   bottom: 19px;
-  background: #cce;
+  background: rgba(204,204,255,0.7);
   width: 100%;
   height: 100px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #336;
+  cursor: default;
 }
 /* HEIGHT IS DEFINED ALSO IN hideshowlegend() function !!!  */
+
+.lower_bar {
+  position: absolute;
+  bottom: 0px;
+  background: rgba(204,204,255,1);
+  width: 100%;
+  height: 19px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #336;
+  cursor: default;
+  -webkit-transition-property: height;
+  -webkit-transition-duration: 500ms;
+  transition-property: height;
+  transition-duration: 500ms;
+}
+
+.lower_bar:hover {
+	height: 100px;
+}
+/* HEIGHT IS DEFINED ALSO IN hideshowfilters() function !!!  */
 
 .lower_bar_elems {
   position: relative;
   left: 3%;
   height: 25%;
+  cursor: default;
 }
 
 .legend_bar_elems {
   position: relative;
   left: 3%;
   height: 25%;
+  cursor: default;
+}
+
+.filt_hide {
+  position: relative;
+  left:6%;
+  width: 20%;
+  height: 100%;
+  cursor: default;
+}
+
+.legend_hide {
+  position: relative;
+  left:16%;
+  width: 20%;
+  height: 100%;
+  cursor: default;
+}
+
+div.filt_hide_button{
+	text-align: center;
+	margin: 5px;
+	cursor: default;
+}
+
+div.legend_hide_button{
+	text-align: center;
+	margin: 5px;
+	cursor: default;
 }
 
 .filters_title {
   position: relative;
   width: 10%;
   height: 100%;
+  cursor: default;
 }
 
 .filt_nodes {
@@ -85,6 +148,7 @@ body {
   top:15px;
   width: 19%;
   height: 100%;
+  cursor: default;
 }
 
 .filt_links {
@@ -93,6 +157,7 @@ body {
   left:5%;
   width: 36%;
   height: 100%;
+  cursor: default;
 }
 
 .filt_sizes {
@@ -101,12 +166,14 @@ body {
   left:8%;
   width: 10%;
   height: 100%;
+  cursor: default;
 }
 
 .legend_title {
   position: relative;
   width: 10%;
   height: 100%;
+  cursor: default;
 }
 
 .legend_nodes {
@@ -114,6 +181,7 @@ body {
   top:15px;
   width: 19%;
   height: 100%;
+  cursor: default;
 }
 
 .legend_links {
@@ -122,34 +190,31 @@ body {
   left:5%;
   width: 36%;
   height: 100%;
+  cursor: default;
 }
 
-
-.filt_hide {
-  position: relative;
-  left:6%;
-  width: 20%;
-  height: 100%;
+div.noselect{
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	cursor: default;
 }
 
-
-.legend_hide {
-  position: relative;
-  left:16%;
-  width: 20%;
-  height: 100%;
+div.button{
+	border-style: solid;
+	border-width: 1px;
+	border-color: #336;
+	opacity: 1;
+	-webkit-box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.5);
+	box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5); 
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	cursor: default;
 }
 
-
-div.save{
-    display:inline-block;
-	width: 80px;
-	height: 20px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	background: #396;
-	text-align: center;
-	margin: 5px;
+div.button:hover{
+	border-color: #c33;
 }
 
 div.showreplypanel{
@@ -158,11 +223,11 @@ div.showreplypanel{
 	height: 40px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	background: #396;
+	background: #6c6;
 	text-align: center;
 	margin: 5px;
 	line-height:40px;
-	font-size: 14pt;
+	font-size: 13pt;
 }
 
 div.showconnectpanel{
@@ -175,15 +240,16 @@ div.showconnectpanel{
 	text-align: center;
 	margin: 5px;
 	line-height:40px;
-	font-size: 14pt;
+	font-size: 13pt;
 }
 
-div.filt_hide_button{
-	text-align: center;
-	margin: 5px;
-}
-
-div.legend_hide_button{
+div.save{
+    display:inline-block;
+	width: 80px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #6c6;
 	text-align: center;
 	margin: 5px;
 }
@@ -205,9 +271,13 @@ div.evalpos{
 	height: 20px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	background: #3c3;
+	background: #6c6;
 	text-align: center;
-	margin: 4px;
+	margin: 6px;
+	cursor: default;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
 }
 
 div.evalneg{
@@ -216,9 +286,13 @@ div.evalneg{
 	height: 20px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	background: #f63;
+	background: #c63;
 	text-align: center;
-	margin: 4px;
+	margin: 6px;
+	cursor: default;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
 }
 
 div.posvotes{
@@ -228,7 +302,11 @@ div.posvotes{
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	background: #fff;
-	text-align: left;
+	text-align: right;
+	cursor: default;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
 }
 
 div.negvotes{
@@ -239,6 +317,23 @@ div.negvotes{
 	border-radius: 3px;
 	background: #fff;
 	text-align: left;
+	cursor: default;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+div.zoombutton{
+    display:inline-block;
+	width: 20px;
+	height: 20px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #fff;
+	text-align: center;
+	border: solid;
+	border-width: 2px;
+	border-color: #000;
 }
 
 #svg {
@@ -251,8 +346,16 @@ div.negvotes{
 
 #right_bar {
   position: relative;
-  top: 1px;
+  top: 5px;
   margin-left: 70%;
+  margin-right: 5px
+}
+
+#left_bar {
+  position: absolute;
+  top: 50px;
+  margin-left: 10px;
+  width: 120px;
 }
 
 #vis div {
@@ -260,7 +363,7 @@ div.negvotes{
 }
 
 .node {
-  stroke: #af0;
+  stroke: #36c;
   stroke-width: 1.5px;
 }
 

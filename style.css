@@ -19,6 +19,7 @@ body {
     vertical-align: center;
     width: 100%;
     min-height: 40px;
+	cursor: default;
 }
 
 #headerName {
@@ -27,6 +28,7 @@ body {
     font-size: 20pt;
     position: absolute;
     left: 0px;
+	cursor: default;
 }
 
 #headerUserName {
@@ -36,13 +38,15 @@ body {
 #headerImport {
     display: inline-block;
     margin: 5px;
-    min-width: 200px;
+    min-width: 120px;
+	cursor: default;
 }
 
 #headerExport {
     display: inline-block;
     margin: 5px;
     min-width: 60px;
+	cursor: default;
 }
 
 
