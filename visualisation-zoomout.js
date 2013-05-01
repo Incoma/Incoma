@@ -22,7 +22,60 @@ var rightpanelhtmleval = "<center><div id='posvotes' class='posvotes'></div><div
 
 var rightpanelhtmlreplyandlink = "<br><center><div id='showreply' class='showreplypanel button' onClick='showreplypanel()'>Reply</div>&nbsp&nbsp&nbsp&nbsp<div class='showconnectpanel button' id='showlink' onClick='showcreatelink()'>Connect</div></center>";
 
-var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=2>Consequence</option><option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div>";
+var connectionlist = new Array(4) ;
+// 1 = General
+connectionlist["1"] = ["General", "Agree", "Disagree", "Consequence", "Alternative"]; 
+// 2 = Question
+connectionlist["2"] = ["General"]; 
+// 3 = Answer
+connectionlist["3"] = ["Answer"]; 
+// 4 = Proposal
+connectionlist["4"]= ["General", "Agree", "Disagree", "Alternative"]; 
+// 5 = Info
+connectionlist["5"]= ["General", "Agree", "Disagree", "Consequence", "Alternative"]; 
+
+ function connectionChange(selectObj) { 
+     var idx = selectObj.selectedIndex; 
+     var valreply = selectObj.options[idx].value; 
+     connlist = connectionlist[valreply]; 
+     var cSelect = document.getElementById("replylinktype"); 
+     // remove the current options from the connections select object
+     var len=cSelect.options.length; 
+     while (cSelect.options.length > 0) { 
+	 cSelect.remove(0); 
+     } 
+     var newOption; 
+     // create new options 
+     for (var i=0; i<connlist.length; i++) { 
+	 newOption = document.createElement("option"); 
+	 switch (connlist[i])
+	 {
+	 case 'General': newOption.value = 1;  
+             break;
+	 case 'Agree':  newOption.value = 3;  
+             break;
+	 case 'Disagree':  newOption.value = 4;  
+             break;
+	 case 'Consequence':  newOption.value = 2;  
+             break;
+	 case 'Alternative':  newOption.value = 7;  
+             break;
+	 case 'Answer':  newOption.value = 8;  
+             break;
+	 default:  
+	 }
+	 newOption.text=connlist[i]; 
+	 // add the new option 
+	 try { 
+	     cSelect.add(newOption);  // this will fail in DOM browsers but is needed for IE 
+	 } 
+	 catch (e) { 
+	     cSelect.appendChild(newOption); 
+	 } 
+     } 
+ }
+
+var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\" onchange=\"connectionChange(this);\"  ><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td>Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=2>Consequence</option><option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div>";
 
 var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=6>Contradiction</option><option value=2>Consequence</option><option value=5>Related</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select>&nbsp&nbsp&nbsp&nbsp<div class='cancel button' onClick='cancellink()'>Cancel</div></center>";
 
