@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="style.css"/>
-<link rel="stylesheet" type="text/css" href="zoomout.css"/>
+<link rel="stylesheet" media="screen and (min-height: 486px) and (max-height: 2000px)" type="text/css" href="zoomout-large.css"/>
+<link rel="stylesheet" media="screen and (min-height: 100px) and (max-height: 485px)" type="text/css" href="zoomout-small.css"/>
 <head>
 <title>INCOMA v0.1 -sandbox-</title>
 </head>
@@ -11,12 +12,13 @@
 <!-- HTML frame -->
 
 
-    <div id="headerMain" style="color:#ccc;">
-        <div id="headerName" style="color:#fff;">&nbspINCOMA&nbspv0.1&nbsp&nbsp&nbsp-&nbspsandbox&nbsp-</div>
-		<a href="http://incomaproject.org" style="color:#fff;">http://incomaproject.org</a>
-        <div id="headerUserName">Name:&nbsp<textarea id='namebox' class='areaname' spellcheck='false'></textarea></div>
+    <div id="headerMain" style="color:#ccc">
+        <div id="headerName">&nbspINCOMA&nbspv0.1&nbsp&nbsp-&nbspsandbox&nbsp-</div>
+	<div id="headerSpace">&nbsp</div>
+	<div id="headerUrl"><a href="http://incomaproject.org" style="color:#fff;text-decoration:none;">incomaproject.org</a></div>
+        <div id="headerExport"></div>
         <div id="headerImport">&nbsp&nbsp&nbspImport:&nbsp</div>
-        <div id="headerExport" ></div>
+        <div id="headerUserName">Name:&nbsp<textarea id='namebox' class='areanameheader' spellcheck='false'></textarea></div>
     </div>
     <div id="visualisationMain">
     </div>  

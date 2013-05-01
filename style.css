@@ -12,6 +12,13 @@ body {
   overflow: hidden;
 }
 
+.areanameheader {
+    display: inline-block;
+
+  resize: none;
+  width: 50px;
+  height: 20px;
+}
 
 #headerMain {
     background: #336;
@@ -24,31 +31,56 @@ body {
 
 #headerName {
     display: inline-block;
-    margin: 5px;
-    font-size: 20pt;
     position: absolute;
     left: 0px;
-	cursor: default;
+    float:left;
+    top: 5px;
+    font-size: 20pt;
+    cursor: default;
+    color:#fff;
+}
+
+#headerSpace {
+    display: inline-block;
+    float:left;
+    position:relative;
+    top: 10px;
+    width: 340px;
+}
+
+#headerUrl {
+    display: inline-block;
+    float:left;
+    position:relative;
+    top: 7px;
+    margin: 5px;
+    color:#fff;
 }
 
 #headerUserName {
     display: inline-block;
+    float:right;
+    position:relative;
+    margin: 5px;
+    height: 20px;
 }
 
 #headerImport {
     display: inline-block;
+    float:right;
+    cursor: default;
+    position:relative;
     margin: 5px;
-    min-width: 120px;
-	cursor: default;
 }
 
 #headerExport {
     display: inline-block;
+    float:right;
+    cursor: default;
+    position:relative;
+    top: 7px;
     margin: 5px;
-    min-width: 60px;
-	cursor: default;
 }
-
 
 #visualisationMain {
     width: 100%;

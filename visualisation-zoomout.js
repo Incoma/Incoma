@@ -22,9 +22,9 @@ var rightpanelhtmleval = "<center><div id='posvotes' class='posvotes'></div><div
 
 var rightpanelhtmlreplyandlink = "<br><center><div id='showreply' class='showreplypanel button' onClick='showreplypanel()'>Reply</div>&nbsp&nbsp&nbsp&nbsp<div class='showconnectpanel button' id='showlink' onClick='showcreatelink()'>Connect</div></center>";
 
-var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div>";
+var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=2>Consequence</option><option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div>";
 
-var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select>&nbsp&nbsp&nbsp&nbsp<div class='cancel button' onClick='cancellink()'>Cancel</div></center>";
+var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=6>Contradiction</option><option value=2>Consequence</option><option value=5>Related</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select>&nbsp&nbsp&nbsp&nbsp<div class='cancel button' onClick='cancellink()'>Cancel</div></center>";
 
 // var rightpanelhtmlprereply = "<br><div class='showreplypanel' onClick='showreplypanel()'>Reply</div>";
 
@@ -150,9 +150,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.isclicked = 0;
     this.clickednodehash = "";
     this.container = null;
-    this.width = 1100;
-    this.height = 600;
-
+    this.width = $(window).width()-5;
+    this.height = $(window).height()-40-19;
     this.bordercolor = {
         "normal": "#36c",
         "clicked": "#000",
@@ -164,7 +163,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.showlegend = 1;
 
     this.svg = null;
-	this.color = d3.scale.category10();
+
+//  this.color = d3.scale.category10();
+//  alert(this.color(1) + this.color(2) + this.color(3) + this.color(4) + this.color(5) + this.color(6) + this.color(7) + this.color(8) + this.color(9) + this.color(10));                                                      
+    this.color = ["#000000", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
+//alert(this.color[1] + this.color[2] + this.color[3] + this.color[4] + this.color[5] + this.color[6] + this.color[7] + this.color[8] + this.color[9] + this.color[10]);                                                      
 
     this.liveAttributes = new LiveAttributes(ABSTR, this);
     //    this.updateLinks = function() { this.definedBelow(); }
@@ -187,11 +190,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             '   \
               <div class="svg_and_right_bar" >   \
    \
-                  <div id="svg" class="mod">   \
+                  <div id="svg" style="Float:left">   \
                     <div class="svg">  </div>   \
                   </div>   \
 	 \
-                  <div id="right_bar" class="mod">   \
+                  <div id="right_bar" style="Float:right">   \
                     <div class="right_bar_header">   \
                       <div class="right_bar_title">   \
                         Content:\
@@ -206,6 +209,20 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					</div> \
 					<div id="rightpanel">  \
 					</div> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
                   </div>   \
 	\
 				  <div id="left_bar" class="mod">   \
@@ -252,7 +269,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     </div>   \
    \
                     <div id="filt_sizes" class="filt_sizes" style="Float:left" >   \
-                      <b>Sizes</b>     \
+                      <b>Evaluations</b>     \
                     </div>   \
                     <div id="filt_hide" class="filt_hide"  style="Float:left" >   \
                       <div class="filt_hide_button" onClick="hideshowfilters()">Hide/show filters</div>   \
@@ -410,7 +427,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    threadslegend[i] = document.createElement("canvas");
 	    threadslegend[i].width  = 6; // in pixels
 	    threadslegend[i].height = 10;
-	    threadslegend[i].style.backgroundColor  = PRES.color(i);
+	    threadslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(threadslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
@@ -466,7 +483,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    threadslegend[i] = document.createElement("canvas");
 	    threadslegend[i].width  = 6; // in pixels
 	    threadslegend[i].height = 10;
-	    threadslegend[i].style.backgroundColor  = PRES.color(i);
+	    threadslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(threadslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name));
@@ -515,7 +532,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    boxeslegend[i] = document.createElement("canvas");
 	    boxeslegend[i].width  = 10; // in pixels
 	    boxeslegend[i].height = 10;
-	    boxeslegend[i].style.backgroundColor  = PRES.color(i);
+	    boxeslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(boxeslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
@@ -572,7 +589,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    boxeslegend[i] = document.createElement("canvas");
 	    boxeslegend[i].width  = 10; // in pixels
 	    boxeslegend[i].height = 10;
-	    boxeslegend[i].style.backgroundColor  = PRES.color(i);
+	    boxeslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(boxeslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name));
@@ -648,7 +665,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     function LiveAttributes(ABSTR, PRES) {
 
         this.nodeFill = function (d) {
-            return PRES.color(d.type);
+            return PRES.color[d.type];
         };
 
         this.nodeHeight = function (d) {
@@ -702,7 +719,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 
         this.linkStroke = function (d) {
-            return PRES.color(d.type);
+            return PRES.color[d.type];
         };
 
 
@@ -722,7 +739,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			if (creatinglink){
 				var nodes = PRES.force.nodes();
 				var index = searchhash(nodes,PRES.clickednodehash);
-				var linecolor = PRES.color(document.getElementById("replylinktype2").value);
+			    var linecolor = PRES.color[document.getElementById("replylinktype2").value];
 				
 				var x1 = nodes[index].x+10,
 					y1 = nodes[index].y+10,
@@ -1115,7 +1132,7 @@ function savelink(d){
 function changelinktype(){
 
 	var PRES = Visualisations.visualisations[0].presentation;
-	var linecolor = PRES.color(document.getElementById("replylinktype2").value);
+    var linecolor = PRES.color[document.getElementById("replylinktype2").value];
 
 	PRES.prelink.style("stroke", linecolor);
 }
