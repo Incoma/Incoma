@@ -1,20 +1,85 @@
+var oldscale = 1;
+var scale = 1;
+var trans = [0,0];
+
+var zoomval = 1;
+var zoommax = 5;
+var zoommin = 0.2;
+
 var despx = 0;
 var despy = 0;
-var zoomval = 1;
-var rightpanelhtmleval = "<center><b>Evaluate:</b> <div class='evalpos' onClick='evalpos()'>+</div><div class='evalneg' onClick='evalneg()'>-</div></center>";
 
-var rightpanelhtmlreply = "<b>Reply:</b><br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\"><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td> Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><<option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea><center><div class='save' onClick='savenode()'>Save</div><div class='cancel' onClick='hidereplypanel()'>Cancel</div>";
+var despxz = 0;
+var despyz = 0;
 
-var rightpanelhtmlprereply = "<br><center><div class='showreplypanel' onClick='showreplypanel()'>Reply to the comment above</div></center>";
+var despxp = 0;
+var despyp = 0;
 
-var rightpanelhtmllink = "<br><center><div class='new' onClick='showcreatelink()'>Connect this comment with another</div></center>";
+var transxz = 0;
+var transyz = 0;
+
+var rightpanelhtmleval = "<center><div id='posvotes' class='posvotes'></div><div class='evalpos button' onClick='evalpos()'>+</div>&nbsp&nbsp<div class='evalneg button' onClick='evalneg()'>-</div><div id='negvotes' class='negvotes'></div></center>";
+
+var rightpanelhtmlreplyandlink = "<br><center><div id='showreply' class='showreplypanel button' onClick='showreplypanel()'>Reply</div>&nbsp&nbsp&nbsp&nbsp<div class='showconnectpanel button' id='showlink' onClick='showcreatelink()'>Connect</div></center>";
+
+var connectionlist = new Array(4) ;
+// 1 = General
+connectionlist["1"] = ["General", "Agree", "Disagree", "Consequence", "Alternative"]; 
+// 2 = Question
+connectionlist["2"] = ["General"]; 
+// 3 = Answer
+connectionlist["3"] = ["Answer"]; 
+// 4 = Proposal
+connectionlist["4"]= ["General", "Agree", "Disagree", "Alternative"]; 
+// 5 = Info
+connectionlist["5"]= ["General", "Agree", "Disagree", "Consequence", "Alternative"]; 
+
+ function connectionChange(selectObj) { 
+     var idx = selectObj.selectedIndex; 
+     var valreply = selectObj.options[idx].value;
+     connlist = connectionlist[valreply];
+     var cSelect = document.getElementById("replylinktype"); 
+     Visualisations.setOptions(cSelect.makeOlist(connList)); 
+  }
+  
+  function makeOList(cList) {
+        var result = [];
+        for (var i = 0; i < cList.length; ++i) {
+            var newOption = {text: cList[i]}
+          switch (cList[i]) {
+            case 'General': newOption.value = 1;  
+                 break;
+            case 'Agree':  newOption.value = 3;  
+                 break;
+            case 'Disagree':  newOption.value = 4;  
+                 break;
+            case 'Consequence':  newOption.value = 2;  
+                 break;
+            case 'Alternative':  newOption.value = 7;  
+                 break;
+            case 'Answer':  newOption.value = 8;  
+                 break;
+            default:  
+            }
+            result.push(newOption);
+        }
+        return result;
+  }
+
+var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\" onchange=\"connectionChange(this);\"  ><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td>Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=2>Consequence</option><option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div>";
+
+var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=6>Contradiction</option><option value=2>Consequence</option><option value=5>Related</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select>&nbsp&nbsp&nbsp&nbsp<div class='cancel button' onClick='cancellink()'>Cancel</div></center>";
+
+// var rightpanelhtmlprereply = "<br><div class='showreplypanel' onClick='showreplypanel()'>Reply</div>";
+
+// var rightpanelhtmllink = "<div class='showconnectpanel' onClick='showcreatelink()'>Connect</div>";
 
 Visualisations.register(new ZoomOut());
 
 function ZoomOut() {
 
     this.name = "Zoom Out",
-    this.abstraction = new ZoomOut_Abstraction(this);
+    this.abstraction = new ZoomOut_Abstraction();
     this.presentation = new ZoomOut_Presentation(this, this.abstraction);
     this.control = new ZoomOut_Control(this, this.abstraction, this.presentation);
 
@@ -30,8 +95,9 @@ function ZoomOut() {
 // Start of this == abstraction = model and state of filters [abstraction initialized with (model)]
 
 var creatinglink = false;
+var replying = false;
 
-function ZoomOut_Abstraction(VIS) {
+function ZoomOut_Abstraction() {
     this.model = null;
     this.linkFilters = {
         1: {
@@ -129,21 +195,24 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.isclicked = 0;
     this.container = null;
     this.nodeSizeDefault = 20;
-    this.width = 900;
-    this.height = 500;
-
+    this.width = $(window).width()-5;
+    this.height = $(window).height()-40-19;
     this.bordercolor = {
-        "normal": "#af0",
-        "clicked": "#255",
-        "over": "#E9B",
-		"origin": "#c33"
+        "normal": "#36c",
+        "clicked": "#000",
+        "over": "#c33",
+		"origin": "#360"
     };
 
     this.showfilters = 0;
     this.showlegend = 1;
 
     this.svg = null;
-    this.color = d3.scale.category20();
+
+//  this.color = d3.scale.category10();
+//  alert(this.color(1) + this.color(2) + this.color(3) + this.color(4) + this.color(5) + this.color(6) + this.color(7) + this.color(8) + this.color(9) + this.color(10));                                                      
+    this.color = ["#000000", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
+//alert(this.color[1] + this.color[2] + this.color[3] + this.color[4] + this.color[5] + this.color[6] + this.color[7] + this.color[8] + this.color[9] + this.color[10]);                                                      
 
     this.liveAttributes = new LiveAttributes(ABSTR, this);
     //    this.updateLinks = function() { this.definedBelow(); }
@@ -164,22 +233,51 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.container = html5node;
         html5node.innerHTML =
             '   \
-             <div class="svg_and_right_bar">   \
+              <div class="svg_and_right_bar" >   \
    \
-                  <div id="svg" class="mod">   \
+                  <div id="svg" style="Float:left">   \
                     <div class="svg">  </div>   \
                   </div>   \
-   \
-                  <div id="right_bar" class="mod">   \
+	 \
+                  <div id="right_bar" style="Float:right">   \
                     <div class="right_bar_header">   \
                       <div class="right_bar_title">   \
-                        Content:           \
+                        Content:\
+						<div id="test1" class="evalpos" style = "background:#cce" onClick="test1()">1</div>	\
+						<div id="test2" class="evalpos" style = "background:#cce" onClick="test2()">2</div>	\
+						<div id="test3" class="evalpos" style = "background:#cce" onClick="test3()">3</div>	\
                       </div>   \
                     </div>   \
     \
                     <textarea id="contbox" class="areacontent" spellcheck="false" readonly></textarea>   \
-<div id="rightpanel">  \
-</div> \
+					<div id="rightpaneleval">  \
+					</div> \
+					<div id="rightpanel">  \
+					</div> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+					<br></br> \
+                  </div>   \
+	\
+				  <div id="left_bar" class="mod">   \
+                    <div class="left_bar_header noselect">   \
+                        <center>   \
+						<div class="zoombutton noselect" onClick="zoomout()">-</div>   \
+						&nbsp&nbspzoom&nbsp&nbsp \
+						<div class="zoombutton noselect" onClick="zoomin()">+</div>   \
+						<\center>  \
+                    </div>   \
                   </div>   \
     \
              </div>   \
@@ -216,7 +314,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     </div>   \
    \
                     <div id="filt_sizes" class="filt_sizes" style="Float:left" >   \
-                      <b>Sizes</b>     \
+                      <b>Evaluations</b>     \
                     </div>   \
                     <div id="filt_hide" class="filt_hide"  style="Float:left" >   \
                       <div class="filt_hide_button" onClick="hideshowfilters()">Hide/show filters</div>   \
@@ -246,8 +344,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     function initSVG(PRES, ABSTR, width, height) {
 
         PRES.force = d3.layout.force()
-            .charge(-400)
+            .charge(-600)
+			.gravity(0.1)
             .linkDistance(40)
+			.theta(0.95)
             .size([width, height]);
         var force = PRES.force;
 
@@ -262,7 +362,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		PRES.svg = svgg
 			.append('svg:g')
-			.call(d3.behavior.zoom().scaleExtent([0.05,1.5]).on("zoom", rescale))
+			.call(d3.behavior.zoom().on("zoom", rescale))
 			.on("dblclick.zoom", null)
 			.append('svg:g')
 			.on("mousedown", PRES.liveAttributes.mousedown)
@@ -305,8 +405,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .attr("height", PRES.liveAttributes.nodeHeight)
             .style("fill", PRES.liveAttributes.nodeFill)
             .on("mouseover", PRES.liveAttributes.mouseover)
-            .on("mouseout", PRES.liveAttributes.mouseout)
-            .on("mousedown", PRES.liveAttributes.mousedown_node)
             .on("click", PRES.liveAttributes.click)
             .call(force.drag);
 			
@@ -328,10 +426,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         force.on("tick", function () {
 		
             PRES.svg.selectAll(".link")
-				.attr("x1", function (d) {return d.source.x + 10;})
-                .attr("y1", function (d) {return d.source.y + 10;})
-                .attr("x2", function (d) {return d.target.x + 10;})
-                .attr("y2", function (d) {return d.target.y + 10;});
+				.attr("x1", function (d) {return d.source.x+10;})
+                .attr("y1", function (d) {return d.source.y+10;})
+                .attr("x2", function (d) {return d.target.x+10;})
+                .attr("y2", function (d) {return d.target.y+10;});
 
             PRES.svg.selectAll(".node")
 				.attr("x", function (d) {return d.x;})
@@ -374,7 +472,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    threadslegend[i] = document.createElement("canvas");
 	    threadslegend[i].width  = 6; // in pixels
 	    threadslegend[i].height = 10;
-	    threadslegend[i].style.backgroundColor  = PRES.color(i);
+	    threadslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(threadslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
@@ -430,7 +528,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    threadslegend[i] = document.createElement("canvas");
 	    threadslegend[i].width  = 6; // in pixels
 	    threadslegend[i].height = 10;
-	    threadslegend[i].style.backgroundColor  = PRES.color(i);
+	    threadslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(threadslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name));
@@ -479,7 +577,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    boxeslegend[i] = document.createElement("canvas");
 	    boxeslegend[i].width  = 10; // in pixels
 	    boxeslegend[i].height = 10;
-	    boxeslegend[i].style.backgroundColor  = PRES.color(i);
+	    boxeslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(boxeslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
@@ -536,7 +634,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    boxeslegend[i] = document.createElement("canvas");
 	    boxeslegend[i].width  = 10; // in pixels
 	    boxeslegend[i].height = 10;
-	    boxeslegend[i].style.backgroundColor  = PRES.color(i);
+	    boxeslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(boxeslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name));
@@ -612,7 +710,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     function LiveAttributes(ABSTR, PRES) {
 
         this.nodeFill = function (d) {
-            return PRES.color(d.type);
+            return PRES.color[d.type];
         };
 
         this.nodeHeight = function (d) {
@@ -631,7 +729,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             }
         };
 
-
         this.nodeOpacityAndSetConnectedLinkOpacity = function (d) {
             if (ABSTR.nodeFilters[d.type].state) {
 
@@ -640,14 +737,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 nodehash = d.hash;
                 PRES.svg.selectAll(".link")
                     .filter(function (d) {
-                    return d.ssource == nodehash;
+                    return d.source.hash == nodehash;
                 })
                     .style("stroke-width", function (d) {
                     return 0;
                 });
                 PRES.svg.selectAll(".link")
                     .filter(function (d) {
-                    return d.ttarget == nodehash;
+                    return d.target.hash == nodehash;
                 })
                     .style("stroke-width", function (d) {
                     return 0;
@@ -667,14 +764,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 
         this.linkStroke = function (d) {
-            return PRES.color(d.type);
+            return PRES.color[d.type];
         };
 
 
         this.linkStrokeWidth = function (d) {
             if (ABSTR.linkFilters[d.type].state) {
                 if (ABSTR.sizeFilters.links.state)
-                    return Math.sqrt(d.evaluation);
+                    return Math.sqrt(d.evalpos-d.evalneg);
                 else
                     return Math.sqrt(6);
             } else {
@@ -687,7 +784,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			if (creatinglink){
                 var nodes = PRES.force.nodes();
                 var index = searchhash(nodes, ABSTR.clickednodehash);
-                var linecolor = PRES.color(document.getElementById("replylinktype2").value);
+                var linecolor = PRES.color[document.getElementById("replylinktype2").value];
 				
 				var x1 = nodes[index].x+10,
 					y1 = nodes[index].y+10,
@@ -703,15 +800,38 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.attr("x2", x2-cutx)
 					.attr("y2", y2-cuty)
 					.style("stroke", linecolor);
-					
 			}
+			// TEST show coordinates in contbox
+			// document.getElementById("contbox").value = 
+				// "mouse: "+ d3.mouse(svg) + "\n"+
+				 // "\n" +
+				// "desp x p: " + Math.round(despxp) + "\n" +
+				// "desp y p: " + Math.round(despyp) + "\n" +
+				 // "\n" +
+				// "trans 0: " + trans[0] + "\n" +
+				// "trans 1: " + trans[1] + "\n" +
+				 // "\n" +
+				 // "desp x z: " + Math.round(despxz) + "\n" +
+				// "desp y z: " + Math.round(despyz) + "\n" +
+				// "\n" +
+				// "scale: " + scale + "\n" +				
+				// "oldscale: " + oldscale + "\n" +
+				// "zoomval: " + zoomval + "\n"
+				// ;  
+			
 		};
 
 		
 		
         this.mouseover = function (d) {
 
-	    if (ABSTR.clickednodehash === "") {
+			var fillopacity = 	PRES.svg.selectAll(".node")
+						.filter(function (e) {return e.hash == d.hash;})
+						.style("fill-opacity");	
+								
+			if (fillopacity == 0){return};
+			
+			if (PRES.clickednodehash === "") {
                 PRES.svg.selectAll(".node")
                     .style("stroke", PRES.bordercolor.normal);
 				
@@ -719,37 +839,32 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.filter(function (d) {return d.origin == "1";})
 					.style("stroke",PRES.bordercolor.origin);
 
-		// this line below is the node where the mouse is over			
-		d3.select(this)
+				// this line below is the node where the mouse is over			
+				d3.select(this)
 //					.transition().duration(250)
-            .style("stroke", PRES.bordercolor.over);
-
-            document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
-            }
+					.style("stroke", PRES.bordercolor.over);
+						
+				document.getElementById("contbox").value = "[" + ABSTR.nodeFilters[d.type].name + "]" + "\n\n" + d.content + "\n\n" +"[by " +d.author+"]";
+			}
         };
 
         this.mousedown = function (d) {
-	    if (!creatinglink){
-			PRES.svg.selectAll(".node")
-				.style("stroke", PRES.bordercolor.normal);
-			
-			PRES.svg.selectAll(".node")
-				.filter(function (d) {return d.origin == "1";})
-				.style("stroke",PRES.bordercolor.origin);
+			if (!creatinglink){
+				PRES.svg.selectAll(".node")
+					.style("stroke", PRES.bordercolor.normal);
 				
-			ABSTR.clickednodehash = "";
-			
-			document.getElementById("contbox").value = "";
-			$('#rightpanel').html(" ");
-	    };
+				PRES.svg.selectAll(".node")
+					.filter(function (d) {return d.origin == "1";})
+					.style("stroke",PRES.bordercolor.origin);
+					
+				PRES.clickednodehash = "";
+				
+				document.getElementById("contbox").value = "";
+				$('#rightpaneleval').html(" ");
+				$('#rightpanel').html(" ");
+				replying = false;
+			};
         };
-		
-		this.mousedown_node = function (d) {
-			//if (creatinglink){savelink(d);};
-        };
-
-        this.mouseout = function (d) {};
-
 
         this.click = function (d) {
 	    if (creatinglink){
@@ -757,22 +872,32 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				savelink(d);
 			}
 		}else{
+			var fillopacity = 	PRES.svg.selectAll(".node")
+								.filter(function (e) {return e.hash == d.hash;})
+								.style("fill-opacity");	
+								
+			if (fillopacity == 0){return};
+
 			PRES.svg.selectAll(".node")
 				.style("stroke", PRES.bordercolor.normal);
 	
 			PRES.svg.selectAll(".node")
 				.filter(function (d) {return d.origin == "1";})
 				.style("stroke",PRES.bordercolor.origin);
-
+			
 			// this line below is the clicked node
 			d3.select(this)
 				.style("stroke", PRES.bordercolor.clicked);
 	
-			ABSTR.clickednodehash = d.hash;
-
-			document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
+			PRES.clickednodehash = d.hash;
 			
-			$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
+			$('#rightpaneleval').html(rightpanelhtmleval);
+			$('#rightpanel').html(rightpanelhtmlreplyandlink);
+			
+			document.getElementById("contbox").value = "[" + ABSTR.nodeFilters[d.type].name + "]" + "\n\n" + d.content+"\n\n" + "[by " +d.author +"]";
+			document.getElementById("posvotes").innerHTML = d.evalpos;
+			document.getElementById("negvotes").innerHTML = d.evalneg;
+			
 		};
         
 		};
@@ -802,7 +927,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 function savenode() {
 	if (document.getElementById("replybox").value == ""){
-		alert("And empty reply can not be saved");
+		alert("An empty reply can not be saved");
 		return;
 	}
     var PRES = Visualisations.visualisations[0].presentation;
@@ -877,25 +1002,22 @@ function createnode(PRES){
     
     var newnode = {
  // elements and order adapted to be the same as in modelb.js
- //       "hash": nodes.length + 2,  // produced a gap
         "hash": nodes.length,
         "content": content,
         "evalpos": 0,
 		"evalneg": 0,
-        "evaluatedby": "",
+        "evaluatedby": [],
         "type": nodetype,
         "author": author,
-        "time": "17-abr-2013",
+        "time": Date.now(),
         x: targetnode.x,
         y: targetnode.y
     };
     
     nodes.push(newnode);
-//    links.push({source: newnode, target: targetnode,"type":linktype,"evaluation":6});
-// elements and order adapted to be the same as in modelb.js
-    links.push({source: newnode, target: targetnode,ssource: newnode, ttarget: targetnode,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
+	links.push({source: newnode, target: targetnode,"evalpos":6,"evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": "17-abr-2013"});
     
-    document.getElementById("replybox").value = "";
+	hidereplypanel();
     
     drawnewnodes(PRES);
 }
@@ -928,8 +1050,6 @@ function drawnewnodes(PRES) {
 		.attr("height", PRES.liveAttributes.nodeHeight)
 		.style("fill", PRES.liveAttributes.nodeFill)
 		.on("mouseover", PRES.liveAttributes.mouseover)
-		.on("mouseout", PRES.liveAttributes.mouseout)
-		.on("mousedown", PRES.liveAttributes.mousedown_node)
 		.on("click", PRES.liveAttributes.click)
         .call(PRES.force.drag)
     
@@ -938,63 +1058,81 @@ function drawnewnodes(PRES) {
     PRES.force.start();
 };
 
-function evalpos() {
-    var PRES = Visualisations.visualisations[0].presentation;
-    evalposnode(PRES);    
-    PRES.update();
-};
+function evalpos(){
+	evalnode("pos");
+}
 
-function evalneg() {
-    var PRES = Visualisations.visualisations[0].presentation;
-    evalnegnode(PRES);    
-    PRES.update();
-};
+function evalneg(){
+	evalnode("neg");
+}
 
-function evalposnode(PRES){		    
-
-    var nodes = PRES.force.nodes();
+function evalnode(vote) {
+    var PRES = Visualisations.visualisations[0].presentation;   
+	
+	var nodes = PRES.force.nodes();
     var links = PRES.force.links();
   
     var targetindex = searchhash(nodes, ABSTR.clickednodehash);
     targetnode = nodes[targetindex];
-
-    targetnode.evalpos = targetnode.evalpos+1;    
-    targetnode.evaluatedby = document.getElementById("namebox").value;    
-    if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};    
-    
-}
-
-function evalnegnode(PRES){		    
-    var nodes = PRES.force.nodes();
-    var links = PRES.force.links();  
-  
-    var targetindex = searchhash(nodes, ABSTR.clickednodehash);
-    targetnode = nodes[targetindex];
-
-	targetnode.evalneg = targetnode.evalneg+1;    
-	targetnode.evaluatedby = document.getElementById("namebox").value; 
-	if (targetnode.evaluatedby == ""){targetnode.evaluatedby = "anon";};
-        
-}
+	
+    var name = document.getElementById("namebox").value;    
+    if (name == ""){name = "anon";}
+	
+	if($.inArray(name, targetnode.evaluatedby) > -1){
+	
+		alert("You have already voted this node");
+		
+	} else{
+	
+		targetnode.evaluatedby.push(name);
+		
+		if (vote=="pos"){
+			targetnode.evalpos = targetnode.evalpos+1; 
+			document.getElementById("posvotes").innerHTML = targetnode.evalpos;
+		}else{
+			targetnode.evalneg = targetnode.evalneg+1;
+			document.getElementById("negvotes").innerHTML = targetnode.evalneg;
+		}
+	
+		PRES.svg.selectAll(".node")
+			.filter(function (d) {return d.hash == PRES.clickednodehash;})
+			.transition().duration(1000).ease("elastic")
+			.attr("width", PRES.liveAttributes.nodeWidth)
+			.attr("height", PRES.liveAttributes.nodeHeight);   
+	}
+};
 
 function showreplypanel(){
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlreply + rightpanelhtmllink);	
+	cancellink();
+
+		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
+//		document.getElementById("replybox").value = ".";  //***** TEST LINE - to avoid de alert of empty reply
+		replying = true;
+		document.getElementById("namebox2").value = document.getElementById("namebox").value;
+		button = document.getElementById("showreply");
+		button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
 }
 
 function hidereplypanel(){
-	$('#rightpanel').html(" ");
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);	
+	document.getElementById("replybox").value = "";  
+	 replying = false; 
+	 $('#rightpanel').html(rightpanelhtmlreplyandlink);	
 }
 
 
 function showcreatelink(){
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply+"<br><b>Type of relation:</b><select id=\"replylinktype2\"> <option value=1>General</option><option value=2>Consequence</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=5>Related</option><option value=6>Contradiction</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select><div class='cancel' onClick='cancellink()'>Cancel</div>");
-	
-	creatinglink = true;
+	if (creatinglink){
+		cancellink();
+	}else{
+		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmllink);
+		creatinglink = true;
+		button = document.getElementById("showlink");
+		button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
+	}
 }
 
 function cancellink(){
-	$('#rightpanel').html(rightpanelhtmleval + rightpanelhtmlprereply + rightpanelhtmllink);
+	$('#rightpanel').html(rightpanelhtmlreplyandlink);
 	
 	var PRES = Visualisations.visualisations[0].presentation;
 	PRES.prelink 
@@ -1021,7 +1159,7 @@ function savelink(d){
     var author = document.getElementById("namebox").value;
     if (author == ""){author = "anonymous";};
 	
-    links.push({source: sourcenode, target: d, ssource: sourceindex, ttarget: d.index,"evaluation":6,"evaluatedby": "","type":linktype,"author": author,"time": "17-abr-2013"});
+    links.push({source: sourcenode, target: d, "evalpos":6, "evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": Date.now()});
 	
     var link = PRES.svg.selectAll(".link")
         .data(links)
@@ -1039,7 +1177,7 @@ function savelink(d){
 function changelinktype(){
 
 	var PRES = Visualisations.visualisations[0].presentation;
-	var linecolor = PRES.color(document.getElementById("replylinktype2").value);
+    var linecolor = PRES.color[document.getElementById("replylinktype2").value];
 
 	PRES.prelink.style("stroke", linecolor);
 }
@@ -1053,21 +1191,122 @@ function rescale() {
     trans=d3.event.translate;
     scale=d3.event.scale;
 	
-	despx = trans[0];
-	despy = trans[1];
-	zoomval = scale;
+	if (scale == oldscale){  //no mousewheel movement
 	
-    PRES.svg.attr("transform",
-		  "translate(" + trans + ")"
-		  + " scale(" + scale + ")");
-	  
+		despxp = trans[0]-transxz;
+		despyp = trans[1]-transyz;
+		
+		var transtime = 0;
+		
+	} else {	
+		if (scale > oldscale){
+			if (zoomval*1.5 < zoommax){zoomval *= 1.5;}
+		} else {
+			if (zoomval/1.5 > zoommin){zoomval /= 1.5;}
+		}
+		
+		despxz = PRES.width*(1-zoomval)/2;
+		despyz = PRES.height*(1-zoomval)/2;
+		
+		transxz = trans[0]-despxp;
+		transyz = trans[1]-despyp;
+		
+		oldscale = scale;
+		var transtime = 200;
+		
+		console.log(d3.mouse(this));
+	}
+		
+	despx = despxz + despxp;
+	despy = despyz + despyp;
+		
+
+	PRES.svg
+		.transition().duration(transtime)
+		.attr("transform", "translate(" + despx + ',' + despy + ") scale(" + zoomval + ")");
 }
+
+
+function zoomin(){
+	var PRES = Visualisations.visualisations[0].presentation;
+	var nodes = PRES.force.nodes();
+	
+	zoomval *= 1.5;
+	
+	despxz = PRES.width*(1-zoomval)/2;
+	despyz = PRES.height*(1-zoomval)/2;
+	
+	despx = despxz + despxp;
+	despy = despyz + despyp;
+	
+    PRES.svg
+	.transition().duration(200)
+	.attr("transform","translate(" + despx + ',' + despy + ") scale(" + zoomval + ")");
+}
+
+function zoomout(){
+	var PRES = Visualisations.visualisations[0].presentation;
+	var nodes = PRES.force.nodes();
+	
+	zoomval /= 1.5;
+	
+	despxz = PRES.width*(1-zoomval)/2;
+	despyz = PRES.height*(1-zoomval)/2;
+	
+	despx = despxz + despxp;
+	despy = despyz + despyp;
+	
+    PRES.svg
+	.transition().duration(200)
+	.attr("transform","translate(" + despx + ',' + despy + ") scale(" + zoomval + ")");
+}
+
 
 function mousemove(){}
 
 function mousedown(){}
 
 function mouseup(){}
+
+// **** TEST FUNCTIONS (triggered by test buttons in the right-bar-header) *****************
+
+function test1(){
+	//document.getElementById("contbox").value = "Holaa";
+	
+	var PRES = Visualisations.visualisations[0].presentation;
+	
+	var nodes = PRES.force.nodes();
+
+    var content = document.getElementById("replybox").value;
+    var nodetype = document.getElementById("replynodetype").value;
+	
+	var author = document.getElementById("namebox").value;
+	if (author == ""){author = "anonymous";};
+    
+    var newnode = {
+ // elements and order adapted to be the same as in modelb.js
+        "hash": nodes.length,
+        "content": content,
+        "evalpos": 0,
+		"evalneg": 0,
+        "evaluatedby": "",
+        "type": nodetype,
+        "author": author,
+        "time": Date.now(),
+        x: 600,
+        y: 300
+    };
+    
+    nodes.push(newnode);
+    
+	hidereplypanel();
+    
+    drawnewnodes(PRES);
+}
+
+function test2(){}
+
+function test3(){}
 
 function ZoomOut_Control(VIS, ABSTR, PRES) {};
 // End of var ZoomOut

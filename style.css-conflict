@@ -1,0 +1,121 @@
+* {
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0px;
+  overflow: hidden;
+}
+
+.areanameheader {
+    display: inline-block;
+
+  resize: none;
+  width: 50px;
+  height: 20px;
+}
+
+#headerMain {
+    background: #336;
+    text-align: right;
+    width: 100%;
+    min-height: 40px;
+	cursor: default;
+}
+
+.header {
+    display: inline-block;
+<<<<<<< HEAD
+    margin: 5px;
+    vertical-align: top;
+}
+
+
+#headerName {
+    font-size: 20pt;
+    position: absolute;
+    left: 0px;
+    top: -2px;
+    color: #ffc;
+}
+
+#headerUserName {
+    max-width: 20%;
+    min-width: 60px;
+}
+
+#headerImport {
+    max-width: 40%;
+    min-width: 200px;
+}
+
+#headerExport {
+    max-width: 20%;
+    min-width: 60px;
+}
+
+#headerChangeVis {
+    min-width: 60px;
+=======
+    position: absolute;
+    left: 0px;
+    float:left;
+    top: 5px;
+    font-size: 20pt;
+    cursor: default;
+    color:#fff;
+}
+
+#headerSpace {
+    display: inline-block;
+    float:left;
+    position:relative;
+    top: 10px;
+    width: 340px;
+}
+
+#headerUrl {
+    display: inline-block;
+    float:left;
+    position:relative;
+    top: 7px;
+    margin: 5px;
+    color:#fff;
+}
+
+#headerUserName {
+    display: inline-block;
+    float:right;
+    position:relative;
+    margin: 5px;
+    height: 20px;
+}
+
+#headerImport {
+    display: inline-block;
+    float:right;
+    cursor: default;
+    position:relative;
+    margin: 5px;
+}
+
+#headerExport {
+    display: inline-block;
+    float:right;
+    cursor: default;
+    position:relative;
+    top: 7px;
+    margin: 5px;
+>>>>>>> 9f17bb85ad317400e2c7c1f7793dd1e149f57ccc
+}
+
+#visualisationMain {
+    width: 100%;
+}
+
+
