@@ -115,6 +115,7 @@ function ZoomOut_Abstraction(VIS) {
     };
     this.init = function (model) {
         this.model = model;
+        this.clickednodehash = "";
     }
 };
 
@@ -126,7 +127,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     // public interface
 
     this.isclicked = 0;
-    this.clickednodehash = "";
     this.container = null;
     this.nodeSizeDefault = 20;
     this.width = 900;
@@ -685,9 +685,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.mousemove = function (d) {
 			if (creatinglink){
-				var nodes = PRES.force.nodes();
-				var index = searchhash(nodes,PRES.clickednodehash);
-				var linecolor = PRES.color(document.getElementById("replylinktype2").value);
+                var nodes = PRES.force.nodes();
+                var index = searchhash(nodes, ABSTR.clickednodehash);
+                var linecolor = PRES.color(document.getElementById("replylinktype2").value);
 				
 				var x1 = nodes[index].x+10,
 					y1 = nodes[index].y+10,
@@ -711,7 +711,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
         this.mouseover = function (d) {
 
-	    if (PRES.clickednodehash === "") {
+	    if (ABSTR.clickednodehash === "") {
                 PRES.svg.selectAll(".node")
                     .style("stroke", PRES.bordercolor.normal);
 				
@@ -737,7 +737,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				.filter(function (d) {return d.origin == "1";})
 				.style("stroke",PRES.bordercolor.origin);
 				
-			PRES.clickednodehash = "";
+			ABSTR.clickednodehash = "";
 			
 			document.getElementById("contbox").value = "";
 			$('#rightpanel').html(" ");
@@ -753,7 +753,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.click = function (d) {
 	    if (creatinglink){
-			if (d.hash !== PRES.clickednodehash){
+			if (d.hash !== ABSTR.clickednodehash){
 				savelink(d);
 			}
 		}else{
@@ -768,7 +768,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			d3.select(this)
 				.style("stroke", PRES.bordercolor.clicked);
 	
-			PRES.clickednodehash = d.hash;
+			ABSTR.clickednodehash = d.hash;
 
 			document.getElementById("contbox").value = d.content+"\n\n"+"(by " +d.author+")" + "\n\n" + "Votes: " + d.evalpos + " positives, " + d.evalneg + " negatives";
 			
@@ -869,7 +869,7 @@ function createnode(PRES){
     var nodetype = document.getElementById("replynodetype").value;
     var linktype = document.getElementById("replylinktype").value;
     
-    var targetindex = searchhash(nodes, PRES.clickednodehash), 
+    var targetindex = searchhash(nodes, ABSTR.clickednodehash), 
     targetnode = nodes[targetindex];
 	
 	var author = document.getElementById("namebox").value;
@@ -955,7 +955,7 @@ function evalposnode(PRES){
     var nodes = PRES.force.nodes();
     var links = PRES.force.links();
   
-    var targetindex = searchhash(nodes, PRES.clickednodehash);
+    var targetindex = searchhash(nodes, ABSTR.clickednodehash);
     targetnode = nodes[targetindex];
 
     targetnode.evalpos = targetnode.evalpos+1;    
@@ -968,7 +968,7 @@ function evalnegnode(PRES){
     var nodes = PRES.force.nodes();
     var links = PRES.force.links();  
   
-    var targetindex = searchhash(nodes, PRES.clickednodehash);
+    var targetindex = searchhash(nodes, ABSTR.clickednodehash);
     targetnode = nodes[targetindex];
 
 	targetnode.evalneg = targetnode.evalneg+1;    
@@ -1015,7 +1015,7 @@ function savelink(d){
 
     var linktype = document.getElementById("replylinktype2").value;
     
-    var sourceindex = searchhash(nodes, PRES.clickednodehash);
+    var sourceindex = searchhash(nodes, ABSTR.clickednodehash);
     sourcenode = nodes[sourceindex];
 	
     var author = document.getElementById("namebox").value;
