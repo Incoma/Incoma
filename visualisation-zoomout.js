@@ -930,7 +930,7 @@ function savenode() {
 		alert("An empty reply can not be saved");
 		return;
 	}
-    var PRES = Visualisations.visualisations[0].presentation;
+    var PRES = Visualisations.current().presentation;
     createnode(PRES);
     //+ call to export fuctions
 };
@@ -938,7 +938,7 @@ function savenode() {
 
 function hideshowlegend() {
 
-    var PRES = Visualisations.visualisations[0].presentation;
+    var PRES = Visualisations.current().presentation;
     var legend_bar = document.getElementById("legend_bar");
 
     PRES.showlegend = !PRES.showlegend;
@@ -950,7 +950,7 @@ function hideshowlegend() {
 
 function hideshowfilters() {
 
-    var PRES = Visualisations.visualisations[0].presentation;
+    var PRES = Visualisations.current().presentation;
     var lower_bar = document.getElementById("lower_bar");
 
     PRES.showfilters = !PRES.showfilters;
@@ -960,7 +960,7 @@ function hideshowfilters() {
 
 function legendfiltersupdate() {
 
-    var PRES = Visualisations.visualisations[0].presentation;
+    var PRES = Visualisations.current().presentation;
     var lower_bar = document.getElementById("lower_bar");
     var legend_bar = document.getElementById("legend_bar");
 
@@ -1067,7 +1067,7 @@ function evalneg(){
 }
 
 function evalnode(vote) {
-    var PRES = Visualisations.visualisations[0].presentation;   
+    var PRES = Visualisations.current().presentation;   
 	
 	var nodes = PRES.force.nodes();
     var links = PRES.force.links();
@@ -1134,7 +1134,7 @@ function showcreatelink(){
 function cancellink(){
 	$('#rightpanel').html(rightpanelhtmlreplyandlink);
 	
-	var PRES = Visualisations.visualisations[0].presentation;
+	var PRES = Visualisations.current().presentation;
 	PRES.prelink 
 		.attr("x1", 0)
 		.attr("y1", 0)
@@ -1146,7 +1146,7 @@ function cancellink(){
 	
 function savelink(d){
 
-    var PRES = Visualisations.visualisations[0].presentation;
+    var PRES = Visualisations.current().presentation;
 
     var nodes = PRES.force.nodes();
     var links = PRES.force.links();
@@ -1176,7 +1176,7 @@ function savelink(d){
 
 function changelinktype(){
 
-	var PRES = Visualisations.visualisations[0].presentation;
+	var PRES = Visualisations.current().presentation;
     var linecolor = PRES.color[document.getElementById("replylinktype2").value];
 
 	PRES.prelink.style("stroke", linecolor);
@@ -1186,7 +1186,7 @@ function changelinktype(){
 
 function rescale() {
 	
-    var PRES = Visualisations.visualisations[0].presentation;
+    var PRES = Visualisations.current().presentation;
 	
     trans=d3.event.translate;
     scale=d3.event.scale;
@@ -1228,7 +1228,7 @@ function rescale() {
 
 
 function zoomin(){
-	var PRES = Visualisations.visualisations[0].presentation;
+	var PRES = Visualisations.current().presentation;
 	var nodes = PRES.force.nodes();
 	
 	zoomval *= 1.5;
@@ -1245,7 +1245,7 @@ function zoomin(){
 }
 
 function zoomout(){
-	var PRES = Visualisations.visualisations[0].presentation;
+	var PRES = Visualisations.current().presentation;
 	var nodes = PRES.force.nodes();
 	
 	zoomval /= 1.5;
@@ -1273,7 +1273,7 @@ function mouseup(){}
 function test1(){
 	//document.getElementById("contbox").value = "Holaa";
 	
-	var PRES = Visualisations.visualisations[0].presentation;
+	var PRES = Visualisations.current().presentation;
 	
 	var nodes = PRES.force.nodes();
 

@@ -1,6 +1,15 @@
 // module namespace:
 var Model = {};
 
+/*
+    This module stores the data of a debate in Model.model and
+    provides methods for loading, saving and editing it.
+    It also defines lists of known node/link types and fields.
+    The current author is stored in Model.currentAuthor.
+    
+    This module must be kept independent of any visualisations.    
+*/
+
 (function() { // create anonymous namespace
 
 // some static information
@@ -75,6 +84,7 @@ Model.createNode = function(nodetype, content, author, time) {
     Model.model.nodes.push(newNode);
 };
 
+
 Model.createLink = function(linktype, source, target, author, time) {
     var newLink = {
         "source": source, 
@@ -100,7 +110,7 @@ Model.importFile = function(text, mime) {
 };
     
 Model.exportFile = function() {
-    return { text: JSON.stringify(this.model),
+    return { text: JSON.stringify(Model.cleanModel()),
              mime: "application/x-incoma+json" };
 };
        
@@ -108,28 +118,35 @@ Model.cleanModel = function(old) {
     if (!old) {
         old = Model.model;
     };
+    var rplHash = function(obj) {
+        obj.source = obj.source.hash;
+        obj.target = obj.target.hash;
+    };
     return { nodes:   cleanArray(old.nodes, Model.nodeFields), 
-             links:   cleanArray(old.links, Model.linkFields), 
+             links:   cleanArray(old.links, Model.linkFields, rplHash), 
              authors: old.authors };
 };
 
 // anonymous helper functions:
 
-function cleanArray(oldArray, objectFields) {
+function cleanArray(oldArray, objectFields, fn) {
     var result = [];
     for (var i = 0; i < oldArray.length; ++i) {
-        var newObj = cleanObject(oldArray[i], objectFields);
+        var newObj = cleanObject(oldArray[i], objectFields, fn);
         result.push(newObj);
     };
     return result;
 };
 
-function cleanObject(obj, fields) {
+function cleanObject(obj, fields, cleanUp) {
     var cleanObject = {};
     for (var i = 0; i < fields.length; ++i) {
         var f = fields[i];
         cleanObject[f] = obj[f];
     };
+    if (cleanUp) {
+        cleanUp(cleanObject);
+    }
     return cleanObject;
 };
                             

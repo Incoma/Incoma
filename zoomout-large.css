@@ -37,7 +37,7 @@ body {
 }
 
 .areacontent {
-  width: 98.5%;
+  width: 365px;
   min-height: 0px;
   height: 120px;
   resize: vertical;
@@ -45,15 +45,16 @@ body {
 
 .areareply {
   border: yes;
-  width: 295px;
+  width: 365px;
   min-height: 0px;
   height: 100px;
   resize: vertical;
 }
 
 .areaname {
+  display: inline-block;
   position: relative;
-  top: 3px;
+  top: 0px;
   border: yes;
   width: 30%;
   height: 17px;
@@ -337,13 +338,14 @@ div.zoombutton{
 }
 
 #svg {
+  position: absolute;
 }
 
 #right_bar {
   position: relative;
-  top: 5px;
-  margin-right: 5px;
-  width: 300px;
+  width: 370px;
+  height:100%;
+  background: rgba(255,255,255,0.7);
 }
 
 #left_bar {

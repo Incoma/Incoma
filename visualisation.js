@@ -1,10 +1,26 @@
 // module namespace:
 var Visualisations = {};
 
+/*
+    This module keeps track of available visualisations and which
+    one is currently selected. A visualisation is any object with
+     - a "name", 
+     - an init(html5node, model) method, and
+     - a destroy() method.
+     
+     We also provide several helper functions for creating HTML elements.
+     TODO: since this is independent it should probably move into its own module.
+*/
 
 (function() { // create anonymous namespace
 
-var PIMPL = new Visualisations_Private();
+// This two strings are used when no visualisation was selected:
+Visualisations.dummyName = "None";
+Visualisations.dummyMessage = "<div style='position:relative;top:20px;left:20px;font-size:14pt;'>Please choose a nickname and a visualisation!</div>";
+
+
+// private implementation, see below:
+var PIMPL = new Visualisations_Private(); 
 
 
 Visualisations.register = function(obj) {
@@ -165,9 +181,9 @@ function Visualisations_Private() {
     this.visualisations = [new Visualisation_Dummy()];
     
     function Visualisation_Dummy() {
-        this.name = "None"; 
+        this.name = Visualisations.dummyName; 
         this.init = function(html5node, model) {
-            html5node.innerHTML="<div style='position:relative;top:20px;left:20px;font-size:14pt;'>Please choose a nickname and a visualisation!</div>";
+            html5node.innerHTML = Visualisations.dummyMessage;
             };
         this.destroy = function(){} 
     };

@@ -58,11 +58,19 @@
 <script src="d3.v3.min.js"></script>
 <script src="opensave.js"></script>
 <script src="modelc.js"></script>
+<script src="model.js"></script>
 <script src="visualisation.js"></script>
 <script src="visualisation-zoomout.js"></script>
 
 <script>
     Model.clear();
+    
+    var nameBox = $("#namebox")[0];
+    nameBox.value = Model.currentAuthor;
+    nameBox.onchange = function(e) {
+        Model.currentAuthor = nameBox.value;
+    };
+    
     
     var chooseVisualisation = $("#visChoice")[0];
     Visualisations.setOptions(chooseVisualisation, Visualisations.options());
@@ -83,11 +91,11 @@
 
     var loadModelFile = function(file) {
                             var fileName = file.name || "current conversation" ;
-                            blobToText( file, function(text) { Model.importFile(text); reInit(Visualisations.current()); } );
+                            OpenSave.blobToText( file, function(text) { Model.importFile(text); reInit(Visualisations.current()); } );
                         }; 
 
-    addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
-    addExportListener( $( "#headerExport" )[0], "Export!", "Incoma-conversation.json", saveModelFile );
+    OpenSave.addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
+    OpenSave.addExportListener( $( "#headerExport" )[0], "Export!", "Incoma-conversation.json", saveModelFile );
 </script>
 </body>
 </html>
