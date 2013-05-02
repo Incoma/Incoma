@@ -65,7 +65,9 @@ Visualisations.makeColorRectangle = function(width, height, color) {
         
 Visualisations.makeTable = function(width) {
     var table  = document.createElement("TABLE");
-	table.style.width = width;
+    if (width) {
+        table.style.width = width;
+    }
 	table.setAttribute('border','0');
 	table.setAttribute('cellpadding','0');
 	table.setAttribute('cellspacing','0');
@@ -99,7 +101,24 @@ Visualisations.appendTableCell = function(table, cellContent) {
     }
     lastrow.appendChild(tcell);
     return table;
-}
+};
+
+Visualisations.makeVerticalTable = function(cells) {
+    var result = Visualisations.makeTable();
+    for (var i = 0; i < cells.length; ++i) {
+        Visualisations.appendTableRow(result);
+        Visualisations.appendTableCell(result, cells[i]);
+    }
+    return result;
+};
+
+Visualisations.makeHorizontalTable = function(cells) {
+    var result = Visualisations.makeTable();
+    for (var i = 0; i < cells.length; ++i) {
+        Visualisations.appendTableCell(result, cells[i]);
+    }
+    return result;
+};
 
 
 Visualisations.makeOption = function(name, value) {
@@ -132,6 +151,12 @@ Visualisations.setOptions = function(selectnode, newOptions) {
 };
 
 // end of public part, below is just implementation
+
+
+
+
+
+
 
 function Visualisations_Private() {
 

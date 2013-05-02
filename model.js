@@ -56,7 +56,7 @@ Model.model = null;
 Model.currentAuthor = "anonymous";
 
 Model.clear = function() {
-    this.model = IncomaDefaultModel || { nodes: [], links: [], authors: []}
+    this.model = IncomaDefaultModel || { nodes: [], links: [], authors: [Model.currentAuthor]}
 };
 
 
