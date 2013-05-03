@@ -29,6 +29,7 @@ Model.connectionTypes = {
     "Consequence" : 2, 
     "Alternative" : 7,
     "Answer": 8,
+    "No relation": 0,
     "Related": 5,   // legacy
     "Contradiction": 6, // legacy
 };
@@ -62,7 +63,13 @@ Model.linkFields = [
 // dynamic information:
 
 Model.model = null;
-Model.currentAuthor = "anonymous";
+Model._currentAuthor = null;
+
+Model.currentAuthor = function(name) {
+    if(name || name === null)
+        Model._currentAuthor = name;
+    return Model._currentAuthor || "anonymous";
+};
 
 Model.clear = function() {
     this.model = IncomaDefaultModel || { nodes: [], links: [], authors: [Model.currentAuthor]}

@@ -66,9 +66,9 @@
     Model.clear();
     
     var nameBox = $("#namebox")[0];
-    nameBox.value = Model.currentAuthor;
+    nameBox.value = Model.currentAuthor();
     nameBox.onchange = function(e) {
-        Model.currentAuthor = nameBox.value;
+        Model.currentAuthor(nameBox.value);
     };
     
     
