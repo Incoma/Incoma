@@ -22,17 +22,24 @@ var rightpanelhtmleval = "<center><div id='posvotes' class='posvotes'></div><div
 
 var rightpanelhtmlreplyandlink = "<br><center><div id='showreply' class='showreplypanel button' onClick='showreplypanel()'>Reply</div>&nbsp&nbsp&nbsp&nbsp<div class='showconnectpanel button' id='showlink' onClick='showcreatelink()'>Connect</div></center>";
 
+var rightpanelhtmllinkeval = "<center><div id='linkposvotes' class='posvotes'></div><div class='evalpos button' onClick='linkevalpos()'>+</div>&nbsp&nbsp<div class='evalneg button' onClick='linkevalneg()'>-</div><div id='linknegvotes' class='negvotes'></div></center>";
+
+var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\" onchange=\"connectionChange(this);\"  ><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td>Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=2>Consequence</option><option value=7>Alternative</option><option value=0>No relation</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div>";
+
+var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=6>Contradiction</option><option value=2>Consequence</option><option value=5>Related</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select>&nbsp&nbsp&nbsp&nbsp<div class='cancel button' onClick='cancellink()'>Cancel</div></center>";
+
+
 var connectionlist = new Array(4) ;
 // 1 = General
-connectionlist["1"] = ["General", "Agree", "Disagree", "Consequence", "Alternative"]; 
+connectionlist["1"] = ["General", "Agree", "Disagree", "Consequence", "Alternative", "No relation"]; 
 // 2 = Question
-connectionlist["2"] = ["General"]; 
+connectionlist["2"] = ["General", "No relation"]; 
 // 3 = Answer
-connectionlist["3"] = ["Answer"]; 
+connectionlist["3"] = ["Answer", "No relation"]; 
 // 4 = Proposal
-connectionlist["4"]= ["General", "Agree", "Disagree", "Alternative"]; 
+connectionlist["4"]= ["General", "Agree", "Disagree", "Alternative", "No relation"]; 
 // 5 = Info
-connectionlist["5"]= ["General", "Agree", "Disagree", "Consequence", "Alternative"]; 
+connectionlist["5"]= ["General", "Agree", "Disagree", "Consequence", "Alternative", "No relation"]; 
 
  function connectionChange(selectObj) { 
      var idx = selectObj.selectedIndex; 
@@ -62,6 +69,8 @@ connectionlist["5"]= ["General", "Agree", "Disagree", "Consequence", "Alternativ
              break;
 	 case 'Answer':  newOption.value = 8;  
              break;
+	 case 'No relation':  newOption.value = 0;  
+             break;
 	 default:  
 	 }
 	 newOption.text=connlist[i]; 
@@ -74,14 +83,6 @@ connectionlist["5"]= ["General", "Agree", "Disagree", "Consequence", "Alternativ
 	 } 
      } 
  }
-
-var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\" onchange=\"connectionChange(this);\"  ><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td>Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=2>Consequence</option><option value=7>Alternative</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div>";
-
-var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=6>Contradiction</option><option value=2>Consequence</option><option value=5>Related</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select>&nbsp&nbsp&nbsp&nbsp<div class='cancel button' onClick='cancellink()'>Cancel</div></center>";
-
-// var rightpanelhtmlprereply = "<br><div class='showreplypanel' onClick='showreplypanel()'>Reply</div>";
-
-// var rightpanelhtmllink = "<div class='showconnectpanel' onClick='showcreatelink()'>Connect</div>";
 
 Visualisations.register(new ZoomOut());
 
@@ -202,12 +203,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     this.isclicked = 0;
     this.clickednodehash = "";
+    this.clickedlinkhash = "";
     this.container = null;
     this.width = $(window).width()-5;
     this.height = $(window).height()-40-19;
     this.bordercolor = {
         "normal": "#36c",
         "clicked": "#000",
+        "linkclicked": "#000",
         "over": "#c33",
 		"origin": "#360"
     };
@@ -248,7 +251,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                   </div>   \
 	 \
                   <div id="right_bar" style="Float:right">   \
-                    <div class="right_bar_header">   \
+                    <div class="right_bar_header noselect">   \
                       <div class="right_bar_title">   \
                         Content:\
 						<div id="test1" class="evalpos" style = "background:#cce" onClick="test1()">1</div>	\
@@ -395,13 +398,23 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .links(graph.links)
             .start();
 
+		PRES.prelink = svg.append("line")
+			.attr("x1", 0)
+			.attr("y1", 0)
+			.attr("x2", 0)
+			.attr("y2", 0)
+			.style("stroke-width", 2)
+			.style("stroke", "black")
+			.style("stroke-opacity",0.5);
 
+			
         var link = svg.selectAll(".link")
             .data(graph.links)
             .enter().append("line")
             .attr("class", "link")
             .style("stroke", PRES.liveAttributes.linkStroke)
-            .style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+            .style("stroke-width", PRES.liveAttributes.linkStrokeWidth)
+            .on("click", PRES.liveAttributes.clicklink);
         //The attributes (as the strokewidth) are obtained from the fields of each node (as example d.evaluation) via functions (example linkStrokeWidth), taking in account if the filters are acting or not (this.abstraction.sizeFilter.links.state)
 
 
@@ -420,19 +433,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.filter(function (d) {return d.origin == "1";})
 			.style("stroke-width", 3)
 			.style("stroke",PRES.bordercolor.origin);
+
 			
-		PRES.prelink = svg.append("line")
-			.attr("x1", 0)
-			.attr("y1", 0)
-			.attr("x2", 0)
-			.attr("y2", 0)
-			.style("stroke-width", 2)
-			.style("stroke", "black")
-			.style("stroke-opacity",0.5);
-
-
         force.on("tick", function () {
-		
+				
             PRES.svg.selectAll(".link")
 				.attr("x1", function (d) {return d.source.x+10;})
                 .attr("y1", function (d) {return d.source.y+10;})
@@ -778,10 +782,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.linkStrokeWidth = function (d) {
             if (ABSTR.linkFilters[d.type].state) {
-                if (ABSTR.sizeFilters.links.state)
-                    return Math.sqrt(d.evalpos-d.evalneg);
+                if (ABSTR.sizeFilters.links.state && d.evalpos > d.evalneg)
+                    return 3*Math.sqrt(1 + d.evalpos-d.evalneg);
                 else
-                    return Math.sqrt(6);
+                    return 3;
             } else {
                 return 0;
             }
@@ -798,15 +802,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					y1 = nodes[index].y+10,
 					x2 = (d3.mouse(svg)[0]-despx)/zoomval,
 					y2 = (d3.mouse(svg)[1]-despy)/zoomval;
-					
-				var cutx = 5*(x2-x1)/(Math.abs(x2-x1)+1),
-					cuty = 5*(y2-y1)/(Math.abs(y2-y1)+1);
 				
 				PRES.prelink
 					.attr("x1", x1)
 					.attr("y1", y1)
-					.attr("x2", x2-cutx)
-					.attr("y2", y2-cuty)
+					.attr("x2", x2)
+					.attr("y2", y2)
 					.style("stroke", linecolor);
 			}
 			// TEST show coordinates in contbox
@@ -861,11 +862,15 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				PRES.svg.selectAll(".node")
 					.style("stroke", PRES.bordercolor.normal);
 				
+				PRES.svg.selectAll(".link")
+					.style("stroke", PRES.liveAttributes.linkStroke);
+				
 				PRES.svg.selectAll(".node")
 					.filter(function (d) {return d.origin == "1";})
 					.style("stroke",PRES.bordercolor.origin);
 					
 				PRES.clickednodehash = "";
+				PRES.clickedlinkhash = "";
 				
 				document.getElementById("contbox").value = "";
 				$('#rightpaneleval').html(" ");
@@ -888,6 +893,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 			PRES.svg.selectAll(".node")
 				.style("stroke", PRES.bordercolor.normal);
+				
+			PRES.svg.selectAll(".link")
+			    .style("stroke", PRES.liveAttributes.linkStroke);
 	
 			PRES.svg.selectAll(".node")
 				.filter(function (d) {return d.origin == "1";})
@@ -898,6 +906,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				.style("stroke", PRES.bordercolor.clicked);
 	
 			PRES.clickednodehash = d.hash;
+			PRES.clickedlinkhash = "";
 			
 			$('#rightpaneleval').html(rightpanelhtmleval);
 			$('#rightpanel').html(rightpanelhtmlreplyandlink);
@@ -908,7 +917,35 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			
 		};
         
+	};
+
+        this.clicklink = function (d) {
+	    if (creatinglink){
+		}else{
+			var strokewidth = 	PRES.svg.selectAll(".link")
+								.filter(function (e) {return e.hash == d.hash;})
+			                                        .style("stroke-width");
+
+
+			if (strokewidth == 0){return};
+
+			d3.select(this)
+				.style("stroke", "#000");
+	
+			PRES.clickedlinkhash = d.hash;
+			
+			$('#rightpaneleval').html(rightpanelhtmllinkeval);
+			$('#rightpanel').html("");
+			
+			document.getElementById("contbox").value = "Type of connection: [" + ABSTR.linkFilters[d.type].name + "]";
+			document.getElementById("linkposvotes").innerHTML = d.evalpos;
+			document.getElementById("linknegvotes").innerHTML = d.evalneg;
+			
 		};
+        
+	};
+
+
     };
 		// end of this == LiveAttributes
 
@@ -932,16 +969,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	
 };
 // End of this == presentation
-
-function savenode() {
-	if (document.getElementById("replybox").value == ""){
-		alert("An empty reply can not be saved");
-		return;
-	}
-    var PRES = Visualisations.visualisations[0].presentation;
-    createnode(PRES);
-    //+ call to export fuctions
-};
 
 
 function hideshowlegend() {
@@ -992,17 +1019,24 @@ function legendfiltersupdate() {
 
 };
 
+function savenode() {
+	if (document.getElementById("replybox").value == ""){
+		alert("An empty reply can not be saved");
+		return;
+	}
+    var PRES = Visualisations.visualisations[0].presentation;
+    createnode(PRES);
+    //+ call to export fuctions
+};
 	
 function createnode(PRES){
 		    
     var nodes = PRES.force.nodes();
-    var links = PRES.force.links();
 
     var content = document.getElementById("replybox").value;
     var nodetype = document.getElementById("replynodetype").value;
-    var linktype = document.getElementById("replylinktype").value;
-    
-    var targetindex = searchhash(nodes, PRES.clickednodehash), 
+	
+	var targetindex = searchhash(nodes, PRES.clickednodehash), 
     targetnode = nodes[targetindex];
 	
 	var author = document.getElementById("namebox").value;
@@ -1023,10 +1057,17 @@ function createnode(PRES){
     };
     
     nodes.push(newnode);
-	links.push({source: newnode, target: targetnode,"evalpos":6,"evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": "17-abr-2013"});
-    
+	
+	var linktype = document.getElementById("replylinktype").value;
+	
+	if (linktype !== "0"){ //creates a new link only if user chooses a relation different than "No relation".
+		var links = PRES.force.links();	
+		links.push({"hash": links.length, source: newnode, target: targetnode,"evalpos":0,"evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": Date.now()});
+		newnode.x = targetnode.x + 40;
+		newnode.y = targetnode.y + 40;
+    }
+	
 	hidereplypanel();
-    
     drawnewnodes(PRES);
 }
 
@@ -1045,8 +1086,9 @@ function drawnewnodes(PRES) {
         .data(links)
         .enter().insert("line",".node")
         .attr("class", "link")
-	.style("stroke", PRES.liveAttributes.linkStroke)
-	.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+		.style("stroke", PRES.liveAttributes.linkStroke)
+		.style("stroke-width", PRES.liveAttributes.linkStrokeWidth)
+        .on("click", PRES.liveAttributes.clicklink);
     
     var node = PRES.svg.selectAll(".node")
         .data(nodes)
@@ -1074,6 +1116,15 @@ function evalneg(){
 	evalnode("neg");
 }
 
+function linkevalpos(){
+	evallink("pos");
+}
+
+function linkevalneg(){
+	evallink("neg");
+}
+
+
 function evalnode(vote) {
     var PRES = Visualisations.visualisations[0].presentation;   
 	
@@ -1088,17 +1139,17 @@ function evalnode(vote) {
 	
 	if($.inArray(name, targetnode.evaluatedby) > -1){
 	
-		alert("You have already voted this node");
+		alert("You have already rated this node");
 		
 	} else{
 	
 		targetnode.evaluatedby.push(name);
 		
 		if (vote=="pos"){
-			targetnode.evalpos = targetnode.evalpos+1; 
+			targetnode.evalpos += 1; 
 			document.getElementById("posvotes").innerHTML = targetnode.evalpos;
 		}else{
-			targetnode.evalneg = targetnode.evalneg+1;
+			targetnode.evalneg += 1;
 			document.getElementById("negvotes").innerHTML = targetnode.evalneg;
 		}
 	
@@ -1109,6 +1160,42 @@ function evalnode(vote) {
 			.attr("height", PRES.liveAttributes.nodeHeight);   
 	}
 };
+
+function evallink(vote) {
+    var PRES = Visualisations.visualisations[0].presentation;   
+	
+	var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+  
+    var targetindex = searchhash(links, PRES.clickedlinkhash);
+    targetlink = links[targetindex];
+	
+    var name = document.getElementById("namebox").value;    
+    if (name == ""){name = "anon";}
+	
+	if($.inArray(name, targetlink.evaluatedby) > -1){
+	
+		alert("You have already rated this link");
+		
+	} else{
+	
+		targetlink.evaluatedby.push(name);
+		
+		if (vote=="pos"){
+			targetlink.evalpos += 1; 
+			document.getElementById("linkposvotes").innerHTML = targetlink.evalpos;
+		}else{
+			targetlink.evalneg += 1;
+			document.getElementById("linknegvotes").innerHTML = targetlink.evalneg; 
+		}
+	
+		PRES.svg.selectAll(".link")
+			.filter(function (d) {return d.hash == PRES.clickedlinkhash;})
+			.transition().duration(1000).ease("elastic")
+			.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+	}
+};
+
 
 function showreplypanel(){
 	cancellink();
@@ -1167,14 +1254,15 @@ function savelink(d){
     var author = document.getElementById("namebox").value;
     if (author == ""){author = "anonymous";};
 	
-    links.push({source: sourcenode, target: d, "evalpos":6, "evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": Date.now()});
+    links.push({"hash": links.length, source: sourcenode, target: d, "evalpos":0, "evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": Date.now()});
 	
     var link = PRES.svg.selectAll(".link")
         .data(links)
         .enter().insert("line",".node")
         .attr("class", "link")
-	.style("stroke", PRES.liveAttributes.linkStroke)
-	.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+		.style("stroke", PRES.liveAttributes.linkStroke)
+		.style("stroke-width", PRES.liveAttributes.linkStrokeWidth)
+		.on("click", PRES.liveAttributes.clicklink);
 		
     cancellink();
 		
@@ -1278,39 +1366,7 @@ function mouseup(){}
 
 // **** TEST FUNCTIONS (triggered by test buttons in the right-bar-header) *****************
 
-function test1(){
-	//document.getElementById("contbox").value = "Holaa";
-	
-	var PRES = Visualisations.visualisations[0].presentation;
-	
-	var nodes = PRES.force.nodes();
-
-    var content = document.getElementById("replybox").value;
-    var nodetype = document.getElementById("replynodetype").value;
-	
-	var author = document.getElementById("namebox").value;
-	if (author == ""){author = "anonymous";};
-    
-    var newnode = {
- // elements and order adapted to be the same as in modelb.js
-        "hash": nodes.length,
-        "content": content,
-        "evalpos": 0,
-		"evalneg": 0,
-        "evaluatedby": "",
-        "type": nodetype,
-        "author": author,
-        "time": Date.now(),
-        x: 600,
-        y: 300
-    };
-    
-    nodes.push(newnode);
-    
-	hidereplypanel();
-    
-    drawnewnodes(PRES);
-}
+function test1(){}
 
 function test2(){}
 
