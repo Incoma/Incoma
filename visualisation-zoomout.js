@@ -4,7 +4,7 @@ var trans = [0,0];
 
 var zoomval = 1;
 var zoommax = 5;
-var zoommin = 0.2;
+var zoommin = 0.1;
 
 var despx = 0;
 var despy = 0;
@@ -1327,7 +1327,7 @@ function zoomin(){
 	var PRES = Visualisations.visualisations[0].presentation;
 	var nodes = PRES.force.nodes();
 	
-	zoomval *= 1.5;
+	if (zoomval*1.5 < zoommax){zoomval *= 1.5;};
 	
 	despxz = PRES.width*(1-zoomval)/2;
 	despyz = PRES.height*(1-zoomval)/2;
@@ -1344,7 +1344,7 @@ function zoomout(){
 	var PRES = Visualisations.visualisations[0].presentation;
 	var nodes = PRES.force.nodes();
 	
-	zoomval /= 1.5;
+	if (zoomval/1.5 > zoommin){zoomval /= 1.5;};
 	
 	despxz = PRES.width*(1-zoomval)/2;
 	despyz = PRES.height*(1-zoomval)/2;
