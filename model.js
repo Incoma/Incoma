@@ -15,36 +15,56 @@ var Model = {};
 // some static information
 
 Model.nodeTypes = {
-    "General": 1,
-    "Question": 2,
-    "Answer": 3,
-    "Proposal": 4,
-    "Info": 5,
+    "General" : {text: "General", value: 1},
+    "Question" : {text: "Question", value: 2},
+    "Answer" : {text: "Answer", value: 3},
+    "Proposal" : {text: "Proposal", value: 4},
+    "Info" : {text: "Info", value: 5},
 };
 
 Model.connectionTypes = {
-    "General" : 1, 
-    "Agree" : 3,
-    "Disagree" : 4, 
-    "Consequence" : 2, 
-    "Alternative" : 7,
-    "Answer": 8,
-    "No relation": 0,
-    "Related": 5,   // legacy
-    "Contradiction": 6, // legacy
+    "General" : {text: "General", value: 1}, 
+    "Agree" : {text: "Agree", value: 3},
+    "Disagree" : {text: "Disagree", value: 4}, 
+    "Consequence" : {text: "Consequence", value: 2}, 
+    "Alternative" : {text: "Alternative", value: 7},
+    "Answer": {text: "Answer", value: 8},
+    "No relation": {text: "No relation", value: 0},
+    "Related": {text: "Related", value: 5},   // legacy
+    "Contradiction": {text: "Contradiction", value: 6}, // legacy
 };
 
-Model.connectionlist = new Array(4) ;
-// 1 = General
-Model.connectionlist["1"] = ["General", "Agree", "Disagree", "Consequence", "Alternative"]; 
-// 2 = Question
-Model.connectionlist["2"] = ["General"]; 
-// 3 = Answer
-Model.connectionlist["3"] = ["Answer"]; 
-// 4 = Proposal
-Model.connectionlist["4"]= ["General", "Agree", "Disagree", "Alternative"]; 
-// 5 = Info
-Model.connectionlist["5"]= ["General", "Agree", "Disagree", "Consequence", "Alternative"]; 
+
+function optionList(connectionNames) {
+    result = [];
+    for (var i=0; i < connectionNames.length; ++i) {
+        result.push(Model.connectionTypes[connectionNames[i]]);
+    };
+    return result;
+};
+
+
+Model.connectionList = function(nodeType) {
+    switch(nodeType) {
+        // 1 = General
+        case "1": 
+            return optionList( ["General", "Agree", "Disagree", "Consequence", "Alternative", "No relation"] );
+        // 2 = Question
+        case "2": 
+            return optionList( ["General", "No relation"] );
+        // 3 = Answer
+        case "3": 
+            return optionList( ["Answer", "No relation"] );
+        // 4 = Proposal
+        case "4": 
+            return optionList( ["General", "Agree", "Disagree", "Alternative", "No relation"] );
+        // 5 = Info
+        case "5": 
+            return optionList( ["General", "Agree", "Disagree", "Consequence", "Alternative", "No relation"] );
+        default:
+            return [];
+    }
+};
 
 
 Model.nodeFields = [ 

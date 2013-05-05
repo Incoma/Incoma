@@ -117,7 +117,7 @@ body {
   cursor: default;
 }
 
-.legend_hide {
+.lower_hide {
   position: relative;
   left:16%;
   width: 20%;
@@ -131,7 +131,7 @@ div.filt_hide_button{
 	cursor: default;
 }
 
-div.legend_hide_button{
+div.lower_hide_button{
 	text-align: center;
 	margin: 5px;
 	cursor: default;
@@ -161,7 +161,7 @@ div.legend_hide_button{
   cursor: default;
 }
 
-.filt_sizes {
+.lower_sizes {
   position: relative;
   top:15px;
   left:8%;
@@ -170,14 +170,14 @@ div.legend_hide_button{
   cursor: default;
 }
 
-.legend_title {
+.lower_title {
   position: relative;
   width: 10%;
   height: 100%;
   cursor: default;
 }
 
-.legend_nodes {
+.lower_nodes {
   position: relative;
   top:15px;
   width: 19%;
@@ -185,7 +185,7 @@ div.legend_hide_button{
   cursor: default;
 }
 
-.legend_links {
+.lower_links {
   position: relative;
   top:15px;
   left:5%;

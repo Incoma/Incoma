@@ -1,22 +1,3 @@
-var oldscale = 1;
-var scale = 1;
-var trans = [0,0];
-
-var zoomval = 1;
-var zoommax = 5;
-var zoommin = 0.1;
-
-var despx = 0;
-var despy = 0;
-
-var despxz = 0;
-var despyz = 0;
-
-var despxp = 0;
-var despyp = 0;
-
-var transxz = 0;
-var transyz = 0;
 
 var rightpanelhtmleval = "<center><div id='posvotes' class='posvotes'></div><div class='evalpos button' onClick='evalpos()'>+</div>&nbsp&nbsp<div class='evalneg button' onClick='evalneg()'>-</div><div id='negvotes' class='negvotes'></div></center>";
 
@@ -29,52 +10,38 @@ var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select i
 var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=6>Contradiction</option><option value=2>Consequence</option><option value=5>Related</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select>&nbsp&nbsp&nbsp&nbsp<div class='cancel button' onClick='cancellink()'>Cancel</div></center>";
 
 
-var connectionlist = new Array(4) ;
-// 1 = General
-connectionlist["1"] = ["General", "Agree", "Disagree", "Consequence", "Alternative", "No relation"]; 
-// 2 = Question
-connectionlist["2"] = ["General", "No relation"]; 
-// 3 = Answer
-connectionlist["3"] = ["Answer", "No relation"]; 
-// 4 = Proposal
-connectionlist["4"]= ["General", "Agree", "Disagree", "Alternative", "No relation"]; 
-// 5 = Info
-connectionlist["5"]= ["General", "Agree", "Disagree", "Consequence", "Alternative", "No relation"]; 
-
  function connectionChange(selectObj) { 
      var idx = selectObj.selectedIndex; 
      var valreply = selectObj.options[idx].value;
-     connlist = connectionlist[valreply];
+     connlist = Model.connectionlist(valreply);
      var cSelect = document.getElementById("replylinktype"); 
-     Visualisations.setOptions(cSelect, makeOList(connlist)); 
+     Visualisations.setOptions(cSelect, connlist); 
   }
   
-  function makeOList(cList) {
-        var result = [];
-        for (var i = 0; i < cList.length; ++i) {
-            var newOption = {text: cList[i]}
-          switch (cList[i]) {
-            case 'General': newOption.value = 1;  
-                 break;
-            case 'Agree':  newOption.value = 3;  
-                 break;
-            case 'Disagree':  newOption.value = 4;  
-                 break;
-            case 'Consequence':  newOption.value = 2;  
-                 break;
-            case 'Alternative':  newOption.value = 7;  
-                 break;
-            case 'Answer':  newOption.value = 8;  
-                 break;
-            default:  
-            }
-            result.push(newOption);
-        }
-        return result;
-  }
+
+
 
 Visualisations.register(new ZoomOut());
 
+
+/*
+    ZoomOut follows the Presentation/Abstraction/Control pattern:
+    * Abstraction: 
+            This object keeps all data that is needed for the presentation. If it refers to an external model, it is also responsible
+            for updating itself when the external data changes, for example by registering appropiate listeners with the external model.
+            The Abstraction also stores the current selection, current zoom state and edit modes (for example "create link")
+            Lastly the abstraction provides methods for manipulating its data.
+    * Presentation:
+            The single main responsibility of the presentation is to take the data from the abstraction and put it on screen.
+            It usually provides an update() method that refreshes the screen from the data.
+            It should also provide methods for translating screen coordinates to objects from the abstraction (selecting) and for
+            registering callbacks for mouseclicks, textedits etc.
+            Methods in Presentation never change data directly!
+    * Control:
+            This object provides methods for all possible user interactions: editing, creating, deleting, selecting, ...
+            These methods receive some parameters and then change the data in the abstraction and the model.
+            It also registers callbacks with the presentation for events it wants to interpret. 
+ */
 function ZoomOut() {
 
     this.name = "Zoom Out",
@@ -93,8 +60,6 @@ function ZoomOut() {
 
 // Start of this == abstraction = model and state of filters [abstraction initialized with (model)]
 
-var creatinglink = false;
-var replying = false;
 
 function ZoomOut_Abstraction() {
     this.model = null;
@@ -180,7 +145,12 @@ function ZoomOut_Abstraction() {
     };
     this.init = function (model) {
         this.model = model;
+        this.isclicked = 0;
         this.clickednodehash = "";
+        this.clickedlinkhash = "";
+        this.creatinglink = false;
+        this.replying = false;
+
     }
 };
 
@@ -191,9 +161,6 @@ function ZoomOut_Abstraction() {
 function ZoomOut_Presentation(VIS, ABSTR) {
     // public interface
 
-    this.isclicked = 0;
-    this.clickednodehash = "";
-    this.clickedlinkhash = "";
     this.container = null;
     this.nodeSizeDefault = 20;
     this.width = $(window).width()-5;
@@ -227,11 +194,18 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.init = function (html5node) {
         this.definedBelow();
     }
+    
+    this.setViewport = function(tx, ty, zoom, transitionTime) {
+    	this.svg.transition().duration(transitionTime)
+                .attr("transform","translate(" + tx + ',' + ty + ") scale(" + zoom + ")");
+    };
+    
     // end of public interface
 
     // Start of init function = change the html code (.innerHTML) inside of the html5node (adding visualization, text areas, and filters) and calls with the abstraction as a parameter: initSVG, initLinkFilters, initNodeFilters, initSizeFilters (this four will create the filters and the svg and place it in the previous html code)
 
     this.init = function (html5node) {
+        this.scaler = new Scaler(this);
         this.container = html5node;
         html5node.innerHTML =
             '   \
@@ -275,9 +249,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				  <div id="left_bar" class="mod">   \
                     <div class="left_bar_header noselect">   \
                         <center>   \
-						<div class="zoombutton noselect" onClick="zoomout()">-</div>   \
+						<div class="zoombutton noselect" id="cmd_zoomout">-</div>   \
 						&nbsp&nbspzoom&nbsp&nbsp \
-						<div class="zoombutton noselect" onClick="zoomin()">+</div>   \
+						<div class="zoombutton noselect" id="cmd_zoomin">+</div>   \
 						<\center>  \
                     </div>   \
                   </div>   \
@@ -286,49 +260,52 @@ function ZoomOut_Presentation(VIS, ABSTR) {
    \
              <div id= "legend_bar" class="legend_bar">   \
                   <div class="legend_bar_elems">   \
-                    <div id="legend_title" class="legend_title" style="Float:left" >   \
+                    <div id="legend_title" class="lower_title" style="Float:left" >   \
                       <b>Legend</b>\
                     </div>   \
-                    <div id="legend_nodes" class="legend_nodes" style="Float:left" >   \
+                    <div id="legend_nodes" class="lower_nodes" style="Float:left" >   \
                       <b>Boxes</b>             \
                     </div>   \
    \
-                    <div id="legend_links" class="legend_links" style="Float:left">   \
+                    <div id="legend_links" class="lower_links" style="Float:left">   \
                       <b>Connections</b>    \
                     </div>   \
-                    <div id="legend_hide" class="legend_hide"  style="Float:left" >   \
-                      <div class="legend_hide_button" onClick="hideshowlegend()">Hide/show legend</div>   \
+                    <div id="legend_hide" class="lower_hide"  style="Float:right" >   \
+                      <div class="lower_hide_button" id="cmd_hideshowlegend">Hide/show legend</div>   \
                     </div>   \
                  </div>   \
              </div>   \
              <div id= "lower_bar" class="lower_bar">   \
    \
                   <div class="lower_bar_elems">   \
-                    <div id="filters_title" class="filters_title" style="Float:left" >   \
+                    <div id="filters_title" class="lower_title" style="Float:left" >   \
                       <b>Filters</b>\
                     </div>   \
-                    <div id="filt_nodes" class="filt_nodes" style="Float:left" >   \
+                    <div id="filt_nodes" class="lower_nodes" style="Float:left" >   \
                       <b>Boxes</b>             \
                     </div>   \
    \
-                    <div id="filt_links" class="filt_links" style="Float:left">   \
+                    <div id="filt_links" class="lower_links" style="Float:left">   \
                       <b>Connections</b>    \
                     </div>   \
    \
-                    <div id="filt_sizes" class="filt_sizes" style="Float:left" >   \
+                    <div id="filt_sizes" class="lower_sizes" style="Float:left" >   \
                       <b>Evaluations</b>     \
                     </div>   \
-                    <div id="filt_hide" class="filt_hide"  style="Float:left" >   \
-                      <div class="filt_hide_button" onClick="hideshowfilters()">Hide/show filters</div>   \
+                    <div id="filt_hide" class="lower_hide"  style="Float:right" >   \
+                      <div class="lower_hide_button" id="cmd_hideshowfilters">Hide/show filters</div>   \
                     </div>   \
                  </div>   \
    \
              </div>   \
         '; // end of innerHTML
 
-
+        $( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
+        $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
+        $( "#cmd_hideshowlegend" )[0].onclick = hideshowlegend;
+        $( "#cmd_hideshowfilters" )[0].onclick = hideshowfilters;
+        
         initSVG(this, ABSTR, this.width, this.height);
-        // 712, 325 = width and height of the visualization
 
         initNodeLegend(this, "legend_nodes", ABSTR.nodeFilters);
         initLinkLegend(this, "legend_links", ABSTR.linkFilters);
@@ -364,7 +341,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		PRES.svg = svgg
 			.append('svg:g')
-			.call(d3.behavior.zoom().on("zoom", rescale))
+			.call(d3.behavior.zoom().on("zoom", PRES.scaler.rescale))
 			.on("dblclick.zoom", null)
 			.append('svg:g')
 			.on("mousedown", PRES.liveAttributes.mousedown)
@@ -784,15 +761,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 
         this.mousemove = function (d) {
-			if (creatinglink){
+			if (ABSTR.creatinglink){
                 var nodes = PRES.force.nodes();
                 var index = searchhash(nodes, PRES.clickednodehash);
                 var linecolor = PRES.color[document.getElementById("replylinktype2").value];
 				
 				var x1 = nodes[index].x+10,
 					y1 = nodes[index].y+10,
-					x2 = (d3.mouse(svg)[0]-despx)/zoomval,
-					y2 = (d3.mouse(svg)[1]-despy)/zoomval;
+                    p2 = PRES.scaler.translate(d3.mouse(svg)),
+                    x2 = p2[0],
+                    y2 = p2[1];
 				
 				PRES.prelink
 					.attr("x1", x1)
@@ -849,7 +827,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 
         this.mousedown = function (d) {
-			if (!creatinglink){
+			if (!ABSTR.creatinglink){
 				PRES.svg.selectAll(".node")
 					.style("stroke", PRES.bordercolor.normal);
 				
@@ -871,7 +849,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 
         this.click = function (d) {
-	    if (creatinglink){
+	    if (ABSTR.creatinglink){
 			if (d.hash !== PRES.clickednodehash){
 				savelink(d);
 			}
@@ -911,7 +889,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	};
 
         this.clicklink = function (d) {
-	    if (creatinglink){
+	    if (ABSTR.creatinglink){
 		}else{
 			var strokewidth = 	PRES.svg.selectAll(".link")
 								.filter(function (e) {return e.hash == d.hash;})
@@ -969,7 +947,7 @@ function hideshowlegend() {
 
     PRES.showlegend = !PRES.showlegend;
 
-    this.legendfiltersupdate();
+    legendfiltersupdate();
 
 };
 
@@ -981,7 +959,7 @@ function hideshowfilters() {
 
     PRES.showfilters = !PRES.showfilters;
 
-    this.legendfiltersupdate();
+    legendfiltersupdate();
 };
 
 function legendfiltersupdate() {
@@ -1207,11 +1185,12 @@ function hidereplypanel(){
 
 
 function showcreatelink(){
-	if (creatinglink){
+	var ABSTR = Visualisations.current().abstraction;
+	if (ABSTR.creatinglink){
 		cancellink();
 	}else{
 		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmllink);
-		creatinglink = true;
+		ABSTR.creatinglink = true;
 		button = document.getElementById("showlink");
 		button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
 	}
@@ -1221,13 +1200,14 @@ function cancellink(){
 	$('#rightpanel').html(rightpanelhtmlreplyandlink);
 	
 	var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
 	PRES.prelink 
 		.attr("x1", 0)
 		.attr("y1", 0)
 		.attr("x2", 0)
 		.attr("y2", 0);
 		
-	creatinglink = false;
+	ABSTR.creatinglink = false;
 }
 	
 function savelink(d){
@@ -1270,81 +1250,104 @@ function changelinktype(){
 
 // Start of control
 
-function rescale() {
-	
-    var PRES = Visualisations.current().presentation;
-	
-    trans=d3.event.translate;
-    scale=d3.event.scale;
-	
-	if (scale == oldscale){  //no mousewheel movement
-	
-		despxp = trans[0]-transxz;
-		despyp = trans[1]-transyz;
-		
-		var transtime = 0;
-		
-	} else {	
-		if (scale > oldscale){
-			if (zoomval*1.5 < zoommax){zoomval *= 1.5;}
-		} else {
-			if (zoomval/1.5 > zoommin){zoomval /= 1.5;}
-		}
-		
-		despxz = PRES.width*(1-zoomval)/2;
-		despyz = PRES.height*(1-zoomval)/2;
-		
-		transxz = trans[0]-despxp;
-		transyz = trans[1]-despyp;
-		
-		oldscale = scale;
-		var transtime = 200;
-		
-		console.log(d3.mouse(this));
-	}
-		
-	despx = despxz + despxp;
-	despy = despyz + despyp;
-		
 
-	PRES.svg
-		.transition().duration(transtime)
-		.attr("transform", "translate(" + despx + ',' + despy + ") scale(" + zoomval + ")");
-}
+function Scaler(PRES) {
+
+    /*  TODO 
+        I'm pretty sure this can be simplified but I'd like to have some documentation
+        about the differences between despx, despxz, despxp and transxz first - avox
+    */
+
+    this.oldscale = 1;
+    this.scale = 1;
+    this.trans = [0,0];
+
+    this.zoomval = 1;
+    this.zoommax = 5;
+    this.zoommin = 0.1;
+
+    this.despx = 0;
+    this.despy = 0;
+
+    this.despxz = 0;
+    this.despyz = 0;
+
+    this.despxp = 0;
+    this.despyp = 0;
+
+    this.transxz = 0;
+    this.transyz = 0;
+
+    var THIS = this;
+    
+    this.translate = function(point) {
+        return [ (point[0]-THIS.despx) / THIS.zoomval, (point[1]-THIS.despy) / THIS.zoomval ];
+    };
+
+    
+    this.rescale = function() {
+		
+        THIS.trans=d3.event.translate;
+        THIS.scale=d3.event.scale;
+        
+        if (THIS.scale == THIS.oldscale){  //no mousewheel movement
+        
+            THIS.despxp = THIS.trans[0]-THIS.transxz;
+            THIS.despyp = THIS.trans[1]-THIS.transyz;
+            
+            var transtime = 0;
+            
+        } else {	
+            if (this.scale > THIS.oldscale){
+                if (THIS.zoomval*1.5 < THIS.zoommax){THIS.zoomval *= 1.5;}
+            } else {
+                if (THIS.zoomval/1.5 > THIS.zoommin){THIS.zoomval /= 1.5;}
+            }
+            
+            THIS.despxz = PRES.width*(1-THIS.zoomval)/2;
+            THIS.despyz = PRES.height*(1-THIS.zoomval)/2;
+            
+            THIS.transxz = THIS.trans[0]-THIS.despxp;
+            THIS.transyz = THIS.trans[1]-THIS.despyp;
+            
+            THIS.oldscale = THIS.scale;
+            var transtime = 200;
+            
+            console.log(d3.mouse(this));
+        }
+            
+        THIS.despx = THIS.despxz + THIS.despxp;
+        THIS.despy = THIS.despyz + THIS.despyp;
+            
+        PRES.setViewport(THIS.despx, THIS.despy, THIS.zoomval, transtime);
+    };
 
 
-function zoomin(){
-	var PRES = Visualisations.current().presentation;
-	var nodes = PRES.force.nodes();
+    this.zoomin = function() {
 	
-	if (zoomval*1.5 < zoommax){zoomval *= 1.5;};
+        if (THIS.zoomval*1.5 < THIS.zoommax){THIS.zoomval *= 1.5;};
 	
-	despxz = PRES.width*(1-zoomval)/2;
-	despyz = PRES.height*(1-zoomval)/2;
+        THIS.despxz = PRES.width*(1-THIS.zoomval)/2;
+        THIS.despyz = PRES.height*(1-THIS.zoomval)/2;
 	
-	despx = despxz + despxp;
-	despy = despyz + despyp;
+        THIS.despx = THIS.despxz + THIS.despxp;
+        THIS.despy = THIS.despyz + THIS.despyp;
 	
-    PRES.svg
-	.transition().duration(200)
-	.attr("transform","translate(" + despx + ',' + despy + ") scale(" + zoomval + ")");
-}
+        PRES.setViewport(THIS.despx, THIS.despy, THIS.zoomval, 200);
+    };
 
-function zoomout(){
-	var PRES = Visualisations.current().presentation;
-	var nodes = PRES.force.nodes();
+    this.zoomout = function() {
 	
-	if (zoomval/1.5 > zoommin){zoomval /= 1.5;};
+        if (THIS.zoomval/1.5 > THIS.zoommin){THIS.zoomval /= 1.5;};
 	
-	despxz = PRES.width*(1-zoomval)/2;
-	despyz = PRES.height*(1-zoomval)/2;
+        THIS.despxz = PRES.width*(1-THIS.zoomval)/2;
+        THIS.despyz = PRES.height*(1-THIS.zoomval)/2;
 	
-	despx = despxz + despxp;
-	despy = despyz + despyp;
+        THIS.despx = THIS.despxz + THIS.despxp;
+        THIS.despy = THIS.despyz + THIS.despyp;
 	
-    PRES.svg
-	.transition().duration(200)
-	.attr("transform","translate(" + despx + ',' + despy + ") scale(" + zoomval + ")");
+        PRES.setViewport(THIS.despx, THIS.despy, THIS.zoomval, 200);
+   };
 }
 
 
