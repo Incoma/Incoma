@@ -19,11 +19,7 @@ var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"re
   }
   
 
-
-
 Visualisations.register(new ZoomOut());
-
-
 /*
     ZoomOut follows the Presentation/Abstraction/Control pattern:
     * Abstraction: 
@@ -42,6 +38,7 @@ Visualisations.register(new ZoomOut());
             These methods receive some parameters and then change the data in the abstraction and the model.
             It also registers callbacks with the presentation for events it wants to interpret. 
  */
+ 
 function ZoomOut() {
 
     this.name = "Zoom Out",
@@ -62,7 +59,9 @@ function ZoomOut() {
 
 
 function ZoomOut_Abstraction() {
+
     this.model = null;
+	
     this.linkFilters = {
         1: {
             name: "General",
@@ -106,6 +105,7 @@ function ZoomOut_Abstraction() {
             typeId: 8
         },
     };
+	
     this.nodeFilters = {
         1: {
             name: "General",
@@ -133,6 +133,7 @@ function ZoomOut_Abstraction() {
             typeId: 5
         },
     };
+	
     this.sizeFilters = {
         nodes: {
             name: "Boxes",
@@ -143,14 +144,13 @@ function ZoomOut_Abstraction() {
             state: true
         },
     };
+	
     this.init = function (model) {
         this.model = model;
-        this.isclicked = 0;
         this.clickednodehash = "";
         this.clickedlinkhash = "";
         this.creatinglink = false;
         this.replying = false;
-
     }
 };
 
@@ -162,11 +162,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     // public interface
 
     this.container = null;
-    this.nodeSizeDefault = 20;
+    this.nodeSizeDefault = 12;
     this.width = $(window).width()-5;
     this.height = $(window).height()-40-19;
     this.bordercolor = {
-        "normal": "#36c",
+        "normal": "#069",
         "clicked": "#000",
         "linkclicked": "#000",
         "over": "#c33",
@@ -196,8 +196,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     }
     
     this.setViewport = function(tx, ty, zoom, transitionTime) {
-    	this.svg.transition().duration(transitionTime)
-                .attr("transform","translate(" + tx + ',' + ty + ") scale(" + zoom + ")");
+    	this.svg
+			.transition().duration(transitionTime)
+            .attr("transform","translate(" + tx + ',' + ty + ") scale(" + zoom + ")");
     };
     
     // end of public interface
@@ -216,12 +217,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                   </div>   \
 	 \
                   <div id="right_bar" style="Float:right">   \
-                    <div class="right_bar_header noselect">   \
-                      <div class="right_bar_title">   \
-                        Content:\
-						<div id="test1" class="evalpos" style = "background:#cce" onClick="test1()">1</div>	\
-						<div id="test2" class="evalpos" style = "background:#cce" onClick="test2()">2</div>	\
-						<div id="test3" class="evalpos" style = "background:#cce" onClick="test3()">3</div>	\
+                    <div id="right_bar_header" class="right_bar_header noselect">   \
+                      <div id="contentlabel" class="right_bar_title">   \
+					    &nbsp \
                       </div>   \
                     </div>   \
     \
@@ -249,9 +247,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				  <div id="left_bar" class="mod">   \
                     <div class="left_bar_header noselect">   \
                         <center>   \
-						<div class="zoombutton noselect" id="cmd_zoomout">-</div>   \
+						<div class="zoombutton button" id="cmd_zoomout">-</div>   \
 						&nbsp&nbspzoom&nbsp&nbsp \
-						<div class="zoombutton noselect" id="cmd_zoomin">+</div>   \
+						<div class="zoombutton button" id="cmd_zoomin">+</div>   \
 						<\center>  \
                     </div>   \
                   </div>   \
@@ -301,6 +299,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         '; // end of innerHTML
 
         $( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
+        $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
+		$( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
         $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
         $( "#cmd_hideshowlegend" )[0].onclick = hideshowlegend;
         $( "#cmd_hideshowfilters" )[0].onclick = hideshowfilters;
@@ -388,13 +388,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         var node = svg.selectAll(".node")
             .data(graph.nodes)
-            .enter().append("rect")
+            .enter().append("circle")
             .attr("class", "node")
-            .attr("width", PRES.liveAttributes.nodeWidth)
-            .attr("height", PRES.liveAttributes.nodeHeight)
+            .attr("r", PRES.liveAttributes.nodeWidth)
             .style("fill", PRES.liveAttributes.nodeFill)
             .on("mouseover", PRES.liveAttributes.mouseover)
             .on("click", PRES.liveAttributes.click)
+			.on("dblclick", PRES.liveAttributes.dblclick)
             .call(force.drag);
 			
 		PRES.svg.selectAll(".node")
@@ -402,18 +402,20 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.style("stroke-width", 3)
 			.style("stroke",PRES.bordercolor.origin);
 
+
+		PRES.setViewport(-300/2, -100/2, 1, 0);
 			
         force.on("tick", function () {
 				
             PRES.svg.selectAll(".link")
-				.attr("x1", function (d) {return d.source.x+10;})
-                .attr("y1", function (d) {return d.source.y+10;})
-                .attr("x2", function (d) {return d.target.x+10;})
-                .attr("y2", function (d) {return d.target.y+10;});
+				.attr("x1", function (d) {return d.source.x;})
+                .attr("y1", function (d) {return d.source.y;})
+                .attr("x2", function (d) {return d.target.x;})
+                .attr("y2", function (d) {return d.target.y;});
 
             PRES.svg.selectAll(".node")
-				.attr("x", function (d) {return d.x;})
-                .attr("y", function (d) {return d.y;});
+				.attr("cx", function (d) {return d.x;})
+                .attr("cy", function (d) {return d.y;});
         });
 
     };
@@ -466,7 +468,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		    default:
 		    }
 		};			  
-                updateLinks(PRES); 
+		PRES.update(); 
 	    }    
 	    tr.appendChild(tdname);
 	    tr.appendChild(tdbox);      
@@ -709,36 +711,27 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             }
         };
 
-        this.nodeOpacityAndSetConnectedLinkOpacity = function (d) {
-            if (ABSTR.nodeFilters[d.type].state) {
-
-                return "1";
-            } else {
-                nodehash = d.hash;
-                PRES.svg.selectAll(".link")
-                    .filter(function (d) {
-                    return d.source.hash == nodehash;
-                })
-                    .style("stroke-width", function (d) {
-                    return 0;
-                });
-                PRES.svg.selectAll(".link")
-                    .filter(function (d) {
-                    return d.target.hash == nodehash;
-                })
-                    .style("stroke-width", function (d) {
-                    return 0;
-                });
-                return "0";
-            }
-        };
-
-
         this.nodeStrokeWidth = function (d) {
             if (ABSTR.nodeFilters[d.type].state) {
-                return "1.5px";
+                return "2px";
             } else {
                 return "0px";
+            }
+        };
+		
+		this.nodeFillOpacity = function (d) {
+            if (ABSTR.nodeFilters[d.type].state) {
+                return "1";
+            } else {
+				return "0";
+            }
+        };
+		
+		this.nodeStrokeOpacity = function (d) {
+            if (ABSTR.nodeFilters[d.type].state) {
+                return "1";
+            } else {
+				return "0";
             }
         };
 
@@ -759,15 +752,39 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             }
         };
 
+		this.linkStrokeOpacity = function (d) {
+            if (ABSTR.linkFilters[d.type].state) {
+                return "1";
+            } else {
+				return "0";
+            }
+        };
+		
+        this.relatedNodesOpacity = function (d) {return PRES.color[d.type];}; //todo
 
+
+        this.relatedLinksOpacity = function (d) {
+            if (!ABSTR.nodeFilters[d.type].state) {
+				PRES.svg.selectAll(".link")
+                    .filter(function (e) {return e.source.hash == d.hash;})
+                    .style("stroke-opacity", 0);
+
+				PRES.svg.selectAll(".link")
+                    .filter(function (e) {return e.target.hash == d.hash;})
+                    .style("stroke-opacity", 0);
+            }
+			return PRES.color[d.type];
+        };		
+
+		
         this.mousemove = function (d) {
 			if (ABSTR.creatinglink){
                 var nodes = PRES.force.nodes();
-                var index = searchhash(nodes, PRES.clickednodehash);
+                var index = searchhash(nodes, ABSTR.clickednodehash);
                 var linecolor = PRES.color[document.getElementById("replylinktype2").value];
 				
-				var x1 = nodes[index].x+10,
-					y1 = nodes[index].y+10,
+				var x1 = nodes[index].x,
+					y1 = nodes[index].y,
                     p2 = PRES.scaler.translate(d3.mouse(svg)),
                     x2 = p2[0],
                     y2 = p2[1];
@@ -779,27 +796,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.attr("y2", y2)
 					.style("stroke", linecolor);
 			}
-			// TEST show coordinates in contbox
-			// document.getElementById("contbox").value = 
-				// "mouse: "+ d3.mouse(svg) + "\n"+
-				 // "\n" +
-				// "desp x p: " + Math.round(despxp) + "\n" +
-				// "desp y p: " + Math.round(despyp) + "\n" +
-				 // "\n" +
-				// "trans 0: " + trans[0] + "\n" +
-				// "trans 1: " + trans[1] + "\n" +
-				 // "\n" +
-				 // "desp x z: " + Math.round(despxz) + "\n" +
-				// "desp y z: " + Math.round(despyz) + "\n" +
-				// "\n" +
-				// "scale: " + scale + "\n" +				
-				// "oldscale: " + oldscale + "\n" +
-				// "zoomval: " + zoomval + "\n"
-				// ;  
-			
 		};
 
-		
 		
         this.mouseover = function (d) {
 
@@ -809,7 +807,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 								
 			if (fillopacity == 0){return};
 			
-			if (PRES.clickednodehash === "") {
+			if (ABSTR.clickednodehash === "" && ABSTR.clickedlinkhash === "") {
                 PRES.svg.selectAll(".node")
                     .style("stroke", PRES.bordercolor.normal);
 				
@@ -819,10 +817,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 				// this line below is the node where the mouse is over			
 				d3.select(this)
-//					.transition().duration(250)
 					.style("stroke", PRES.bordercolor.over);
 						
-				document.getElementById("contbox").value = "[" + ABSTR.nodeFilters[d.type].name + "]" + "\n\n" + d.content + "\n\n" +"[by " +d.author+"]";
+				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
+				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";");
+				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author +")";
+				document.getElementById("contbox").value = d.content;
 			}
         };
 
@@ -838,102 +838,165 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.filter(function (d) {return d.origin == "1";})
 					.style("stroke",PRES.bordercolor.origin);
 					
-				PRES.clickednodehash = "";
-				PRES.clickedlinkhash = "";
+				ABSTR.clickednodehash = "";
+				ABSTR.clickedlinkhash = "";
 				
+				document.getElementById("right_bar_header").setAttribute ("style", "background: (227,226,230);");
+				document.getElementById("contentlabel").setAttribute ("style", "background: (227,226,230);");
+				document.getElementById("contentlabel").innerHTML = "&nbsp";
+	
 				document.getElementById("contbox").value = "";
 				$('#rightpaneleval').html(" ");
 				$('#rightpanel').html(" ");
-				replying = false;
+				
+				ABSTR.replying = false;
 			};
         };
 
         this.click = function (d) {
-	    if (ABSTR.creatinglink){
-			if (d.hash !== PRES.clickednodehash){
-				savelink(d);
-			}
-		}else{
-			var fillopacity = 	PRES.svg.selectAll(".node")
-								.filter(function (e) {return e.hash == d.hash;})
-								.style("fill-opacity");	
-								
-			if (fillopacity == 0){return};
+			if (ABSTR.creatinglink){
+				if (d.hash !== ABSTR.clickednodehash){
+					savelink(d);
+				}
+			}else{
+				var fillopacity = 	PRES.svg.selectAll(".node")
+									.filter(function (e) {return e.hash == d.hash;})
+									.style("fill-opacity");	
+									
+				if (fillopacity == 0){return};
 
-			PRES.svg.selectAll(".node")
-				.style("stroke", PRES.bordercolor.normal);
+				PRES.svg.selectAll(".node")
+					.style("stroke", PRES.bordercolor.normal);
+					
+				PRES.svg.selectAll(".link")
+					.style("stroke", PRES.liveAttributes.linkStroke);
+		
+				PRES.svg.selectAll(".node")
+					.filter(function (d) {return d.origin == "1";})
+					.style("stroke",PRES.bordercolor.origin);
 				
-			PRES.svg.selectAll(".link")
-			    .style("stroke", PRES.liveAttributes.linkStroke);
-	
-			PRES.svg.selectAll(".node")
-				.filter(function (d) {return d.origin == "1";})
-				.style("stroke",PRES.bordercolor.origin);
-			
-			// this line below is the clicked node
-			d3.select(this)
-				.style("stroke", PRES.bordercolor.clicked);
-	
-			PRES.clickednodehash = d.hash;
-			PRES.clickedlinkhash = "";
-			
-			$('#rightpaneleval').html(rightpanelhtmleval);
-			$('#rightpanel').html(rightpanelhtmlreplyandlink);
-			
-			document.getElementById("contbox").value = "[" + ABSTR.nodeFilters[d.type].name + "]" + "\n\n" + d.content+"\n\n" + "[by " +d.author +"]";
-			document.getElementById("posvotes").innerHTML = d.evalpos;
-			document.getElementById("negvotes").innerHTML = d.evalneg;
+				// this line below is the clicked node
+				d3.select(this)
+					.style("stroke", PRES.bordercolor.clicked);
+		
+				ABSTR.clickednodehash = d.hash;
+				ABSTR.clickedlinkhash = "";
+				
+				$('#rightpaneleval').html(rightpanelhtmleval);
+				$('#rightpanel').html(rightpanelhtmlreplyandlink);
+				
+				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
+				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.3)   + ";");
+				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author + ")";
+				document.getElementById("contbox").value = d.content;
+				
+				document.getElementById("posvotes").innerHTML = d.evalpos;
+				document.getElementById("negvotes").innerHTML = d.evalneg;
+				
+			};
 			
 		};
-        
-	};
-
-        this.clicklink = function (d) {
-	    if (ABSTR.creatinglink){
-		}else{
-			var strokewidth = 	PRES.svg.selectAll(".link")
+		
+		this.dblclick = function (d) {
+			
+			var selx = PRES.svg.selectAll(".node")
 								.filter(function (e) {return e.hash == d.hash;})
-			                                        .style("stroke-width");
+								.attr("cx");
+								
+			var sely = PRES.svg.selectAll(".node")
+								.filter(function (e) {return e.hash == d.hash;})
+								.attr("cy");
 
+			PRES.scaler.zoomval = 1.5;
+			
+			PRES.scaler.despx0 = (PRES.scaler.midx-selx*PRES.scaler.zoomval) - PRES.scaler.despxp;
+			PRES.scaler.despy0 = (PRES.scaler.midy-sely*PRES.scaler.zoomval) - PRES.scaler.despyp;
 
-			if (strokewidth == 0){return};
+			
+			//alert(selx);
+			
+			PRES.scaler.despx = PRES.scaler.despxp + PRES.scaler.despx0;
+			PRES.scaler.despy = PRES.scaler.despyp + PRES.scaler.despy0;
+				
 
-			d3.select(this)
-				.style("stroke", "#000");
-	
-			PRES.clickedlinkhash = d.hash;
-			
-			$('#rightpaneleval').html(rightpanelhtmllinkeval);
-			$('#rightpanel').html("");
-			
-			document.getElementById("contbox").value = "Type of connection: [" + ABSTR.linkFilters[d.type].name + "]";
-			document.getElementById("linkposvotes").innerHTML = d.evalpos;
-			document.getElementById("linknegvotes").innerHTML = d.evalneg;
-			
+			PRES.svg
+				.transition().duration(400)
+				.attr("transform", "translate(" + PRES.scaler.despx + ',' + PRES.scaler.despy + ") scale(" + PRES.scaler.zoomval + ")");
 		};
-        
-	};
 
+		
+        this.clicklink = function (d) {
+			if (ABSTR.creatinglink){
+			}else{
+				var strokewidth = 	PRES.svg.selectAll(".link")
+									.filter(function (e) {return e.hash == d.hash;})
+									.style("stroke-width");
+
+				if (strokewidth == 0){return};
+
+				d3.select(this)
+					.style("stroke", "#000");
+		
+				ABSTR.clickedlinkhash = d.hash;
+				
+				$('#rightpaneleval').html(rightpanelhtmllinkeval);
+				$('#rightpanel').html("");
+				
+				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.linkFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed					
+				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.linkFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed			
+					
+				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[d.type].name + " connection" + "</b>";
+				
+				document.getElementById("linkposvotes").innerHTML = d.evalpos;
+				document.getElementById("linknegvotes").innerHTML = d.evalneg;			
+			};
+		};
 
     };
-		// end of this == LiveAttributes
+	
+	// end of this == LiveAttributes
+	
+	this.replypanel = function() {
+		alert("dentro");
+		cancellink();
+		if (ABSTR.replying){
+				ABSTR.replying = false;
+				var PRES = Visualisations.current().presentation;
+				PRES.mousedown();
+			}
+			$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
+	//		document.getElementById("replybox").value = ".";  //***** TEST LINE - to avoid de alert of empty reply
+			ABSTR.replying = true;
+			document.getElementById("namebox2").value = document.getElementById("namebox").value;
+			button = document.getElementById("showreply");
+			button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
+	};
+
 
     // update functions (svg, nodes and links)
 
     function updateLinks(PRES) {
         PRES.svg.selectAll(".link").style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+        PRES.svg.selectAll(".link").style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
     };
 
     function updateNodes(PRES) {
-        PRES.svg.selectAll(".node").style("fill-opacity", PRES.liveAttributes.nodeOpacityAndSetConnectedLinkOpacity);
         PRES.svg.selectAll(".node").style("stroke-width", PRES.liveAttributes.nodeStrokeWidth);
-        PRES.svg.selectAll(".node").attr("width", PRES.liveAttributes.nodeWidth);
-        PRES.svg.selectAll(".node").attr("height", PRES.liveAttributes.nodeHeight);
+        PRES.svg.selectAll(".node").attr("r", PRES.liveAttributes.nodeWidth);
+        PRES.svg.selectAll(".node").style("fill-opacity", PRES.liveAttributes.nodeFillOpacity);
+        PRES.svg.selectAll(".node").style("stroke-opacity", PRES.liveAttributes.nodeStrokeOpacity);
     };
 
+	function updateRelatedOpacity(PRES) {
+	    PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedNodesOpacity);
+        PRES.svg.selectAll(".node").style("fill", PRES.liveAttributes.relatedLinksOpacity);
+	};
+	
+	
     this.update = function () {
         updateLinks(this);
         updateNodes(this);
+		updateRelatedOpacity(this);
     };
 	
 };
@@ -969,24 +1032,166 @@ function legendfiltersupdate() {
     var legend_bar = document.getElementById("legend_bar");
 
     if (PRES.showfilters && PRES.showlegend) {
-	legend_bar.style.height = "100px";
-	lower_bar.style.height = "100px";
-	legend_bar.style.bottom = "100px";
+	lower_bar.style.bottom = "-100px";
+	legend_bar.style.bottom = "0px";
     } else if (!PRES.showfilters && PRES.showlegend) {    
-	legend_bar.style.height = "100px";
-	lower_bar.style.height = "19px";
-	legend_bar.style.bottom = "19px";
+	lower_bar.style.bottom = "-182px";
+	legend_bar.style.bottom = "-82px";
     } else if (PRES.showfilters && !PRES.showlegend) {    
-	legend_bar.style.height = "19px";
-	lower_bar.style.height = "100px";
-	legend_bar.style.bottom = "100px";
+	lower_bar.style.bottom = "-100px";
+	legend_bar.style.bottom = "-82px";
     } else  {   
-	legend_bar.style.height = "19px";
-	lower_bar.style.height = "19px";
-	legend_bar.style.bottom = "19px";
+	lower_bar.style.bottom = "-182px";
+	legend_bar.style.bottom = "-164px";
     }
 
 };
+
+
+function evalpos(){
+	evalnode("pos");
+}
+
+function evalneg(){
+	evalnode("neg");
+}
+
+function linkevalpos(){
+	evallink("pos");
+}
+
+function linkevalneg(){
+	evallink("neg");
+}
+
+
+function evalnode(vote) {
+
+    var PRES = Visualisations.current().presentation;   
+	var ABSTR = Visualisations.current().abstraction;
+	
+	var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+  
+    var targetindex = searchhash(nodes, ABSTR.clickednodehash);
+    targetnode = nodes[targetindex];
+	
+    var name = document.getElementById("namebox").value;    
+    if (name == ""){name = "anon";}
+	
+	if($.inArray(name, targetnode.evaluatedby) > -1){
+	
+		alert("You have already rated this node");
+		
+	} else{
+	
+		targetnode.evaluatedby.push(name);
+		
+		if (vote=="pos"){
+			targetnode.evalpos += 1; 
+			document.getElementById("posvotes").innerHTML = targetnode.evalpos;
+		}else{
+			targetnode.evalneg += 1;
+			document.getElementById("negvotes").innerHTML = targetnode.evalneg;
+		}
+	
+		PRES.svg.selectAll(".node")
+			.filter(function (d) {return d.hash == ABSTR.clickednodehash;})
+			.transition().duration(1000).ease("elastic")
+			.attr("r", PRES.liveAttributes.nodeWidth) 
+	}
+};
+
+function evallink(vote) {
+
+    var PRES = Visualisations.current().presentation;   
+	var ABSTR = Visualisations.current().abstraction;
+	
+	var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+  
+    var targetindex = searchhash(links, ABSTR.clickedlinkhash);
+    targetlink = links[targetindex];
+	
+    var name = document.getElementById("namebox").value;    
+    if (name == ""){name = "anon";}
+	
+	if($.inArray(name, targetlink.evaluatedby) > -1){
+	
+		alert("You have already rated this link");
+		
+	} else{
+	
+		targetlink.evaluatedby.push(name);
+		
+		if (vote=="pos"){
+			targetlink.evalpos += 1; 
+			document.getElementById("linkposvotes").innerHTML = targetlink.evalpos;
+		}else{
+			targetlink.evalneg += 1;
+			document.getElementById("linknegvotes").innerHTML = targetlink.evalneg; 
+		}
+	
+		PRES.svg.selectAll(".link")
+			.filter(function (d) {return d.hash == ABSTR.clickedlinkhash;})
+			.transition().duration(1000).ease("elastic")
+			.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+	}
+};
+
+
+function showreplypanel(){
+
+	var ABSTR = Visualisations.current().abstraction;
+	
+	cancellink();
+	if (ABSTR.replying){
+			ABSTR.replying = false;
+			var PRES = Visualisations.current().presentation;
+			PRES.mousedown();
+		}
+		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
+//		document.getElementById("replybox").value = ".";  //***** TEST LINE - to avoid de alert of empty reply
+		ABSTR.replying = true;
+		document.getElementById("namebox2").value = document.getElementById("namebox").value;
+		button = document.getElementById("showreply");
+		button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
+}
+
+function hidereplypanel(){
+	var ABSTR = Visualisations.current().abstraction;
+	document.getElementById("replybox").value = "";  
+	 ABSTR.replying = false; 
+	 $('#rightpanel').html(rightpanelhtmlreplyandlink);	
+}
+
+
+function showcreatelink(){
+	var ABSTR = Visualisations.current().abstraction;
+	if (ABSTR.creatinglink){
+		cancellink();
+	}else{
+		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmllink);
+		ABSTR.creatinglink = true;
+		ABSTR.replying = false;
+		button = document.getElementById("showlink");
+		button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
+	}
+}
+
+function cancellink(){
+	$('#rightpanel').html(rightpanelhtmlreplyandlink);
+	
+	var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+	PRES.prelink 
+		.attr("x1", 0)
+		.attr("y1", 0)
+		.attr("x2", 0)
+		.attr("y2", 0);
+		
+	ABSTR.creatinglink = false;
+}
 
 function savenode() {
 	if (document.getElementById("replybox").value == ""){
@@ -1001,12 +1206,13 @@ function savenode() {
 	
 function createnode(PRES){
 		    
+	var ABSTR = Visualisations.current().abstraction;
     var nodes = PRES.force.nodes();
 
     var content = document.getElementById("replybox").value;
     var nodetype = document.getElementById("replynodetype").value;
 	
-	var targetindex = searchhash(nodes, PRES.clickednodehash), 
+	var targetindex = searchhash(nodes, ABSTR.clickednodehash), 
     targetnode = nodes[targetindex];
 	
 	var author = Model.currentAuthor();
@@ -1061,12 +1267,11 @@ function drawnewnodes(PRES) {
     
     var node = PRES.svg.selectAll(".node")
         .data(nodes)
-        .enter().append("rect")
+        .enter().append("circle")
         .attr("class", "node")
-        .attr("x", function (d) {return d.x;})
-        .attr("y", function (d) {return d.y;})
-		.attr("width", PRES.liveAttributes.nodeWidth)
-		.attr("height", PRES.liveAttributes.nodeHeight)
+        .attr("cx", function (d) {return d.x;})
+        .attr("cy", function (d) {return d.y;})
+		.attr("r", PRES.liveAttributes.nodeWidth)
 		.style("fill", PRES.liveAttributes.nodeFill)
 		.on("mouseover", PRES.liveAttributes.mouseover)
 		.on("click", PRES.liveAttributes.click)
@@ -1077,149 +1282,18 @@ function drawnewnodes(PRES) {
     PRES.force.start();
 };
 
-function evalpos(){
-	evalnode("pos");
-}
 
-function evalneg(){
-	evalnode("neg");
-}
-
-function linkevalpos(){
-	evallink("pos");
-}
-
-function linkevalneg(){
-	evallink("neg");
-}
-
-
-function evalnode(vote) {
-    var PRES = Visualisations.current().presentation;   
-	
-	var nodes = PRES.force.nodes();
-    var links = PRES.force.links();
-  
-    var targetindex = searchhash(nodes, PRES.clickednodehash);
-    targetnode = nodes[targetindex];
-	
-    var name = document.getElementById("namebox").value;    
-    if (name == ""){name = "anon";}
-	
-	if($.inArray(name, targetnode.evaluatedby) > -1){
-	
-		alert("You have already rated this node");
-		
-	} else{
-	
-		targetnode.evaluatedby.push(name);
-		
-		if (vote=="pos"){
-			targetnode.evalpos += 1; 
-			document.getElementById("posvotes").innerHTML = targetnode.evalpos;
-		}else{
-			targetnode.evalneg += 1;
-			document.getElementById("negvotes").innerHTML = targetnode.evalneg;
-		}
-	
-		PRES.svg.selectAll(".node")
-			.filter(function (d) {return d.hash == PRES.clickednodehash;})
-			.transition().duration(1000).ease("elastic")
-			.attr("width", PRES.liveAttributes.nodeWidth)
-			.attr("height", PRES.liveAttributes.nodeHeight);   
-	}
-};
-
-function evallink(vote) {
-    var PRES = Visualisations.current().presentation;   
-	
-	var nodes = PRES.force.nodes();
-    var links = PRES.force.links();
-  
-    var targetindex = searchhash(links, PRES.clickedlinkhash);
-    targetlink = links[targetindex];
-	
-    var name = document.getElementById("namebox").value;    
-    if (name == ""){name = "anon";}
-	
-	if($.inArray(name, targetlink.evaluatedby) > -1){
-	
-		alert("You have already rated this link");
-		
-	} else{
-	
-		targetlink.evaluatedby.push(name);
-		
-		if (vote=="pos"){
-			targetlink.evalpos += 1; 
-			document.getElementById("linkposvotes").innerHTML = targetlink.evalpos;
-		}else{
-			targetlink.evalneg += 1;
-			document.getElementById("linknegvotes").innerHTML = targetlink.evalneg; 
-		}
-	
-		PRES.svg.selectAll(".link")
-			.filter(function (d) {return d.hash == PRES.clickedlinkhash;})
-			.transition().duration(1000).ease("elastic")
-			.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
-	}
-};
-
-
-function showreplypanel(){
-	cancellink();
-
-		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
-//		document.getElementById("replybox").value = ".";  //***** TEST LINE - to avoid de alert of empty reply
-		replying = true;
-		document.getElementById("namebox2").value = document.getElementById("namebox").value;
-		button = document.getElementById("showreply");
-		button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
-}
-
-function hidereplypanel(){
-	document.getElementById("replybox").value = "";  
-	 replying = false; 
-	 $('#rightpanel').html(rightpanelhtmlreplyandlink);	
-}
-
-
-function showcreatelink(){
-	var ABSTR = Visualisations.current().abstraction;
-	if (ABSTR.creatinglink){
-		cancellink();
-	}else{
-		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmllink);
-		ABSTR.creatinglink = true;
-		button = document.getElementById("showlink");
-		button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
-	}
-}
-
-function cancellink(){
-	$('#rightpanel').html(rightpanelhtmlreplyandlink);
-	
-	var PRES = Visualisations.current().presentation;
-	var ABSTR = Visualisations.current().abstraction;
-	PRES.prelink 
-		.attr("x1", 0)
-		.attr("y1", 0)
-		.attr("x2", 0)
-		.attr("y2", 0);
-		
-	ABSTR.creatinglink = false;
-}
-	
 function savelink(d){
 
     var PRES = Visualisations.current().presentation;
-
+	var ABSTR = Visualisations.current().abstraction;
+	
     var nodes = PRES.force.nodes();
     var links = PRES.force.links();
 
     var linktype = document.getElementById("replylinktype2").value;
     
-    var sourceindex = searchhash(nodes, PRES.clickednodehash);
+    var sourceindex = searchhash(nodes, ABSTR.clickednodehash);
     sourcenode = nodes[sourceindex];
 	
     var author = Model.currentAuthor();
@@ -1247,7 +1321,7 @@ function changelinktype(){
 
 	PRES.prelink.style("stroke", linecolor);
 }
-
+ 
 // Start of control
 
 
@@ -1256,6 +1330,12 @@ function Scaler(PRES) {
     /*  TODO 
         I'm pretty sure this can be simplified but I'd like to have some documentation
         about the differences between despx, despxz, despxp and transxz first - avox
+		
+		Yes, quite possible.. This is just the first way it ended up working, after other with even much more variables declared!
+		despxp : "pan displacement", the movement produced by mouse dragging
+		despxz : "zoom displacement", the movement that is produced when zooming, to maintain the correct position of the svg
+		despx0 : the rest of movements, like the initial movement, or the one produced when focusing in a node (with the dblclick function)
+		transxz : a memory used to obtain the real mouse dragging displacement from d3.event.translate, that accumulates the "aditional" movement produced when zooming
     */
 
     this.oldscale = 1;
@@ -1266,20 +1346,24 @@ function Scaler(PRES) {
     this.zoommax = 5;
     this.zoommin = 0.1;
 
-    this.despx = 0;
-    this.despy = 0;
-
-    this.despxz = 0;
-    this.despyz = 0;
+	this.despx0 = -300/2;
+	this.despy0 = -100/2;
+		
+	this.despx = this.despx0;
+	this.despy = this.despy0;
 
     this.despxp = 0;
     this.despyp = 0;
 
     this.transxz = 0;
     this.transyz = 0;
+	
+	this.midx = $(window).width()/2 + this.despx0;
+	this.midy = $(window).height()/2 + this.despy0;
 
     var THIS = this;
     
+	
     this.translate = function(point) {
         return [ (point[0]-THIS.despx) / THIS.zoomval, (point[1]-THIS.despy) / THIS.zoomval ];
     };
@@ -1290,61 +1374,73 @@ function Scaler(PRES) {
         THIS.trans=d3.event.translate;
         THIS.scale=d3.event.scale;
         
-        if (THIS.scale == THIS.oldscale){  //no mousewheel movement
+        if (THIS.scale == THIS.oldscale){  //no mousewheel movement, just translation
         
             THIS.despxp = THIS.trans[0]-THIS.transxz;
             THIS.despyp = THIS.trans[1]-THIS.transyz;
-            
-            var transtime = 0;
+			
+			THIS.despx = THIS.despx0 + THIS.despxp;
+			THIS.despy = THIS.despy0 + THIS.despyp;
+			
+			// making the transformation directly instead of calling setViewport to avoid a problem caused by transitionTime = 0
+			PRES.svg
+				.attr("transform","translate(" + THIS.despx + ',' + THIS.despy + ") scale(" + THIS.zoomval + ")"); 
             
         } else {	
-            if (this.scale > THIS.oldscale){
+		
+			THIS.oldzoomval = THIS.zoomval;
+            if (THIS.scale > THIS.oldscale){
                 if (THIS.zoomval*1.5 < THIS.zoommax){THIS.zoomval *= 1.5;}
             } else {
                 if (THIS.zoomval/1.5 > THIS.zoommin){THIS.zoomval /= 1.5;}
             }
             
-            THIS.despxz = PRES.width*(1-THIS.zoomval)/2;
-            THIS.despyz = PRES.height*(1-THIS.zoomval)/2;
+			THIS.despx0 = d3.mouse(this)[0]-(d3.mouse(this)[0]-THIS.despx)*THIS.zoomval/THIS.oldzoomval-THIS.despxp;
+			THIS.despy0 = d3.mouse(this)[1]-(d3.mouse(this)[1]-THIS.despy)*THIS.zoomval/THIS.oldzoomval-THIS.despyp;
             
             THIS.transxz = THIS.trans[0]-THIS.despxp;
             THIS.transyz = THIS.trans[1]-THIS.despyp;
             
             THIS.oldscale = THIS.scale;
             var transtime = 200;
+			
+			THIS.despx = THIS.despx0 + THIS.despxp;
+			THIS.despy = THIS.despy0 + THIS.despyp;
             
-            console.log(d3.mouse(this));
-        }
-            
-        THIS.despx = THIS.despxz + THIS.despxp;
-        THIS.despy = THIS.despyz + THIS.despyp;
-            
-        PRES.setViewport(THIS.despx, THIS.despy, THIS.zoomval, transtime);
-    };
+			PRES.setViewport(THIS.despx, THIS.despy, THIS.zoomval, transtime);
+		}
+	};
+		
+      
 
 
     this.zoomin = function() {
 	
+		THIS.oldzoomval = THIS.zoomval;
+		
         if (THIS.zoomval*1.5 < THIS.zoommax){THIS.zoomval *= 1.5;};
 	
-        THIS.despxz = PRES.width*(1-THIS.zoomval)/2;
-        THIS.despyz = PRES.height*(1-THIS.zoomval)/2;
+        THIS.despx0 = THIS.midx-(THIS.midx-THIS.despx)*THIS.zoomval/THIS.oldzoomval-THIS.despxp;
+        THIS.despy0 = THIS.midy-(THIS.midy-THIS.despy)*THIS.zoomval/THIS.oldzoomval-THIS.despyp;
 	
-        THIS.despx = THIS.despxz + THIS.despxp;
-        THIS.despy = THIS.despyz + THIS.despyp;
+        THIS.despx = THIS.despx0 + THIS.despxp;
+        THIS.despy = THIS.despy0 + THIS.despyp;
 	
         PRES.setViewport(THIS.despx, THIS.despy, THIS.zoomval, 200);
     };
+	
 
     this.zoomout = function() {
 	
+		THIS.oldzoomval = THIS.zoomval;
+		
         if (THIS.zoomval/1.5 > THIS.zoommin){THIS.zoomval /= 1.5;};
 	
-        THIS.despxz = PRES.width*(1-THIS.zoomval)/2;
-        THIS.despyz = PRES.height*(1-THIS.zoomval)/2;
+        THIS.despx0 = THIS.midx-(THIS.midx-THIS.despx)*THIS.zoomval/THIS.oldzoomval-THIS.despxp;
+        THIS.despy0 = THIS.midy-(THIS.midy-THIS.despy)*THIS.zoomval/THIS.oldzoomval-THIS.despyp;
 	
-        THIS.despx = THIS.despxz + THIS.despxp;
-        THIS.despy = THIS.despyz + THIS.despyp;
+        THIS.despx = THIS.despx0 + THIS.despxp;
+        THIS.despy = THIS.despy0 + THIS.despyp;
 	
         PRES.setViewport(THIS.despx, THIS.despy, THIS.zoomval, 200);
    };
@@ -1356,6 +1452,18 @@ function mousemove(){}
 function mousedown(){}
 
 function mouseup(){}
+
+function hex2rgb(hex, opacity) {
+        var h=hex.replace('#', '');
+        h =  h.match(new RegExp('(.{'+h.length/3+'})', 'g'));
+
+        for(var i=0; i<h.length; i++)
+            h[i] = parseInt(h[i].length==1? h[i]+h[i]:h[i], 16);
+
+        if (typeof opacity != 'undefined')  h.push(opacity);
+
+        return 'rgba('+h.join(',')+')';
+}
 
 // **** TEST FUNCTIONS (triggered by test buttons in the right-bar-header) *****************
 

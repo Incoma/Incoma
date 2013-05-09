@@ -25,22 +25,36 @@ body {
 
 .right_bar_header {
   padding: 4px 4px 4px 4px;
-  background: #ccf;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #336;
+  background: rgb(227,226,230);
+  border: solid 1px #636;
+  -moz-border-top-left-radius: 5px;
+  -moz-border-top-right-radius: 5px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
 }
 
 .right_bar_title {
+  padding: 6px 6px 6px 6px;
+  background: rgb(227,226,230);
   line-height: 14pt;
   top: -10px;
+  opacity: 1;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
 
 .areacontent {
-  width: 365px;
+  padding: 8px 4px 4px 8px;
+  width: 96.2%;
   min-height: 0px;
   height: 120px;
+  border: solid 1px #636;
   resize: vertical;
+  cursor: default;
+  -moz-border-bottom-left-radius: 5px;
+  -moz-border-bottom-right-radius: 5px;
+  border-bottom-left-radius:5px;
+  border-bottom-right-radius:5px;
 }
 
 .areareply {
@@ -48,51 +62,63 @@ body {
   width: 365px;
   min-height: 0px;
   height: 60px;
+  border: solid 1px #636;
   resize: vertical;
 }
 
 .areaname {
   display: inline-block;
   position: relative;
-  top: 0px;
+  top: 5px;
   border: yes;
   width: 30%;
-  height: 17px;
+  height: 20px;
   resize: none;
 }
 
 .legend_bar {
   position: absolute;
-  bottom: 19px;
+  bottom: -82px;
   background: rgba(204,204,255,0.7);
-  width: 100%;
-  height: 100px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #336;
+  width: 99%;
+
+  height: 198px;
+  border: solid 2px rgba(51,51,153, 0.4);
+
+
   cursor: default;
+  margin-left:0.5%;
+  margin-right:0.5%;
+   	-moz-border-radius: 10px;
+	border-radius: 10px;
+  -webkit-transition-property: bottom;
+  -webkit-transition-duration: 700ms;
+  transition-property: bottom;
+  transition-duration: 700ms;
 }
 /* HEIGHT IS DEFINED ALSO IN hideshowlegend() function !!!  */
 
 .lower_bar {
   position: absolute;
-  bottom: 0px;
+  bottom: -182px;
   background: rgba(204,204,255,1);
-  width: 100%;
-  height: 19px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #336;
+  width: 99%;
+  height: 198px;
+  border: solid 2px rgba(51,51,153, 0.4);
+
+
   cursor: default;
-  -webkit-transition-property: height;
+   margin-left:0.5%;
+  margin-right:0.5%;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-transition-property: bottom;
   -webkit-transition-duration: 500ms;
-  transition-property: height;
+  transition-property: bottom;
   transition-duration: 500ms;
 }
 
-.lower_bar:hover {
-	height: 100px;
-}
+
 /* HEIGHT IS DEFINED ALSO IN hideshowfilters() function !!!  */
 
 .lower_bar_elems {
@@ -205,7 +231,9 @@ div.button{
 	border-style: solid;
 	border-width: 1px;
 	border-color: #336;
-	opacity: 1;
+
+	-moz-border-radius: 3px;
+	border-radius: 3px;
 	-webkit-box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.5);
 	box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.5); 
 	-webkit-user-select: none;
@@ -222,9 +250,7 @@ div.showreplypanel{
 	display: inline-block;
 	width: 100px;
 	height: 40px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	background: #6c6;
+	background: #99f;
 	text-align: center;
 	margin: 5px;
 	line-height:40px;
@@ -235,9 +261,7 @@ div.showconnectpanel{
 	display: inline-block;
 	width: 100px;
 	height: 40px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	background: #99f;
+	background: #c93;
 	text-align: center;
 	margin: 5px;
 	line-height:40px;
@@ -248,8 +272,6 @@ div.save{
     display:inline-block;
 	width: 80px;
 	height: 20px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
 	background: #6c6;
 	text-align: center;
 	margin: 5px;
@@ -259,8 +281,6 @@ div.cancel{
     display:inline-block;
 	width: 80px;
 	height: 20px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
 	background: #c93;
 	text-align: center;
 	margin: 5px;
@@ -270,30 +290,18 @@ div.evalpos{
     display:inline-block;
 	width: 30px;
 	height: 20px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
 	background: #6c6;
 	text-align: center;
 	margin: 6px;
-	cursor: default;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	user-select: none;
 }
 
 div.evalneg{
     display:inline-block;
 	width: 30px;
 	height: 20px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
 	background: #c63;
 	text-align: center;
 	margin: 6px;
-	cursor: default;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	user-select: none;
 }
 
 div.posvotes{
@@ -304,10 +312,6 @@ div.posvotes{
 	border-radius: 3px;
 	background: #fff;
 	text-align: right;
-	cursor: default;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	user-select: none;
 }
 
 div.negvotes{
@@ -318,18 +322,12 @@ div.negvotes{
 	border-radius: 3px;
 	background: #fff;
 	text-align: left;
-	cursor: default;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	user-select: none;
 }
 
 div.zoombutton{
     display:inline-block;
 	width: 20px;
 	height: 20px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
 	background: #fff;
 	text-align: center;
 	border: solid;
@@ -342,15 +340,17 @@ div.zoombutton{
 }
 
 #right_bar {
+  padding: 5px 5px 5px 5px;
   position: relative;
   width: 370px;
   height:100%;
-  background: rgba(255,255,255,0.7);
+  background: rgba(212,190,244,0.3);
+  border-left: solid 2px rgba(163,128,180,.5);
 }
 
 #left_bar {
   position: absolute;
-  top: 50px;
+  top: 60px;
   margin-left: 10px;
   width: 120px;
 }
@@ -361,7 +361,7 @@ div.zoombutton{
 
 .node {
   stroke: #36c;
-  stroke-width: 1.5px;
+  stroke-width: 2px;
 }
 
 .link {
