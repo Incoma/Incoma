@@ -13,18 +13,19 @@ body {
 }
 
 #headerMain {
-    background: #336;
+    background: #000;
     text-align: right;
     width: 100%;
-    min-height: 40px;
+    height: 50px;
+	padding-top:5px;
     cursor: default;
 }
 
 .header {
     display: inline-block;
-    margin: 5px;
-    padding-left: 10px;
-    vertical-align: top;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
     cursor: default;
 }
 
@@ -34,11 +35,28 @@ body {
     left: 0px;
     font-size: 20pt;
     color:#fff;
+    margin: 5px;
+    padding-left: 10px;
+    vertical-align: top;
+}
+
+#headerMenu {
+    position: absolute;
+    left: 300px;
+    font-size: 12pt;
+    color:#fff;
+	line-height: 45px;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 #headerUrl {
+    position: absolute;
+    left: 400px;
+    font-size: 12pt;
     color:#fff;
-    text-decoration:none;
+	line-height: 45px;
+	text-decoration: none;
 }
 
 #headerImport {

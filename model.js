@@ -91,10 +91,9 @@ Model.currentAuthor = function(name) {
     return Model._currentAuthor || "anonymous";
 };
 
-Model.clear = function() {
-    this.model = IncomaDefaultModel || { nodes: [], links: [], authors: [Model.currentAuthor]}
+Model.clear = function(model) {
+    this.model = model || { nodes: [], links: [], authors: [Model.currentAuthor]}
 };
-
 
 Model.createNode = function(nodetype, content, author, time) {
     var newHash = Model.model.nodes.length;

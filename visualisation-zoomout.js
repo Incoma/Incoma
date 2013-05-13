@@ -63,86 +63,27 @@ function ZoomOut_Abstraction() {
     this.model = null;
 	
     this.linkFilters = {
-        1: {
-            name: "General",
-            state: true,
-            typeId: 1
-        },
-        2: {
-            name: "Consequence",
-            state: true,
-            typeId: 2
-        },
-        3: {
-            name: "Agree",
-            state: true,
-            typeId: 3
-        },
-        4: {
-            name: "Disagree",
-            state: true,
-            typeId: 4
-        },
-        5: {
-            name: "Related",
-            state: true,
-            typeId: 5
-        },
-        6: {
-            name: "Contradiction",
-            state: true,
-            typeId: 6
-        },
-        7: {
-            name: "Alternative",
-            state: true,
-            typeId: 7
-        },
-
-        8: {
-            name: "Answer",
-            state: true,
-            typeId: 8
-        },
+		1: {name: "General",state: true, typeId: 1},
+        2: {name: "Consequence", state: true, typeId: 2},
+        3: {name: "Agree", state: true, typeId: 3},
+        4: {name: "Disagree", state: true, typeId: 4},
+        5: {name: "Related", state: true, typeId: 5},
+        6: {name: "Contradiction", state: true, typeId: 6},
+        7: {name: "Alternative", state: true, typeId: 7},
+        8: {name: "Answer", state: true, typeId: 8},
     };
 	
     this.nodeFilters = {
-        1: {
-            name: "General",
-            state: true,
-            typeId: 1
-        },
-        2: {
-            name: "Question",
-            state: true,
-            typeId: 2
-        },
-        3: {
-            name: "Answer",
-            state: true,
-            typeId: 3
-        },
-        4: {
-            name: "Proposal",
-            state: true,
-            typeId: 4
-        },
-        5: {
-            name: "Info",
-            state: true,
-            typeId: 5
-        },
+		1: {name: "General", state: true, typeId: 1},
+        2: {name: "Question", state: true, typeId: 2},
+        3: {name: "Answer", state: true, typeId: 3},
+        4: {name: "Proposal", state: true, typeId: 4},
+        5: {name: "Info", state: true, typeId: 5},
     };
 	
     this.sizeFilters = {
-        nodes: {
-            name: "Boxes",
-            state: true
-        },
-        links: {
-            name: "Threads",
-            state: true
-        },
+		nodes: {name: "Boxes", state: true},
+        links: {name: "Threads", state: true},
     };
 	
     this.init = function (model) {
@@ -164,9 +105,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.container = null;
     this.nodeSizeDefault = 12;
     this.width = $(window).width()-5;
-    this.height = $(window).height()-40-19;
+    this.height = $(window).height()-50-19;
     this.bordercolor = {
-        "normal": "#069",
+        "normal": "rgba(0,0,0,0)",
         "clicked": "#000",
         "linkclicked": "#000",
         "over": "#c33",
@@ -223,7 +164,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                       </div>   \
                     </div>   \
     \
-                    <textarea id="contbox" class="areacontent" spellcheck="false" readonly></textarea>   \
+                    <div id="contbox" class="divareacontent noselect"></div>   \
 					<div id="rightpaneleval">  \
 					</div> \
 					<div id="rightpanel">  \
@@ -323,7 +264,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     function initSVG(PRES, ABSTR, width, height) {
 
         PRES.force = d3.layout.force()
-            .charge(-600)
+ //           .charge(-600)
+			.charge(function(d) { return -Math.sqrt(d.weight)*500; })
 			.gravity(0.1)
             .linkDistance(40)
 			.theta(0.95)
@@ -359,6 +301,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .style("stroke", "blue")
 			.style("stroke-opacity",0);
 		
+		PRES.setViewport(-300/2, -100/2, 1, 0);
+
+
         var graph = ABSTR.model;
 
         force
@@ -376,7 +321,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.style("stroke-opacity",0.5);
 
 			
-        var link = svg.selectAll(".link")
+        PRES.links = svg.selectAll(".link")
             .data(graph.links)
             .enter().append("line")
             .attr("class", "link")
@@ -385,8 +330,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .on("click", PRES.liveAttributes.clicklink);
         //The attributes (as the strokewidth) are obtained from the fields of each node (as example d.evaluation) via functions (example linkStrokeWidth), taking in account if the filters are acting or not (this.abstraction.sizeFilter.links.state)
 
-
-        var node = svg.selectAll(".node")
+		PRES.nodes = svg.selectAll(".node")
             .data(graph.nodes)
             .enter().append("circle")
             .attr("class", "node")
@@ -396,17 +340,46 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .on("click", PRES.liveAttributes.click)
 			.on("dblclick", PRES.liveAttributes.dblclick)
             .call(force.drag);
+		
+		PRES.nodes
+			.style("fill-opacity",0)
+			.transition().delay(800).duration(1000)
+			.style("fill-opacity",1);
 			
-		PRES.svg.selectAll(".node")
-			.filter(function (d) {return d.origin == "1";})
-			.style("stroke-width", 3)
-			.style("stroke",PRES.bordercolor.origin);
+		PRES.links
+			.style("stroke-opacity",0)
+			.transition().delay(800).duration(1500)
+			.style("stroke-opacity",1);	
+			
+	//This three alternative paragraphs below to the previous one, to append text to the nodes (but work much slower)
+	
+        // var node = svg.selectAll(".node")
+            // .data(graph.nodes)
+            // .enter().append("g")
+            // .attr("class", "node")
+            // .call(force.drag);
+			
+		// node.append("circle")
+			// .attr("r", PRES.liveAttributes.nodeWidth)
+            // .style("fill", PRES.liveAttributes.nodeFill)
+            // .on("mouseover", PRES.liveAttributes.mouseover)
+            // .on("click", PRES.liveAttributes.click)
+			// .on("dblclick", PRES.liveAttributes.dblclick)
 
+		// node.append("text")
+			// .attr("x", 0)
+			// .attr("y", 0)
+			// .text(function(d) { return d.content })
+			// .attr("stroke", "#000")
+			// .attr("stroke-width","0px")
+			// .style("fill-opacity",0)
+			// .style("text-anchor", "middle")
+			// .style("font-family", "sans-serif")
+            // .style("font-size", "2px");
 
-		PRES.setViewport(-300/2, -100/2, 1, 0);
 			
         force.on("tick", function () {
-				
+		
             PRES.svg.selectAll(".link")
 				.attr("x1", function (d) {return d.source.x;})
                 .attr("y1", function (d) {return d.source.y;})
@@ -416,6 +389,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             PRES.svg.selectAll(".node")
 				.attr("cx", function (d) {return d.x;})
                 .attr("cy", function (d) {return d.y;});
+				
+		//	PRES.nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; }); // an alternative
         });
 
     };
@@ -456,7 +431,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    threadslegend[i].height = 10;
 	    threadslegend[i].style.backgroundColor  = PRES.color[i];
             tdname.appendChild(threadslegend[i]);
-
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
             tdbox.appendChild(checkbox[i]);
             checkbox[i].onclick = function() { 
@@ -705,7 +679,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.nodeWidth = function (d) {
             if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
-                return PRES.nodeSizeDefault * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
+                return PRES.nodeSizeDefault *Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
             } else {
                 return PRES.nodeSizeDefault;
             }
@@ -760,8 +734,32 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             }
         };
 		
-        this.relatedNodesOpacity = function (d) {return PRES.color[d.type];}; //todo
-
+        this.relatedNodesOpacity = function (d) {
+            if (!ABSTR.linkFilters[d.type].state) {		
+				affectednodes = PRES.svg.selectAll(".node")
+								.filter(function(e){return ((e.hash == d.source.hash)||(e.hash == d.target.hash));})
+				for (i=0;i<affectednodes[0].length;i++){
+					var showedlinks = false;
+					linkofaffectednodes = PRES.svg.selectAll(".link")
+								.filter(function(e){return ((affectednodes[0][i].__data__.hash == e.source.hash)||(affectednodes[0][i].__data__.hash == e.target.hash));})
+					
+					for (j=0;j<linkofaffectednodes[0].length;j++){
+						linkopacity = PRES.svg.selectAll(".link")
+										.filter(function(e){return e.hash == linkofaffectednodes[0][j].__data__.hash;})
+										.style("stroke-opacity");
+						if (linkopacity > 0){showedlinks = true};
+					};
+					
+					if (!showedlinks){
+						PRES.svg.selectAll(".node")
+								.filter(function(e){return e.hash == affectednodes[0][i].__data__.hash;})
+								.style("fill-opacity",0)
+								.style("stroke-opacity",0);
+					};
+				};
+			};
+			return PRES.color[d.type];
+		}; //todo
 
         this.relatedLinksOpacity = function (d) {
             if (!ABSTR.nodeFilters[d.type].state) {
@@ -822,7 +820,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
 				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";");
 				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author +")";
-				document.getElementById("contbox").value = d.content;
+				document.getElementById("contbox").innerHTML = URLlinks(d.content);
 			}
         };
 
@@ -845,7 +843,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				document.getElementById("contentlabel").setAttribute ("style", "background: (227,226,230);");
 				document.getElementById("contentlabel").innerHTML = "&nbsp";
 	
-				document.getElementById("contbox").value = "";
+				document.getElementById("contbox").innerHTML = "";
 				$('#rightpaneleval').html(" ");
 				$('#rightpanel').html(" ");
 				
@@ -888,7 +886,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
 				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.3)   + ";");
 				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author + ")";
-				document.getElementById("contbox").value = d.content;
+				document.getElementById("contbox").innerHTML = URLlinks(d.content);
 				
 				document.getElementById("posvotes").innerHTML = d.evalpos;
 				document.getElementById("negvotes").innerHTML = d.evalneg;
@@ -976,15 +974,17 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     // update functions (svg, nodes and links)
 
     function updateLinks(PRES) {
-        PRES.svg.selectAll(".link").style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
-        PRES.svg.selectAll(".link").style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
+        PRES.svg.selectAll(".link")
+			.style("stroke-width", PRES.liveAttributes.linkStrokeWidth)
+			.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
     };
 
     function updateNodes(PRES) {
-        PRES.svg.selectAll(".node").style("stroke-width", PRES.liveAttributes.nodeStrokeWidth);
-        PRES.svg.selectAll(".node").attr("r", PRES.liveAttributes.nodeWidth);
-        PRES.svg.selectAll(".node").style("fill-opacity", PRES.liveAttributes.nodeFillOpacity);
-        PRES.svg.selectAll(".node").style("stroke-opacity", PRES.liveAttributes.nodeStrokeOpacity);
+        PRES.svg.selectAll(".node")
+			.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
+			.attr("r", PRES.liveAttributes.nodeWidth)
+			.style("fill-opacity", PRES.liveAttributes.nodeFillOpacity)
+			.style("stroke-opacity", PRES.liveAttributes.nodeStrokeOpacity);
     };
 
 	function updateRelatedOpacity(PRES) {
@@ -1153,9 +1153,10 @@ function showreplypanel(){
 		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
 //		document.getElementById("replybox").value = ".";  //***** TEST LINE - to avoid de alert of empty reply
 		ABSTR.replying = true;
+		
 		document.getElementById("namebox2").value = document.getElementById("namebox").value;
-		button = document.getElementById("showreply");
-		button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
+		document.getElementById("showreply").setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
+		document.getElementById("replybox").focus();
 }
 
 function hidereplypanel(){
@@ -1238,8 +1239,8 @@ function createnode(PRES){
 	if (linktype !== "0"){ //creates a new link only if user chooses a relation different than "No relation".
 		var links = PRES.force.links();	
 		links.push({"hash": links.length, source: newnode, target: targetnode,"evalpos":0,"evalneg":0,"evaluatedby": [],"type":linktype,"author": author,"time": Date.now()});
-		newnode.x = targetnode.x + 40;
-		newnode.y = targetnode.y + 40;
+		newnode.x = targetnode.x + 20;
+		newnode.y = targetnode.y + 20;
     }
 	
 	hidereplypanel();
@@ -1271,12 +1272,15 @@ function drawnewnodes(PRES) {
         .attr("class", "node")
         .attr("cx", function (d) {return d.x;})
         .attr("cy", function (d) {return d.y;})
-		.attr("r", PRES.liveAttributes.nodeWidth)
+		.attr("r", 0)
 		.style("fill", PRES.liveAttributes.nodeFill)
 		.on("mouseover", PRES.liveAttributes.mouseover)
 		.on("click", PRES.liveAttributes.click)
+		.on("dblclick", PRES.liveAttributes.dblclick)
         .call(PRES.force.drag)
-    
+		.transition().ease("elastic").duration(1000)
+		.attr("r", PRES.liveAttributes.nodeWidth);
+		
     //PRES.svg.selectAll(".node").on('mousedown.drag', null);
     
     PRES.force.start();
@@ -1343,7 +1347,7 @@ function Scaler(PRES) {
     this.trans = [0,0];
 
     this.zoomval = 1;
-    this.zoommax = 5;
+    this.zoommax = 15;
     this.zoommin = 0.1;
 
 	this.despx0 = -300/2;
@@ -1463,6 +1467,11 @@ function hex2rgb(hex, opacity) {
         if (typeof opacity != 'undefined')  h.push(opacity);
 
         return 'rgba('+h.join(',')+')';
+}
+
+function URLlinks(text) {
+    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(exp,"<a href='$1' target='_blank'>$1</a>"); 
 }
 
 // **** TEST FUNCTIONS (triggered by test buttons in the right-bar-header) *****************
