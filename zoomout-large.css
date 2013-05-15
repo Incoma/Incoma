@@ -364,7 +364,7 @@ div.zoombutton{
 
 #left_bar {
   position: absolute;
-  top: 65px;
+  top: 60px;
   margin-left: 10px;
   width: 120px;
 }
@@ -384,23 +384,34 @@ div.zoombutton{
   border-left: solid 2px rgba(163,128,180,.5);
 }
 
+.hidepanel {
+  position: fixed;
+  top:50px;
+  left:0px;
+  width: 100%;
+  height:100%;
+  background:rgba(255,255,255,1);
+  opacity:1;
+	-webkit-transition-property: opacity;
+    -webkit-transition-duration: 2800ms;
+    transition-property: opacity;
+    transition-duration: 2800ms;
+}
+
 #big_background {
   position: absolute;
   width: 100%;
   height:100%;
-  background:rgba(255,255,255,0.6);
+  background:rgba(255,255,255,0.7);
 }
 
 .huge_panel_1 {
-	display: inline-block;
 	position: fixed;
-	top:0px;
-	left:0px;
+	top:25%;
+	height:70%;
+	left:0%;
 	width: 100%;
-	height: 100%;
 	background: rgba(255, 255, 255, 0);
-	-moz-border-radius: 20px;
-	border-radius: 20px;
 	-webkit-transition-property: left;
     -webkit-transition-duration: 800ms;
     transition-property: left;
@@ -414,7 +425,7 @@ div.zoombutton{
 	left:130%;
 	width: 35%;
 	height: 65%;
-	padding:25px;
+	padding:2%;
 	background: rgba(65,99,233,0.1);
 	border: solid 1px #ccc;
 	-moz-border-radius: 20px;
@@ -444,13 +455,12 @@ div.zoombutton{
 
 .big_panel{
 	display: inline-block;
-	position: relative;
-	top: 90px;
-	margin:35px;
-	width: 260px;
-	height: 350px;
+	position:relative;
+	margin-left:35px;
+	margin-right:35px;
+	width: 240px;
+	height: 320px;
 	background: rgba(65,99,233,0.1);
-	text-align: center;
 	border: solid 1px #ccc;
 	-moz-border-radius: 20px;
 	border-radius: 20px;
@@ -459,7 +469,7 @@ div.zoombutton{
 .big_button{
 	display: inline-block;
 	position: relative;
-	top: 110px;
+	top: 90px;
 	margin:0px;
 	width: 150px;
 	height: 80px;
@@ -500,7 +510,6 @@ div.big_button:active{
 	box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5); 
 }
 
-
 .conv_select_panel{
 	display: inline-block;
 	position: absolute;
@@ -513,7 +522,7 @@ div.big_button:active{
 	display: inline-block;
 	position: absolute;
 	height: 58%;
-	width: 90%;
+	width: 89%;
 	background: rgba(0,0,0,0);
     border: solid 1px #aaa;
 	margin-top:75px;
@@ -527,8 +536,8 @@ div.big_button:active{
 .bt_panel{
 	display: inline-block;
 	position:absolute;
-	left:10%;
-	width: 80%;
+	left:5%;
+	width: 90%;
 	bottom:1px;
 }
 

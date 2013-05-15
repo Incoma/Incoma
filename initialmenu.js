@@ -103,7 +103,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
               <div class="svg_and_right_bar" >   \
 			  \
 				  <div id="svg" style="Float:left">   \
-                    <div class="svg">  </div>   \
+                    <div class="svg"></div>   \
                   </div>   \
 	 \
                   <div id="big_background" class="noselect">   \
@@ -166,8 +166,12 @@ function InitialMenu_Presentation(VIS, ABSTR) {
                   </div>   \
              </div>  \
 			 ' 
-
+	 	document.getElementById("headerMenu").setAttribute("style","visibility:hidden;");
 		
+		document.getElementById("menu_panel").setAttribute("style", "left: 0%");
+		document.getElementById("join_panel").setAttribute("style", "left: 130%");
+		document.getElementById("new_panel").setAttribute("style", "left: 135%");
+	
 		// example data for the select conversation
 		var ddData = [
 			{
@@ -228,10 +232,17 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 			}
 		];
 
+			element = document.getElementById('join_panel');
+			style = window.getComputedStyle(element);
+			panelwidth = parseInt(style.getPropertyValue('width'))*.99;
+
+			
 		$('#selectconversation').ddslick({
+		
+	
 		    data: ddData,
 			selectText: "Select a conversation...",
-			width:475,
+			width: panelwidth,
 			height:380,
 			background: "#fff",
 			onSelected: function(selectedData){
@@ -300,12 +311,12 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 
 		PRES.nodes
 			.style("fill-opacity",0)
-			.transition().delay(1000).duration(1500)
+			.transition().delay(800).duration(1000)
 			.style("fill-opacity",1);
 			
 		PRES.links
 			.style("stroke-opacity",0)
-			.transition().delay(1000).duration(2000)
+			.transition().delay(800).duration(1500)
 			.style("stroke-opacity",1);	
 			
 		pulses = setInterval(function(){force.resume();},3000);
@@ -411,7 +422,8 @@ function bt_menu(){
 function bt_sandbox(){
 	clearTimeout(pulses);
     Model.clear(IncomaSandboxModel);
-	reInit(Visualisations.select(1));
+	document.getElementById("menu_panel").setAttribute("style", "left: 100%");
+	setTimeout(function(){reInit(Visualisations.select(1));},700);
 }
 
 function bt_create(){
@@ -435,9 +447,7 @@ function bt_cancel(){
 }
 
 function bt_new_ok(){
-	document.getElementById("menu_panel").setAttribute("style", "left: 0%");
-	document.getElementById("join_panel").setAttribute("style", "left: 130%");
-	document.getElementById("new_panel").setAttribute("style", "left: 135%");
+	document.getElementById("new_panel").setAttribute("style", "left: -65%");
 	
 	clearTimeout(pulses);
 	
@@ -449,7 +459,7 @@ function bt_new_ok(){
 	
 	Model.createNode(1, content, author, Date.now());
 	
-	reInit(Visualisations.select(1));
+	setTimeout(function(){reInit(Visualisations.select(1));},700);
 }
 
 

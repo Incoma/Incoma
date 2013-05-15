@@ -13,7 +13,7 @@
 
 
     <div id="headerMain">
-        <div id="headerName" class="header">
+        <div id="headerName" class="header" onclick="test1()">
             INCOMA&nbsp;&nbsp;sandbox&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
         </div>
 		<div id="headerMenu"  class="header" onclick="bt_menu()">
@@ -103,6 +103,12 @@
 
     OpenSave.addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
     OpenSave.addExportListener( $( "#headerExport" )[0], "Export!", "Incoma-conversation.json", saveModelFile );
+	
+	//** test zz
+	function test1() {
+		//
+	}
+	
 </script>
 </body>
 </html>

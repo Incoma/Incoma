@@ -235,10 +235,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                       <div class="lower_hide_button" id="cmd_hideshowfilters">Hide/show filters</div>   \
                     </div>   \
                  </div>   \
-   \
+    \
              </div>   \
         '; // end of innerHTML
 
+	 	document.getElementById("headerMenu").setAttribute("style","visibility:visible;");
+		
         $( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
         $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
 		$( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
@@ -340,7 +342,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .on("click", PRES.liveAttributes.click)
 			.on("dblclick", PRES.liveAttributes.dblclick)
             .call(force.drag);
-		
+			
 		PRES.nodes
 			.style("fill-opacity",0)
 			.transition().delay(800).duration(1000)
