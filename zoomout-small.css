@@ -442,9 +442,9 @@ div.zoombutton{
 .big_panel{
 	display: inline-block;
 	position:relative;
-	margin-left:25px;
-	margin-right:25px;
-	width: 240px;
+	margin-left:20px;
+	margin-right:20px;
+	width: 220px;
 	height: 300px;
 	background: rgba(65,99,233,0.1);
 	border: solid 1px #ccc;

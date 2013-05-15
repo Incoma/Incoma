@@ -243,7 +243,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 		    data: ddData,
 			selectText: "Select a conversation...",
 			width: panelwidth,
-			height:380,
+			height:panelwidth*0.82,
 			background: "#fff",
 			onSelected: function(selectedData){
 				document.getElementById("conv_info").innerHTML = "[info about conversation number " + (selectedData.selectedIndex + 1) + "]";
