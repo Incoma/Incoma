@@ -13,7 +13,7 @@
 
 
     <div id="headerMain">
-        <div id="headerName" class="header" onclick="test1()">
+        <div id="headerName" class="header">
             INCOMA&nbsp;&nbsp;sandbox&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
         </div>
 		<div id="headerMenu"  class="header" onclick="bt_menu()">
@@ -22,7 +22,7 @@
         <a id="headerUrl" href="http://incomaproject.org" target="_blank">
             incomaproject.org
         </a>
-        <div id="headerUserName" class="header" style="visibility:hidden;">
+    <!--    <div id="headerUserName" class="header" style="visibility:hidden;">
             Nickname:&nbsp;
             <textarea id='namebox' spellcheck='false'></textarea>
         </div>
@@ -31,11 +31,15 @@
             <select id="visChoice" name="visualisationChoice" size="1">
             </select>
         </div>
-        <div id="headerImport" class="header">
-            Import debate:&nbsp;
-        </div>
+        <div id="headerImport" class="header" style="visibility:hidden;">
+            Import:&nbsp;
+        </div> 
+		&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp -->
         <div id="headerExport"  class="header">
             <a href="" id="headerExportLink" >&nbsp;</a>
+        </div>
+        <div id="headerSave"  class="header button">
+            Save changes
         </div>
     </div>
     <div id="visualisationMain">
@@ -72,19 +76,21 @@
 <script>
     Model.clear(IncomaMenuModel);
     
-    var nameBox = $("#namebox")[0];
-    nameBox.value = Model.currentAuthor();
-    nameBox.onchange = function(e) {
-        Model.currentAuthor(nameBox.value);
-    };
+	$( "#headerSave" )[0].onclick = saveConversation;
+		
+//    var nameBox = $("#namebox")[0];
+//    nameBox.value = Model.currentAuthor();
+//    nameBox.onchange = function(e) {
+//        Model.currentAuthor(nameBox.value);
+//    };
     
     
-    var chooseVisualisation = $("#visChoice")[0];
-    Visualisations.setOptions(chooseVisualisation, Visualisations.options());
-    chooseVisualisation.onchange = function (e) {
-        var i = chooseVisualisation.options[chooseVisualisation.selectedIndex].value;
-        reInit(Visualisations.select(i));
-    };
+//    var chooseVisualisation = $("#visChoice")[0];
+//    Visualisations.setOptions(chooseVisualisation, Visualisations.options());
+//    chooseVisualisation.onchange = function (e) {
+//        var i = chooseVisualisation.options[chooseVisualisation.selectedIndex].value;
+//        reInit(Visualisations.select(i));
+//    };
     
     reInit(Visualisations.select(2));
         
@@ -97,17 +103,12 @@
     var saveModelFile = function() { return Model.exportFile(); }
 
     var loadModelFile = function(file) {
-                            var fileName = file.name || "current conversation" ;
+                           var fileName = file.name || "current conversation" ;
                             OpenSave.blobToText( file, function(text) { Model.importFile(text); reInit(Visualisations.current()); } );
                         }; 
 
-    OpenSave.addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
-    OpenSave.addExportListener( $( "#headerExport" )[0], "Export!", "Incoma-conversation.json", saveModelFile );
-	
-	//** test zz
-	function test1() {
-		//
-	}
+//    OpenSave.addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
+    OpenSave.addExportListener( $( "#headerExport" )[0], "Export conversation", "Incoma-conversation.json", saveModelFile );
 	
 </script>
 </body>

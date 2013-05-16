@@ -1,14 +1,15 @@
 
-var rightpanelhtmleval = "<center><div id='posvotes' class='posvotes'></div><div class='evalpos button' onClick='evalpos()'>+</div>&nbsp&nbsp<div class='evalneg button' onClick='evalneg()'>-</div><div id='negvotes' class='negvotes'></div></center>";
+var rightpanelhtmleval = "<center><div id='posvotes' class='posvotes'></div><div class='evalpos button' onClick='evalpos()'>+</div>&nbsp&nbsp<div class='evalneg button' onClick='evalneg()'>-</div><div id='negvotes' class='negvotes'></div></center><div id='evalalert' class='alerttext noselect'>&nbsp</div>";
 
-var rightpanelhtmlreplyandlink = "<br><center><div id='showreply' class='showreplypanel button' onClick='showreplypanel()'>Reply</div>&nbsp&nbsp&nbsp&nbsp<div class='showconnectpanel button' id='showlink' onClick='showcreatelink()'>Connect</div></center>";
+var rightpanelhtmllinkeval = "<center><div id='linkposvotes' class='posvotes'></div><div class='evalpos button' onClick='linkevalpos()'>+</div>&nbsp&nbsp<div class='evalneg button' onClick='linkevalneg()'>-</div><div id='linknegvotes' class='negvotes'></div></center><div id='evalalert' class='alerttext noselect'>&nbsp</div>";
 
-var rightpanelhtmllinkeval = "<center><div id='linkposvotes' class='posvotes'></div><div class='evalpos button' onClick='linkevalpos()'>+</div>&nbsp&nbsp<div class='evalneg button' onClick='linkevalneg()'>-</div><div id='linknegvotes' class='negvotes'></div></center>";
+var rightpanelhtmlreplyandlink = "<center><div id='showreply' class='showreplypanel button' onClick='showreplypanel()'>Reply</div>&nbsp&nbsp&nbsp&nbsp<div class='showconnectpanel button' id='showlink' onClick='showcreatelink()'>Connect</div></center>";
 
-var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\" onchange=\"connectionChange(this);\"  ><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td>Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=2>Consequence</option><option value=7>Alternative</option><option value=0>No relation</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div>";
+var rightpanelhtmlreply = "<br><table><tr><td> Type of reply: </td><td><select id=\"replynodetype\" onchange=\"connectionChange(this);\"  ><option value=1>General</option><option value=2>Question</option><option value=3>Answer</option> <option value=4>Proposal</option><option value=5>Info</option></select>  <br></td></tr><tr><td>Type of relation:</td><td> <select id=\"replylinktype\"> <option value=1>General</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=2>Consequence</option><option value=7>Alternative</option><option value=0>No relation</option></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div><div id='replyalert' class='alerttext noselect' style='text-align:right;'>&nbsp</div>";
 
 var rightpanelhtmllink = "<center><br>Type of relation:&nbsp&nbsp<select id=\"replylinktype2\"> <option value=1>General</option><option value=6>Contradiction</option><option value=2>Consequence</option><option value=5>Related</option><option value=3>Agree</option> <option value=4>Disagree</option><option value=7>Alternative</option><option value=8>Answer</option> onClick='changelinktype()'</select>&nbsp&nbsp&nbsp&nbsp<div class='cancel button' onClick='cancellink()'>Cancel</div></center>";
 
+saved = true;
 
  function connectionChange(selectObj) { 
      var idx = selectObj.selectedIndex; 
@@ -119,10 +120,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     this.svg = null;
 
-//  this.color = d3.scale.category10();
-//  alert(this.color(1) + this.color(2) + this.color(3) + this.color(4) + this.color(5) + this.color(6) + this.color(7) + this.color(8) + this.color(9) + this.color(10));                                                      
-    this.color = ["#000000", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
-//alert(this.color[1] + this.color[2] + this.color[3] + this.color[4] + this.color[5] + this.color[6] + this.color[7] + this.color[8] + this.color[9] + this.color[10]);                                                      
+	// previous colors
+  //  this.color = ["#000000", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f"];
+	
+    this.nodecolor = ["#000000", "#7f7f7f", "#ec9242", "#9261c3", "#df64ba", "#1f77b4"];
+    this.linkcolor = ["#000000", "#7f7f7f", "#339e94", "#2ca02c", "#d62728", "#1f77b4", "#5e3a1a", "#ec9242", "#9261c3"];                                            
 
     this.liveAttributes = new LiveAttributes(ABSTR, this);
     //    this.updateLinks = function() { this.definedBelow(); }
@@ -240,6 +242,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         '; // end of innerHTML
 
 	 	document.getElementById("headerMenu").setAttribute("style","visibility:visible;");
+		document.getElementById("headerExport").setAttribute("style","visibility:visible;");
+	 	document.getElementById("headerSave").setAttribute("style","visibility:visible;");
 		
         $( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
         $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
@@ -247,6 +251,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
         $( "#cmd_hideshowlegend" )[0].onclick = hideshowlegend;
         $( "#cmd_hideshowfilters" )[0].onclick = hideshowfilters;
+        $( "#legend_title" )[0].onclick = hideshowlegend;
+        $( "#filters_title" )[0].onclick = hideshowfilters;
         
         initSVG(this, ABSTR, this.width, this.height);
 
@@ -431,7 +437,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    threadslegend[i] = document.createElement("canvas");
 	    threadslegend[i].width  = 6; // in pixels
 	    threadslegend[i].height = 10;
-	    threadslegend[i].style.backgroundColor  = PRES.color[i];
+	    threadslegend[i].style.backgroundColor  = PRES.linkcolor[i];
             tdname.appendChild(threadslegend[i]);
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
             tdbox.appendChild(checkbox[i]);
@@ -486,7 +492,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    threadslegend[i] = document.createElement("canvas");
 	    threadslegend[i].width  = 6; // in pixels
 	    threadslegend[i].height = 10;
-	    threadslegend[i].style.backgroundColor  = PRES.color[i];
+	    threadslegend[i].style.backgroundColor  = PRES.linkcolor[i];
             tdname.appendChild(threadslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name));
@@ -535,7 +541,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    boxeslegend[i] = document.createElement("canvas");
 	    boxeslegend[i].width  = 10; // in pixels
 	    boxeslegend[i].height = 10;
-	    boxeslegend[i].style.backgroundColor  = PRES.color[i];
+	    boxeslegend[i].style.backgroundColor  = PRES.nodecolor[i];
             tdname.appendChild(boxeslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name + ": "));
@@ -592,7 +598,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	    boxeslegend[i] = document.createElement("canvas");
 	    boxeslegend[i].width  = 10; // in pixels
 	    boxeslegend[i].height = 10;
-	    boxeslegend[i].style.backgroundColor  = PRES.color[i];
+	    boxeslegend[i].style.backgroundColor  = PRES.nodecolor[i];
             tdname.appendChild(boxeslegend[i]);
 
             tdname.appendChild(Visualisations.makeText(" " + filter.name));
@@ -668,7 +674,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     function LiveAttributes(ABSTR, PRES) {
 
         this.nodeFill = function (d) {
-            return PRES.color[d.type];
+            return PRES.nodecolor[d.type];
         };
 
         this.nodeHeight = function (d) {
@@ -713,7 +719,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 
         this.linkStroke = function (d) {
-            return PRES.color[d.type];
+            return PRES.linkcolor[d.type];
         };
 
 
@@ -760,7 +766,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					};
 				};
 			};
-			return PRES.color[d.type];
+			return PRES.linkcolor[d.type];
 		}; //todo
 
         this.relatedLinksOpacity = function (d) {
@@ -773,7 +779,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     .filter(function (e) {return e.target.hash == d.hash;})
                     .style("stroke-opacity", 0);
             }
-			return PRES.color[d.type];
+			return PRES.nodecolor[d.type];
         };		
 
 		
@@ -781,7 +787,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			if (ABSTR.creatinglink){
                 var nodes = PRES.force.nodes();
                 var index = searchhash(nodes, ABSTR.clickednodehash);
-                var linecolor = PRES.color[document.getElementById("replylinktype2").value];
+                var linecolor = PRES.linkcolor[document.getElementById("replylinktype2").value];
 				
 				var x1 = nodes[index].x,
 					y1 = nodes[index].y,
@@ -819,8 +825,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				d3.select(this)
 					.style("stroke", PRES.bordercolor.over);
 						
-				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
-				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";");
+				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
+				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";");
 				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author +")";
 				document.getElementById("contbox").innerHTML = URLlinks(d.content);
 			}
@@ -885,8 +891,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				$('#rightpaneleval').html(rightpanelhtmleval);
 				$('#rightpanel').html(rightpanelhtmlreplyandlink);
 				
-				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
-				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.nodeFilters[d.type].typeId],0.3)   + ";");
+				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
+				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.3)   + ";");
 				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author + ")";
 				document.getElementById("contbox").innerHTML = URLlinks(d.content);
 				
@@ -942,8 +948,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				$('#rightpaneleval').html(rightpanelhtmllinkeval);
 				$('#rightpanel').html("");
 				
-				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.linkFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed					
-				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.color[ABSTR.linkFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed			
+				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed					
+				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[d.type].typeId],0.3)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed			
 					
 				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[d.type].name + " connection" + "</b>";
 				
@@ -954,23 +960,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     };
 	
-	// end of this == LiveAttributes
-	
-	this.replypanel = function() {
-		alert("dentro");
-		cancellink();
-		if (ABSTR.replying){
-				ABSTR.replying = false;
-				var PRES = Visualisations.current().presentation;
-				PRES.mousedown();
-			}
-			$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
-	//		document.getElementById("replybox").value = ".";  //***** TEST LINE - to avoid de alert of empty reply
-			ABSTR.replying = true;
-			document.getElementById("namebox2").value = document.getElementById("namebox").value;
-			button = document.getElementById("showreply");
-			button.setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
-	};
+	// end of this == LiveAttributes	
 
 
     // update functions (svg, nodes and links)
@@ -1078,12 +1068,14 @@ function evalnode(vote) {
     var targetindex = searchhash(nodes, ABSTR.clickednodehash);
     targetnode = nodes[targetindex];
 	
-    var name = document.getElementById("namebox").value;    
+    //var name = document.getElementById("namebox").value;    
     if (name == ""){name = "anon";}
 	
 	if($.inArray(name, targetnode.evaluatedby) > -1){
 	
-		alert("You have already rated this node");
+		var alert = document.getElementById("evalalert");
+		alert.innerHTML = "You have already rated this node";
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		
 	} else{
 	
@@ -1101,6 +1093,9 @@ function evalnode(vote) {
 			.filter(function (d) {return d.hash == ABSTR.clickednodehash;})
 			.transition().duration(1000).ease("elastic")
 			.attr("r", PRES.liveAttributes.nodeWidth) 
+	
+		document.getElementById("headerSave").setAttribute("style","background:#393; color:#eee; border-color:#eee;");
+		saved=false;
 	}
 };
 
@@ -1115,12 +1110,13 @@ function evallink(vote) {
     var targetindex = searchhash(links, ABSTR.clickedlinkhash);
     targetlink = links[targetindex];
 	
-    var name = document.getElementById("namebox").value;    
+    //var name = document.getElementById("namebox").value;    
     if (name == ""){name = "anon";}
 	
 	if($.inArray(name, targetlink.evaluatedby) > -1){
-	
-		alert("You have already rated this link");
+		var alert = document.getElementById("evalalert");
+		alert.innerHTML = "You have already rated this link";
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		
 	} else{
 	
@@ -1138,6 +1134,9 @@ function evallink(vote) {
 			.filter(function (d) {return d.hash == ABSTR.clickedlinkhash;})
 			.transition().duration(1000).ease("elastic")
 			.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+			
+		document.getElementById("headerSave").setAttribute("style","background:#393; color:#eee; border-color:#eee;");
+		saved=false;
 	}
 };
 
@@ -1156,7 +1155,7 @@ function showreplypanel(){
 //		document.getElementById("replybox").value = ".";  //***** TEST LINE - to avoid de alert of empty reply
 		ABSTR.replying = true;
 		
-		document.getElementById("namebox2").value = document.getElementById("namebox").value;
+		//document.getElementById("namebox2").value = document.getElementById("namebox").value;
 		document.getElementById("showreply").setAttribute("style", "box-shadow: inset 1px 1px 2px 1px rgba(0, 0, 0, 0.5);");
 		document.getElementById("replybox").focus();
 }
@@ -1198,11 +1197,18 @@ function cancellink(){
 
 function savenode() {
 	if (document.getElementById("replybox").value == ""){
-		alert("An empty reply can not be saved");
+	
+		var alert = document.getElementById("replyalert");
+		alert.innerHTML = "Write something first!&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp";
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+		
 		return;
 	}
     var PRES = Visualisations.current().presentation;
     createnode(PRES);
+	
+	document.getElementById("headerSave").setAttribute("style","background:#393; color:#eee; border-color:#eee;");
+	saved=false;
     //+ call to export fuctions
 };
 
@@ -1247,6 +1253,7 @@ function createnode(PRES){
 	
 	hidereplypanel();
     drawnewnodes(PRES);
+	
 }
 
 function searchhash(elements, objective){
@@ -1315,6 +1322,9 @@ function savelink(d){
 		.on("click", PRES.liveAttributes.clicklink);
 		
     cancellink();
+	
+	document.getElementById("headerSave").setAttribute("style","background:#393; color:#eee; border-color:#eee;");
+	saved=false;
 		
     PRES.force.start();
 		
@@ -1323,7 +1333,7 @@ function savelink(d){
 function changelinktype(){
 
 	var PRES = Visualisations.current().presentation;
-    var linecolor = PRES.color[document.getElementById("replylinktype2").value];
+    var linecolor = PRES.linkcolor[document.getElementById("replylinktype2").value];
 
 	PRES.prelink.style("stroke", linecolor);
 }
@@ -1452,7 +1462,16 @@ function Scaler(PRES) {
    };
 }
 
-
+function saveConversation(){
+	if (!saved){
+		//
+		// save the conversation in database
+		//
+		document.getElementById("headerSave").setAttribute("style","background:#030; color:#888; border-color:#888;");
+		saved=true;
+	}
+}
+	
 function mousemove(){}
 
 function mousedown(){}
@@ -1476,13 +1495,6 @@ function URLlinks(text) {
     return text.replace(exp,"<a href='$1' target='_blank'>$1</a>"); 
 }
 
-// **** TEST FUNCTIONS (triggered by test buttons in the right-bar-header) *****************
-
-function test1(){}
-
-function test2(){}
-
-function test3(){}
 
 function ZoomOut_Control(VIS, ABSTR, PRES) {};
 // End of var ZoomOut

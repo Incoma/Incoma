@@ -73,7 +73,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 
     this.svg = null;
                                                
-    this.color = ["#000000", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
+    this.color = ["#000000", "#7f7f7f", "#339e94", "#2ca02c", "#d62728", "#1f77b4", "#5e3a1a", "#ec9242", "#9261c3"];
                                                     
     this.liveAttributes = new LiveAttributes(ABSTR, this);
 	
@@ -134,7 +134,12 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 							<div class="conv_select_panel noselect">  \
 							  <div id="selectconversation"></div>  \
 							</div>  \
-							<div id="conv_info" class = "conv_info noselect"></div>  \
+						  <center>   \
+							<br><br><br>-OR- \
+							<br><br><b>Insert a conversation code:</b>&nbsp<textarea id="conv_code" class="areaname"></textarea>  \
+							<br><br>-OR-  \
+							<br><br><b>Import a local conversation:</b>&nbsp<div id="convImport"></div>  \
+						  </center>   \
 							<div class="bt_panel noselect">  \
 								<center>  \
 									<div id="bt_join_ok" onclick="bt_join_ok()" class="conv_ok button">OK</div>  \
@@ -166,7 +171,12 @@ function InitialMenu_Presentation(VIS, ABSTR) {
                   </div>   \
              </div>  \
 			 ' 
+			 
+		OpenSave.addImportListener( $( "#convImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
+		
 	 	document.getElementById("headerMenu").setAttribute("style","visibility:hidden;");
+	 	document.getElementById("headerExport").setAttribute("style","visibility:hidden;");
+	 	document.getElementById("headerSave").setAttribute("style","visibility:hidden;");
 		
 		document.getElementById("menu_panel").setAttribute("style", "left: 0%");
 		document.getElementById("join_panel").setAttribute("style", "left: 130%");
@@ -236,9 +246,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 			style = window.getComputedStyle(element);
 			panelwidth = parseInt(style.getPropertyValue('width'))*.99;
 
-			
 		$('#selectconversation').ddslick({
-		
 	
 		    data: ddData,
 			selectText: "Select a conversation...",
@@ -246,15 +254,11 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 			height:panelwidth*0.82,
 			background: "#fff",
 			onSelected: function(selectedData){
-				document.getElementById("conv_info").innerHTML = "[info about conversation number " + (selectedData.selectedIndex + 1) + "]";
+			//	document.getElementById("conv_info").innerHTML = "[info about conversation number " + (selectedData.selectedIndex + 1) + "]";
 			}
 		});
-
         initSVG(this, ABSTR, this.width, this.height);
-
-
     };
-
 
     function initSVG(PRES, ABSTR, width, height) {
 

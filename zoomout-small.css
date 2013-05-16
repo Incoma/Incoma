@@ -338,6 +338,13 @@ div.negvotes{
 	text-align: left;
 }
 
+.alerttext{
+	display:block;
+	text-align:center;
+	font-size:11pt;
+	color: #c33
+}
+
 div.zoombutton{
     display:inline-block;
 	width: 20px;
@@ -497,11 +504,19 @@ div.big_button:active{
 }
 
 .conv_select_panel{
-	display: inline-block;
+	display: block;
 	position: absolute;
 	width: 240px;
 	height: 30px;
 	background: rgba(0,0,0,0);
+}
+
+.conv_label{
+	display:block;
+	position:relative;
+	text-align:center;
+	font-size:12pt;
+	color: #000;
 }
 
 .conv_info{
@@ -530,7 +545,7 @@ div.big_button:active{
 .conv_ok{
 	display: inline-block;
 	position:relative;
-	width: 100px;
+	width: 80px;
 	height: 40px;
 	margin:20px;
 	background: #6c6;
@@ -542,7 +557,7 @@ div.big_button:active{
 .conv_cancel{
 	display: inline-block;
 	position:relative;
-	width: 100px;
+	width: 80px;
 	height: 40px;
 	margin:20px;
 	background: #c63;

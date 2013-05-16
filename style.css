@@ -42,7 +42,7 @@ body {
 
 #headerMenu {
     position: absolute;
-    left: 500px;
+    left: 430px;
     font-size: 12pt;
     color:#fff;
 	line-height: 45px;
@@ -52,7 +52,7 @@ body {
 
 #headerUrl {
     position: absolute;
-    left: 300px;
+    left: 270px;
     font-size: 12pt;
     color:#fff;
 	line-height: 45px;
@@ -84,6 +84,23 @@ body {
 
 #headerUserName {
     height: 20px;
+}
+
+#headerSave{
+    display: inline-block;
+	width: 110px;
+	height: 34px;
+	background: #030;
+	text-align: center;
+	vertical-align: center;
+	margin-right:10px;
+	line-height:34px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #888;
+	color: #888;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
 }
 
 #namebox {

@@ -338,6 +338,14 @@ div.negvotes{
 	text-align: left;
 }
 
+.alerttext{
+	display:block;
+	text-align:center;
+	font-size:11pt;
+	color: #c33
+}
+
+
 div.zoombutton{
     display:inline-block;
 	width: 20px;
@@ -511,11 +519,19 @@ div.big_button:active{
 }
 
 .conv_select_panel{
-	display: inline-block;
+	display: block;
 	position: absolute;
 	width: 240px;
 	height: 30px;
 	background: rgba(0,0,0,0);
+}
+
+.conv_label{
+	display:block;
+	position:relative;
+	text-align:center;
+	font-size:12pt;
+	color: #000;
 }
 
 .conv_info{
