@@ -1,5 +1,6 @@
-Visualisations.register(new InitialMenu());
+Visualisations.register(new InitialMenu()); //adds the InitialMenu visualization to the Visualizations array
 
+//stablishes the name and defines the Abstraction and Presentation modules of the visualization
 function InitialMenu() {
 
     this.name = "Initial Menu",
@@ -16,6 +17,7 @@ function InitialMenu() {
 }
 
 
+//defines arrays and parameters needed for the Abstraction module
 function InitialMenu_Abstraction() {
 
     this.model = null;
@@ -55,6 +57,7 @@ function InitialMenu_Abstraction() {
 
 
 
+//defines the parameters and elements of the Presentation module
 function InitialMenu_Presentation(VIS, ABSTR) {
 
 
@@ -87,10 +90,12 @@ function InitialMenu_Presentation(VIS, ABSTR) {
     }
      
 
+	//defines the html content of the visualization (except the header, defined in index-main)
     this.init = function (html5node) {
         this.scaler = new Scaler(this);
         this.container = html5node;
 		
+//**different tries of inserting the html content from an external file....
 //		var html = document.open('initialmenu.html');
 //		html5node.innerHTML = html;
 		
@@ -174,74 +179,68 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 			 
 		OpenSave.addImportListener( $( "#convImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
 		
+		//hides the "menu" and "export" options from the header
 	 	document.getElementById("headerMenu").setAttribute("style","visibility:hidden;");
 	 	document.getElementById("headerExport").setAttribute("style","visibility:hidden;");
-	 	document.getElementById("headerSave").setAttribute("style","visibility:hidden;");
 		
+		//move all the menu panels to their initial position
 		document.getElementById("menu_panel").setAttribute("style", "left: 0%");
 		document.getElementById("join_panel").setAttribute("style", "left: 130%");
 		document.getElementById("new_panel").setAttribute("style", "left: 135%");
 	
-		// example data for the select conversation
+		// example data for the select control of the ddslick pluging
 		var ddData = [
 			{
 				text: "Title of the conversation 1",
 				value: 1,
 				selected: false,
 				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-				imageSrc: "http://dl.dropbox.com/u/40036711/Images/facebook-icon-32.png"
 			},
 			{
 				text: "Title of the conversation 2",
 				value: 2,
 				selected: false,
 				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-				imageSrc: "http://dl.dropbox.com/u/40036711/Images/twitter-icon-32.png"
 			},
 			{
 				text: "Title of the conversation 3",
 				value: 3,
 				selected: false,
 				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-				imageSrc: "http://dl.dropbox.com/u/40036711/Images/linkedin-icon-32.png"
 			},
 			{
 				text: "Title of the conversation 4",
 				value: 4,
 				selected: false,
 				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-				imageSrc: "http://dl.dropbox.com/u/40036711/Images/foursquare-icon-32.png"
 			},
 			{
 				text: "Title of the conversation 5",
 				value: 5,
 				selected: false,
 				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-				imageSrc: "http://dl.dropbox.com/u/40036711/Images/facebook-icon-32.png"
 			},
 			{
 				text: "Title of the conversation 6",
 				value: 6,
 				selected: false,
 				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-				imageSrc: "http://dl.dropbox.com/u/40036711/Images/twitter-icon-32.png"
 			},
 			{
 				text: "Title of the conversation 7",
 				value: 7,
 				selected: false,
 				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-				imageSrc: "http://dl.dropbox.com/u/40036711/Images/linkedin-icon-32.png"
 			},
 			{
 				text: "Title of the conversation 8",
 				value: 8,
 				selected: false,
 				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-				imageSrc: "http://dl.dropbox.com/u/40036711/Images/foursquare-icon-32.png"
 			}
 		];
 
+			//obtains the width of join_panel (where the 'join' menu elements are) to adapt the width of the ddslick select control
 			element = document.getElementById('join_panel');
 			style = window.getComputedStyle(element);
 			panelwidth = parseInt(style.getPropertyValue('width'))*.99;
@@ -260,6 +259,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
         initSVG(this, ABSTR, this.width, this.height);
     };
 
+	//initialization and definition of the SVG and its elements (the graph with nodes, links, prelink line, the force)
     function initSVG(PRES, ABSTR, width, height) {
 
         PRES.force = d3.layout.force()
@@ -323,6 +323,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 			.transition().delay(800).duration(1500)
 			.style("stroke-opacity",1);	
 			
+		//call to force.resume() each 3 seconds in order to animate the graph
 		pulses = setInterval(function(){force.resume();},3000);
 		
         force.on("tick", function () {
@@ -341,6 +342,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
     };
     
 
+	//the attributes for the nodes and links
     function LiveAttributes(ABSTR, PRES) {
 
         this.nodeFill = function (d) {
@@ -416,6 +418,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 
 };
 
+//functions for the different buttons of the initial menu
 function bt_menu(){
     Model.clear(IncomaMenuModel);
 	reInit(Visualisations.select(2));

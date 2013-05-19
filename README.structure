@@ -1,5 +1,6 @@
 Files/Modules:
 
+
 "opensave.js"
 =============
 
@@ -35,6 +36,21 @@ aVisualisation.destroy(): tear down the current visualisation
 ==========================
 
 A sample visualisation using http://d3js.org/d3.v3.min.js
+
+
+"initialmenu.js"
+================
+
+Contains the html code of the initial menu and the visualization for the background graph animation, with the same structure than "visualization-zoomout.js"
+
+
+"jsonmodels.js"
+================
+
+Some json predefined models, 
+- emptymodel (used when creating a new conversation) 
+- sandboxmodel (for the sandbox)
+- menumodel (for the animated background of the initial menu)
 
 
 "index-main.html"

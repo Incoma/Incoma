@@ -40,6 +40,7 @@ Visualisations.register(new ZoomOut());
             It also registers callbacks with the presentation for events it wants to interpret. 
  */
  
+//stablishes the name and defines the Abstraction, Presentation and Control modules of the visualization
 function ZoomOut() {
 
     this.name = "Zoom Out",
@@ -151,7 +152,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.init = function (html5node) {
         this.scaler = new Scaler(this);
         this.container = html5node;
-        html5node.innerHTML =
+ 
+	//defines the html content of the visualization (except the header, defined in index-main)
+
+		html5node.innerHTML =
             '   \
               <div class="svg_and_right_bar" >   \
    \
@@ -241,10 +245,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
              </div>   \
         '; // end of innerHTML
 
+		//makes visible the "menu" and "export" buttons of the header
 	 	document.getElementById("headerMenu").setAttribute("style","visibility:visible;");
 		document.getElementById("headerExport").setAttribute("style","visibility:visible;");
-	 	document.getElementById("headerSave").setAttribute("style","visibility:visible;");
 		
+		//stablish the onclick functions for the html elements of html5node
         $( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
         $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
 		$( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
@@ -273,7 +278,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         PRES.force = d3.layout.force()
  //           .charge(-600)
-			.charge(function(d) { return -Math.sqrt(d.weight)*500; })
+			.charge(function(d) { return -Math.sqrt(d.weight)*500; }) //stablish a charge for each node proportional to its number of links
 			.gravity(0.1)
             .linkDistance(40)
 			.theta(0.95)
@@ -309,10 +314,25 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .style("stroke", "blue")
 			.style("stroke-opacity",0);
 		
-		PRES.setViewport(-300/2, -100/2, 1, 0);
+		PRES.setViewport(-300/2, -100/2, 1, 0); //center the 'origin point' of the graph
 
 
         var graph = ABSTR.model;
+
+		
+		//stablishes the correct relation between links source/target and the nodes hash
+		var hash_lookup = [];
+		
+		graph.nodes.forEach(function(d, i) {
+		  hash_lookup[d.hash] = d;
+		});
+		
+		graph.links.forEach(function(d, i) {
+		  d.source = hash_lookup[d.source];
+		  d.target = hash_lookup[d.target];
+		});
+
+		
 
         force
             .nodes(graph.nodes)
@@ -767,7 +787,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				};
 			};
 			return PRES.linkcolor[d.type];
-		}; //todo
+		}; 
 
         this.relatedLinksOpacity = function (d) {
             if (!ABSTR.nodeFilters[d.type].state) {
@@ -804,6 +824,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			}
 		};
 
+		//if the node where the mouse is, is visible, 
+		//-changes its border color to the defined "over" color (restoring the border color of the rest of nodes)
+		//-updates the information showed in the content box and in its label
 		
         this.mouseover = function (d) {
 
@@ -825,6 +848,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				d3.select(this)
 					.style("stroke", PRES.bordercolor.over);
 						
+				// change the color of the header to the color corresponding to the type of the box, and shows its type of content and its author			
 				document.getElementById("right_bar_header").setAttribute ("style", "background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";"); // change the color of the header to the color that corresponds to the type of the box showed
 				document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.2)   + ";");
 				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author +")";
@@ -832,6 +856,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			}
         };
 
+		//when the user clicks in empty space.
+		//if the user is not creating a link, deselects any previously selected node, restablishing border colors and the info of the content box and its label
         this.mousedown = function (d) {
 			if (!ABSTR.creatinglink){
 				PRES.svg.selectAll(".node")
@@ -859,6 +885,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			};
         };
 
+		//when the user clicks inside one node
+		//if the user is creating a link, it saves the link using the last clicked node as the target
+		//if the user is not creatin a link, selects the clicked node, changing its border color and showing its information in the content box and in its label.
         this.click = function (d) {
 			if (ABSTR.creatinglink){
 				if (d.hash !== ABSTR.clickednodehash){
@@ -903,6 +932,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			
 		};
 		
+		//focus on the double clicked node
 		this.dblclick = function (d) {
 			
 			var selx = PRES.svg.selectAll(".node")
@@ -931,9 +961,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		};
 
 		
+		//if the user is not creating a new link, selects the clicked link, changing its stroke color and showing its information in the content label
         this.clicklink = function (d) {
-			if (ABSTR.creatinglink){
-			}else{
+			if (!ABSTR.creatinglink){
+
 				var strokewidth = 	PRES.svg.selectAll(".link")
 									.filter(function (e) {return e.hash == d.hash;})
 									.style("stroke-width");
@@ -961,6 +992,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     };
 	
 	// end of this == LiveAttributes	
+
+	
 
 
     // update functions (svg, nodes and links)
@@ -995,6 +1028,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 // End of this == presentation
 
 
+//shows or hides the filters and legend bars
 function hideshowlegend() {
 
     var PRES = Visualisations.current().presentation;
@@ -1040,6 +1074,7 @@ function legendfiltersupdate() {
 };
 
 
+//functions for the rating of nodes and links
 function evalpos(){
 	evalnode("pos");
 }
@@ -1094,8 +1129,6 @@ function evalnode(vote) {
 			.transition().duration(1000).ease("elastic")
 			.attr("r", PRES.liveAttributes.nodeWidth) 
 	
-		document.getElementById("headerSave").setAttribute("style","background:#393; color:#eee; border-color:#eee;");
-		saved=false;
 	}
 };
 
@@ -1134,13 +1167,12 @@ function evallink(vote) {
 			.filter(function (d) {return d.hash == ABSTR.clickedlinkhash;})
 			.transition().duration(1000).ease("elastic")
 			.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
-			
-		document.getElementById("headerSave").setAttribute("style","background:#393; color:#eee; border-color:#eee;");
-		saved=false;
+
 	}
 };
 
 
+//shows the reply options and cancel the creation of a new link, or hides the options if they are already showed
 function showreplypanel(){
 
 	var ABSTR = Visualisations.current().abstraction;
@@ -1152,7 +1184,6 @@ function showreplypanel(){
 			PRES.mousedown();
 		}
 		$('#rightpanel').html(rightpanelhtmlreplyandlink + rightpanelhtmlreply);	
-//		document.getElementById("replybox").value = ".";  //***** TEST LINE - to avoid de alert of empty reply
 		ABSTR.replying = true;
 		
 		//document.getElementById("namebox2").value = document.getElementById("namebox").value;
@@ -1168,6 +1199,7 @@ function hidereplypanel(){
 }
 
 
+//shows the create link options
 function showcreatelink(){
 	var ABSTR = Visualisations.current().abstraction;
 	if (ABSTR.creatinglink){
@@ -1195,6 +1227,7 @@ function cancellink(){
 	ABSTR.creatinglink = false;
 }
 
+//creation of a new node
 function savenode() {
 	if (document.getElementById("replybox").value == ""){
 	
@@ -1207,9 +1240,7 @@ function savenode() {
     var PRES = Visualisations.current().presentation;
     createnode(PRES);
 	
-	document.getElementById("headerSave").setAttribute("style","background:#393; color:#eee; border-color:#eee;");
-	saved=false;
-    //+ call to export fuctions
+
 };
 
 	
@@ -1227,12 +1258,11 @@ function createnode(PRES){
 	var author = Model.currentAuthor();
     
     var newnode = {
- // elements and order adapted to be the same as in modelb.js
         "hash": nodes.length,
         "content": content,
-        "evalpos": 0,
+        "evalpos": 1,
 		"evalneg": 0,
-        "evaluatedby": [],
+        "evaluatedby": [author],
         "type": nodetype,
         "author": author,
         "time": Date.now(),
@@ -1290,12 +1320,11 @@ function drawnewnodes(PRES) {
 		.transition().ease("elastic").duration(1000)
 		.attr("r", PRES.liveAttributes.nodeWidth);
 		
-    //PRES.svg.selectAll(".node").on('mousedown.drag', null);
     
     PRES.force.start();
 };
 
-
+//creation of a new link
 function savelink(d){
 
     var PRES = Visualisations.current().presentation;
@@ -1322,14 +1351,13 @@ function savelink(d){
 		.on("click", PRES.liveAttributes.clicklink);
 		
     cancellink();
-	
-	document.getElementById("headerSave").setAttribute("style","background:#393; color:#eee; border-color:#eee;");
-	saved=false;
+
 		
     PRES.force.start();
 		
 }
 
+//changes the color of the prelink line when a new type of link is selected
 function changelinktype(){
 
 	var PRES = Visualisations.current().presentation;
@@ -1343,16 +1371,10 @@ function changelinktype(){
 
 function Scaler(PRES) {
 
-    /*  TODO 
-        I'm pretty sure this can be simplified but I'd like to have some documentation
-        about the differences between despx, despxz, despxp and transxz first - avox
-		
-		Yes, quite possible.. This is just the first way it ended up working, after other with even much more variables declared!
-		despxp : "pan displacement", the movement produced by mouse dragging
-		despxz : "zoom displacement", the movement that is produced when zooming, to maintain the correct position of the svg
-		despx0 : the rest of movements, like the initial movement, or the one produced when focusing in a node (with the dblclick function)
-		transxz : a memory used to obtain the real mouse dragging displacement from d3.event.translate, that accumulates the "aditional" movement produced when zooming
-    */
+		// despxp : "pan displacement", the movement produced by mouse dragging
+		// despxz : "zoom displacement", the movement that is produced when zooming, to maintain the correct position of the svg
+		// despx0 : the rest of movements, like the initial movement, or the one produced when focusing in a node (with the dblclick function)
+		// transxz : a memory used to obtain the real mouse dragging displacement from d3.event.translate, that accumulates the "aditional" movement produced when zooming
 
     this.oldscale = 1;
     this.scale = 1;
@@ -1462,15 +1484,7 @@ function Scaler(PRES) {
    };
 }
 
-function saveConversation(){
-	if (!saved){
-		//
-		// save the conversation in database
-		//
-		document.getElementById("headerSave").setAttribute("style","background:#030; color:#888; border-color:#888;");
-		saved=true;
-	}
-}
+
 	
 function mousemove(){}
 
@@ -1478,6 +1492,7 @@ function mousedown(){}
 
 function mouseup(){}
 
+//converts from hex color to rgba color
 function hex2rgb(hex, opacity) {
         var h=hex.replace('#', '');
         h =  h.match(new RegExp('(.{'+h.length/3+'})', 'g'));

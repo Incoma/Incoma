@@ -1,1 +1,0 @@
-var IncomaEmptyModel = {nodes:[],links:[],authors:[]}

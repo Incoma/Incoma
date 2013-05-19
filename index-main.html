@@ -38,9 +38,6 @@
         <div id="headerExport"  class="header">
             <a href="" id="headerExportLink" >&nbsp;</a>
         </div>
-        <div id="headerSave"  class="header button">
-            Save changes
-        </div>
     </div>
     <div id="visualisationMain">
     </div>  
@@ -65,9 +62,7 @@
 <script src="d3.v3.min.js"></script>
 <script src="jquery.ddslick.min.js"></script>
 <script src="opensave.js"></script>
-<script src="menumodel_small.js"></script>
-<script src="sandboxmodel.js"></script>
-<script src="emptymodel.js"></script>
+<script src="jsonmodels.js"></script>
 <script src="model.js"></script>
 <script src="visualisation.js"></script>
 <script src="visualisation-zoomout.js"></script>
@@ -76,7 +71,6 @@
 <script>
     Model.clear(IncomaMenuModel);
     
-	$( "#headerSave" )[0].onclick = saveConversation;
 		
 //    var nameBox = $("#namebox")[0];
 //    nameBox.value = Model.currentAuthor();
