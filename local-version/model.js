@@ -83,8 +83,7 @@ Model.linkFields = [
 // dynamic information:
 
 Model.model = null;
-
-Model.currentAuthor = null;
+Model._currentAuthor = null;
 
 Model.currentAuthor = function(name) {
     if(name || name === null)
@@ -101,12 +100,12 @@ Model.createNode = function(nodetype, content, author, time) {
     var newNode = {
         "hash": newHash,
         "content": content,
-        "evalpos": 1,
+        "evalpos": 0,
 		"evalneg": 0,
-        "evaluatedby": [author],
+        "evaluatedby": [],
         "type": nodetype,
         "author": (author || Model.model.currentAuthor),
-        "time": (time || Math.floor((new Date()).getTime() / 1000)),
+        "time": (time || Date.now()),
     };
     Model.model.nodes.push(newNode);
 };
@@ -121,7 +120,7 @@ Model.createLink = function(linktype, source, target, author, time) {
         "evaluatedby": [],
         "type": linktype,
         "author": (author || Model.model.currentAuthor),
-        "time": (time || Math.floor((new Date()).getTime() / 1000)),
+        "time": (time || Date.now()),
     };
     Model.model.links.push(newLink);
 };

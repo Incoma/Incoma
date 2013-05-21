@@ -345,6 +345,7 @@ div.negvotes{
 	color: #c33
 }
 
+
 div.zoombutton{
     display:inline-block;
 	width: 20px;
@@ -532,6 +533,7 @@ div.big_button:active{
 	font-size:12pt;
 	color: #000;
 }
+
 .conv_info{
 	display: inline-block;
 	position: absolute;

@@ -16,14 +16,13 @@ function InitialMenu() {
 
 }
 
-
 //defines arrays and parameters needed for the Abstraction module
 function InitialMenu_Abstraction() {
 
     this.model = null;
 	
     this.linkFilters = {
-		1: {name: "General",state: true, typeId: 1},
+	1: {name: "General",state: true, typeId: 1},
         2: {name: "Consequence", state: true, typeId: 2},
         3: {name: "Agree", state: true, typeId: 3},
         4: {name: "Disagree", state: true, typeId: 4},
@@ -34,7 +33,7 @@ function InitialMenu_Abstraction() {
     };
 	
     this.nodeFilters = {
-		1: {name: "General", state: true, typeId: 1},
+	1: {name: "General", state: true, typeId: 1},
         2: {name: "Question", state: true, typeId: 2},
         3: {name: "Answer", state: true, typeId: 3},
         4: {name: "Proposal", state: true, typeId: 4},
@@ -42,7 +41,7 @@ function InitialMenu_Abstraction() {
     };
 	
     this.sizeFilters = {
-		nodes: {name: "Boxes", state: true},
+	nodes: {name: "Boxes", state: true},
         links: {name: "Threads", state: true},
     };
 	
@@ -54,7 +53,6 @@ function InitialMenu_Abstraction() {
         this.replying = false;
     };
 };
-
 
 
 //defines the parameters and elements of the Presentation module
@@ -73,7 +71,6 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 		"origin": "#360"
     };
 
-
     this.svg = null;
                                                
     this.color = ["#000000", "#7f7f7f", "#339e94", "#2ca02c", "#d62728", "#1f77b4", "#5e3a1a", "#ec9242", "#9261c3"];
@@ -90,19 +87,12 @@ function InitialMenu_Presentation(VIS, ABSTR) {
     }
      
 
-	//defines the html content of the visualization (except the header, defined in index-main)
+	//defines the html content of the visualization (except the header, defined in index)
     this.init = function (html5node) {
         this.scaler = new Scaler(this);
         this.container = html5node;
 		
-//**different tries of inserting the html content from an external file....
-//		var html = document.open('initialmenu.html');
-//		html5node.innerHTML = html;
-		
-//		html5node.innerHTML ='<object type="html" data="initialmenu.html"></object>';
-
-// 		$('#html5node').load('initialmenu.html');
-		
+	
         html5node.innerHTML =
             '   \
               <div class="svg_and_right_bar" >   \
@@ -139,12 +129,6 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 							<div class="conv_select_panel noselect">  \
 							  <div id="selectconversation"></div>  \
 							</div>  \
-						  <center>   \
-							<br><br><br>-OR- \
-							<br><br><b>Insert a conversation code:</b>&nbsp<textarea id="conv_code" class="areaname"></textarea>  \
-							<br><br>-OR-  \
-							<br><br><b>Import a local conversation:</b>&nbsp<div id="convImport"></div>  \
-						  </center>   \
 							<div class="bt_panel noselect">  \
 								<center>  \
 									<div id="bt_join_ok" onclick="bt_join_ok()" class="conv_ok button">OK</div>  \
@@ -177,86 +161,58 @@ function InitialMenu_Presentation(VIS, ABSTR) {
              </div>  \
 			 ' 
 			 
-		OpenSave.addImportListener( $( "#convImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
+		//OpenSave.addImportListener( $( "#convImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
 		
-		//hides the "menu" and "export" options from the header
+		//hides some elements of the header
 	 	document.getElementById("headerMenu").setAttribute("style","visibility:hidden;");
-	 	document.getElementById("headerExport").setAttribute("style","visibility:hidden;");
+		document.getElementById("headerExport").setAttribute("style","visibility:hidden;"); 
+		document.getElementById("headerUsername").setAttribute("style","visibility:hidden;"); 
 		
-		//move all the menu panels to their initial position
+		//moves all the menu panels to their initial position
 		document.getElementById("menu_panel").setAttribute("style", "left: 0%");
 		document.getElementById("join_panel").setAttribute("style", "left: 130%");
 		document.getElementById("new_panel").setAttribute("style", "left: 135%");
+
+
+	        // 
+ 	        update_public_conv_db();
+
+		//loads the public conversations data
+
+	        db_getconversations();
 	
-		// example data for the select control of the ddslick pluging
-		var ddData = [
-			{
-				text: "Title of the conversation 1",
-				value: 1,
-				selected: false,
-				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-			},
-			{
-				text: "Title of the conversation 2",
-				value: 2,
-				selected: false,
-				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-			},
-			{
-				text: "Title of the conversation 3",
-				value: 3,
-				selected: false,
-				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-			},
-			{
-				text: "Title of the conversation 4",
-				value: 4,
-				selected: false,
-				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-			},
-			{
-				text: "Title of the conversation 5",
-				value: 5,
-				selected: false,
-				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-			},
-			{
-				text: "Title of the conversation 6",
-				value: 6,
-				selected: false,
-				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-			},
-			{
-				text: "Title of the conversation 7",
-				value: 7,
-				selected: false,
-				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-			},
-			{
-				text: "Title of the conversation 8",
-				value: 8,
-				selected: false,
-				description: "Rating: -- &nbsp&nbsp Number of thoughts: -- &nbsp&nbsp Last activity: --",
-			}
-		];
+		//adds the information to the elements of the ddslick selector
+		var ddData = [];
+		
+		for (var i=0;i<conversations.length;i++){
+			ddData.push({
+				text: conversations[i].title,
+				value: i,
+				selected:false,
+				description: "Number of thoughts: " + conversations[i].thoughtnum + " &nbsp&nbsp&nbsp&nbsp&nbsp Last activity: " + timeAgo(conversations[i].lasttime)
+			});
+		}
+		
 
-			//obtains the width of join_panel (where the 'join' menu elements are) to adapt the width of the ddslick select control
-			element = document.getElementById('join_panel');
-			style = window.getComputedStyle(element);
-			panelwidth = parseInt(style.getPropertyValue('width'))*.99;
+		//obtains the width of join_panel (where the 'join' menu elements are) to adapt the width of the ddslick select control
+		element = document.getElementById('join_panel');
+		style = window.getComputedStyle(element);
+		panelwidth = parseInt(style.getPropertyValue('width'))*.99;
 
+		//defines the properties and the onSelected actions of the ddslick selector
 		$('#selectconversation').ddslick({
-	
 		    data: ddData,
 			selectText: "Select a conversation...",
 			width: panelwidth,
 			height:panelwidth*0.82,
 			background: "#fff",
 			onSelected: function(selectedData){
-			//	document.getElementById("conv_info").innerHTML = "[info about conversation number " + (selectedData.selectedIndex + 1) + "]";
+				conversation = conversations[selectedData.selectedIndex].hash;
 			}
 		});
+
         initSVG(this, ABSTR, this.width, this.height);
+
     };
 
 	//initialization and definition of the SVG and its elements (the graph with nodes, links, prelink line, the force)
@@ -324,7 +280,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 			.style("stroke-opacity",1);	
 			
 		//call to force.resume() each 3 seconds in order to animate the graph
-		pulses = setInterval(function(){force.resume();},3000);
+		pulses = setInterval(function(){force.resume();},3000); 
 		
         force.on("tick", function () {
 		
@@ -341,7 +297,6 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 
     };
     
-
 	//the attributes for the nodes and links
     function LiveAttributes(ABSTR, PRES) {
 
@@ -418,21 +373,18 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 
 };
 
-//functions for the different buttons of the initial menu
+
 function bt_menu(){
-    Model.clear(IncomaMenuModel);
-	reInit(Visualisations.select(2));
-	
+	clearTimeout(autoupdate);
+        Model.clear(IncomaMenuModel);
+	window.location.href = "?";
+	//reInit(Visualisations.select(2));
 	bt_cancel();
 	}
 
-function bt_sandbox(){
-	clearTimeout(pulses);
-    Model.clear(IncomaSandboxModel);
-	document.getElementById("menu_panel").setAttribute("style", "left: 100%");
-	setTimeout(function(){reInit(Visualisations.select(1));},700);
-}
+//Functions for the different buttons of the initial menu
 
+//shows the 'create new conversation' panel
 function bt_create(){
 	document.getElementById("menu_panel").setAttribute("style", "left: -100%");
 	document.getElementById("join_panel").setAttribute("style", "left: 130%");
@@ -441,32 +393,74 @@ function bt_create(){
 	document.getElementById("new_title").focus();
 }
 
+//shows the 'join conversation' panel
 function bt_join(){
 	document.getElementById("menu_panel").setAttribute("style", "left: -100%");
 	document.getElementById("join_panel").setAttribute("style", "left: 30%");
 	document.getElementById("new_panel").setAttribute("style", "left: 135%");
 }
 
+//returns to the initial screen
 function bt_cancel(){
 	document.getElementById("menu_panel").setAttribute("style", "left: 0%");
 	document.getElementById("join_panel").setAttribute("style", "left: 130%");
 	document.getElementById("new_panel").setAttribute("style", "left: 135%");
 }
 
+
+//loads the sandbox model and the zoom-out visualization
+function bt_sandbox(){
+    clearTimeout(pulses);
+    Model.clear(IncomaSandboxModel);
+    document.getElementById("menu_panel").setAttribute("style", "left: 100%");
+    setTimeout(function(){reInit(Visualisations.select(1));},700);
+}
+
+
+//loads an existing conversation
+function bt_join_ok(){
+    document.getElementById("join_panel").setAttribute("style", "left: -70%");
+    window.location.href = "?c=" + conversation;
+}
+
+
+//creates a new conversation
 function bt_new_ok(){
+
 	document.getElementById("new_panel").setAttribute("style", "left: -65%");
 	
 	clearTimeout(pulses);
 	
-    Model.clear(IncomaEmptyModel);
+        Model.clear(IncomaEmptyModel);
 	
+	title = document.getElementById("new_title").value;
 	content = document.getElementById("new_firstcomment").value;
 	author = document.getElementById("new_name").value;
+	time = Math.floor((new Date()).getTime() / 1000);
 	if (author == ""){author = "anonymous"};
 	
-	Model.createNode(1, content, author, Date.now());
+	$("#headerNamebox")[0].value = author;
+	Model.currentAuthor(author);
 	
-	setTimeout(function(){reInit(Visualisations.select(1));},700);
+	Model.createNode(1, content, author, time); //creates the initial node, type="general"
+	
+	
+	var ispublic = true; //todo - option to choose between public or private conversation
+
+	//creates the tables for the new conversation and stores the first node
+	conversation = hashit2(title + content + author + time);
+
+
+	db_createconversation(conversation,title,time,ispublic);
+
+	db_savenode(Model.model.nodes[0]);
+	
+	setTimeout(function(){
+		// window.history.pushState("", "", "?c=" + conversation); //with this alternative two lines, the page is not refreshed
+		// reInit(Visualisations.select(1));
+		window.location.href = "?c=" + conversation;
+	},700);
+	
 }
 
 

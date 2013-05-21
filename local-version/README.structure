@@ -1,8 +1,5 @@
-The files in this directory are the PHP/MySQL version of Incoma which uses the MySQL database to store the conversations. 
-In the local-version directory can be found a local version of Incoma that does not use PHP or MySQL. This version can export/import conversations to files.
-
-
 Files/Modules:
+
 
 "opensave.js"
 =============
@@ -56,10 +53,7 @@ Some json predefined models,
 - menumodel (for the animated background of the initial menu)
 
 
-"index.php"/"index.html" (PHP-MySQL/local version)
+"index.html"
 =================
-The php/html file which puts it all together
 
-"*.php" files
-=================
-These files are used in the PHP-MySQL version to read/write in the database. All the calls to these files are done in the index.php file.
+The html file which puts it all together

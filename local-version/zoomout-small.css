@@ -46,7 +46,7 @@ body {
   padding: 8px 4px 4px 8px;
   width: 96.2%;
   min-height: 0px;
-  height: 120px;
+  height: 60px;
   border: solid 1px #636;
   resize: vertical;
   cursor: default;
@@ -60,7 +60,7 @@ body {
   padding: 8px 4px 4px 8px;
   width: 96.2%;
   min-height: 0px;
-  height: 120px;
+  height: 60px;
   background: rgb(255,255,255);
   border: solid 1px #636;
   resize: vertical;
@@ -76,7 +76,7 @@ body {
   border: yes;
   width: 365px;
   min-height: 0px;
-  height: 100px;
+  height: 60px;
   border: solid 1px #636;
   resize: vertical;
 }
@@ -391,20 +391,6 @@ div.zoombutton{
   border-left: solid 2px rgba(163,128,180,.5);
 }
 
-.hidepanel {
-  position: fixed;
-  top:50px;
-  left:0px;
-  width: 100%;
-  height:100%;
-  background:rgba(255,255,255,1);
-  opacity:1;
-	-webkit-transition-property: opacity;
-    -webkit-transition-duration: 2800ms;
-    transition-property: opacity;
-    transition-duration: 2800ms;
-}
-
 #big_background {
   position: absolute;
   width: 100%;
@@ -414,8 +400,8 @@ div.zoombutton{
 
 .huge_panel_1 {
 	position: fixed;
-	top:25%;
-	height:70%;
+	top:20%;
+	height:50%;
 	left:0%;
 	width: 100%;
 	background: rgba(255, 255, 255, 0);
@@ -430,9 +416,9 @@ div.zoombutton{
 	position: fixed;
 	top:15%;
 	left:130%;
-	width: 35%;
+	width: 	35%;;
 	height: 65%;
-	padding:2%;
+	padding: 2%;
 	background: rgba(65,99,233,0.1);
 	border: solid 1px #ccc;
 	-moz-border-radius: 20px;
@@ -448,8 +434,8 @@ div.zoombutton{
 	position: fixed;
 	top:15%;
 	left:140%;
-	height: 380px;
-	padding:25px;
+	height: 330px;
+	padding:20px;
 	background: rgba(65,99,233,0.1);
 	border: solid 1px #ccc;
 	-moz-border-radius: 20px;
@@ -463,10 +449,10 @@ div.zoombutton{
 .big_panel{
 	display: inline-block;
 	position:relative;
-	margin-left:35px;
-	margin-right:35px;
-	width: 240px;
-	height: 320px;
+	margin-left:20px;
+	margin-right:20px;
+	width: 220px;
+	height: 300px;
 	background: rgba(65,99,233,0.1);
 	border: solid 1px #ccc;
 	-moz-border-radius: 20px;
@@ -532,14 +518,15 @@ div.big_button:active{
 	font-size:12pt;
 	color: #000;
 }
+
 .conv_info{
 	display: inline-block;
 	position: absolute;
-	height: 58%;
+	height: 50%;
 	width: 89%;
 	background: rgba(0,0,0,0);
     border: solid 1px #aaa;
-	margin-top:75px;
+	margin-top:65px;
 	text-align:center;
 	line-height: 150px;
 	font-size:13pt;
@@ -558,7 +545,7 @@ div.big_button:active{
 .conv_ok{
 	display: inline-block;
 	position:relative;
-	width: 100px;
+	width: 80px;
 	height: 40px;
 	margin:20px;
 	background: #6c6;
@@ -570,7 +557,7 @@ div.big_button:active{
 .conv_cancel{
 	display: inline-block;
 	position:relative;
-	width: 100px;
+	width: 80px;
 	height: 40px;
 	margin:20px;
 	background: #c63;
@@ -604,8 +591,8 @@ div.big_button:active{
   display: inline-block;
   width: 365px;
   min-height: 0px;
-  height: 120px;
-  max-height:120px;
+  height: 90px;
+  max-height:90px;
   border: solid 1px #aaa;
   resize: vertical;
 }
