@@ -4,6 +4,13 @@ In the local-version directory can be found a local version of Incoma that does 
 
 Files/Modules:
 
+"incomadb.conf"
+=============
+name of the MySQL database, user and password with the following format:
+$username="THEUSERNAME";
+$password="THEPASSWORD";
+$database="NAMEOFTHEDATABASE";
+
 "opensave.js"
 =============
 
