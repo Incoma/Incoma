@@ -13,23 +13,26 @@ $resultconvs=mysql_query($queryconvs);
 while($convlist[]=mysql_fetch_array($resultconvs));
 
 for($i = 0, $size = count($convlist)-1; $i < $size; ++$i) {
-       	      $conversation = $convlist[$i][0]; 
+       	      $pubconversation = $convlist[$i][0]; 
 
-	      $querynodes="SELECT time FROM nodes_".$conversation." ORDER BY time";
+	      $querynodes="SELECT time FROM nodes_".$pubconversation." ORDER BY time";
 	      $resultnodes=mysql_query($querynodes);
 	      while($nodesphp[]=mysql_fetch_array($resultnodes));
-	      $numnodes=mysql_numrows($resultnodes);
+	      $pubnumnodes=mysql_numrows($resultnodes);
 
 	      array_pop($nodesphp);
 	      $nodesphp2[]=array_pop($nodesphp);
 
-	      $lasttimenode=$nodesphp2[0][0];
+	      $publasttimenode=$nodesphp2[0][0];
 
 	      $sqlupdate =  'UPDATE public_conversations'.
-	      ' SET thoughtnum='.$numnodes.', lasttime='.$lasttimenode.
-	      ' WHERE hash="'.$conversation.'"';
+	      ' SET thoughtnum='.$pubnumnodes.', lasttime='.$publasttimenode.
+	      ' WHERE hash="'.$pubconversation.'"';
 
 	      mysql_query($sqlupdate);
+
+
+
 
 unset($nodesphp);
 unset($nodesphp2);

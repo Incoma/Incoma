@@ -520,6 +520,7 @@ div.big_button:active{
 .conv_select_panel{
 	display: block;
 	position: absolute;
+	margin-top:5px;
 	width: 240px;
 	height: 30px;
 	background: rgba(0,0,0,0);
@@ -560,7 +561,7 @@ div.big_button:active{
 	position:relative;
 	width: 100px;
 	height: 40px;
-	margin:20px;
+	margin:10px;
 	background: #6c6;
 	text-align: center;
 	line-height:40px;
@@ -572,7 +573,7 @@ div.big_button:active{
 	position:relative;
 	width: 100px;
 	height: 40px;
-	margin:20px;
+	margin:10px;
 	background: #c63;
 	text-align: center;
 	line-height:40px;

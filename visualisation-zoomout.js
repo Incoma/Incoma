@@ -1,7 +1,5 @@
 //definition of the html code of the right panel bar for different situations
 
-zz = 0;
-
 var rightpanelhtmleval = "<center><div id='posvotes' class='posvotes'></div><div class='evalpos button' onClick='evalpos()'>+</div>&nbsp&nbsp<div class='evalneg button' onClick='evalneg()'>-</div><div id='negvotes' class='negvotes'></div></center><div id='evalalert' class='alerttext noselect'>&nbsp</div>";
 
 var rightpanelhtmlreplyandlink = "<center><div id='showreply' class='showreplypanel button' onClick='showreplypanel()'>Reply</div>&nbsp&nbsp&nbsp&nbsp<div class='showconnectpanel button' id='showlink' onClick='showcreatelink()'>Connect</div></center>";
@@ -278,8 +276,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     function initSVG(PRES, ABSTR, width, height) {
 
         PRES.force = d3.layout.force()
- //         .charge(-600)
-			.charge(function(d) { return -100-Math.sqrt(d.weight)*350; }) //stablish a charge for each node proportional to its number of links
+            .charge(-500)
+		//	.charge(function(d) { return -150-Math.sqrt(d.weight)*350; }) //stablish a charge for each node proportional to its number of links
 			.gravity(0.1)
             .linkDistance(50)
 			.theta(0.95)
@@ -367,6 +365,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.on("dblclick", PRES.liveAttributes.dblclick)
             .call(force.drag);
 			
+			
 		PRES.nodes
 			.style("fill-opacity",0)
 			.transition().delay(800).duration(600)
@@ -404,7 +403,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             // .style("font-size", "2px");
 
 		
-		autoupdate = setInterval(function(){updateConversation();},60000); 
+		autoupdate = setInterval(function(){updateConversation();},5000); 
 		
         force.on("tick", function () {
 		
@@ -957,8 +956,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			PRES.scaler.despy0 = (PRES.scaler.midy-sely*PRES.scaler.zoomval) - PRES.scaler.despyp;
 
 			
-			//alert(selx);
-			
 			PRES.scaler.despx = PRES.scaler.despxp + PRES.scaler.despx0;
 			PRES.scaler.despy = PRES.scaler.despyp + PRES.scaler.despy0;
 				
@@ -1121,31 +1118,31 @@ function evalnode(vote) {
 		var alert = document.getElementById("evalalert");
 		alert.innerHTML = "You have already rated this node";
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
-		
-	} else{
-	
-		targetnode.evaluatedby.push(name);
-		
-		if (vote=="pos"){
-			targetnode.evalpos += 1; 
-			document.getElementById("posvotes").innerHTML = targetnode.evalpos;
-			var variable = "evalpos";
-			var value = targetnode.evalpos;
-		}else{
-			targetnode.evalneg += 1;
-			document.getElementById("negvotes").innerHTML = targetnode.evalneg;
-			var variable = "evalneg";
-			var value = targetnode.evalneg;
-		}
-	
-		PRES.svg.selectAll(".node")
-			.filter(function (d) {return d.hash == ABSTR.clickednodehash;})
-			.transition().duration(1000).ease("elastic")
-			.attr("r", PRES.liveAttributes.nodeWidth) 
-			
-		db_update_eval_node(variable,value);
-
+		return;
 	}
+	
+	targetnode.evaluatedby.push(name);
+	
+	if (vote=="pos"){
+		targetnode.evalpos += 1; 
+		document.getElementById("posvotes").innerHTML = targetnode.evalpos;
+		var variable = "evalpos";
+		var value = targetnode.evalpos;
+	}else{
+		targetnode.evalneg += 1;
+		document.getElementById("negvotes").innerHTML = targetnode.evalneg;
+		var variable = "evalneg";
+		var value = targetnode.evalneg;
+	}
+
+	PRES.svg.selectAll(".node")
+		.filter(function (d) {return d.hash == ABSTR.clickednodehash;})
+		.transition().duration(1000).ease("elastic")
+		.attr("r", PRES.liveAttributes.nodeWidth) 
+		
+	db_update_eval_node(variable,value);
+
+	
 };
 
 function evallink(vote) {
@@ -1163,35 +1160,34 @@ function evallink(vote) {
     if (name == ""){name = "anon";}
 	
 	if($.inArray(name, targetlink.evaluatedby) > -1){
+	
 		var alert = document.getElementById("evalalert");
-
 		alert.innerHTML = "You have already rated this link";
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
-		
-	} else{
+		return;
+	} 
 	
-		targetlink.evaluatedby.push(name);
-		
-		if (vote=="pos"){
-			targetlink.evalpos += 1; 
-			document.getElementById("linkposvotes").innerHTML = targetlink.evalpos;
-			var variable = "evalpos";
-			var value = targetlink.evalpos;
-		}else{
-			targetlink.evalneg += 1;
-			document.getElementById("linknegvotes").innerHTML = targetlink.evalneg; 
-			var variable = "evalneg";
-			var value = targetlink.evalneg;
-		}
+	targetlink.evaluatedby.push(name);
 	
-		PRES.svg.selectAll(".link")
-			.filter(function (d) {return d.hash == ABSTR.clickedlinkhash;})
-			.transition().duration(1000).ease("elastic")
-			.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
-
-		db_update_eval_link(variable,value);
-
+	if (vote=="pos"){
+		targetlink.evalpos += 1; 
+		document.getElementById("linkposvotes").innerHTML = targetlink.evalpos;
+		var variable = "evalpos";
+		var value = targetlink.evalpos;
+	}else{
+		targetlink.evalneg += 1;
+		document.getElementById("linknegvotes").innerHTML = targetlink.evalneg; 
+		var variable = "evalneg";
+		var value = targetlink.evalneg;
 	}
+
+	PRES.svg.selectAll(".link")
+		.filter(function (d) {return d.hash == ABSTR.clickedlinkhash;})
+		.transition().duration(1000).ease("elastic")
+		.style("stroke-width", PRES.liveAttributes.linkStrokeWidth);
+
+	db_update_eval_link(variable,value);
+
 };
 
 
@@ -1303,9 +1299,8 @@ function createnode(PRES){
     };
 	
     nodes.push(newnode);
-	Model.model.nodes.push(newnode);
-	
 	db_savenode(newnode);
+	
 	
 	var linktype = document.getElementById("replylinktype").value;
 	
@@ -1328,7 +1323,6 @@ function createnode(PRES){
 		};
 		
 		links.push(newlink);
-		Model.model.links.push(newlink);
 		
 		var newlinkfordb = {
 			"hash": newlink.hash, 
@@ -1371,8 +1365,8 @@ function drawnewnodes(PRES) {
         .data(nodes)
         .enter().append("circle")
         .attr("class", "node")
-        .attr("cx", function (d) {return d.x;})
-        .attr("cy", function (d) {return d.y;})
+        .attr("cx", function (d) {coordx = d.x; return d.x;})
+        .attr("cy", function (d) {coordy = d.y; explode(PRES, coordx,coordy); return d.y;})
 		.attr("r", 0)
 		.style("fill", PRES.liveAttributes.nodeFill)
 		.on("mouseover", PRES.liveAttributes.mouseover)
@@ -1575,6 +1569,26 @@ function Scaler(PRES) {
 	
         PRES.setViewport(THIS.despx, THIS.despy, THIS.zoomval, 200);
    };
+}
+
+function explode(PRES, cx, cy){
+	// explosion = PRES.svg.append("circle")
+		// .attr("cx", cx)
+        // .attr("cy", cy)
+        // .attr("r", 10)
+		// .style("fill-opacity",0)
+		// .style("stroke-width","1px")
+		// .style("stroke","blue")
+		// .style("stroke-opacity",0.8);
+		
+		
+	// explosion.transition().ease("cubic-out").duration(1500)
+        // .attr("r", 450)
+		// .style("stroke-width","10px")
+		// .style("stroke-opacity",0)
+		// .remove();
+	
+	// setTimeout(function(){explosion.remove();},2000);
 }
 
 

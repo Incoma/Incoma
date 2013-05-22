@@ -2,7 +2,8 @@
 $conversation = $_POST['conversation'];
 $title = $_POST['title'];
 $time = $_POST['time'];
-$ispublic = $_POST['ispublic'];
+$readispublic = $_POST['ispublic'];
+$ispublic = ($readispublic === 'true');
 
 $lines = file('incomadb.conf');
 $username = rtrim(str_replace(array("\$username=\"", "\";"), "", $lines[0]));

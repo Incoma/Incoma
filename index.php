@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="style.css"/>
+<link rel="stylesheet" href="ezMark-master/css/ezmark.css" media="all">
 <link rel="stylesheet" media="screen and (min-height: 486px) and (max-height: 2000px)" type="text/css" href="zoomout-large.css"/>
 <link rel="stylesheet" media="screen and (min-height: 100px) and (max-height: 485px)" type="text/css" href="zoomout-small.css"/>
 <head>
@@ -10,6 +11,7 @@
 
 <body>
     <script src="jquery-1.9.1.js"></script>
+<script type="text/javascript" language="Javascript" src="ezMark-master/js/jquery.ezmark.js"></script>
 
 <!-- HTML frame -->
 
@@ -114,7 +116,7 @@
 
 		db_getmodel();
 
-		generatemodel();
+		db_generatemodel();
 
 		//loads the 'zoom-out' visualization with the conversation data loaded from the db
 		Model.clear(modeldb);
@@ -132,7 +134,7 @@
 			async: false,
 			}).done(function(data) {
 			data.conversations.pop();
-			conversations =  data.conversations;
+			conversationlist =  data.conversations;
 		});
 
 	}
@@ -161,7 +163,7 @@
 		});
 	}
 	
-	function generatemodel(){
+	function db_generatemodel(){
 	
 		var nodesjs=modelfromdb.nodes;
 		var linksjs=modelfromdb.links;
@@ -191,26 +193,31 @@
 
 	function db_savenode(newnode){
 
+	        if(conversation !== "sandbox"){
 		var newnodejs = ["hash",newnode.hash,"content",newnode.content,"evalpos",newnode.evalpos,"evalneg",newnode.evalneg,"evaluatedby",(newnode.evaluatedby).join("@@@@"),"type",newnode.type,"author",newnode.author,"time",newnode.time];
 		
 		newnodestring = newnodejs.join('####');
 
 		$.post("savenode.php", {newnodephp: newnodestring, conversation: conversation});
+		}
 	}
 
 
 	function db_savelink(newlink){
 
+	        if(conversation !== "sandbox"){
 		var newlinkjs = ["hash",newlink.hash,"source",newlink.source,"target",newlink.target,"evalpos",newlink.evalpos,"evalneg",newlink.evalneg,"evaluatedby",(newlink.evaluatedby).join("@@@@"),"type",newlink.type,"author",newlink.author,"time",newlink.time];
 				
 		newlinkstring = newlinkjs.join('####');
 
 		$.post("savelink.php", {newlinkphp: newlinkstring, conversation: conversation});
+                }
 	}
 
 
 	function db_update_eval_node(variable,value){
 
+	        if(conversation !== "sandbox"){
 		var table="nodes_" + conversation,
 			hash = parseInt(targetnode.hash);
 	
@@ -219,12 +226,14 @@
 			value = (targetnode.evaluatedby).join("@@@@");
 			
 		$.post("updateevaluatedby.php", {conversation:conversation, table:table, variable:variable, value:value, hash:hash});
+                }
 
 	}
 
 
 	function db_update_eval_link(variable,value){
 
+	        if(conversation !== "sandbox"){
 		var table="links_" + conversation,
 			hash = parseInt(targetlink.hash);
 	
@@ -233,6 +242,7 @@
 			value = (targetlink.evaluatedby).join("@@@@");
 			
 		$.post("updateevaluatedby.php", {conversation:conversation, table:table, variable:variable, value:value, hash:hash});
+                } 
 
 	}
 
@@ -253,13 +263,14 @@
 		nodes = PRES.force.nodes();
 		links = PRES.force.links();
 		
+	
 		var old_model = Model.model;
 		
 		db_getmodel();
-		generatemodel();
-		Model.clear(modeldb);
+		db_generatemodel();
 		
-		var new_model = Model.model;
+		var new_model = modeldb;
+	
 	
 		updatednodes = [];
 		old_nodeshash = [];
@@ -278,6 +289,7 @@
 			nodes.push(updatednodes[i]);
 		}	
 		
+
 		updatedlinks = [];
 		old_linkshash = [];
 		
@@ -295,18 +307,19 @@
 			links.push(updatedlinks[i]);
 		}	
 			
-		updatednodes.forEach(function(d, i) {
-		  hash_lookup[d.hash] = d;
-		});
-		
-		updatedlinks.forEach(function(d, i) {
-		  d.source = hash_lookup[d.source];
-		  d.target = hash_lookup[d.target];
-		});
-		
-		
+
 		if (updatedlinks.length>0 || updatednodes.length>0){
-			drawnewnodes(PRES)
+		
+			updatednodes.forEach(function(d, i) {
+			  hash_lookup[d.hash] = d;
+			});
+			
+			updatedlinks.forEach(function(d, i) {
+			  d.source = hash_lookup[d.source];
+			  d.target = hash_lookup[d.target];
+			});			
+			
+			drawnewnodes(PRES);
 		}
 		
 	}
@@ -346,48 +359,48 @@
 		return hash.join("");
 	}
 	
-function timeAgo(date) {
+	
+	function timeAgo(date) {
 
-    var seconds = Math.floor(Date.now()/1000) - date;
+		var seconds = Math.floor(Date.now()/1000) - date;
+		var interval = Math.floor(seconds / 31536000);
 
-    var interval = Math.floor(seconds / 31536000);
-
-    if (interval > 1) {
-        return interval + " years ago";
-    }
-    if (interval > 0) {
-        return interval + " year ago";
-    }
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) {
-        return interval + " months ago";
-    }
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) {
-        return interval + " days ago";
-    }
-    if (interval > 0) {
-        return interval + " day ago";
-    }
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) {
-        return interval + " hours ago";
-    }
-    if (interval > 0) {
-        return interval + " hour ago";
-    }
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) {
-        return interval + " minutes ago";
-    }
-    if (interval > 0) {
-        return interval + " minute ago";
-    }
-	if (seconds > 1) {
-		return seconds + " seconds ago";
+		if (interval > 1) {
+			return interval + " years ago";
+		}
+		if (interval > 0) {
+			return interval + " year ago";
+		}
+		interval = Math.floor(seconds / 2592000);
+		if (interval > 1) {
+			return interval + " months ago";
+		}
+		interval = Math.floor(seconds / 86400);
+		if (interval > 1) {
+			return interval + " days ago";
+		}
+		if (interval > 0) {
+			return interval + " day ago";
+		}
+		interval = Math.floor(seconds / 3600);
+		if (interval > 1) {
+			return interval + " hours ago";
+		}
+		if (interval > 0) {
+			return interval + " hour ago";
+		}
+		interval = Math.floor(seconds / 60);
+		if (interval > 1) {
+			return interval + " minutes ago";
+		}
+		if (interval > 0) {
+			return interval + " minute ago";
+		}
+		if (seconds > 1) {
+			return seconds + " seconds ago";
+		}
+		return "just now";
 	}
-    return "just now";
-}
 
 
 

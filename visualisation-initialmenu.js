@@ -91,8 +91,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
     this.init = function (html5node) {
         this.scaler = new Scaler(this);
         this.container = html5node;
-		
-	
+
         html5node.innerHTML =
             '   \
               <div class="svg_and_right_bar" >   \
@@ -148,7 +147,9 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 							<br>  \
 							<center>  \
 								<div class="new_name_header noselect">Your name</div>  \
-								<textarea id="new_name" class="new_name" spellcheck="false"></textarea> \
+								<textarea id="new_name" class="new_name" spellcheck="false"></textarea><br> \
+<input type="radio" name="typeconv" value="Public"> Public conversation (it will appear on the list of public conversations)<br> \
+<input type="radio" name="typeconv" value="Private" checked> Private conversation (only people with the link will be able to join it)<br> \
 							</center>  \
 							<div class="bt_panel noselect">  \
 								<center>  \
@@ -160,7 +161,10 @@ function InitialMenu_Presentation(VIS, ABSTR) {
                   </div>   \
              </div>  \
 			 ' 
-			 
+
+			$('input').ezMark();	
+
+
 		//OpenSave.addImportListener( $( "#convImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
 		
 		//hides some elements of the header
@@ -169,48 +173,11 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 		document.getElementById("headerUsername").setAttribute("style","visibility:hidden;"); 
 		
 		//moves all the menu panels to their initial position
-		document.getElementById("menu_panel").setAttribute("style", "left: 0%");
-		document.getElementById("join_panel").setAttribute("style", "left: 130%");
-		document.getElementById("new_panel").setAttribute("style", "left: 135%");
-
-
-	        // 
- 	        update_public_conv_db();
-
-		//loads the public conversations data
-
-	        db_getconversations();
+		bt_cancel();
+		// document.getElementById("menu_panel").setAttribute("style", "left: 0%");
+		// document.getElementById("join_panel").setAttribute("style", "left: 130%");
+		// document.getElementById("new_panel").setAttribute("style", "left: 135%");
 	
-		//adds the information to the elements of the ddslick selector
-		var ddData = [];
-		
-		for (var i=0;i<conversations.length;i++){
-			ddData.push({
-				text: conversations[i].title,
-				value: i,
-				selected:false,
-				description: "Number of thoughts: " + conversations[i].thoughtnum + " &nbsp&nbsp&nbsp&nbsp&nbsp Last activity: " + timeAgo(conversations[i].lasttime)
-			});
-		}
-		
-
-		//obtains the width of join_panel (where the 'join' menu elements are) to adapt the width of the ddslick select control
-		element = document.getElementById('join_panel');
-		style = window.getComputedStyle(element);
-		panelwidth = parseInt(style.getPropertyValue('width'))*.99;
-
-		//defines the properties and the onSelected actions of the ddslick selector
-		$('#selectconversation').ddslick({
-		    data: ddData,
-			selectText: "Select a conversation...",
-			width: panelwidth,
-			height:panelwidth*0.82,
-			background: "#fff",
-			onSelected: function(selectedData){
-				conversation = conversations[selectedData.selectedIndex].hash;
-			}
-		});
-
         initSVG(this, ABSTR, this.width, this.height);
 
     };
@@ -296,6 +263,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
         });
 
     };
+	
     
 	//the attributes for the nodes and links
     function LiveAttributes(ABSTR, PRES) {
@@ -376,10 +344,9 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 
 function bt_menu(){
 	clearTimeout(autoupdate);
-        Model.clear(IncomaMenuModel);
+    Model.clear(IncomaMenuModel);
 	window.location.href = "?";
 	//reInit(Visualisations.select(2));
-	bt_cancel();
 	}
 
 //Functions for the different buttons of the initial menu
@@ -398,6 +365,15 @@ function bt_join(){
 	document.getElementById("menu_panel").setAttribute("style", "left: -100%");
 	document.getElementById("join_panel").setAttribute("style", "left: 30%");
 	document.getElementById("new_panel").setAttribute("style", "left: 135%");
+	
+	conversation="";
+
+	//updates, loads and order the list of public conversations	
+	update_public_conv_db();
+	db_getconversations();
+	orderconversationlist(document.getElementById("selectorder").value);
+	
+	prepare_ddslick();
 }
 
 //returns to the initial screen
@@ -419,6 +395,8 @@ function bt_sandbox(){
 
 //loads an existing conversation
 function bt_join_ok(){
+	if (conversation == ""){return;}
+	
     document.getElementById("join_panel").setAttribute("style", "left: -70%");
     window.location.href = "?c=" + conversation;
 }
@@ -427,11 +405,39 @@ function bt_join_ok(){
 //creates a new conversation
 function bt_new_ok(){
 
+	var title = document.getElementById("new_title").value,
+		content = document.getElementById("new_firstcomment").value,
+		author = document.getElementById("new_name").value,
+		time = Math.floor((new Date()).getTime() / 1000);
+	
+	var radios = document.getElementsByName('typeconv');
+	var ispublic = false;
+	    if (radios[0].checked) {
+		ispublic = true;
+	    }
+
+	if (title==""){
+		var alert = document.getElementById("titlealert");
+		alert.innerHTML = "Write a title first";
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+		return;
+	}
+	
+	if (content==""){
+		var alert = document.getElementById("firstthoughtalert");
+		alert.innerHTML = "Write something first";
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+		return;
+	}
+
+	if (author == ""){author = "anonymous"};
+	
+		
 	document.getElementById("new_panel").setAttribute("style", "left: -65%");
 	
 	clearTimeout(pulses);
 	
-        Model.clear(IncomaEmptyModel);
+    Model.clear(IncomaEmptyModel);
 	
 	title = document.getElementById("new_title").value;
 	content = document.getElementById("new_firstcomment").value;
@@ -439,13 +445,17 @@ function bt_new_ok(){
 	time = Math.floor((new Date()).getTime() / 1000);
 	if (author == ""){author = "anonymous"};
 	
+	var radios = document.getElementsByName('typeconv');
+	var ispublic = false;
+	    if (radios[0].checked) {
+		ispublic = true;
+	    }
+
 	$("#headerNamebox")[0].value = author;
 	Model.currentAuthor(author);
 	
 	Model.createNode(1, content, author, time); //creates the initial node, type="general"
 	
-	
-	var ispublic = true; //todo - option to choose between public or private conversation
 
 	//creates the tables for the new conversation and stores the first node
 	conversation = hashit2(title + content + author + time);
@@ -461,6 +471,76 @@ function bt_new_ok(){
 		window.location.href = "?c=" + conversation;
 	},700);
 	
+}
+
+
+function prepare_ddslick(){
+	
+	//obtains the width of join_panel (where the 'join' menu elements are) to adapt the width of the ddslick select control
+	element = document.getElementById('join_panel');
+	style = window.getComputedStyle(element);
+	panelwidth = parseInt(style.getPropertyValue('width'))*.99;
+	
+	
+	//adds the information to the elements of the ddslick selector
+	var ddData = [];
+	
+	for (var i=0;i<conversationlist.length;i++){
+		ddData.push({
+			text: conversationlist[i].title,
+			value: i,
+			selected:false,
+			description: "Number of thoughts: " + conversationlist[i].thoughtnum + " &nbsp&nbsp&nbsp&nbsp&nbsp Created: " + timeAgo(conversationlist[i].creationtime) + " &nbsp&nbsp&nbsp&nbsp&nbsp Last activity: " + timeAgo(conversationlist[i].lasttime)
+		});
+	}
+	
+
+	//reinitiates and defines the properties and the onSelected actions of the ddslick selector
+	$('#selectconversation').ddslick('destroy');
+	
+	$('#selectconversation').ddslick({
+		data: ddData,
+		selectText: "Select a conversation...",
+		width: panelwidth,
+		height:panelwidth*0.60,
+		background: "#fff",
+		onSelected: function(selectedData){
+			conversation = conversationlist[selectedData.selectedIndex].hash;
+		}
+	});
+}
+
+
+function orderconversationlist(order){
+	
+	switch (order){
+		
+	case "1": //by last activity		
+		conversationlist.sort(function(a,b){
+			return b.lasttime - a.lasttime;
+		});
+		break
+		
+	case "2": //by number of thoughts	
+		conversationlist.sort(function(a,b){
+			return b.thoughtnum - a.thoughtnum;
+		});
+		break
+
+	case "3": //by creationtime	
+		conversationlist.sort(function(a,b){
+			return b.creationtime - a.creationtime;
+		});
+		break
+
+	case "4": //by title		
+		conversationlist.sort(function(a,b){
+			return (a.title).localeCompare(b.title);
+		});
+		break
+	}
+		
+	prepare_ddslick();
 }
 
 
