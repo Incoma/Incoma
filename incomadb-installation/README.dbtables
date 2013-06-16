@@ -1,0 +1,53 @@
+********** Description of tables of the database.
+
+** Types of fields:
+
+tinytext = 255 characters
+text = 65535 characters
+mediumtext = 16777215 characters
+longtext = 4294967295 characters
+
+tinyint = from -128 to 127
+int = from -2147483648 to 2147483647
+bigint = from -9223372036854775808 to 9223372036854775807
+
+** Limits of fields:
+
+"title" maxlength="100"
+"comment" maxlength="5000"
+"name" maxlength="20"
+
+** Tables:
+
+conversations:
+| hash         | tinytext   |
+| title        | tinytext   |
+| thoughtnum   | int(11)    |
+| lasttime     | bigint(20) |
+| creationtime | bigint(20) |
+| ispublic     | tinyint(4) |
+| language     | tinytext   |
+
+nodes_*:
+| hash        | bigint(20) |
+| content     | text       |
+| evalpos     | int(11)    |
+| evalneg     | int(11)    |
+| evaluatedby | longtext   |
+| type        | int(11)    |
+| author      | tinytext   |
+| seed        | tinyint(4) |
+| time        | bigint(20) |
+
+links_*:
+| hash        | bigint(20) |
+| source      | bigint(20) |
+| target      | bigint(20) |
+| direct      | tinyint(4) |
+| evalpos     | int(11)    |
+| evalneg     | int(11)    |
+| evaluatedby | longtext   |
+| type        | int(11)    |
+| author      | tinytext   |
+| time        | bigint(20) |
+

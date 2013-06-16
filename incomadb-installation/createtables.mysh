@@ -1,0 +1,12 @@
+use incoma
+create table conversations (hash tinytext, title tinytext, thoughtnum int, lasttime bigint, creationtime bigint, ispublic tinyint, language tinytext);
+create table nodes_sandbox ( hash bigint, content text, evalpos int, evalneg int, evaluatedby longtext, type int, author tinytext, seed tinyint, time bigint );
+create table links_sandbox ( hash bigint, source bigint, target bigint, direct tinyint, evalpos int, evalneg int, evaluatedby longtext, type int, author tinytext, time bigint);
+
+//insert into nodes_sandbox values(0,'Prueba nodo 0',4,0,'',1,'Mike','17-abr-2013');
+//insert into nodes_sandbox values(1,'Prueba nodo 1',1,0,'',1,'Moke','18-abr-2013');
+//insert into links_sandbox  values(0,0,1,1,0,'',1,'Moe','1367393737376');
+//insert into public_conversations values(0,'sandbox',2,'1367393737376');
+
+
+

@@ -1,6 +1,4 @@
-The files in this directory are the PHP/MySQL version of Incoma which uses the MySQL database to store the conversations. 
-In the local-version directory can be found a local version of Incoma that does not use PHP or MySQL. This version can export/import conversations to files.
-
+The default index.php version is the PHP/MySQL version of Incoma which uses the MySQL database to store the conversations. A local version without PHP/MySQL can be executed loading index-local.html
 
 Files/Modules:
 
@@ -63,10 +61,19 @@ Some json predefined models,
 - menumodel (for the animated background of the initial menu)
 
 
-"index.php"/"index.html" (PHP-MySQL/local version)
+"index.php"/"index-local.html" (PHP-MySQL/local version)
 =================
 The php/html file which puts it all together
 
 "*.php" files
 =================
-These files are used in the PHP-MySQL version to read/write in the database. All the calls to these files are done in the index.php file.
+These files are used in the PHP-MySQL version to read/write in the database. All the calls to these files are done in the index.php file
+
+file-maps folder
+=================
+The MAP files contain the functions defined in each file, and some of the calls. We hope these files helps you to understand better the code
+
+incomadb-installation
+=================
+Scripts to configurate the MySQL database, and definitions of the tables. Check that each script worked properly after using them.
+

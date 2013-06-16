@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
 <link rel="stylesheet" href="plugins/ezMark-master/css/ezmark.css" media="all">
@@ -20,25 +20,25 @@
 
     <div id="headerMain">
         <div id="headerName" class="header noselect">
-        <a  id="headerName" href="http://think.incomaproject.org">
+        <a  id="headerName" href="http://think.incomaproject.org/es">
             INCOMA<sup>beta</sup></a>
         </div>
 		<div id="headerMenu"  class="header noselect" onclick="bt_menu()" style="visibility:hidden;">
-            Menu
+            Menú
         </div>
         <a id="headerUrl" class="header" href="http://incomaproject.org" target="_blank">
             incomaproject.org
         </a>
         <div id="headerLangSelection" class="header noselect">
-			Language:
+			Idioma:
             <select id="headerlangselect" class="header noselect" onchange="changelanguage(this)">
-				<option value="English" selected="selected">English</option>
-				<option value="Spanish">Spanish</option>
-				<option value="More">More languages</option>
+				<option value="English" >Inglés</option>
+				<option value="Spanish" selected="selected">Español</option>
+				<option value="More">Más idiomas</option>
             </select>
         </div>
         <div id="headerUsername" class="header noselect" style="visibility:hidden;">
-            Name:&nbsp;
+            Nombre:&nbsp;
             <textarea id='headerNamebox' class="header" spellcheck='false' maxlength='20'></textarea>
         </div>
         <div id="headerExport" class="header noselect" style="visibility:hidden;">
@@ -48,11 +48,10 @@
 <!-- This tag will be filled by the visualization scripts -->
     <div id="visualisationMain">
 		<div id="noconversation_panel" class="language_panel shadow noselect" style="position:absolute; visibility:hidden;">
-			There is no conversation with this URL.
-			<div id="noconversation_button" class="language_button button" onclick="bt_menu();">Go to menu</div>
+		No existe ninguna conversación con esta dirección.
+		<div id="noconversation_button" class="language_button button" onclick="bt_menu();">Ir al menú</div>
 		</div>
     </div>  
-
 
 <!-- Javascript -->
 <!-- opensave: Open and save conversations -->
@@ -80,7 +79,7 @@ $(function() {$('.resizable').resizable();});
 
 <script>
 
-	weblanguage = "English";
+	weblanguage = "Spanish";
 
 	//gets the current user name from the name box in the header
     var author = $("#headerNamebox")[0];
@@ -209,14 +208,13 @@ $(function() {$('.resizable').resizable();});
 		data.nodes.pop();
 		data.links.pop();
 		modelfromdb =  { nodes: data.nodes, links: data.links, authors: []};
-		}).fail(function(data) {
-	        });
+		});
 	}
 	
 	
 	function db_generatemodel(){
 	//From the previous DB conversation generate a valid JS conversation
-	
+		
 		var nodesjs=modelfromdb.nodes;
 		var linksjs=modelfromdb.links;
 		var numnodesdb=modelfromdb.nodes.length;
@@ -408,9 +406,9 @@ $(function() {$('.resizable').resizable();});
 	function changelanguage(selection){
 	
 		switch (selection.value){
-			case "Spanish":
-				weblanguage = "Spanish";
-				var str = (conversation == "") ? "/es" : "/es/?c=" + conversation;
+			case "English":
+				weblanguage = "English";
+				var str = (conversation == "") ? "../" : "../?c=" + conversation;
 				window.location.href = str;
 				
 				break;
@@ -543,40 +541,40 @@ $(function() {$('.resizable').resizable();});
 		var interval = Math.floor(seconds / 31536000);
 
 		if (interval > 1) {
-			return interval + " years ago";
+			return "hace " + interval + " años";
 		}
 		if (interval > 0) {
-			return interval + " year ago";
+			return "hace " + interval + " año";
 		}
 		interval = Math.floor(seconds / 2592000);
 		if (interval > 1) {
-			return interval + " months ago";
+			return "hace " + interval + " meses";
 		}
 		interval = Math.floor(seconds / 86400);
 		if (interval > 1) {
-			return interval + " days ago";
+			return "hace " + interval + " días";
 		}
 		if (interval > 0) {
-			return interval + " day ago";
+			return "hace " + interval + " día";
 		}
 		interval = Math.floor(seconds / 3600);
 		if (interval > 1) {
-			return interval + " hours ago";
+			return "hace " + interval + " horas";
 		}
 		if (interval > 0) {
-			return interval + " hour ago";
+			return "hace " + interval + " hora";
 		}
 		interval = Math.floor(seconds / 60);
 		if (interval > 1) {
-			return interval + " minutes ago";
+			return "hace " + interval + " minutos";
 		}
 		if (interval > 0) {
-			return interval + " minute ago";
+			return "hace " + interval + " minuto";
 		}
 		if (seconds > 1) {
-			return seconds + " seconds ago";
+			return "hace " + interval + " segundos";
 		}
-		return "just now";
+		return "ahora mismo";
 	}
 
 

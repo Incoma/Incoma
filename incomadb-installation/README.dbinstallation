@@ -1,0 +1,8 @@
+mysql -u root -p < createemptydb.mysh
+mysql -u root -p < createuser.mysh
+mysql -u root -p < giveperms.mysh
+
+
+mysql -u THEUSERNAME -p < createtables.mysh
+
+
