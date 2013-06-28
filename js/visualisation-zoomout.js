@@ -123,7 +123,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.width = $(window).width();
     this.height = $(window).height()-50;
     this.filtershelp = true;
-    this.darkerarrowsseeds = 1;
+    this.darkerarrowsseeds = 2;
 	this.showfilters = true;
 	
     this.bordercolor = {
@@ -278,7 +278,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			handles: 'w',
 			minWidth: 335,
   			resize: function() {
-				$("#right_bar").height('auto');
 				$(this).css("left", 0);
 			}
 		});
@@ -1209,17 +1208,23 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		
         this.click = function (d) {
+		
+			var fillopacity = PRES.svg.selectAll(".node")
+									.filter(function (e) {return e.hash == d.hash;})
+									.style("fill-opacity");	
+									
+			if (fillopacity == 0){
+				PRES.liveAttributes.backgroundclick;
+				return;
+			};
+				
 			if (ABSTR.creatinglink && selectedconnectlinktype != 0){
 				if (d.hash != ABSTR.clickednodehash && !existingconnection(ABSTR.clickednodehash,d.hash)){
 					savelink(d);
 				}
-			}else{
-				var fillopacity = 	PRES.svg.selectAll(".node")
-									.filter(function (e) {return e.hash == d.hash;})
-									.style("fill-opacity");	
-									
-				if (fillopacity == 0){return};
 				
+			}else{
+			
 				hidelinkselect();
 				
 				ABSTR.clickednodehash = d.hash;
@@ -1703,8 +1708,6 @@ function createnode(PRES){
 		addseed(newnode);
 	}
 	
-	ABSTR.clickednodehash = "";
-	ABSTR.clickedhash = "";
 }
 
 function drawnewlinks() {
@@ -2574,6 +2577,7 @@ function definerenormalization(){
 	var maxnodesize = 30;
 	var minlinksize = 1;
 	var maxlinksize = 9;
+	var variation = 5; //sets the variation of the sizes, they are bigger when 'variation' is closer to zero.
 	
 	// var evalminlimit = -10;
 	// var evalmaxlimit = 15;
@@ -2589,8 +2593,8 @@ function definerenormalization(){
 	// var maxdomain = (maxeval > evalmaxlimit) ? maxeval+1 : evalmaxlimit;
 	// var mindomain = (mineval < evalminlimit) ? mineval-1 : evalminlimit;
 	
-	var maxdomain = maxeval + 10;
-	var mindomain = mineval - 10;
+	var maxdomain = maxeval + variation;
+	var mindomain = mineval - variation;
 	
 	PRES.renormalizednode=d3.scale.linear().domain([mindomain,1,maxdomain]).range([minnodesize,PRES.nodeSizeDefault,maxnodesize]);
 	PRES.renormalizednode.clamp(true);
@@ -2605,8 +2609,8 @@ function definerenormalization(){
 	// var maxdomain = (maxeval > evalmaxlimit) ? maxeval+1 : evalmaxlimit;
 	// var mindomain = (mineval < evalminlimit) ? mineval-1 : evalminlimit;
 	
-	var maxdomain = maxeval + 5;
-	var mindomain = mineval - 5;
+	var maxdomain = maxeval + variation;
+	var mindomain = mineval - variation;
 	
 	PRES.renormalizedlink=d3.scale.linear().domain([mindomain,1,maxdomain]).range([minlinksize,PRES.linkStrokeWidthDefault,maxlinksize]);
 	PRES.renormalizedlink.clamp(true);
