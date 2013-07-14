@@ -99,9 +99,11 @@ body {
 
 #headerMenu {
     position: absolute;
-    left: 450px;
+    left: 440px;
+    border: solid thin #ddd;
+    padding:2px 0.5em;
+	margin:10px 20px 0px 0px;
     font-size: 11pt;
-	line-height: 45px;
 	cursor:pointer;
 }
 
@@ -122,7 +124,6 @@ body {
   border: solid thin #ddd;
   padding: 0px 5px;
   background: rgba(0,0,0,0);
-
 }
 
 

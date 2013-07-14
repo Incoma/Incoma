@@ -1,0 +1,5 @@
+use mysql;
+GRANT ALL PRIVILEGES ON NAMEOFTHEDATABASE.* TO THEUSERNAME@localhost;
+flush privileges;
+
+

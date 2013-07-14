@@ -27,7 +27,7 @@ body {
   top: 60px;
   padding:5px;
   margin-left: 15px;
-  width: 120px;
+  width: 106px;
   border: solid 2px rgba(0,0,0,0);
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -37,6 +37,7 @@ body {
 .left_bar_header {
   padding: 0px;
   background: rgba(0,0,0,0);
+  text-align:center;
 }
 
 .zoombutton{
@@ -45,12 +46,82 @@ body {
 	height: 20px;
 	background: #fff;
 	text-align: center;
-	border: solid;
 	border: solid 1px #888;
 	font-weight: 400;
 	font-size:11pt;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
 }
 
+.showevolution{
+  position:absolute;
+  top:100px;
+  left:20px;
+  display:inline;
+  float:left;
+  width:100px;
+  text-align:center;
+  padding: 5px;
+  border: solid 1px #888;
+  background: rgba(245, 245, 245,0.8);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.controlevolution{
+  position:absolute;
+  top:130px;
+  left:20px;
+  float:left;
+  width:140px;
+  margin-left:0px;
+  height:18px;
+  line-height:15px;
+  text-align:center;
+  padding: 5px 5px 5px 0px;
+  border: solid 1px #888;
+  background: rgba(245, 245, 245,0.8);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius:5px;
+}
+
+.evolutioncontrols{
+  display:inline;
+  padding: 0px 0px 0px 10px;
+  width:22px;
+  font-weight:700;
+  text-align:center;
+  cursor:pointer;
+}
+
+.evolutionvelocity{
+  display:inline-block;
+  padding: 0px 0px;
+  width:40px;
+  font-size:9pt;
+  text-align:center;
+  cursor:default;
+}
+.evolutionclose{
+	float:right;
+	border: solid 1px #888;
+	color:#444;
+	font-size:11pt;
+	font-weight:400;
+	line-height:13px;
+	width:16px;
+	height:16px;
+	margin: 0px 0px 5px 0px;
+	text-align:center;
+	cursor:pointer;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius:3px;
+}
 
 .title_container{
   position:absolute;
@@ -64,11 +135,13 @@ body {
 .conversation_title {
   display:inline;
   padding:6px 20px;
-  border: solid 1px #888;
+  border: solid 2px #bbb;
   border-top:none;
-  background: rgba(245, 245, 245,0.8);
+  background: rgba(255, 255, 255,1);
+  -webkit-border-bottom-left-radius: 5px;
   -moz-border-bottom-left-radius: 5px;
   border-bottom-left-radius:5px;
+  -webkit-border-bottom-right-radius: 5px;
   -moz-border-bottom-right-radius: 5px;
   border-bottom-right-radius:5px;
 }
@@ -76,7 +149,7 @@ body {
 
 .tutorial_panel {
   position: absolute;
-  top: 95px;
+  top: 149px;
   left: 10px;
   font-size:9pt;
   padding:8px 12px;
@@ -116,7 +189,6 @@ body {
 	text-align:right;
 }
 
-
 .language_panel {
   position: absolute;
   top: 310px;
@@ -153,23 +225,67 @@ body {
   float:right;
   width:325px;
   min-width:325px;
-  padding: 10px 10px 13px 10px;
+  padding: 0px 10px 12px 10px;
   height:100%;
-  background: rgba(245, 245, 245,0.6);
+  background: rgba(245, 245, 245,0.8);
   border-left: solid 1px #bbb;
   border-bottom: solid 1px #bbb;
+  -webkit-border-bottom-left-radius: 10px;
   -moz-border-bottom-left-radius: 10px;
   border-bottom-left-radius:10px;
 }
 
-.hidden_right_bar{
-  float:right;
-  width:400px;
-  min-width:400px;
-  padding: 10px 10px 13px 10px;
-  height:100%;
-  -moz-border-bottom-left-radius: 10px;
-  border-bottom-left-radius:10px;
+.changevisualization{
+	display: inline-block;
+	width: 100px;
+	height: 20px;
+	background: #dee9ed;
+	text-align: center;
+	margin: 5px 0px 5px 0px;
+	line-height:20px;
+	font-size: 10pt;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+.timevisdiv{
+  width:100%;
+  border-top: solid 1px #bbb;
+  overflow: auto;
+  padding: 0px 0px 20px 0px;
+}
+
+.divnodelegend {
+  text-align:left;
+  margin:0px 10px 0px 15px;
+  color: #222;
+}
+
+.divnodecontent {
+
+  padding: 4px 5px 7px 5px;
+
+  display:relative;
+  margin: 2px 10px 0px 10px;
+
+  min-height: 22px;
+  max-height: 2000px;
+  background: rgb(255,255,255);
+  border: solid 1px #000;
+  border-color: #000;
+  resize: vertical;
+  overflow:auto;
+  cursor: default;
+  word-wrap: break-word;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius:5px;
+}
+
+.divnodeinteract {
+  margin:0px 10px 0px 15px;
+  color: #222;
+  height:24px;
 }
 
 #rightpanel{
@@ -209,14 +325,45 @@ body {
   border: solid 1px #bbb;
   resize: vertical;
   overflow:auto;
-  cursor: default;
+  cursor: text;
   word-wrap: break-word;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
   -moz-border-bottom-left-radius: 5px;
   -moz-border-bottom-right-radius: 5px;
   border-bottom-left-radius:5px;
   border-bottom-right-radius:5px;
 }
 
+.justbutton{
+	border: solid 1px #666;
+
+
+
+
+
+
+
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	cursor: pointer;
+}
+
+
+div.justbutton:hover{
+
+	border-color: #c33;
+}
+
+
+div.justbutton:active{
+
+	-webkit-box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5); 
+}
 .button{
 	border: solid 1px #555;
 	-webkit-border-radius: 3px;
@@ -228,7 +375,7 @@ body {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
-	cursor: default;
+	cursor: pointer;
 }
 
 div.button:hover{
@@ -241,35 +388,14 @@ div.button:active{
 	box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5); 
 }
 
-.littlebutton{
-	border-color: #555;
-	-webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius:3px;
-	-webkit-box-shadow: -1px 1px 1px 0px rgba(0, 0, 0, 0.5);
-	box-shadow: -1px 1px 1px 0px rgba(0, 0, 0, 0.5); 
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	user-select: none;
-	cursor: default;
-}
-
-.littlebutton:hover{
-	border-color: #c33;
-}
-
-.littlebutton:active{
-	-webkit-box-shadow: inset -1px 1px 1px 0px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: inset -1px 1px 1px 0px rgba(0, 0, 0, 0.5);
-	box-shadow: inset -1px 1px 1px 0px rgba(0, 0, 0, 0.5); 
-}
 .evalbutton{
-	border-color: #888;
+	border-color: #666;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
-	cursor: default;
+	cursor: pointer;
 	-webkit-box-shadow: -1px 1px 2px 0px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: -1px 1px 2px 0px rgba(0, 0, 0, 0.5);
 	box-shadow: -1px 1px 2px 0px rgba(0, 0, 0, 0.5); 
 }
 
@@ -283,30 +409,13 @@ div.evalbutton:active{
 	box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5); 
 }
 
-div.showreplypanel2{
-	display: inline-block;
-	width: 90px;
-	height: 35px;
-	text-align: center;
-	margin: 10px 6px 0px 3px;
-	line-height:35px;
-	font-size: 11pt;
-	
-	background: rgba(214,209,255,1);
-	background: -moz-linear-gradient(top, rgba(214,209,255,1) 0%, rgba(179,176,255,1) 100%);
-	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(214,209,255,1)), color-stop(100%, rgba(179,176,255,1)));
-	background: -webkit-linear-gradient(top, rgba(214,209,255,1) 0%, rgba(179,176,255,1) 100%);
-	background: -o-linear-gradient(top, rgba(214,209,255,1) 0%, rgba(179,176,255,1) 100%);
-	background: -ms-linear-gradient(top, rgba(214,209,255,1) 0%, rgba(179,176,255,1) 100%);
-	background: linear-gradient(to bottom, rgba(214,209,255,1) 0%, rgba(179,176,255,1) 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d6d1ff', endColorstr='#b3b0ff', GradientType=0 );
-}
+
 
 div.showreplypanel{
 	display: inline-block;
 	width: 90px;
 	height: 35px;
-	background: #b6ced8;
+	background: #dee9ed;
 	text-align: center;
 	margin: 10px 6px 0px 3px;
 	line-height:35px;
@@ -321,8 +430,74 @@ div.showconnectpanel{
 	margin: 10px 0px 0px 6px;
 	line-height:35px;
 	font-size: 11pt;
-	background: #b6ced8;
+	background: #dee9ed;
 }
+div.smallshowreplypanel{
+	display: inline-block;
+	width: 64px;
+	height: 20px;
+	background: #dee9ed;
+	text-align: center;
+	margin: 1px 3px 0px 3px;
+	line-height:20px;
+	font-size: 9pt;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+div.smallshowconnectpanel{
+	display: inline-block;
+	width: 55px;
+	height: 20px;
+	text-align: center;
+	margin: 1px 0px 0px 3px;
+	line-height:20px;
+	font-size: 9pt;
+	background: #dee9ed;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+div.smallevalpos{
+    display:inline-block;
+	width: 25px;
+	height: 16px;
+	padding-top:2px;
+	background: #a3ec93;
+	border: solid 1px #666;
+	color:#333;
+	font-size: 8pt;
+	text-align: center;
+	margin: 0px 0px 0px 10px;
+	-webkit-border-bottom-left-radius: 8px;
+    -webkit-border-top-left-radius: 8px;
+	-moz-border-bottom-left-radius: 8px;
+    -moz-border-top-left-radius: 8px;
+	border-bottom-left-radius:8px;
+	border-top-left-radius:8px;
+}
+
+div.smallevalneg{
+    display:inline-block;
+	width: 25px;
+	height: 16px;
+	padding-top:2px;
+	background: #f2a6a6;
+	color:#333;
+	border: solid 1px #666;
+	font-size: 8pt;
+	text-align: center;
+	margin: 0px 6px 0px 0px;
+    -webkit-border-bottom-right-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
+    -moz-border-bottom-right-radius: 8px;
+    -moz-border-top-right-radius: 8px;
+    border-bottom-right-radius:8px;
+    border-top-right-radius:8px;
+}
+
 
 div.save{
     display:inline-block;
@@ -330,7 +505,7 @@ div.save{
 	width: 60px;
 	height: 22px;
 	line-height:20px;
-	background: #b6ced8;
+	background: #dee9ed;
 	text-align: center;
 	margin-right: 10px;
 	margin-bottom: 3px;
@@ -342,7 +517,7 @@ div.cancel{
 	width: 60px;
 	height: 22px;
 	line-height:20px;
-	background: #b6ced8;
+	background: #dee9ed;
 	text-align: center;
 	
 }
@@ -358,6 +533,8 @@ div.evalpos{
 	font-size: 9pt;
 	text-align: center;
 	margin: 9px 0px 3px 10px;
+	-webkit-border-bottom-left-radius: 8px;
+    -webkit-border-top-left-radius: 8px;
 	-moz-border-bottom-left-radius: 8px;
     -moz-border-top-left-radius: 8px;
 	border-bottom-left-radius:8px;
@@ -375,6 +552,8 @@ div.evalneg{
 	font-size: 9pt;
 	text-align: center;
 	margin: 9px 6px 3px 0px;
+    -webkit-border-bottom-right-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
     -moz-border-bottom-right-radius: 8px;
     -moz-border-top-right-radius: 8px;
     border-bottom-right-radius:8px;
@@ -417,12 +596,31 @@ div.evalneg{
   box-sizing: border-box;
 }
 
+
+.areareplysum {
+  padding: 2px 2px 2px 2px;
+  min-height: 0px;
+  height: 24px;
+  width:100%;
+  background: rgb(255,255,255);
+  border: solid 1px #bbb;
+  resize: vertical;
+  overflow:auto;
+	-webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius:5px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+
 .areaname {
   display: inline-block;
   position: relative;
   top: 5px;
   border: yes;
-  width: 120px;
+  width: 106px;
   height: 20px;
   resize: none;
 }
@@ -431,40 +629,28 @@ div.evalneg{
 .replysavecancel{
   float: right;
   padding:7px 0px 0px 0px;
+  height:26px;
 }
 
-.legend_bar {
-  position: absolute;
-  bottom: -82px;
-  background: rgba(204,204,255,0.7);
-  width: 99%;
-  height: 188px;
-  border: solid 1px rgba(51,51,153, 0.6);
-  cursor: default;
-  margin-left:0.5%;
-  margin-right:0.5%;
-	-webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius:10px;
-  -webkit-transition: bottom 700ms;
-  transition: bottom 700ms;
-}
+
 
 .lower_bar {
   position: absolute;
   bottom: -75px;
-  background: rgba(204,204,255,0.7);
   width: 97.7%;
   left:1%;
   margin-right:1%;
   padding:1px;
-  height: 201px;
-  border: solid 1px rgba(51,51,153, 0.6);
+  height: 175px;
+  background: rgba(245, 245, 245,0.7);
+  border: solid 1px #bbb;
   cursor: default;
 	-webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
   -webkit-transition: bottom 500ms, border-color 300ms;
+  -moz-transition: bottom 500ms, border-color 300ms;
+  -o-transition: bottom 500ms, border-color 300ms;
   transition: bottom 500ms, border-color 300ms;
 }
 
@@ -477,7 +663,8 @@ div.evalneg{
 }
 
 .lower_hide {
-  position: relative;
+  position: absolute;
+  left:90%;
   width: 10%;
   height: 100%;
   cursor: default;
@@ -489,8 +676,6 @@ div.lower_hide_button{
 	width:70px;
 	cursor: pointer;
 }
-
-
 
 .lower_title {
   position: absolute;
@@ -507,8 +692,8 @@ div.lower_hide_button{
 .lower_nodes {
   position: relative;
   top:30px;
-  left:12%;
-  width: 19%;
+  left:6%;   
+  width: 24%;
   height: 100%;
   cursor: default;
 }
@@ -516,7 +701,7 @@ div.lower_hide_button{
 .lower_links {
   position: relative;
   top:30px;
-  left:15%;
+  left:10%;
   width: 36%;
   height: 100%;
   cursor: default;
@@ -525,10 +710,30 @@ div.lower_hide_button{
 .lower_sizes {
   position: relative;
   top:30px;
-  left:20%;
+  left:15%;
   width: 10%;
   height: 100%;
   cursor: default;
+}
+
+.lower_showtexts {
+  position: relative;
+  top:70px;
+  left:18%;
+  width: 10%;
+  float:left; 
+  color:#777; 
+  cursor: pointer;
+}
+
+.lower_showsums {
+  position: relative;
+  top:50px;
+  left:8%;
+  width: 15%;
+  float:left; 
+  color:#777; 
+  cursor: pointer;
 }
 
 
@@ -548,21 +753,6 @@ div.noselect{
 	-webkit-box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.3);
 	-moz-box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.3);
 	box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.3); 
-}
-
-
-.hidepanel {
-  position: fixed;
-  top:50px;
-  left:0px;
-  width: 100%;
-  height:100%;
-  background:rgba(255,255,255,1);
-  opacity:1;
-	-webkit-transition-property: opacity;
-    -webkit-transition-duration: 2800ms;
-    transition-property: opacity;
-    transition-duration: 2800ms;
 }
 
 
@@ -604,8 +794,8 @@ div.noselect{
 	position: fixed;
 	top:13%;
 	left:140%;
-	height: 305px;
-	padding:25px;
+	height: 345px;
+	padding:15px;
 	background: rgba(65,99,233,0.1);
 	border: solid 1px #ccc;
 	-webkit-border-radius: 20px;
@@ -716,7 +906,7 @@ div.big_button:active{
 	position:absolute;
 	left:5%;
 	width: 90%;
-	bottom: -10px;
+	bottom: -12px;
 }
 
 .bt_panel2{
@@ -730,33 +920,36 @@ div.big_button:active{
 .conv_ok{
 	display: inline-block;
 	position:relative;
-	width: 100px;
-	height: 40px;
-	margin:20px;
+	width: 90px;
+	height: 35px;
+	margin:0px 20px 20px 0px;
 	background: #b6ced8;
 	text-align: center;
-	line-height:40px;
-	font-size: 13pt;
+	line-height:35px;
+	font-size: 12pt;
 }
 
 .conv_cancel{
 	display: inline-block;
 	position:relative;
-	width: 100px;
-	height: 40px;
-	margin:20px;
+	width: 90px;
+	height: 35px;
+	margin:0px 20px 20px 0px;
 	background: #b6ced8;
 	text-align: center;
-	line-height:40px;
-	font-size: 13pt;
+	line-height:35px;
+	font-size: 12pt;
 }
 
 .new_header {
-  padding: 4px 4px 4px 4px;
+  width: 98%;
   background: rgb(227,226,230);
   border: solid 1px #aaa;
   height:22px;
+  padding: 4px 4px 4px 4px;
   text-align:center;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
   -moz-border-top-left-radius: 5px;
   -moz-border-top-right-radius: 5px;
   border-top-left-radius:5px;
@@ -764,20 +957,20 @@ div.big_button:active{
 }
 
 .new_title {
-  display: inline-block;
-  position: relative;
-  width: 365px;
+  width: 98%;
   height: 20px;
   border: solid 1px #aaa;
+  padding: 4px 4px 4px 4px;
   resize: none;
   margin-top:-1px;
 }
 
 .new_first {
   display: inline-block;
-  width: 365px;
+  width: 98%;
+  padding: 4px 4px 4px 4px;
   min-height: 0px;
-  height: 54px;
+  height: 60px;
   max-height:180px;
   border: solid 1px #aaa;
   resize: vertical;
@@ -785,12 +978,11 @@ div.big_button:active{
 }
 
 .new_name_header {
-  padding: 4px 4px 4px 4px;
-  background: rgb(227,226,230);
-  border: solid 1px #aaa;
-  height:16px;
-  width:142px;
-  text-align:center;
+  padding: 0px 4px 3px 4px;
+  height:15px;
+  text-align:left;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
   -moz-border-top-left-radius: 5px;
   -moz-border-top-right-radius: 5px;
   border-top-left-radius:5px;
@@ -800,26 +992,31 @@ div.big_button:active{
 .new_name {
   display: inline;
   position: relative;
+  padding:3px 3px 2px 3px;
   width: 150px;
-  height: 20px;
+  height: 18px;
   border: solid 1px #aaa;
   margin-bottom: 5px;
-  text-align: center;
+  text-align: left;
   resize: none;
   margin-top:-1px;
+	-webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius:5px;
 }
 
 .new_selectlanguage {
   float:right; 
-  padding-right:20px; 
+  padding-right:5px; 
   text-align:left;
 }
 
 .radiosel {
   display: block;
   position:absolute;
-  bottom:65px;
-  left:62px;
+  margin-top:10px;
+  bottom:48px;
+  left:65px;
 }
 
 .node {
@@ -832,5 +1029,5 @@ div.big_button:active{
 
 .ui-resizable { position: relative;}
 .ui-resizable-handle { position: absolute;font-size: 0.1px;z-index: 99999; display: block; }
-.ui-resizable-w { cursor: w-resize; width: 14px; left: -7px; top: 0; height: 100%; }
+.ui-resizable-w { cursor: w-resize; width: 20px; left: -10px; top: 0; height: 100%; }
 

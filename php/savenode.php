@@ -13,8 +13,8 @@ mysql_connect(localhost,$username,$password);
 $newnodephparray = explode("####", $newnodephp);
 
 $sqlnode = 'INSERT INTO nodes_'.$conversation.
-	'( hash  , content , evalpos , evalneg , evaluatedby , type , author , seed , time) '.
-	'VALUES ( '.$newnodephparray[1].' , "'.$newnodephparray[3].'" , '.$newnodephparray[5].' , '.$newnodephparray[7].' , "'.$newnodephparray[9].'" , '.$newnodephparray[11].'  , "'.$newnodephparray[13].'" , '.$newnodephparray[15].' , '.time().' )';
+	'( hash  , content  , contentsum , evalpos , evalneg , evaluatedby , type , author , seed , time) '.
+	'VALUES ( '.$newnodephparray[1].' , "'.$newnodephparray[3].'" ,  "'.$newnodephparray[5].'" , '.$newnodephparray[7].' , '.$newnodephparray[9].' , "'.$newnodephparray[11].'" , '.$newnodephparray[13].'  , "'.$newnodephparray[15].'" , '.$newnodephparray[17].' , '.time().' )';
 	
 mysql_query($sqlnode);
 

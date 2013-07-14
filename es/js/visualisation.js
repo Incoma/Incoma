@@ -1,4 +1,4 @@
-﻿// module namespace:
+// module namespace:
 var Visualisations = {};
 
 /*

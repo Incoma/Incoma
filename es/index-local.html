@@ -8,7 +8,9 @@
 <link rel="stylesheet" media="screen and (min-height: 100px) and (max-height: 485px)" type="text/css" href="css/zoomout-small.css"/>
 
 <head>
-<title>INCOMA</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title  id="window_title">INCOMA</title>
+<link rel="shortcut icon" href="img/favicon.ico">
 </head>
 
 
@@ -18,7 +20,6 @@
 	<script type="text/javascript" language="Javascript" src="plugins/ezMark-master/js/jquery.ezmark.js"></script>
 
 <!-- HTML frame -->
-
 
     <div id="headerMain">
         <div id="headerName" class="header noselect">
@@ -30,31 +31,40 @@
 		<div id="headerMenu"  class="header noselect" onclick="bt_menu()" style="visibility:hidden;">
             Menú
         </div>
-        <a id="headerUrl" class="header noselect"  style="visibility:hidden;" href="http://incomaproject.org" target="_blank">
-            incomaproject.org
+        <a id="headerUrl" class="header" href="http://blog.incoma.org" target="_blank">
+<!-- (START) CHANGE FOR THE LOCAL NON-MYSQL VERSION -->
+<!-- (END)   CHANGE FOR THE LOCAL NON-MYSQL VERSION -->
         </a>
-        <div id="headerUsername" class="header noselect" style="visibility:hidden;">
-			Nombre:&nbsp;
-            <textarea id='headerNamebox' class="header" spellcheck='false' maxlength='20'></textarea></span>
-        </div>
         <div id="headerLangSelection" class="header noselect">
 			Idioma:
             <select id="headerlangselect" class="header noselect" onchange="changelanguage(this)">
-				<option value="English" selected="selected">Inglés</option>
-				<option value="Spanish">Español</option>
+				<option value="Spanish" selected="selected">Español</option>
+				<option value="English">Inglés</option>
+				<option value="More">Más idiomas</option>
             </select>
         </div>
 <!-- (START) CHANGE FOR THE LOCAL NON-MYSQL VERSION -->
+        <div id="headerExport" class="header noselect" style="visibility:hidden;">
+            <a class="header" href="" id="headerExportLink" >&nbsp;</a>
+        </div>
         <div id="headerImport" class="header noselect" style="">
-<!-- (END)   CHANGE FOR THE LOCAL NON-MYSQL VERSION -->
             Importar conversación:&nbsp;
         </div>
-        <div id="headerExport"  class="header noselect" style="visibility:hidden;">
-            <a href="" id="headerExportLink" >&nbsp;</a>
+<!-- (END)   CHANGE FOR THE LOCAL NON-MYSQL VERSION -->
+        <div id="headerUsername" class="header noselect" style="visibility:hidden;">
+            Nombre:&nbsp;
+            <textarea id='headerNamebox' class="header" spellcheck='false' maxlength='20'></textarea>
         </div>
+
     </div>
+<!-- This tag will be filled by the visualization scripts -->
     <div id="visualisationMain">
+		<div id="noconversation_panel" class="language_panel shadow noselect" style="position:absolute; visibility:hidden;">
+			No hay ninguna conversación con esta URL.
+			<div id="noconversation_button" class="language_button button" onclick="bt_menu();">Ir al menú</div>
+		</div>
     </div>  
+
 
 <!-- Javascript -->
 <!-- opensave: Open and save conversations -->
@@ -82,16 +92,16 @@ $(function() {$('.resizable').resizable();});
 
 <script>
 
-	var weblanguage = "English";
+ Model.title = "conversation";
+
+	weblanguage = "Spanish";
 
 	//gets the current user name from the name box in the header
     var author = $("#headerNamebox")[0];
     author.onchange = function(e) {
         Model.currentAuthor(author.value);
     };
-
-    //$("#headerlangselect")[0].onchange = changelanguage();
-     
+      
     function reInit(newVisualisation) {
         if (newVisualisation) {
             newVisualisation.init( $( "#visualisationMain" )[0], Model.model);
@@ -100,19 +110,20 @@ $(function() {$('.resizable').resizable();});
     
     var saveModelFile = function() { return Model.exportFile(); }
 
+//***************** (START) CHANGES FOR THE LOCAL NON-MYSQL VERSION ******************************
     var loadModelFile = function(file) {
-                            var fileName = file.name || "current conversation" ;
+                            var fileName = file.name || "conversación actual" ;
+//                            OpenSave.blobToText( file, function(text) { Model.importFile(text); reInit(Visualisations.current()); } );
                             OpenSave.blobToText( file, function(text) { Model.importFile(text); reInit(Visualisations.select(1)); } );
                         }; 
 
     OpenSave.addImportListener( $( "#headerImport" )[0], ".xml,.json,application/x-incoma", loadModelFile );
-    OpenSave.addExportListener( $( "#headerExport" )[0], "Export", "Incoma-conversation.json", saveModelFile );
-	
+//***************** (END) CHANGES FOR THE LOCAL NON-MYSQL VERSION ******************************
+    OpenSave.addExportListener( $( "#headerExport" )[0], "Exportar", "Incoma-conversation.json", saveModelFile );
 	
 	
 // dbcode ***
-// Here should be all the functions that call to the PHP code to interact with the MySQL database. In the local non-mysql version these are empty or have an alternative code
-
+// All the functions that call to the PHP code to interact with the MySQL database
 //***************** (START) DEFINITIONS FOR THE LOCAL NON-MYSQL VERSION ******************************
 	var conversation=""; 
 	var convlanguage=""; 
@@ -129,7 +140,8 @@ $(function() {$('.resizable').resizable();});
 			
 	} else {
 
-		db_loadconversation();	
+		db_loadconversation();
+		
 	};
 
 
@@ -155,32 +167,44 @@ $(function() {$('.resizable').resizable();});
 	function db_reloadconversation(){
 	}
 
+	
 	function db_gettitle(){
-    }
+	}
+	
+	
+	function db_gettags(){
+        }
 
-
+	
 	function db_getmodel(){
 	}
 	
-	function db_generatemodel(){		
+	
+	function db_generatemodel(){
 	}
+
 
 	function db_savenode(newnode){
 	}
 
+
 	function db_savelink(newlink){
 	}
+
 
 	function db_update_eval_node(variable,value){
 	}
 
+
 	function db_update_eval_link(variable,value){
 	}
 
-	function db_update_public_conv(){	
-	}	
 
-	function updateConversation(){		
+	function db_update_public_conv(){
+	}
+	
+
+	function updateConversation(){
 	}
 	
 
@@ -189,14 +213,18 @@ $(function() {$('.resizable').resizable();});
 	//@@language dependent
 	function changelanguage(selection){
 	
-		if (selection.value == "Spanish"){
-			
+		switch (selection.value){
+			case "English":
 //***** NEW DEFINITION	
-			var str = (conversation == "") ? "/es/index-local.html" : "/es/index-local.html?c=" + conversation;
-			window.location.href = str;
+			var str = (conversation == "") ? "/../index-local.html" : "/../index-local.html?c=" + conversation;
+			window.location.href = str;				
+				break;
+				
+			case "More":
+				break;
 		}
 	}
-
+	
 
 	function loadsandbox(){
 //***** NEW DEFINITION	
@@ -207,41 +235,40 @@ $(function() {$('.resizable').resizable();});
 
 		$('#tutorial_panel').delay(800).fadeIn(600)
 	        closetutorialpanel();
-
 	}
 
-
+	
 	function loadmenu(){
 //***** NEW DEFINITION	
-		window.location.href = "?";
+		window.location.href = "?";		
 	}
-
 
 
 	function createconvhash(string){
 //***** NEW DEFINITION	
 		var temphash = "non_db_version"
-		return temphash;	
+		return temphash;		
 	}
+
 
 //***************** (END) CHANGES FOR THE LOCAL NON-MYSQL VERSION ********************************
 
-
+	
 	function nodehashit(string){
 	// Create a hash to identify a node
 		var PRES = Visualisations.current().presentation;
 		nodes = PRES.force.nodes();
 		var current_model = Model.model;
 		current_model_nodeshashlist = [];
+		
 		for (var i=0;i<current_model.nodes.length;i++){	
 			current_model_nodeshashlist.push(current_model.nodes[i].hash);
 		}
 				
 		var temphash = hashit(string);
 
-        
 	    while($.inArray(temphash, current_model_nodeshashlist) > -1){
-		    var newstring = string + Date.now();
+			var newstring = string + Date.now();
 	        temphash = hashit(newstring);
 	    }
 	
@@ -255,6 +282,7 @@ $(function() {$('.resizable').resizable();});
 		links = PRES.force.links();
 		var current_model = Model.model;
 		current_model_linkshashlist = [];
+		
 		for (var i=0;i<current_model.links.length;i++){	
 			current_model_linkshashlist.push(current_model.links[i].hash);
 		}
@@ -269,7 +297,7 @@ $(function() {$('.resizable').resizable();});
 	    return temphash;
 	}
 
-	
+
 	function hashit(str){
 		// Generate a hash from a string (v1)
 		var hash = 5381;
@@ -302,7 +330,8 @@ $(function() {$('.resizable').resizable();});
 
 		return hash.join("");
 	}
-	
+
+
 	function timeAgo(date) {
 		// Transform Epoch timestamp in human time
 		var seconds = Math.floor(Date.now()/1000) - date;
@@ -347,5 +376,6 @@ $(function() {$('.resizable').resizable();});
 
 
 </script>
+
 </body>
 </html>

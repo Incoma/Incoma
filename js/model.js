@@ -14,31 +14,27 @@ var Model = {};
 
 // some static information
 
-Model.nodeTypesArray = ["General", "Question", "Answer", "Proposal", "Info"];
+Model.nodeTypesArray = ["General", "Question", "Proposal", "Info"];
 
-Model.linkTypesArray = ["General", "Agreement", "Disagreement", "Consequence", "Alternative" , "Answer", "Related", "Contradiction", "Equivalence", "No relation"];
+Model.linkTypesArray = ["General", "Agreement", "Disagreement", "Consequence", "Alternative", "Equivalence", "No relation"];
 
-Model.linkConnectTypesArray = ["Related", "Consequence", "Agreement", "Disagreement", "Alternative" , "Answer", "Contradiction", "Equivalence"];
+Model.linkConnectTypesArray = ["General", "Consequence", "Agreement", "Disagreement", "Alternative" , "Equivalence"];
 
 Model.nodeTypes = {
     "General" : {text: "General", value: 1, image: "img/node1.png"},
     "Question" : {text: "Question", value: 2, image: "img/node2.png"},
-    "Answer" : {text: "Answer", value: 3, image: "img/node3.png"},
-    "Proposal" : {text: "Proposal", value: 4, image: "img/node4.png"},
-    "Info" : {text: "Info", value: 5, image: "img/node5.png"},
+    "Proposal" : {text: "Proposal", value: 3, image: "img/node3.png"},
+    "Info" : {text: "Info", value: 4, image: "img/node4.png"},
 };
 
 Model.linkTypes = {
     "General" : {text: "General", value: 1, image: "img/link1.png"}, 
-    "Agreement" : {text: "Agreement", value: 3, image: "img/link3.png"},
-    "Disagreement" : {text: "Disagreement", value: 4, image: "img/link4.png"}, 
-    "Consequence" : {text: "Consequence", value: 2, image: "img/link2.png"}, 
-    "Alternative" : {text: "Alternative", value: 7, image: "img/link7.png"},
-    "Answer": {text: "Answer", value: 8, image: "img/link8.png"},
+    "Agreement" : {text: "Agreement", value: 2, image: "img/link2.png"},
+    "Disagreement" : {text: "Disagreement", value: 3, image: "img/link3.png"}, 
+    "Consequence" : {text: "Consequence", value: 4, image: "img/link4.png"}, 
+    "Alternative" : {text: "Alternative", value: 5, image: "img/link5.png"},
+	"Equivalence": {text: "Equivalence", value: 6, image: "img/link6.png"},
     "No relation": {text: "No relation", value: 0, image: "img/link0.png"},
-    "Related": {text: "Related", value: 5, image: "img/link5.png"},   // legacy
-    "Contradiction": {text: "Contradiction", value: 6, image: "img/link6.png"}, // legacy
-	"Equivalence": {text: "Equivalence", value: 9, image: "img/link9.png"},
 };
 
 
@@ -55,37 +51,38 @@ Model.connectionList = function(nodeType) {
     switch(nodeType) {
         // 1 = General
         case 1: 
-            return optionList( ["General", "Agreement", "Disagreement", "Consequence", "Alternative", "No relation"] );
+	//************************************
+	return optionList( ["General", "Agreement", "Disagreement", "Consequence", "Alternative", "Equivalence", "No relation"] );
+	//************************************
         // 2 = Question
         case 2: 
             return optionList( ["General", "No relation"] );
-        // 3 = Answer
+        // 3 = Proposal
         case 3: 
-            return optionList( ["Answer"] );
-        // 4 = Proposal
+	//***************
+	return optionList( ["General", "Alternative", "No relation"] );
+	//***************
+        // 4 = Info
         case 4: 
-            return optionList( ["General", "No relation"] );
-        // 5 = Info
-        case 5: 
-            return optionList( ["General", "Agreement", "Disagreement", "Consequence", "Alternative",  "Contradiction", "Equivalence", "No relation"] );
+            return optionList( ["General", "Agreement", "Disagreement", "Consequence", "Alternative", "Equivalence", "No relation"] );
         default:
             return [];
     }
 };
 
-
+//*****************
 Model.nodeFields = [ 
-    "hash", "content", 
+		    "hash", "content", "contentsum",
     "evalpos", "evalneg", "evaluatedby",
     "type", "author", "seed", "time"
 ];
 
 Model.linkFields = [
-    "source", "target", "direct", 
+    "hash", "source", "target", "direct", 
     "evalpos", "evalneg", "evaluatedby",
     "type", "author", "time"
 ];
-
+//*******************
 
 // dynamic information:
 
@@ -103,44 +100,47 @@ Model.clear = function(model) {
     this.model = model || { nodes: [], links: [], authors: [Model.currentAuthor]}
 };
 
-Model.createNode = function(nodetype, content, author, seed, time) {
 
-    var newHash = parseInt(hashit(content + nodetype + author + time));
+//*************************
+Model.createNode = function(nodetype, content, contentsum, author, seed, time) {
 
-    var newNode = {
+    var newHash = parseInt(nodehashit(content + contentsum + nodetype + author + time));
+    
+   var newNode = {
         "hash": newHash,
         "content": content,
+        "contentsum": contentsum,
         "evalpos": 1,
 		"evalneg": 0,
         "evaluatedby": [author],
         "type": nodetype,
-        "author": (author || Model.model.currentAuthor),
-		"seed": seed,
+        "author":  (author || Model.model.currentAuthor),
+		"seed":seed,
         "time": (time || Math.floor((new Date()).getTime() / 1000)),
-    };
-    Model.model.nodes.push(newNode);
+  };
+  Model.model.nodes.push(newNode);
 };
 
 
 Model.createLink = function(linktype, source, target, author, time) {
 
-    var hash = hashit(source + target + author + linktype + time);
+  var hash = hashit(source + target + author + linktype + time);
 
-    var newLink = {
-	"hash": hash, 
-        "source": source, 
-        "target": target,
-		"direct": 1, //...
-        "evalpos": 1, 
+  var newLink = {
+"hash": hash, 
+      "source": source, 
+      "target": target,
+	"direct": 1, 
+	"evalpos": 1, 
         "evalneg": 0,
-        "evaluatedby": [author],
-        "type": linktype,
-        "author": (author || Model.model.currentAuthor),
-        "time": (time || Math.floor((new Date()).getTime() / 1000)),
-    };
-    Model.model.links.push(newLink);
+      "evaluatedby": [author],
+      "type": linktype,
+      "author": (author || Model.model.currentAuthor),
+      "time": (time || Math.floor((new Date()).getTime() / 1000)),
+  };
+  Model.model.links.push(newLink);
 };
-    
+//*************************    
     
 Model.importFile = function(text, mime) {
     // TODO: check mime for other formats

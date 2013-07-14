@@ -14,31 +14,27 @@ var Model = {};
 
 // some static information
 
-Model.nodeTypesArray = ["General", "Pregunta", "Respuesta", "Propuesta", "Información"];
+Model.nodeTypesArray = ["General", "Pregunta", "Propuesta", "Información"];
 
-Model.linkTypesArray = ["General", "Acuerdo", "Desacuerdo", "Consecuencia", "Alternativa" , "Respuesta", "Relacionado", "Contradicción", "Equivalencia", "Sin relación"];
+Model.linkTypesArray = ["General", "Acuerdo", "Desacuerdo", "Consecuencia", "Alternativa", "Equivalencia", "Sin relación"];
 
-Model.linkConnectTypesArray = ["Relacionado", "Consecuencia", "Acuerdo", "Desacuerdo", "Alternativa" , "Respuesta", "Contradicción", "Equivalencia"];
+Model.linkConnectTypesArray = ["General", "Consecuencia", "Acuerdo", "Desacuerdo", "Alternativa" , "Equivalencia"];
 
 Model.nodeTypes = {
     "General" : {text: "General", value: 1, image: "img/node1.png"},
     "Pregunta" : {text: "Pregunta", value: 2, image: "img/node2.png"},
-    "Respuesta" : {text: "Respuesta", value: 3, image: "img/node3.png"},
-    "Propuesta" : {text: "Propuesta", value: 4, image: "img/node4.png"},
-    "Información" : {text: "Información", value: 5, image: "img/node5.png"},
+    "Propuesta" : {text: "Propuesta", value: 3, image: "img/node3.png"},
+    "Información" : {text: "Información", value: 4, image: "img/node4.png"},
 };
 
 Model.linkTypes = {
     "General" : {text: "General", value: 1, image: "img/link1.png"}, 
-    "Acuerdo" : {text: "Acuerdo", value: 3, image: "img/link3.png"},
-    "Desacuerdo" : {text: "Desacuerdo", value: 4, image: "img/link4.png"}, 
-    "Consecuencia" : {text: "Consecuencia", value: 2, image: "img/link2.png"}, 
-    "Alternativa" : {text: "Alternativa", value: 7, image: "img/link7.png"},
-    "Respuesta": {text: "Respuesta", value: 8, image: "img/link8.png"},
+    "Acuerdo" : {text: "Acuerdo", value: 2, image: "img/link2.png"},
+    "Desacuerdo" : {text: "Desacuerdo", value: 3, image: "img/link3.png"}, 
+    "Consecuencia" : {text: "Consecuencia", value: 4, image: "img/link4.png"}, 
+    "Alternativa" : {text: "Alternativa", value: 5, image: "img/link5.png"},
+	"Equivalencia": {text: "Equivalencia", value: 6, image: "img/link6.png"},
     "Sin relación": {text: "Sin relación", value: 0, image: "img/link0.png"},
-    "Relacionado": {text: "Relacionado", value: 5, image: "img/link5.png"},   // legacy
-    "Contradicción": {text: "Contradicción", value: 6, image: "img/link6.png"}, // legacy
-	"Equivalencia": {text: "Equivalencia", value: 9, image: "img/link9.png"},
 };
 
 
@@ -55,37 +51,38 @@ Model.connectionList = function(nodeType) {
     switch(nodeType) {
         // 1 = General
         case 1: 
-            return optionList( ["General", "Acuerdo", "Desacuerdo", "Consecuencia", "Alternativa", "Sin relación"] );
+	//************************************
+	return optionList( ["General", "Acuerdo", "Desacuerdo", "Consecuencia", "Alternativa", "Equivalencia", "Sin relación"] );
+	//************************************
         // 2 = Question
         case 2: 
             return optionList( ["General", "Sin relación"] );
-        // 3 = Answer
+        // 3 = Proposal
         case 3: 
-            return optionList( ["Respuesta"] );
-        // 4 = Proposal
+	//***************
+	return optionList( ["General", "Alternativa", "Sin relación"] );
+	//***************
+        // 4 = Info
         case 4: 
-            return optionList( ["General", "Sin relación"] );
-        // 5 = Info
-        case 5: 
-            return optionList( ["General", "Acuerdo", "Desacuerdo", "Consecuencia", "Alternativa",  "Contradicción", "Equivalencia", "Sin relación"] );
+            return optionList( ["General", "Acuerdo", "Desacuerdo", "Consecuencia", "Alternativa", "Equivalencia", "Sin relación"] );
         default:
             return [];
     }
 };
 
-
+//*****************
 Model.nodeFields = [ 
-    "hash", "content", 
+		    "hash", "content", "contentsum",
     "evalpos", "evalneg", "evaluatedby",
     "type", "author", "seed", "time"
 ];
 
 Model.linkFields = [
-    "source", "target", "direct", 
+    "hash", "source", "target", "direct", 
     "evalpos", "evalneg", "evaluatedby",
     "type", "author", "time"
 ];
-
+//*******************
 
 // dynamic information:
 
@@ -103,44 +100,47 @@ Model.clear = function(model) {
     this.model = model || { nodes: [], links: [], authors: [Model.currentAuthor]}
 };
 
-Model.createNode = function(nodetype, content, author, seed, time) {
 
-    var newHash = parseInt(hashit(content + nodetype + author + time));
+//*************************
+Model.createNode = function(nodetype, content, contentsum, author, seed, time) {
 
-    var newNode = {
+    var newHash = parseInt(nodehashit(content + contentsum + nodetype + author + time));
+    
+   var newNode = {
         "hash": newHash,
         "content": content,
+        "contentsum": contentsum,
         "evalpos": 1,
 		"evalneg": 0,
         "evaluatedby": [author],
         "type": nodetype,
-        "author": (author || Model.model.currentAuthor),
-		"seed": seed,
+        "author":  (author || Model.model.currentAuthor),
+		"seed":seed,
         "time": (time || Math.floor((new Date()).getTime() / 1000)),
-    };
-    Model.model.nodes.push(newNode);
+  };
+  Model.model.nodes.push(newNode);
 };
 
 
 Model.createLink = function(linktype, source, target, author, time) {
 
-    var hash = hashit(source + target + author + linktype + time);
+  var hash = hashit(source + target + author + linktype + time);
 
-    var newLink = {
-	"hash": hash, 
-        "source": source, 
-        "target": target,
-		"direct": 1, //...
-        "evalpos": 1, 
+  var newLink = {
+"hash": hash, 
+      "source": source, 
+      "target": target,
+	"direct": 1, 
+	"evalpos": 1, 
         "evalneg": 0,
-        "evaluatedby": [author],
-        "type": linktype,
-        "author": (author || Model.model.currentAuthor),
-        "time": (time || Math.floor((new Date()).getTime() / 1000)),
-    };
-    Model.model.links.push(newLink);
+      "evaluatedby": [author],
+      "type": linktype,
+      "author": (author || Model.model.currentAuthor),
+      "time": (time || Math.floor((new Date()).getTime() / 1000)),
+  };
+  Model.model.links.push(newLink);
 };
-    
+//*************************    
     
 Model.importFile = function(text, mime) {
     // TODO: check mime for other formats

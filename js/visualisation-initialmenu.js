@@ -22,6 +22,7 @@ function InitialMenu() {
 function InitialMenu_Abstraction() {
 
     this.model = null;
+
 	
     this.linkFilters = {
 	1: {name: "General",state: true, typeId: 1},
@@ -46,7 +47,7 @@ function InitialMenu_Abstraction() {
 	nodes: {name: "Boxes", state: true},
         links: {name: "Threads", state: true},
     };
-	
+
     this.init = function (model) {
         this.model = model;
     };
@@ -145,11 +146,11 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 					  <div id="new_panel" class="huge_panel_3 noselect">   \
 						<div class="new_header noselect">Introduce a title for the conversation</div>  \
 						<textarea id="new_title" class="new_title" spellcheck="false" maxlength="100"></textarea> \
-						<center><div id="titlealert" class="alerttext noselect">&nbsp</div><center>  \
+						<center><div id="titlealert" class="alerttext noselect">&nbsp</div><div id="firstthoughtalert" class="alerttext noselect">&nbsp</div><center>  \
 						<div class="new_header noselect">Write the first thought of the conversation</div>  \
 						<textarea id="new_firstcomment" class="new_first" spellcheck="false" maxlength="5000"></textarea> \
-						<center><div id="firstthoughtalert" class="alerttext noselect">&nbsp</div><center>  \
-						<div style="display:block">  \
+						<br>Summary of your thought (optional):<textarea id="new_firstsum" class="areareplysum" spellcheck="false" maxlength="100"></textarea>  \
+						<div style="display:block;padding:5px">  \
 							<div style="Float:left;">  \
 								<div class="new_name_header noselect">Your name</div>  \
 								<textarea id="new_name" class="new_name" spellcheck="false" maxlength="20"></textarea> \
@@ -173,7 +174,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 			  </div>   \
 			  <div id="language_panel" class="language_panel shadow noselect">   \
 				At the moment there are no more languages available.<br><br>If you want to help with the translation to another language, <br>you can do it entering here:  \
-				<a href="http://titanpad.com/incomatranslations" target="_blank">titanpad.com/incomatranslations</a>  \
+				<a href="http://titanpad.com/incomatranslation" target="_blank">titanpad.com/incomatranslation</a>  \
 				<div id="language_button" class="language_button button">OK</div>  \
 			  </div>   \
 		 </div>  \
@@ -450,6 +451,8 @@ function bt_new_ok(){
 
 	var title = document.getElementById("new_title").value,
 		content = document.getElementById("new_firstcomment").value;
+		var contentsum = document.getElementById("new_firstsum").value;
+
 
 	if (title==""){
 		var alert = document.getElementById("titlealert");
@@ -481,12 +484,12 @@ function bt_new_ok(){
 
 	Model.clear(IncomaEmptyModel);
 	Model.currentAuthor(author);	
-	Model.createNode(1, content, author, 2, time); //creates the initial node, type="general", seed=2
+	Model.createNode(1, content, contentsum, author, 2, time); //creates the initial node, type="general", seed=2
 	Model.title = title;
 	
 	
 	//creates a hash conversation checking that a similar one doesn't exist already
-	var stringforhash = title + content + author + time;
+	var stringforhash = title + content + contentsum + author + time;
 	conversation = createconvhash(stringforhash);
 
 	//creates the tables for the new conversation and stores the first node	
@@ -611,7 +614,7 @@ function preparelangselect(){
 	$('#selectlanguage').ddTslick({
 		data: ddData,
 		selectText: "Select language...",
-		width: 120,
+		width: 140,
 		height:150,
 		background: "#fff",
 		onSelected: function(selectedData){

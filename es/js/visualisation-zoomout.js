@@ -14,12 +14,19 @@ var rightpanelhtmleval = "<div style='float:right;'><div style='float:right;'><d
 
 var rightpanelhtmllinkeval = "<div style='float:right;'><div id='evalalert' class='alerttext noselect'></div><div id='linkpos' class='evalpos' onClick='linkevalpos()'>+</div><div id='linkneg' class='evalneg' onClick='linkevalneg()'>-</div></div>";
 
-var rightpanelhtmlreply = "<table><tr><td id='tdnodetype'>Tipo de comentario:&nbsp<select id='replynodetype'></select></td><td>&nbsp&nbsp&nbsp&nbsp</td><td id='tdlinktype'>Tipo de conexión:&nbsp<select id=\"replylinktype\" style='display:inline-block;'></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false' maxlength='5000'></textarea>Nombre:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false' maxlength='20'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='replysavecancel'><center><div class='save button' onClick='savenode()'>Salvar</div><div class='cancel button' onClick='hidereplypanel()'>Cancelar</div></center><div id='replyalert' class='alerttext noselect' style='text-align:right;'>&nbsp</div>";
+var rightpanelhtmlreply = "<table><tr><td id='tdnodetype'>Tipo de respuesta:&nbsp<select id='replynodetype'></select></td><td>&nbsp&nbsp&nbsp&nbsp</td><td id='tdlinktype'>Tipo de conexión:&nbsp<select id=\"replylinktype\" style='display:inline-block;'></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false' maxlength='5000'></textarea>Resumen de tu respuesta (opcional):<textarea id='replyboxsum' class='areareplysum' spellcheck='false' maxlength='100'></textarea>Nombre:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false' maxlength='20'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='replysavecancel'><center><div class='save button' onClick='savenode()'>Salvar</div><div class='cancel button' onClick='hidereplypanel()'>Cancelar</div></center><div id='replyalert' class='alerttext noselect' style='text-align:right;'>&nbsp</div></div>";
 
 var rightpanelhtmllink = "<table><tr><td id='tdconnect'><select id='connectlinktype'></select></td><td><p>&nbsp&nbsp</p></td><td><div class='cancel button' onClick='cancellink()'>Cancelar</div></td></tr></table><br><div id='connecttext' class='connecttext'>&nbsp</div>";
 
 var rightpanelhtmlspace = "<div style='float:left;visibility:hidden;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div></div><br></div>"; 
 
+var rightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">Ver timeline</div></center><div id="right_bar_header" class="right_bar_header "><div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div></div><div id="contbox" class="divareacontent"></div><div id="rightpaneleval"></div><div id="rightpanel"></div><div id="rightpanelspace"></div>';
+
+var timevisrightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">Ocultar timeline</div></center><div id="timevisdiv" class="timevisdiv"></div>';
+
+var timevisrightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">Cerrar timeline</div></center><div id="timevisdiv" class="timevisdiv"></div>';
+
+var timevisinteracthtml = "<div id='evalalert' class='linkalerttext noselect' style='float:left;'></div><div style='float:right;'><div id='showreply' class='smallshowreplypanel justbutton' onClick='showreplypanel()'>Responder</div><div id='showconnect' class='smallshowconnectpanel justbutton' onClick='showcreatelink()'>Conectar</div><div id='nodepos' class='smallevalpos justbutton' onClick='evalpos()'>+</div><div id='nodeneg' class='smallevalneg justbutton' onClick='evalneg()'>-</div></div>";
   
 Visualisations.register(new ZoomOut()); //adds the ZoomOut visualization to the Visualizations array
 /*
@@ -68,22 +75,18 @@ function ZoomOut_Abstraction() {
 	
     this.linkFilters = {
 		1: {name: "General",state: true, typeId: 1},
-		2: {name: "Consecuencia", state: true, typeId: 2},
-		3: {name: "Acuerdo", state: true, typeId: 3},
-		4: {name: "Desacuerdo", state: true, typeId: 4},		
-		5: {name: "Relacionado", state: true, typeId: 5},
-		6: {name: "Contradicción", state: true, typeId: 6},
-		7: {name: "Alternativa", state: true, typeId: 7},
-		8: {name: "Respuesta", state: true, typeId: 8},
-		9: {name: "Equivalencia", state: true, typeId: 9},
+		2: {name: "Acuerdo", state: true, typeId: 2},
+		3: {name: "Desacuerdo", state: true, typeId: 3},
+		4: {name: "Consecuencia", state: true, typeId: 4},		
+		5: {name: "Alternativa", state: true, typeId: 5},
+		6: {name: "Equivalencia", state: true, typeId: 6},
     };
 	
     this.nodeFilters = {
 		1: {name: "General", state: true, typeId: 1},
         2: {name: "Pregunta", state: true, typeId: 2},
-        3: {name: "Respuesta", state: true, typeId: 3},
-        4: {name: "Propuesta", state: true, typeId: 4},
-        5: {name: "Información", state: true, typeId: 5},
+        3: {name: "Propuesta", state: true, typeId: 3},
+        4: {name: "Información", state: true, typeId: 4},
     };
 	
     this.sizeFilters = {
@@ -93,6 +96,7 @@ function ZoomOut_Abstraction() {
 	
     this.init = function (model) {
         this.model = model;
+		this.clickednode = "";
         this.clickednodehash = "";
 		this.overnodehash = "";
         this.clickedlinkhash = "";
@@ -102,8 +106,13 @@ function ZoomOut_Abstraction() {
 		this.overnode = false;
 		this.overlink = false;
 		this.overseed = false;
-		this.loadingfadein = true;
+		this.letmouseover = false;
 		this.tutorialopened=false;
+		this.showingevolution=false;
+		this.evolutionpause=false;
+		this.timevisualization=false;
+		this.youarenotalone=false;
+		this.firsttick=true;
     }
 };
 // End of this == abstraction
@@ -112,7 +121,7 @@ function ZoomOut_Abstraction() {
 // Start of this == presentation [initialized passing it (html5node, abstraction)]
 function ZoomOut_Presentation(VIS, ABSTR) {
     // public interface
-
+	
     this.container = null;
     this.nodeSizeDefault = 15;
     this.linkStrokeWidthDefault = 4;
@@ -123,8 +132,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.width = $(window).width();
     this.height = $(window).height()-50;
     this.filtershelp = true;
-    this.darkerarrowsseeds = 1;
+    this.darkerarrowsseeds = 2;
+    this.darkernodes = 0.3;
 	this.showfilters = true;
+	this.evolutionvelocity = 1;
+	this.readnodes = [];
+	this.drawexplosions = true;
+	this.showingtexts = false;
+	this.showingsums = false;
+	this.savelinks = "";
+
 	
     this.bordercolor = {
         "normal": "#888",
@@ -134,15 +151,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     };
 
     this.svg = null;
-
-		
+	
 //arrays of colors for nodes and links
 	
-//  CODE   	   	   = ["#000000", "General", "Questio", "Answer ", "Proposa", "Info   "];
-    this.nodecolor = ["#000000", "#f9c8a4", "#f68888", "#a2b0e7", "#e7a2dd", "#bae59a"];	
+//  CODE   	   = ["#000000", "General", "Questio", "Proposa", "Info   "];
+    this.nodecolor = ["#000000", "#f9c8a4", "#a2b0e7", "#e7a2dd", "#bae59a"];
 
-//  CODE           = ["#000000", "General", "Consequ", "Agreeme", "Disagre", "Related", "Contrad", "Alterna",  "Answer ", "Equival"]; 
-    this.linkcolor = ["#000000", "#f9c8a4", "#caccf4", "#7adc7c", "#e85959", "#ecaa41", "#c87b37", "#b27de8",  "#a2b0e7", "#b5b5b5"];
+//  CODE           = ["#000000", "General", "Agreeme", "Disagre", "Consequ", "Alterna", "Equival"]; 
+    this.linkcolor = ["#000000", "#f9c8a4", "#7adc7c", "#e85959", "#b27de8", "#c87b37", "#ecaa41"];
                                            
     
     this.liveAttributes = new LiveAttributes(ABSTR, this);
@@ -160,6 +176,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.transition().ease("cubic-out").duration(transitionTime)
             .attr("transform","translate(" + tx + ',' + ty + ") scale(" + zoom + ")");
     };
+	
     // end of public interface
 
 	
@@ -170,7 +187,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.container = html5node;
 
 		db_gettitle();
-		
+		db_gettags();
+	
 		//defines the html content of the visualization (except the header, defined in index)
         html5node.innerHTML =
             '   \
@@ -180,17 +198,28 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     <div class="svg">  </div>   \
                   </div>   \
 	 \
-	 			  <div id="left_bar" class="mod">   \
+	 			  <div id="left_bar" class="mod noselect">   \
                     <div class="left_bar_header noselect">   \
-						<center><div class="zoombutton littlebutton" id="cmd_zoomout" style="float:left;">-</div>   \
+						<center><div class="zoombutton justbutton shadow" id="cmd_zoomout" style="float:left;">-</div>   \
 						zoom \
-						<div class="zoombutton littlebutton" id="cmd_zoomin" style="float:right;">+</div></center>   \
+						<div class="zoombutton justbutton shadow" id="cmd_zoomin" style="float:right;">+</div></center>   \
                     </div>   \
+				  </div>   \
+	\
+				  <div>  \
+				    <div id="showevolution" class="showevolution shadow noselect">Ver evolución</div>  \
+					<div id="controlevolution" class="controlevolution shadow noselect">  \
+						<div id="evolutionslow" class="evolutioncontrols">≪</div>  \
+						<div id="evolutionpause" class="evolutioncontrols">ll</div>  \
+						<div id="evolutionfast" class="evolutioncontrols">≫</div>  \
+						<div id="evolvelocity" class="evolutionvelocity">&nbsp</div>  \
+						<div id="evolutionclose" class="evolutionclose noselect">x</div>  \
+					</div>  \
                   </div>   \
     \
-	 			  <div class="title_container">  \
-					<div id="conversation_title" class="conversation_title shadow">   \
-						title \
+	 			  <div class="title_container noselect">  \
+					<div id="conversation_title" class="conversation_title noselect" onclick="egg1()";>   \
+						[...] \
 					</div>   \
 				  </div>  \
 	\
@@ -199,14 +228,19 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					<div class="tutorial_panel_click noselect"></div>  \
                   </div>   \
 	\
-	 			  <div id="language_panel" class="language_panel shadow noselect">   \
+	 			  <div id="language_panel" class="language_panel shadow ">   \
 					En este momento no hay más idiomas disponibles.<br><br>Si quieres ayudar con la traducción a otro idioma, <br>puedes hacerlo entrando aquí:  \
-					<a href="http://titanpad.com/incomatranslations" target="_blank">titanpad.com/incomatranslations</a>  \
+					<a href="http://titanpad.com/incomatranslation" target="_blank">titanpad.com/incomatranslation</a>  \
 					<div id="language_button" class="language_button button">OK</div>  \
                   </div>   \
 	\
                   <div id="right_bar" class="right_bar shadow">   \
-                    <div id="right_bar_header" class="right_bar_header noselect">   \
+					<center>  \
+					  <div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">  \
+						Ver timeline  \
+					  </div>  \
+					</center>  \
+                    <div id="right_bar_header" class="right_bar_header ">   \
                       <div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div>   \
                     </div>   \
                     <div id="contbox" class="divareacontent"></div>   \
@@ -217,10 +251,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	\
              </div>   \
 	\
-             <div id= "lower_bar" class="lower_bar shadow noselect">  \
+             <div id= "lower_bar" class="lower_bar shadow ">  \
                   <div class="lower_bar_elems">   \
                     <div id="filters_title" class="lower_title" style="Float:left" >   \
-                      <b>Leyenda</b>\
+                      <b>Leyenda</b> \
                     </div>   \
                     <center><div id="filters_text" class="lower_text">  \
 					  (Haz click en cualquier elemento para ocultarlo o mostrarlo en la conversación) \
@@ -236,6 +270,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                     <div id="filt_sizes" class="lower_sizes" style="Float:left;">   \
                       <u><b>Tamaños</b></u>    \
                     </div>   \
+                    <div id="showtexts" class="lower_showtexts noselect">   \
+                      Ver etiquetas   \
+                    </div>   \
+                    <div id="showsums" class="lower_showsums">   \
+                      Ver resúmenes    \
+                    </div>   \
                     <div id="filt_hide" class="lower_hide" style="Float:right">   \
                       <div class="lower_hide_button button" id="cmd_hideshowfilters">Ocultar</div>   \
                     </div>   \
@@ -246,7 +286,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		$('#rightpanelspace').html(rightpanelhtmlspace);
 
-		
 		//stablish the onclick functions for the html elements of html5node
 		$( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
         $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
@@ -255,7 +294,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		$( "#tutorial_panel" )[0].onclick = changetutorialpanel;
 		$( "#tutorial_panel_close" )[0].onclick = closetutorialpanel;
 		$( "#language_button" )[0].onclick = closelanguagepanel;
-
+		$( "#showevolution" )[0].onclick = showevolution;
+		$( "#evolutionclose" )[0].onclick = showevolution;
+		$( "#evolutionpause" )[0].onclick = evolutionpause;
+		$( "#evolutionfast" )[0].onclick = evolutionfast;
+		$( "#evolutionslow" )[0].onclick = evolutionslow;
+	    $( "#showsums" )[0].onclick = showsums;
+		
 		$( "#conversation_title" ).html(Model.title);		
 		$( "#window_title" ).html("INCOMA ("+Model.title+")");
 
@@ -270,11 +315,19 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		$("#legend_bar").fadeOut(0);
 		$('#tutorial_panel').fadeOut(0);
 		$('#language_panel').fadeOut(0);
+		$('#controlevolution').fadeOut(0);
 		$('#htmlcontent').fadeIn(800);
 		$('#lower_bar').fadeIn(800);
-				
+		$('#svg').fadeOut(0);
+		
+		
+		if (Model.tags == null){
+			document.getElementById("showtexts").setAttribute("style","visibility:hidden; cursor:default;");
+		} else {
+			$( "#showtexts" )[0].onclick = showtexts;
+		}
+		
 		//makes the right_bar resizable
-		//$("#right_bar").resizable({handles: 'w'});
 		$(".right_bar").resizable({
 			handles: 'w',
 			minWidth: 335,
@@ -283,11 +336,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			}
 		});
 		
+		if ($(window).width()>1300){$("#right_bar").width($(window).width()/3.2);};
+		
 		rbwidth = $("#right_bar").width();
 		cbheight = $("#contbox").height();
 	
 		//open the tutorial in Sandbox mode
-		if (conversation === "sandbox"){
+		if (conversation === "sandbox" || conversation === "sandbox_es"){
 			ABSTR.tutorialopened = true;
 			ABSTR.tutorialstep = -1;
 			$('#tutorial_panel').delay(800).fadeIn(600)
@@ -305,7 +360,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         initNodeFilters(this, "filt_nodes", ABSTR.nodeFilters);
         initLinkFilters(this, "filt_links", ABSTR.linkFilters);
         initSizeFilters(this, "filt_sizes", ABSTR.sizeFilters);
-        // The initfilters take as an input parameter the id of the div where they will be placed (e.g "filt_links"), with appendChild.
 
     };
     // End of init function of presentation
@@ -319,6 +373,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.gravity(0.1)
             .linkDistance(50)
 			.theta(0.95)
+			.friction(0.85)
             .size([width, height]);
 			
         var force = PRES.force;
@@ -351,6 +406,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .style("stroke", "blue")
 			.style("stroke-opacity",0)
 			.on("click", PRES.liveAttributes.backgroundclick);
+		
 
         var graph = ABSTR.model;
 		
@@ -367,17 +423,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			if (d.seed > 0){
 				PRES.seedsdata.push({homenode:d, seedtype:d.seed});
 			}		
+			
 		});
 
 		//initial position of the nodes
-		graph.nodes.forEach(function(d, i) {		
-				 d.x = d.y = width / graph.nodes.length * i;
-		});
+		// graph.nodes.forEach(function(d, i) {		
+				 // d.x = d.y = width / graph.nodes.length * i;
+		// });
 
-		//initialposition of the screen
-		PRES.setViewport(PRES.scaler.despx0, PRES.scaler.despy0, 1, 0);
-		if (graph.nodes.length < 10){PRES.scaler.zoomin()};
-		if (graph.nodes.length > 50){PRES.scaler.zoomout()};
 		
 		//definition of the renormalization for nodes and links sizes
 		definerenormalization();
@@ -387,7 +440,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .nodes(graph.nodes)
             .links(graph.links)
             .start();
-
 		
 		//appends all the visual elements to the SVG
 		PRES.linkselect = svg.append("line")
@@ -414,11 +466,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.attr("y1", 0)
 			.attr("x2", 0)
 			.attr("y2", 0)
-			.style("stroke-width", 2)
+			.style("stroke-width", 3)
 			.style("stroke", "black")
 			.style("stroke-dasharray", "8,6")
 			.style("stroke-linecap", "round")
-			.style("stroke-opacity",0.5);
+			.style("stroke-opacity",0);
 
 		//Add the links	
         PRES.links = svg.selectAll(".link")
@@ -440,6 +492,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .data(graph.nodes)
             .enter().append("circle")
             .attr("class", "node")
+			.attr("cx",function(d){return d.x;})
+			.attr("cy",function(d){return d.y;})
             .attr("r", PRES.liveAttributes.nodeRadius)
 			.style("stroke", PRES.liveAttributes.nodeStroke)
 			.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
@@ -504,26 +558,28 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				.append("path")
 				.attr("d", " M 0 0 Q 4 0.45 0 0.9 Q 3.2 0.45 0 0");
 		}
+		
+		
 
 		//initial loading of the conversation		
 		var numnodes = Model.model.nodes.length;
-		var delay=1000*Math.sqrt(numnodes)/3;
+		var delay=1000*Math.sqrt(numnodes);
 				
 		//in the middle of the loading, gives a random shift to the nodes positions and changes the charge to its correct value 
-		setTimeout(function(){
-			Model.model.nodes.forEach(function(d, i) {		
-				d.x += 20*Math.random(); 
-				d.y += 20*Math.random(); 
-			});
+		// setTimeout(function(){
+			// Model.model.nodes.forEach(function(d, i) {		
+				// d.x += 20*Math.random(); 
+				// d.y += 20*Math.random(); 
+			// });
 
-			PRES.force
-				.charge(-500)
-				.start();
-		},delay*0.7);
+			// PRES.force
+				// .charge(-500)
+				// .start();
+		// },delay*0.7);
 		
 		//end of the loading, nodes become draggables
 		setTimeout(function(){
-			ABSTR.loadingfadein = false;
+			ABSTR.letmouseover = true;
 			
 			PRES.nodes
 				.call(force.drag);
@@ -560,10 +616,26 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		//activation of the periodic conversation update with the nodes and links created by other users simultaneously
 		autoupdate = setInterval(function(){updateConversation();},PRES.updateinterval); 
 		
+		//initialposition of the screen
+		PRES.setViewport(PRES.scaler.despx0, PRES.scaler.despy0, 1, 0);
+		if (graph.nodes.length < 5){PRES.scaler.zoomin();};
+		if (graph.nodes.length > 15){PRES.scaler.zoomout();};
+		if (graph.nodes.length > 60){PRES.scaler.zoomout();};
+		if (graph.nodes.length > 150){PRES.scaler.zoomout();};
+		if (graph.nodes.length > 300){PRES.scaler.zoomout();};
+		
+		PRES.drawexplosions = false;
+		PRES.evolutionvelocity = 9000;
+		PRES.force.friction(0.95);
+		PRES.force.charge(-9000);
+		PRES.force.gravity(0.1);
+		PRES.force.linkStrength(1);
+		startevolution();		
+		
 		
 		//defines the movement of the nodes and links
         force.on("tick", function () {
-		
+				
 			PRES.svg.selectAll(".link")
 			.attr("points", function(d) {
 			return d.source.x + "," + d.source.y + " " +
@@ -577,6 +649,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			PRES.svg.selectAll(".seed")
 				.attr("cx", function (d) {return d.homenode.x;})
                 .attr("cy", function (d) {return d.homenode.y;});
+				
+			PRES.svg.selectAll("text")
+				.attr("x", function (d) {return d.node.x;})
+                .attr("y", function (d) {return (parseInt(d.node.y)-parseInt(PRES.liveAttributes.nodeRadius(d.node)))-1;});
 							
 			if (ABSTR.selectedlink != ""){
 				PRES.svg.selectAll(".linkselect")
@@ -596,8 +672,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     function initNodeFilters(PRES, columnId, filterlist) {
 
 	// 5 filters with 3 per column for the nodes
-        var numfilts = 5;
-        var filtspercol = 3 ;
+        var numfilts = 4;
+        var filtspercol = 2 ;
         var filtsperrow = Math.ceil(numfilts/filtspercol);
 
     	var column = document.getElementById(columnId);
@@ -625,22 +701,22 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			tdname.id = i;
 			
 			tdname.onclick = function () {
-				for (var j = 1; j < numfilts+1; ++j) {
 				
-					filterlist[this.id].state = !filterlist[this.id].state; 	
+				filterlist[this.id].state = !filterlist[this.id].state; 	
 
-					var textcolor = (filterlist[this.id].state) ? "#000" : "#777";	
-					this.setAttribute("style","cursor: pointer; color: " + textcolor);
-					
-					$("#filters_text").delay(300).fadeOut(600);
-					PRES.filtershelp = false;
-				};
+				var textcolor = (filterlist[this.id].state) ? "#000" : "#777";	
+				this.setAttribute("style","cursor: pointer; color: " + textcolor);
+				
+				$("#filters_text").delay(300).fadeOut(600);
+				PRES.filtershelp = false;
+
 				PRES.update(); 
+				PRES.force.start();
 			};
 			
 			tdimage = document.createElement("td");
-			tdimage.setAttribute("style","width: 22px; height: 20px; background:url('img/node" + filter.typeId + ".png') no-repeat;");
-			
+            tdimage.setAttribute("style","width: 32px; height: 20px; background:url('img/node" + filter.typeId + ".png') no-repeat;");
+ 		
 			tdspace = document.createElement("td");
 			tdspace.style.width = "25px";
 			
@@ -672,8 +748,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	
     function initLinkFilters(PRES, columnId, filterlist) {
 	// 9 filters with 3 per column for the links
-        var numfilts = 9 ;
-        var filtspercol = 3 ;
+        var numfilts = 6 ;
+        var filtspercol = 2 ;
         var filtsperrow = Math.ceil(numfilts/filtspercol);
 
     	var column = document.getElementById(columnId);
@@ -695,24 +771,24 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			}
 			
 			tdimage = document.createElement("td");
-			tdimage.setAttribute("style","width: 20px; background:url('img/link" + filter.typeId + ".png') no-repeat;");
+			tdimage.setAttribute("style","width: 20px; height: 20px; background:url('img/link" + filter.typeId + ".png') no-repeat;");
 			
 			tdname = document.createElement("td");
 			tdname.setAttribute("style","cursor: pointer");
 			tdname.id = i;
 			
 			tdname.onclick = function () {
-				for (var j = 1; j < numfilts+1; ++j) {
 				
-					filterlist[this.id].state = !filterlist[this.id].state; 	
+				filterlist[this.id].state = !filterlist[this.id].state; 	
 
-					var textcolor = (filterlist[this.id].state) ? "#000" : "#777";	
-					this.setAttribute("style","cursor: pointer; color: " + textcolor);
-					
-					$("#filters_text").delay(300).fadeOut(600);
-					PRES.filtershelp = false;					
-				};
+				var textcolor = (filterlist[this.id].state) ? "#000" : "#777";	
+				this.setAttribute("style","cursor: pointer; color: " + textcolor);
+				
+				$("#filters_text").delay(300).fadeOut(600);
+				PRES.filtershelp = false;					
+
 				PRES.update(); 
+				PRES.force.start();
 			};
 			
 			tdspace = document.createElement("td");
@@ -756,6 +832,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	tb = document.createElement("tbody");
 	
     var filter = filterlist.evaluations;
+	
 	tr = document.createElement("tr");
 	
 	tdname = document.createElement("td");
@@ -771,11 +848,13 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		PRES.filtershelp = false;				
 			
 		PRES.update(); 
+		PRES.force.start();
 	};	
 	
 	tdname.appendChild(Visualisations.makeText(filter.name));
 	tr.appendChild(tdname);
 	tb.appendChild(tr);
+	
 	table.appendChild(tb);
 	column.appendChild(table);
 
@@ -804,7 +883,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         };
 		
         this.nodeFill = function (d) {
-            return PRES.nodecolor[d.type];
+			if($.inArray(d.hash, PRES.readnodes) < 0){
+				return PRES.nodecolor[d.type];
+			} else {
+				return d3.rgb(PRES.nodecolor[d.type]).darker(PRES.darkernodes).toString();
+			}
         };
 		
         this.nodeStroke = function (d) {
@@ -816,7 +899,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.nodeStrokeWidth = function (d) {
             if (ABSTR.nodeFilters[d.type].state) {
 				if ((ABSTR.clickednodehash == d.hash) || (ABSTR.overnodehash == d.hash)){
-					return "2px";
+					return "3px";
 				} else {
 					return "1px";
 				}
@@ -833,6 +916,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             }
         };
 
+		this.textFillOpacity = function (d) {
+            if (ABSTR.nodeFilters[d.node.type].state) {
+                return "1";
+            } else {
+				return "0";
+            }
+        };
+		
         this.linkStroke = function (d) {
             return PRES.linkcolor[d.type];
         };
@@ -854,12 +945,12 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
         this.linkArrow = function (d) {
             if (ABSTR.linkFilters[d.type].state) {
-				if (d.type != 5 && d.type != 6 && d.type != 7 && d.type != 9 ) {                
-					// related, contradiction, alternative and equivalence have no direction
-					if (d.type == 3 && d.direct==1){
+				if ( d.type != 5 && d.type != 6 ) {                
+					//  alternative and equivalence have no direction
+					if (d.type == 2 && d.direct==1){
 						return "";
 						// agree and disagree have no direction if it is a connection
-					} else if (d.type == 4 && d.direct==1) {
+					} else if (d.type == 3 && d.direct==1) {
 						return "";
 					} else {
 						
@@ -939,6 +1030,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 								.filter(function(e){return e.hash == affectednodes[0][i].__data__.hash;})
 								.style("fill-opacity",0)
 								.style("stroke-opacity",0);
+								
+						PRES.svg.selectAll("text")
+							.filter(function(e){return e.node.hash == affectednodes[0][i].__data__.hash;})
+							.style("fill-opacity",0);
 					};
 				};
 			};
@@ -1008,7 +1103,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			if (ABSTR.creatinglink && selectedconnectlinktype != 0){
                 var nodes = PRES.force.nodes();
                 var index = searchhash(nodes, ABSTR.clickednodehash);
-                var linecolor = PRES.linkcolor[selectedconnectlinktype];
+                PRES.linecolor = PRES.linkcolor[selectedconnectlinktype];
 				
 				var x1 = nodes[index].x,
 					y1 = nodes[index].y,
@@ -1021,14 +1116,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.attr("y1", y1)
 					.attr("x2", x2)
 					.attr("y2", y2)
-					.style("stroke", linecolor);
+					.style("stroke", PRES.linecolor);
 			}
 		};
 
 		
         this.mouseover = function (d) {
 		
-			if (ABSTR.overnode || ABSTR.loadingfadein){return;}
+			if (ABSTR.overnode || !ABSTR.letmouseover){return;}
 			
 			var fillopacity = PRES.svg.selectAll(".node")
 						.filter(function (e) {return e.hash == d.hash;})
@@ -1037,9 +1132,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			if (fillopacity == 0){return};
 			
 			ABSTR.overnode = true;
-			ABSTR.overlink = false;
 						
-			if ((ABSTR.clickednodehash === "" && ABSTR.clickedlinkhash === "") || (ABSTR.creatinglink && ABSTR.clickednodehash != d.hash)){
+			if ((ABSTR.clickednodehash === "" && ABSTR.clickedlinkhash === "") || (ABSTR.creatinglink && (ABSTR.clickednodehash != d.hash || ABSTR.timevisualization))){
 								
 				ABSTR.overnodehash = d.hash;
 				
@@ -1050,20 +1144,30 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				
 				
 				timednodecontentlabel = setTimeout(function(){
-				
-				//	clearTimeout(timedclearlabel);
+
+					if (ABSTR.timevisualization){
 					
-					$("#right_bar").height('auto');
-					$('#rightpaneleval').html(rightpanelhtmleval);
-					$('#rightpanelspace').html("");
-					document.getElementById("nodepos").innerHTML = "+" + d.evalpos;
-					document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
+						overindex = $.inArray(d, timednodes);
+						var id = "nodecontent"+overindex;
+						overdivcontent(id);
+						
+						$('#timevisdiv').animate({
+							scrollTop: $('#timevisdiv').scrollTop()+$("#"+id).position().top-60
+						}, 400);
 					
-					$("#contbox").stop().slideDown(0);
-					document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");
-					document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
-					document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
+					} else {
 					
+						$("#right_bar").height('auto');
+						$('#rightpaneleval').html(rightpanelhtmleval);
+						$('#rightpanelspace').html("");
+						document.getElementById("nodepos").innerHTML = "+" + d.evalpos;
+						document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
+						
+						$("#contbox").stop().slideDown(0);
+						document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");
+						document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
+						document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
+					}
 				},150);
 			}
         };
@@ -1093,15 +1197,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				
 				timedlinkcontentlabel = setTimeout(function(){
 				
+					if (ABSTR.timevisualization){return;}
+					
 					$('#rightpaneleval').html(rightpanelhtmllinkeval);
 					$('#rightpanelspace').html("");
 					document.getElementById("linkpos").innerHTML = "+" + d.evalpos;
 					document.getElementById("linkneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
 					
 					document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[d.type].typeId],0.5) +";");
-					document.getElementById("contentlabel").innerHTML = "<b> Conexión " + ABSTR.linkFilters[d.type].name.toLowerCase() + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
+					document.getElementById("contentlabel").innerHTML = "<b>Conexión " + ABSTR.linkFilters[d.type].name.toLowerCase() + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
 					
-				//	clearTimeout(timedclearlabel);
 					$("#right_bar").height($("#right_bar").height());
 					$("#contbox").stop().slideUp(0);
 					
@@ -1113,7 +1218,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.mouseout = function (d) {
 		
-			if (ABSTR.loadingfadein){return;};
+			if (!ABSTR.letmouseover){return;};
 			
 			timedmouseout = setTimeout(function(){
 			
@@ -1129,20 +1234,29 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.style("stroke", PRES.liveAttributes.nodeStroke);
 				
 					
-				if(ABSTR.clickednodehash === "" &&ABSTR.clickedlinkhash === ""){
+				if(ABSTR.clickednodehash === "" && ABSTR.clickedlinkhash === ""){
+
+					if (ABSTR.timevisualization){
 					
-				//	timedclearlabel = setTimeout(function(){},200);
-					
-				    clearcontentlabel();
-					$('#rightpaneleval').html(" ");
-					$('#rightpanel').html(" ");
-					$('#rightpanelspace').html(rightpanelhtmlspace);
+						var index = $.inArray(d, timednodes);
+						var id = "nodecontent"+index;
+						outdivcontent(id);
+						
+					} else {
+						clearcontentlabel();
+					}
 				}
 				
 				if(ABSTR.creatinglink){
 				
 					timednodecontentlabel = setTimeout(function(){
-					
+						
+						if (ABSTR.timevisualization){
+							var index = $.inArray(d, timednodes);
+							var id = "nodecontent"+index;
+							outdivcontent(id);
+						}
+						
 						document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[ABSTR.clickednode.type].typeId],0.5) +";");
 						document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[ABSTR.clickednode.type].name + "</b>" + "&nbsp&nbsp" + " (por " +ABSTR.clickednode.author + " - "+timeAgo(ABSTR.clickednode.time)+")";
 						document.getElementById("contbox").innerHTML = URLlinks(nl2br(ABSTR.clickednode.content));
@@ -1160,20 +1274,18 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.mouseoutlink = function (d) {
 			
-			clearTimeout(timedlinkcontentlabel);
-			
 			ABSTR.overlink = false;
+			
+			clearTimeout(timedlinkcontentlabel);
 			
 			if (ABSTR.clickedlinkhash === ""){
 			
 				hidelinkselect();
 				
 				if (ABSTR.clickednodehash === "" && ABSTR.overnodehash === ""){	
-				
+					if (ABSTR.timevisualization){return;}
+					
 					clearcontentlabel();
-					$('#rightpaneleval').html(" ");
-					$('#rightpanel').html(" ");
-					$('#rightpanelspace').html(rightpanelhtmlspace);
 
 				}
 			} 
@@ -1186,13 +1298,30 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
 		
         this.backgroundclick = function (d) {
+		
+			clearSelection();
 
-		//	if (!ABSTR.creatinglink && !ABSTR.overnode && !ABSTR.overlink){
-			if (!ABSTR.creatinglink){
+			if (!ABSTR.creatinglink && !ABSTR.overnode && !ABSTR.overlink){
 			
 				hidelinkselect();
-				clearcontentlabel();
 				
+				if (ABSTR.timevisualization){
+					var color = d3.rgb(PRES.nodecolor[timednodes[oldindex].type]).darker(0).toString();
+					$("#nodecontent"+oldindex).css({
+							"border": "solid 2px "+color,
+					});
+					
+					$("#nodeinteract"+oldindex).height("24px");
+					$("#nodeinteract"+oldindex).html("");
+					
+					oldindex = "";
+					
+				}else{
+				
+					clearcontentlabel();
+				}
+				
+				ABSTR.clickednode = "";
 				ABSTR.clickednodehash = "";
 				ABSTR.clickedlinkhash = "";
 				ABSTR.overnodehash = "";
@@ -1204,13 +1333,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				
 				PRES.svg.selectAll(".link")
 					.style("stroke", PRES.liveAttributes.linkStroke);	
-					
-			//	timedclearlabel = setTimeout(function(){},100);
 				
-			//	clearcontentlabel();
-				$('#rightpaneleval').html(" ");
-				$('#rightpanel').html(" ");
-				$('#rightpanelspace').html(rightpanelhtmlspace);
 
 			};
         };		
@@ -1225,14 +1348,15 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			if (fillopacity == 0){
 				PRES.liveAttributes.backgroundclick;
 				return;
-			};			
-			
+			};
+				
 			if (ABSTR.creatinglink && selectedconnectlinktype != 0){
 				if (d.hash != ABSTR.clickednodehash && !existingconnection(ABSTR.clickednodehash,d.hash)){
 					savelink(d);
 				}
-			}else{
 				
+			}else{
+			
 				hidelinkselect();
 				
 				ABSTR.clickednodehash = d.hash;
@@ -1240,30 +1364,48 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				ABSTR.clickedlinkhash = "";
 				ABSTR.replying = false;
 				
+				if($.inArray(d.hash, PRES.readnodes) < 0){
+					PRES.readnodes.push(d.hash);
+				}
+				
+				
 				PRES.svg.selectAll(".node")
 					.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
-					.style("stroke", PRES.liveAttributes.nodeStroke);
+					.style("stroke", PRES.liveAttributes.nodeStroke)
+					.style("fill",PRES.liveAttributes.nodeFill);
 		
-				$("#right_bar").height('auto');
-				$('#rightpaneleval').html(rightpanelhtmleval);
-				$('#rightpanel').html(rightpanelhtmlreplyandlink);
-				$('#rightpanelspace').html("");
-				$('#nodepos').addClass('evalbutton').css("border-color", "#888");
-				$('#nodeneg').addClass('evalbutton').css("border-color", "#888");
-				
+				if (!ABSTR.timevisualization){
+					$("#right_bar").height('auto');
+					$('#rightpaneleval').html(rightpanelhtmleval);
+					$('#rightpanel').html(rightpanelhtmlreplyandlink);
+					$('#rightpanelspace').html("");
+					$('#nodepos').addClass('evalbutton').css("border-color", "#888");
+					$('#nodeneg').addClass('evalbutton').css("border-color", "#888");
+				}
 				
 				timedcontentlabel = setTimeout(function(){
-				//	clearTimeout(timedclearlabel);
-					$('#right_bar').stop().fadeTo(200, 1);
-					$("#contbox").stop().slideDown(0);
-					
-					document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");
-					document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
-					document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
-					
-					document.getElementById("nodepos").innerHTML = "+" + d.evalpos;
-					document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
-					
+				
+					if (ABSTR.timevisualization){
+						index = $.inArray(d, timednodes);
+						var id = "nodecontent"+index;
+						
+						selectdivcontent(index);
+						$('#timevisdiv').animate({
+							scrollTop: $('#timevisdiv').scrollTop()+$("#"+id).position().top-60
+						}, 400);
+						
+					} else{
+				
+						$('#right_bar').stop().fadeTo(200, 1);
+							$("#contbox").stop().slideDown(0);
+							
+							document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");
+							document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
+							document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
+							
+							document.getElementById("nodepos").innerHTML = "+" + d.evalpos;
+							document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
+					}	
 				},0);
 				
 			};			
@@ -1272,28 +1414,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
 		//focus on the double clicked node
 		this.dblclick = function (d) {
-			
-			var selx = PRES.svg.selectAll(".node")
-								.filter(function (e) {return e.hash == d.hash;})
-								.attr("cx");
-								
-			var sely = PRES.svg.selectAll(".node")
-								.filter(function (e) {return e.hash == d.hash;})
-								.attr("cy");
-
-			PRES.scaler.zoomval = 2;
-			
-			PRES.scaler.despx0 = (PRES.scaler.midx-selx*PRES.scaler.zoomval) - PRES.scaler.despxp;
-			PRES.scaler.despy0 = (PRES.scaler.midy-sely*PRES.scaler.zoomval) - PRES.scaler.despyp;
-
-			
-			PRES.scaler.despx = PRES.scaler.despxp + PRES.scaler.despx0;
-			PRES.scaler.despy = PRES.scaler.despyp + PRES.scaler.despy0;
-				
-
-			PRES.svg
-				.transition().ease("cubic-out").duration(500)
-				.attr("transform", "translate(" + PRES.scaler.despx + ',' + PRES.scaler.despy + ") scale(" + PRES.scaler.zoomval + ")");
+			nodefocus(d, 2);
 		};
 
 		
@@ -1318,15 +1439,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 				
 				timedcontentlabel = setTimeout(function(){
+				
+					if (ABSTR.timevisualization){return;}
+					
 					document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[d.type].typeId],0.5) +";");
-					document.getElementById("contentlabel").innerHTML = "<b> Conexión " + ABSTR.linkFilters[d.type].name.toLowerCase() + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
+					document.getElementById("contentlabel").innerHTML = "<b>Conexión " + ABSTR.linkFilters[d.type].name.toLowerCase() + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
 					
 					document.getElementById("linkpos").innerHTML = "+" + d.evalpos;
 					document.getElementById("linkneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
 					$('#nodepos').addClass('evalbutton').css("border-color", "#888");
 					$('#nodeneg').addClass('evalbutton').css("border-color", "#888");
-				
-				//	clearTimeout(timedclearlabel);
 					
 					$("#right_bar").height($("#right_bar").height());
 					$('#right_bar').stop().fadeTo(200,1);
@@ -1362,6 +1484,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
     function updateNodes(PRES) {
         PRES.svg.selectAll(".node")
+			.style("fill",PRES.liveAttributes.nodeFill)
+			.style("stroke", PRES.liveAttributes.nodeStroke)
 			.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 			.attr("r", PRES.liveAttributes.nodeRadius)
 			.style("fill-opacity", PRES.liveAttributes.nodeFillOpacity)
@@ -1369,6 +1493,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		PRES.svg.selectAll(".seed")
 			.attr("r", PRES.liveAttributes.seedRadius);
+			
+		PRES.svg.selectAll("text")
+			.style("fill-opacity", PRES.liveAttributes.textFillOpacity);
     };
 
 	function updateRelatedOpacity(PRES) {
@@ -1383,9 +1510,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 //shows or hides the filters and legend bars
 
-function hideshowlegend() {
-
-};
+function hideshowlegend() {};
 
 
 function hideshowfilters() {
@@ -1393,7 +1518,7 @@ function hideshowfilters() {
     var PRES = Visualisations.current().presentation;
 	
 	PRES.showfilters = !PRES.showfilters;	
-	
+
 	var str = (PRES.showfilters) ? "Ocultar" : "Mostrar";
 	$("#cmd_hideshowfilters").html(str);
 	
@@ -1406,7 +1531,7 @@ function legendfiltersupdate() {
     var PRES = Visualisations.current().presentation;
     var lower_bar = document.getElementById("lower_bar");
 	
-    (PRES.showfilters) ? lower_bar.style.bottom = "-75px" : lower_bar.style.bottom = "-180px";
+    (PRES.showfilters) ? lower_bar.style.bottom = "-75px" : lower_bar.style.bottom = "-155px";
 
 };
 
@@ -1443,8 +1568,12 @@ function evalnode(vote) {
     if (name == ""){name = "anonymous";}
 	
 	if($.inArray(name, targetnode.evaluatedby) > -1){
+		
 		var alert = document.getElementById("evalalert");
+		
 		var brornot = ($(window).height()<486) ? "<br>" : " ";
+		if (ABSTR.timevisualization){brornot=" ";}
+		
 		alert.innerHTML = "Ya has votado" + brornot + "este comentario";
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		return;
@@ -1494,8 +1623,10 @@ function evallink(vote) {
 	
 	if($.inArray(name, targetlink.evaluatedby) > -1){
 	
+
 		var alert = document.getElementById("evalalert");
 		var brornot = ($(window).height()<486) ? "<br>" : " ";
+		
 		alert.innerHTML = "Ya has votado" + brornot + "esta conexión";
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		return;
@@ -1546,9 +1677,21 @@ function showreplypanel(){
 		return;
 	}
 	
-	var brornot = ($(window).height()<486) ? "" : "<br><br>";
-	$('#rightpanel').html(rightpanelhtmlreplyandlink + brornot+ rightpanelhtmlreply);
-	$('#rightpanelspace').html("");
+	if (ABSTR.timevisualization){
+
+		$("#nodeinteract"+oldindex).height("auto");
+		$("#nodeinteract"+oldindex).html(timevisinteracthtml +  "<br></br>" + rightpanelhtmlreply + "<br></br><br>"); 
+		
+		$('#timevisdiv').animate({
+			scrollTop: $('#timevisdiv').scrollTop()+$("#nodecontent"+oldindex).position().top-60
+		}, 400);
+
+	} else {
+	
+		var brornot = ($(window).height()<486) ? "" : "<br><br>";
+		$('#rightpanel').html(rightpanelhtmlreplyandlink + brornot+ rightpanelhtmlreply);
+		$('#rightpanelspace').html("");
+	}
 	ABSTR.replying = true;
 	
 	document.getElementById("namebox2").value = Model.currentAuthor();
@@ -1564,60 +1707,102 @@ function showreplypanel(){
 
 function hidereplypanel(){
 	var ABSTR = Visualisations.current().abstraction;
+	ABSTR.replying = false; 
+		 
 	document.getElementById("replybox").value = "";  
-	 ABSTR.replying = false; 
-	 $('#rightpanel').html(rightpanelhtmlreplyandlink);	
-	 $('#rightpanelspace').html("");
+	document.getElementById("replyboxsum").value = "";
+
+	
+	if (ABSTR.timevisualization){
+		$("#nodeinteract"+oldindex).height("24px");
+		$("#nodeinteract"+oldindex).html(timevisinteracthtml); 
+	} else {
+			
+		 $('#rightpanel').html(rightpanelhtmlreplyandlink);	
+		 $('#rightpanelspace').html("");
+	}
 }
 
 
 //shows the create link options
 function showcreatelink(){
+
 	var ABSTR = Visualisations.current().abstraction;
 	
 	if (ABSTR.creatinglink){
 		cancellink();
-	}else{
+		return;
+	}
+	
+	if (ABSTR.replying){
+		hidereplypanel();
+	}
+
+
+	if (ABSTR.timevisualization){
+
+		$("#nodeinteract"+oldindex).height("auto");
+		$("#nodeinteract"+oldindex).html(timevisinteracthtml +  "<br></br>" + rightpanelhtmllink + "<br>"); 
+		
+		$('#timevisdiv').animate({
+			scrollTop: $('#timevisdiv').scrollTop()+$("#nodecontent"+oldindex).position().top-60
+		}, 400);
+
+	} else {
+
 		var brornot = ($(window).height()<486) ? "" : "<br><br>";
 		$('#rightpanel').html(rightpanelhtmlreplyandlink + brornot + rightpanelhtmllink);
 		$('#rightpanelspace').html("");
 		
-		ABSTR.creatinglink = true;
-		ABSTR.replying = false;
-		button = document.getElementById("showconnect");
-		button.setAttribute("style", "box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5);");
-		
-		selectedconnectlinktype = 0;
-		prepareconnectlinktype();
 	}
+	
+	ABSTR.creatinglink = true;
+	ABSTR.replying = false;
+	button = document.getElementById("showconnect");
+	button.setAttribute("style", "box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5);");
+	
+	selectedconnectlinktype = 0;
+	prepareconnectlinktype();
+
+
 }
 
-
 function cancellink(){
-	$('#rightpanel').html(rightpanelhtmlreplyandlink);
-	$('#rightpanelspace').html("");
-	
+
 	var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
+	
+	if (ABSTR.timevisualization){
+		$("#nodeinteract"+oldindex).height("24px");
+		$("#nodeinteract"+oldindex).html(timevisinteracthtml); 
+	} else {
+	
+		$('#rightpanel').html(rightpanelhtmlreplyandlink);
+		$('#rightpanelspace').html("");
+	}
+	
 	PRES.prelink 
 		.attr("x1", 0)
 		.attr("y1", 0)
 		.attr("x2", 0)
-		.attr("y2", 0);
+		.attr("y2", 0)
+		.style("stroke-opacity", 0);
 		
 	ABSTR.creatinglink = false;
 }
 
 //creation of a new node
 function savenode() {
+		
 	if (document.getElementById("replybox").value == ""){
 		var alert = document.getElementById("replyalert");
-		alert.innerHTML = "&nbsp&nbsp¡Escribe algo primero!";
+		alert.innerHTML = "Escribe algo primero!";
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		$('#replybox').effect('highlight',2000);
 		return;
 	}
     var PRES = Visualisations.current().presentation;
+	
     createnode(PRES);
 };
 
@@ -1634,6 +1819,7 @@ function createnode(PRES){
     var nodes = PRES.force.nodes();
 
     var content = document.getElementById("replybox").value;
+    var contentsum = document.getElementById("replyboxsum").value;
     var nodetype = selectedreplynodetype;
 	
 	var targetindex = searchhash(nodes, ABSTR.clickednodehash), 
@@ -1647,11 +1833,12 @@ function createnode(PRES){
 	var randomplusminus = Math.random() < 0.5 ? -1 : 1;
 	var coordx = targetnode.x + randomplusminus*10*(Math.random()+1);
 	var coordy = targetnode.y + randomplusminus*10*(Math.random()+1);
-	
-	var hash = parseInt(nodehashit(content + nodetype + author + time));
+
+	var hash = parseInt(nodehashit(content + contentsum + nodetype + author + time));
     var newnode = {
         "hash": hash,
         "content": content,
+        "contentsum": contentsum,
         "evalpos": 1,
 		"evalneg": 0,
         "evaluatedby": [author],
@@ -1664,9 +1851,9 @@ function createnode(PRES){
     };
 	
     nodes.push(newnode);
+
 	db_savenode(newnode);	
 	update_hash_lookup([newnode], []);
-	
 	
 	var linktype = selectedreplylinktype;
 	
@@ -1716,6 +1903,31 @@ function createnode(PRES){
 	if (newnode.seed == 1){
 		addseed(newnode);
 	}
+	if (ABSTR.timevisualization){
+		
+		var i= timednodes.length-1;
+		var legend = timednodes[i].author+' - '+timeAgo(timednodes[i].time);
+		var color = d3.rgb(PRES.nodecolor[timednodes[i].type]).darker(0).toString();
+		
+		var html = '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div><div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 2px '+color+';" onclick="clickdivcontent(this.id);" onmouseover="overdivcontent(this.id);" onmouseout="outdivcontent(this.id);"></div><div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
+		
+		$("#timevisdiv").html($("#timevisdiv").html().replace("<br><br><br> <br><br><br><br>","") + html + "<br><br><br> <br><br><br><br>");
+		
+		$("#nodecontent"+i).html(URLlinks(nl2br(timednodes[i].content)));
+		
+		$('#timevisdiv').animate({
+			scrollTop: $('#timevisdiv').scrollTop()+$("#nodecontent"+i).position().top-60
+		}, 700);
+		
+		$("#nodecontent"+i).fadeTo(0,0.01);
+		$("#nodelegend"+i).fadeTo(0,0.01);
+		$("#nodeinteract"+i).fadeTo(0,0.01);
+
+		$("#nodecontent"+i).delay(800).fadeTo(300,1);
+		$("#nodelegend"+i).delay(800).fadeTo(300,1);
+		$("#nodeinteract"+i).delay(800).fadeTo(300,1);
+		
+	}
 	
 }
 
@@ -1738,7 +1950,7 @@ function drawnewlinks() {
 		.on("mouseover", PRES.liveAttributes.mouseoverlink)
 		.on("mouseout", PRES.liveAttributes.mouseoutlink)
         .on("click", PRES.liveAttributes.clicklink);
-	    
+	
 	PRES.force.start();
 }
 
@@ -1766,7 +1978,7 @@ function drawnewnodes() {
         .call(PRES.force.drag)
 		.transition().ease("elastic").duration(1000)
 		.attr("r", PRES.liveAttributes.nodeRadius);
-			    
+	
     PRES.force.start();
 };
 
@@ -1798,7 +2010,7 @@ function savelink(d){
     var linktype = selectedconnectlinktype;
     
     var sourceindex = searchhash(nodes, ABSTR.clickednodehash);
-    sourcenode = nodes[sourceindex];
+    var sourcenode = nodes[sourceindex];
 	
     var author = Model.currentAuthor();
 	var time = Math.floor((new Date()).getTime() / 1000);
@@ -1842,6 +2054,7 @@ function savelink(d){
 		.attr("marker-mid", PRES.liveAttributes.linkArrow)
 		.style("stroke", PRES.liveAttributes.linkStroke)
 		.style("stroke-width", PRES.liveAttributes.linkStrokeWidth)
+		.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity)
 		.style("stroke-dasharray", PRES.liveAttributes.linkStrokeDashArray)
 		.style("stroke-linecap", "round")
 		.on("mouseover", PRES.liveAttributes.mouseoverlink)
@@ -1864,7 +2077,9 @@ function savelink(d){
 //changes the color of the prelink line when a new type of link is selected
 function changelinktype(){
 	var PRES = Visualisations.current().presentation;
-	PRES.prelink.style("stroke", PRES.linkcolor[selectedconnectlinktype]);
+	PRES.prelink
+		.style("stroke", PRES.linkcolor[selectedconnectlinktype])
+		.style("stroke-opacity",0.6);
 }
  
 
@@ -1881,14 +2096,15 @@ function Scaler(PRES) {
     this.trans = [0,0];
 
     this.zoomval = 1;
-    this.zoommax = 10;
+    this.zoommax = 8;
     this.zoommin = 0.1;
 	
 	this.zoomincrement = 1.3;
 	this.zoomduration = 300;
 
-	this.despx0 = -300/2;
-	this.despy0 = -180/2;
+	this.despx0 = -400/2;
+	if (conversation === "sandbox" || conversation === "sandbox_es"){this.despx0 = -(400-280)/2;}
+	this.despy0 = -(180-50)/2;
 		
 	this.despx = this.despx0;
 	this.despy = this.despy0;
@@ -1988,9 +2204,44 @@ function Scaler(PRES) {
 }
 
 
+function nodefocus(d, zoomv){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+	
+	var selx = PRES.svg.selectAll(".node")
+						.filter(function (e) {return e.hash == d.hash;})
+						.attr("cx");
+						
+	var sely = PRES.svg.selectAll(".node")
+						.filter(function (e) {return e.hash == d.hash;})
+						.attr("cy");
+
+	PRES.scaler.zoomval = zoomv;
+	
+	var xcenter = ($(window).width() - $("#right_bar").width())/2;
+	
+	if (ABSTR.tutorialopened){xcenter += 175;}
+	
+	PRES.scaler.despx0 = (xcenter-selx*PRES.scaler.zoomval) - PRES.scaler.despxp;
+	PRES.scaler.despy0 = (PRES.scaler.midy-sely*PRES.scaler.zoomval) - PRES.scaler.despyp;
+	
+	
+	PRES.scaler.despx = PRES.scaler.despxp + PRES.scaler.despx0;
+	PRES.scaler.despy = PRES.scaler.despyp + PRES.scaler.despy0;
+		
+
+	PRES.svg
+		.transition().ease("cubic-out").duration(500)
+		.attr("transform", "translate(" + PRES.scaler.despx + ',' + PRES.scaler.despy + ") scale(" + PRES.scaler.zoomval + ")");
+}
+
+
 function explode(cx, cy, color){ 
 
 	var PRES = Visualisations.current().presentation;
+	
+	if (!PRES.drawexplosions){return;}
 	
 	if (typeof color==='undefined'){
 		color="blue";
@@ -2012,7 +2263,7 @@ function explode(cx, cy, color){
 		.style("stroke-opacity",0)
 		.remove();
 	
-	setTimeout(function(){explosion.remove();},2000);
+	setTimeout(function(){explosion.remove();},1550);
 }
 
 
@@ -2084,7 +2335,7 @@ function updatecontentlabel(d, time, votes){
 	
 	timedcontentlabel = setTimeout(function(){
 		document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5)   + ";");
-		document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author + " - "+timeAgo(d.time)+")";
+		document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (por " +d.author + " - "+timeAgo(d.time)+")";
 		document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
 		
 		if (votes){
@@ -2146,9 +2397,7 @@ function preparereplynodetype(){
 		background: "#fff",
 		onSelected: function(selectedData){
 			selectedreplynodetype = ddData[selectedData.selectedIndex].value;
-			//if (selectedreplynodetype ==3){selectedreplylinktype = 8;}
 			preparereplylinktype();
-			//if (selectedreplynodetype ==3){$('#replylinktype').ddTslick('select', {index: 0})};
 		}
 	});
 	
@@ -2160,7 +2409,7 @@ function preparereplylinktype(){
 	var nodetype = selectedreplynodetype;
 	var ddData=[];
 	
-	var defaultselected = (nodetype ==3) ? "Respuesta" : "General";
+	var defaultselected = "General";
 	
 	var typeslist = Model.connectionList(nodetype)
 	
@@ -2180,7 +2429,7 @@ function preparereplylinktype(){
 	$('#replylinktype').ddTslick({
 
 		data: ddData,
-		selectText: "Tipo de conexión",
+		selectText: "Tipo de relación",
 		width: 135,
 		height: 25*(typeslist.length),
 		background: "#fff",
@@ -2193,6 +2442,8 @@ function preparereplylinktype(){
 
 function prepareconnectlinktype(){
 
+	var PRES = Visualisations.current().presentation;
+	
 	var ddData=[];
 	
 	for (var i=0;i<Model.linkConnectTypesArray.length;i++){
@@ -2218,6 +2469,7 @@ function prepareconnectlinktype(){
 		background: "#fff",
 		onSelected: function(selectedData){
 			selectedconnectlinktype = ddData[selectedData.selectedIndex].value;
+			PRES.linecolor = PRES.linkcolor[selectedconnectlinktype];
 			changelinktype();
 			showconnecttext();
 		}
@@ -2228,35 +2480,28 @@ function prepareconnectlinktype(){
 function showconnecttext(){
 
 	switch (selectedconnectlinktype){
-		case 2:
-			str = "Selecciona un pensamiento que sea consecuencia de este"
-			break;
-		case 3:
-			str = "Selecciona un pensamiento que esté de acuerdo con este"
-			break;
-		case 4:
-			str = "Selecciona un pensamiento que esté en desacuerdo con este"
-			break;
-		case 5:
+		case 1:
 			str = "Selecciona un pensamiento que esté relacionado con este"
 			break;
-		case 6:
-			str = "Selecciona un pensamiento que sea contradictorio con este"
+		case 2:
+			str = "Selecciona un pensamiento que esté de acuerdo con este"
 			break;
-		case 7:
+		case 3:
+			str = "Selecciona un pensamiento que esté en desacuerdo con este"
+			break;
+		case 4:
+			str = "Selecciona un pensamiento que sea consecuencia de este"
+			break;
+		case 5:
 			str = "Selecciona un pensamiento que sea una alternativa a este"
 			break;
-		case 8:
-			str = "Selecciona un pensamiento que sea una respuesta de este"
-			break;
-		case 9:
+		case 6:
 			str = "Selecciona un pensamiento que sea equivalente a este"
 			break;
 	}
 	
 	$("#connecttext").html(str);
 }
-
 
 function mousemove(){}
 
@@ -2310,14 +2555,13 @@ function changetutorialpanel(){
 	
 	var text= "";
 	var textclose = "<div id='tutorial_panel_close' class='tutorial_panel_close noselect' onclick='closetutorialpanel()'>&times</div>";
-	var textclick = "<div class='tutorial_panel_click'>(Haz click para continuar)</div>";
+	var textclick = "<div class='tutorial_panel_click'>(Click para continuar)</div>";
 	
 	switch (ABSTR.tutorialstep){
 	
 		case -1:
-		text = "¡Bienvenido a Incoma!  &nbsp;&nbsp; ヽ(^。^)ノ ヽ(^。^)ノ  <br><br>&nbsp;&nbsp;&nbsp;&nbsp; (ﾉ^ ヮ^)ﾉ *:･ﾟ✧ <br><br>En este panel encontrarás un tutorial para aprender a usarlo. En cualquier momento puedes cerrarlo, o hacer click para seguir avanzando.";
+		text = "¡Bienvenido a Incoma!  &nbsp;&nbsp; ヽ(^。^)ノ ヽ(^。^)ノ  <br>&nbsp;&nbsp;&nbsp;&nbsp; (ﾉ^ ヮ^)ﾉ *:･ﾟ✧  <br><br>En este panel encontrarás un tutorial para aprender a usarlo. En cualquier momento puedes cerrarlo, o hacer click para seguir avanzando. <i>Puedes jugar con este Sandbox libremente! (los cambios no se guardan)</i>";
 		break;
-		
 		
 		case 0:
 		text = "El gráfico que ves en medio de la pantalla es una conversación. Los círculos representan pensamientos y las líneas las relaciones entre ellos.<br><br>Esta conversación llamada 'Sandbox' es un ejemplo de una conversación típica. Puedes jugar libremente con ella, los cambios que hagas no se guardarán, a diferencia de lo que ocurre en las otras conversaciones." 
@@ -2334,21 +2578,21 @@ function changetutorialpanel(){
 		
 		
 		case 2:
-		text = "El color de los círculos indica el tipo de pensamiento que contienen (un pensamiento general, una pregunta, una respuesta, una propuesta, información,...), y el color de las líneas el tipo de relación que existe entre los círculos que conectan (los pensamientos pueden estar de acuerdo, en desacuerdo, ser contradictorios, ser uno la respuesta a la pregunta que hay en otro,...)";
+		text = "El color de los círculos indica el tipo de pensamiento que contienen (un pensamiento general, una pregunta, una respuesta, una propuesta, información,...), y el color de las líneas el tipo de relación que existe entre los círculos que conectan (los pensamientos pueden estar de acuerdo, en desacuerdo, ser equivalentes, ser uno la consecuencia de otro,...)";
 
 		$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
 		break;
 		
 		
 		case 3:
-		text = "Puedes ver el significado de los colores en el panel de leyenda en la parte inferior de la pantalla. También puedes usar este panel para ocultar o mostrar un tipo específico de pensamiento o conexión, haciendo click en su nombre.";
+		text = 'Puedes ver el significado de los colores en el panel de leyenda en la parte inferior de la pantalla.<br><br>También puedes usar este panel para ocultar o mostrar un tipo específico de pensamiento o conexión, haciendo click en su nombre. Por defecto el tamaño de los círculos y enlaces depende de su puntuación. Si quieres verlos todos del mismo tamaño haz click en la palabra "Evaluaciones" en la sección "Tamaños" del panel.';
 		
-		$("#lower_bar").css("border", "solid 1px red");
+		$("#lower_bar").css("border", "solid 2px red");
 		break;
 		
 
 		case 4:
-		text = 'Por defecto el tamaño de los círculos y enlaces depende de su puntuación. Si quieres verlos todos del mismo tamaño haz click en la palabra "Evaluaciones" en la sección "Tamaños" del panel. <br><br>Si quieres ocultar la leyenda, haz click en el botón "Ocultar" de la esquina superior derecha de esta.';
+		text = 'Haciendo click en "Mostrar etiquetas" aparecerá una línea de texto sobre cada círculo mostrando sus etiquetas (generadas automáticamente entre las palabras más usadas en la conversación).<br><br>Haciendo click en "Mostrar resúmenes" el texto mostrará el resumen del nodo, creado por el usuario o uno con el comienzo del comentario. Si quieres ocultar la leyenda, haz click en el botón "Ocultar" de su esquina.';
 		
 		break;
 
@@ -2375,7 +2619,7 @@ function changetutorialpanel(){
 		
 		
 		case 7:
-		text = "En primer lugar, tienes un menú para seleccionar el tipo de respuesta que estás dando: lo que escribes es una pregunta? una respuesta a una pregunta? una proposición? información (en lugar de una opinón)?<br><br>En segundo lugar, tienes otro menú para seleccionar el tipo de relación entre tu pensamiento y el otro que has clickeado. Dependiendo del tipo de comentario que selecciones, encontrarás ciertos tipo de posibles conexiones."
+		text = "En primer lugar, tienes un menú para seleccionar el tipo de respuesta que estás dando: lo que escribes es una pregunta? una propuesta? información (en lugar de una opinón)?<br><br>En segundo lugar, tienes otro menú para seleccionar el tipo de relación entre tu pensamiento y el otro que has clickeado. Dependiendo del tipo de comentario que selecciones, encontrarás ciertos tipo de posibles conexiones."
 		
 		$("#tdnodetype").css("border", "solid 2px red");
 		$("#tdlinktype").css("border", "solid 2px red");
@@ -2384,20 +2628,22 @@ function changetutorialpanel(){
 		
 		
 		case 8:
-		text = 'Debajo de esos dos menús puedes escribir tu comentario y tu nombre. Cuando acabes haz click en "Salvar" y observa cómo aparece tu comentario en el gráfico!<br><br>Si quieres escribir un pensamiento que no esté conectado a ningún otro, selecciona "Sin relación" en el menú "Tipo de conexión".';
+		text = 'Debajo de esos dos menús puedes escribir tu comentario, un resúmen del comentario (si quieres) y tu nombre. Cuando acabes haz click en "Salvar" y observa cómo aparece tu comentario en el gráfico!<br><br>Si quieres escribir un pensamiento que no esté conectado a ningún otro, selecciona "Sin relación" en el menú "Tipo de conexión".';
 		
 		$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
 		$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");		
 		
 		$("#replybox").css("border-color", "red");
+		$("#replyboxsum").css("border-color", "red");
 		$("#namebox2").css("border-color", "red");
 		break;
 		
 		
 		case 9:
-		text = 'Si crees que dos pensamientos tienen una relación entre ellos y quieres mostrarlo en el gráfico, selecciona uno de ellos y haz click en el botón "Conectar". Elije el tipo de relación en el menú y haz click en el otro pensamiento.<br><br>Ten en cuenta que el orden importa en las relaciones "Consecuencia" y "Respuesta" (uno de los pensamientos es la consecuencia o la respuesta del otro, pero no al revés).';
+		text = 'Si crees que dos pensamientos tienen una relación entre ellos y quieres mostrarlo en el gráfico, selecciona uno de ellos y haz click en el botón "Conectar". Elije el tipo de relación en el menú y haz click en el otro pensamiento.<br><br>Ten en cuenta que el orden importa en la relación "Consecuencia" (uno de los pensamientos es la consecuencia del otro, pero no al revés).';
 		
 		$("#replybox").css("border-color", "#bbb");
+		$("#replyboxsum").css("border-color", "#bbb");
 		$("#namebox2").css("border-color", "#bbb");
 		
 		showcreatelink();
@@ -2409,22 +2655,28 @@ function changetutorialpanel(){
 		text = 'Para evaluar un pensamiento haz click en él, escribe tu nombre en el recuadro "Nombre" de la parte superior de la pantalla (si no lo has introducido ya en alguna parte), y haz click en los botones verde o rojo de debajo del pensamiento. Los números de votos positivos y negativos se muestran en los botones.';
 		
 		$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");
+		$("#headerNamebox").css("border", "solid 2px red");
+		$("#nodepos").css("border", "solid 2px red");
+		$("#nodeneg").css("border", "solid 2px red");
 		cancellink();
 		break;
 		
 		
 		case 11:
-		text = 'Para deseleccionar un círculo, haz click en cualquier parte vacía de la pantalla.<br><br> También puedes hacer click y arrastrar para moverla, y acercarte o alejarte usando los botones de la parte superior izquierda de la ventana o con la rueda del ratón. También es posible arrastrar los círculos si quieres cambiarles de posición, y haciéndoles doble click la vista se centrará en ellos.';
+		text = 'Para deseleccionar un círculo, haz click en cualquier parte vacía de la pantalla.<br><br>También puedes arrastrar la pantalla para moverla, y acercarte o alejarte usando los botones de zoom de la esquina superior izquierda o usando la rueda del ratón. También es posible arrastrar los círculos si quieres cambiarles de posición, y haciéndoles doble click la vista se centrará en ellos.';
 		
 		ABSTR.overnode = false;
 		PRES.liveAttributes.backgroundclick();
 		
 		$("#left_bar").css("border-color", "red");
+		$("#headerNamebox").css("border", "solid thin #ddd");
+		$("#nodepos").css("border", "solid 2px rgba(0,0,0,0)");
+		$("#nodeneg").css("border", "solid 2px rgba(0,0,0,0)");
 		break;
 
 		
 		case 12: 
-		text = 'Juega con la Sandbox hasta que te sientas cómodo con el uso de Incoma.<br><br>Una vez que veas cómo funciona todo, puedes crear una conversación nueva o unirte a una que ya exista. Para ello, haz click en el menú y elige la opción que quieras: "Crear" o "Participar". Recuerda que en las demás conversaciones que no son la Sandbox, los cambios se guardarán en la base de datos.';
+		text = 'Juega con la Sandbox hasta que te sientas cómodo con el uso de Incoma.<br><br>Una vez que veas cómo funciona todo, puedes crear una conversación nueva o unirte a una que ya exista. Para ello, haz click en el menú y elige la opción que quieras: "Crear" o "Participar". Recuerda que en las demás conversaciones que no son la Sandbox, todos los cambios (nuevos pensamientos, conexiones y valoraciones) se guardan automáticamente.';
 		
 		$("#left_bar").css("border-color", "rgba(0,0,0,0)");
 		$("#headerMenu").css("color", "#f53d3d");
@@ -2432,7 +2684,7 @@ function changetutorialpanel(){
 		
 		
 		case 13:
-		text = "Puedes encontrar más información sobre el proyecto Incoma en el blog incomaproject.org<br><br>Si tienes dudas, sugerencias, si encuentras algún error, quieres compartir con nosotros algo bonito, o lo que sea, escríbenos a <br>incomaproject.contact@gmail.com";
+		text = "Puedes encontrar más información sobre el proyecto Incoma en el blog del proyecto blog.incoma.org<br><br>Si tienes dudas, sugerencias, si encuentras algún error, quieres compartir con nosotros algo bonito, o lo que sea, escríbenos a <br>incomaproject.contact@gmail.com";
 		
 		$("#headerMenu").css("color", "#ddd");
 		$("#headerUrl").css("color", "#f53d3d");
@@ -2443,7 +2695,7 @@ function changetutorialpanel(){
 		text = "Recuerda que Incoma es SOFTWARE LIBRE. Así que es tuyo y del resto de la humanidad. Porque amamos al 99%.<br><br>¡Disfrútalo!";
 		
 		$("#headerUrl").css("color", "#ddd");
-		textclick = "<div class='tutorial_panel_click'>(Haz click para terminar)</div>";
+		textclick = "<div class='tutorial_panel_click'>(Click para terminar)</div>";
 		break;		
 		
 		
@@ -2468,19 +2720,25 @@ function closetutorialpanel(){
 	//restore all the possible modifications made at different steps in the tutorial
 	$("#lower_bar").css("border", "solid 1px rgba(51,51,153, 0.6)");
 	$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
-	ABSTR.overnode = false;
-	PRES.liveAttributes.backgroundclick();	
-	$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
-	$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");	
-	$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");		
-	$("#replybox").css("border-color", "#bbb");
-	$("#namebox2").css("border-color", "#bbb");
 	$("#left_bar").css("border-color", "rgba(0,0,0,0)");
 	$("#headerMenu").css("color", "#ddd");
 	$("#headerUrl").css("color", "#ddd");
 	
+	ABSTR.overnode = false;
+	
+	
+	if (!ABSTR.timevisualization){
+		PRES.liveAttributes.backgroundclick();	
+		$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
+		$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");	
+		$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");		
+		$("#replybox").css("border-color", "#bbb");
+		$("#replyboxsum").css("border-color", "#bbb");
+		$("#namebox2").css("border-color", "#bbb");
+	}
+	
 	//closes the tutorial panel
-	$("#tutorial_panel").html("").animate({height: 20},300).animate({width: 72},300);
+	$("#tutorial_panel").html("").animate({height: 20},300).animate({width: 70},300);
 	
 	setTimeout(function(){
 		$("#tutorial_panel").css({"font-size":"11pt", "cursor":"pointer"}).html("Ver tutorial");
@@ -2490,8 +2748,8 @@ function closetutorialpanel(){
 	ABSTR.tutorialopened=false;
 }
 
-function opentutorialpanel(){
 
+function opentutorialpanel(){
 
     var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
@@ -2578,6 +2836,7 @@ function opennoconversationpanel(){
 	autoupdate = "";
 }
 
+
 // Defines a renormaliztion for the size of nodes and links depending on the votes of all of them
 function definerenormalization(){
 
@@ -2585,10 +2844,10 @@ function definerenormalization(){
 	var maxnodesize = 30;
 	var minlinksize = 1;
 	var maxlinksize = 9;
-	var variation = 5;
+	var variation = 5; //sets the variation of the sizes, they are bigger when 'variation' is closer to zero.
 	
-	// var evalminlimit = -15;
-	// var evalmaxlimit = 30;
+	// var evalminlimit = -10;
+	// var evalmaxlimit = 15;
 	
 	//nodes renormalization
     var PRES = Visualisations.current().presentation;
@@ -2597,9 +2856,6 @@ function definerenormalization(){
 	
 	var maxeval = d3.max(nodesdifevalarray);
 	var mineval = d3.min(nodesdifevalarray);
-	
-	// var maxdomain = (maxeval > evalmaxlimit) ? maxeval+1 : evalmaxlimit;
-	// var mindomain = (mineval < evalminlimit) ? mineval-1 : evalminlimit;
 	
 	var maxdomain = maxeval + variation;
 	var mindomain = mineval - variation;
@@ -2614,17 +2870,624 @@ function definerenormalization(){
 	var maxeval = d3.max(linksdifevalarray);
 	var mineval = d3.min(linksdifevalarray);
 	
-	// var maxdomain = (maxeval > evalmaxlimit) ? maxeval+1 : evalmaxlimit;
-	// var mindomain = (mineval < evalminlimit) ? mineval-1 : evalminlimit;
-	
 	var maxdomain = maxeval + variation;
 	var mindomain = mineval - variation;
 	
 	PRES.renormalizedlink=d3.scale.linear().domain([mindomain,1,maxdomain]).range([minlinksize,PRES.linkStrokeWidthDefault,maxlinksize]);
 	PRES.renormalizedlink.clamp(true);
 	
+
 }
 
+function showevolution(){
+
+	var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+	
+	ABSTR.showingevolution = !ABSTR.showingevolution;
+	
+	if (!ABSTR.showingevolution){
+		$("#controlevolution").slideUp(200);
+		$("#showevolution").html("Ver evolución");
+		clearInterval(addone);
+		PRES.evolutionvelocity = 9000;
+		addbytime(); 
+		
+	} else {
+		$("#controlevolution").slideDown(200);
+		PRES.drawexplosions = false;
+		ABSTR.evolutionpause = false;
+		ABSTR.letmouseover = false;
+		PRES.force.friction(0.7);
+		PRES.force.charge(-500);
+		PRES.force.linkStrength(0.5);
+		$("#evolutionpause").html("ll");
+		
+		startevolution();
+	}
+
+}
+
+
+function startevolution(){
+    var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+	
+	PRES.force.nodes([]);
+	PRES.force.links([]);
+	
+	PRES.svg.selectAll(".link")
+        .data("")
+        .exit().remove();
+		
+	PRES.svg.selectAll(".node")
+        .data("")
+        .exit().remove();
+		
+	PRES.svg.selectAll(".seed")
+        .data("")
+        .exit().remove();
+		
+	PRES.svg.selectAll("text")
+        .data("")
+        .exit().remove();
+		
+	allnodes = Model.model.nodes.slice();
+	alllinks = Model.model.links.slice();
+	
+	allnodes.sort(function(a,b){a.time-b.time;});
+	alllinks.sort(function(a,b){a.time-b.time;});
+	
+	danodes = [];
+	dalinks = [];
+	
+	addbytime(); 
+	
+}
+
+function addbytime(){
+	
+	var ABSTR = Visualisations.current().abstraction;
+    var PRES = Visualisations.current().presentation;
+	
+	if (allnodes.length> 0 && alllinks.length> 0){
+	
+		if ((allnodes[0].time < alllinks[0].time && allnodes[0].seed > 0)||(ABSTR.youarenotalone)){
+			danodes.push(allnodes[0]);
+			PRES.force.nodes(danodes);
+			drawnewnodes();
+			if(allnodes[0].seed>0){addseed(allnodes[0]);}
+			allnodes.shift();
+		} else {
+			dalinks.push(alllinks[0]);
+			PRES.force.links(dalinks);
+			drawnewlinks();		
+			if (alllinks[0].direct == 0){
+				danodes.push(allnodes[0]);
+				PRES.force.nodes(danodes);
+				drawnewnodes();
+				if(allnodes[0].seed>0){addseed(allnodes[0]);}
+				allnodes.shift();
+			}
+			alllinks.shift();
+		}
+	}else if(allnodes.length > 0){
+			danodes.push(allnodes[0]);
+			PRES.force.nodes(danodes);
+			drawnewnodes();
+			if (allnodes[0].seed > 0){addseed(allnodes[0]);}
+			allnodes.shift();
+	} else if(alllinks.length > 0){
+			dalinks.push(alllinks[0]);
+			PRES.force.links(dalinks);
+			drawnewlinks();		
+			alllinks.shift();
+	} else {
+		clearInterval(addone);
+		ABSTR.showingevolution = false;
+		ABSTR.youarenotalone = false;
+		ABSTR.letmouseover = true;
+		PRES.evolutionvelocity = 1;
+		$("#evolvelocity").html("");
+		$("#showevolution").html("Ver evolución");
+		$("#controlevolution").slideUp(200);
+		
+		PRES.force.friction(0.85);
+	   	PRES.force.charge(-500);
+		PRES.force.linkStrength(1);
+		PRES.force.gravity(0.1);
+		PRES.force.start();
+		PRES.drawexplosions = true;
+		
+		Model.model.nodes = PRES.force.nodes();
+		Model.model.links = PRES.force.links();
+		
+		$("#svg").delay(800).fadeIn(500);
+		return;
+	}
+	
+	addone = setTimeout("addbytime()",250/PRES.evolutionvelocity); 
+}
+
+
+function evolutionpause(){
+	
+	var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+
+	ABSTR.evolutionpause = !ABSTR.evolutionpause;
+	
+	if (ABSTR.evolutionpause){
+		clearInterval(addone);
+		$("#evolutionpause").html("▶");
+	} else {
+		addbytime();
+		$("#evolutionpause").html("ll");
+	}
+}
+
+function evolutionfast(){
+	var PRES = Visualisations.current().presentation;
+
+	if (PRES.evolutionvelocity < 8){PRES.evolutionvelocity *= 2;}
+	if (PRES.evolutionvelocity == 0.4){PRES.evolutionvelocity = 0.5;}
+	
+	var str = "";
+	if (PRES.evolutionvelocity != 1){str="(x"+PRES.evolutionvelocity+")";}
+	
+	$("#evolvelocity").html(str);
+	
+	if (!ABSTR.evolutionpause){
+		clearInterval(addone);
+		addbytime();
+	}
+}
+
+
+function evolutionslow(){
+	var PRES = Visualisations.current().presentation;
+
+	if (PRES.evolutionvelocity > 0.1){PRES.evolutionvelocity *= 0.5;}
+	if (PRES.evolutionvelocity == 0.25){PRES.evolutionvelocity = 0.2;}
+	
+	var str = "";
+	if (PRES.evolutionvelocity != 1){str="(x"+PRES.evolutionvelocity+")";}
+	
+	$("#evolvelocity").html(str);
+}
+
+
+
+function findstringsontext (strings, text) {   
+    var stringsarray=strings.split(", "); 
+    var foundstringsarray = [];
+
+    for (i=0;i<stringsarray.length;i++){
+	if (text.indexOf(stringsarray[i]) !== -1){
+	foundstringsarray.push(stringsarray[i]);
+	}
+    };
+
+      var foundstrings = foundstringsarray.join(); 
+      return foundstrings;
+
+}
+
+
+function showtexts(){
+
+    var PRES = Visualisations.current().presentation;
+	PRES.showingtexts = !PRES.showingtexts; 
+
+
+	if (PRES.showingsums){
+	hidesums();	
+	}
+
+	var textdata = [];
+	
+	Model.model.nodes.forEach(function(d, i) {		
+
+			textdata.push({node:d, text: findstringsontext(Model.tags, d.content)});
+	});
+		
+		
+	if (PRES.showingtexts){
+	
+		PRES.svg.selectAll("text")
+			.data(textdata)
+			.enter().append("text")
+			.text( function (d) { return d.text;})
+			.attr("x", function(d) { return d.node.x; })
+			.attr("y", function(d) { return (parseInt(d.node.y)-parseInt(PRES.liveAttributes.nodeRadius(d.node))-1); })
+		    .style("font-size", "12px")
+			.attr("text-anchor", "middle")
+			.style("fill-opacity", function(d) {return PRES.liveAttributes.nodeFillOpacity(d.node);})
+			.style("fill", "#333");
+		
+		$("#showtexts").css("color","#000");
+	
+	} else {
+	
+		PRES.svg.selectAll("text")
+			.data("")
+			.exit().remove();
+			
+		$("#showtexts").css("color","#777");
+	}
+	
+}
+
+
+
+function hidetexts(){
+
+    var PRES = Visualisations.current().presentation;
+
+	if (PRES.showingtexts){
+	PRES.showingtexts = !PRES.showingtexts; 
+	
+		PRES.svg.selectAll("text")
+			.data("")
+			.exit().remove();
+			
+		$("#showtexts").css("color","#777");
+	}
+	
+}
+
+
+function showsums(){
+
+    var PRES = Visualisations.current().presentation;
+	PRES.showingsums = !PRES.showingsums; 
+
+	if (PRES.showingtexts){
+	hidetexts();	
+	}
+		
+	var textdata2 = [];
+	
+	Model.model.nodes.forEach(function(d, i) {	
+			//if a node has no summary, an automatic summary is created with the 60 first character of its content
+			var fontcolor = "#000";
+			var fontstyle = "normal";
+			var summary = d.contentsum;
+			
+			if (summary == ""){
+			
+				var fontcolor = "#555";
+				var fontstyle = "italic";
+				
+				if (d.content.length > 60){
+					summary = "[" + d.content.slice(0, 60) + "...]";
+				} else {
+					summary = "[" + d.content + "]";
+				}
+
+			}
+			
+			textdata2.push({node:d, fontcolor:fontcolor, fontstyle: fontstyle, summary: summary});
+	});
+		
+	
+	if (PRES.showingsums){
+	
+		PRES.svg.selectAll("text")
+		    .data(textdata2)
+		    .enter().append("text")
+		    .text( function (d) { return d.summary;})
+		    .attr("x", function(d) { return d.node.x; })
+		    .attr("y", function(d) { return (parseInt(d.node.y)-parseInt(PRES.liveAttributes.nodeRadius(d.node)))-1; })
+			.attr("text-anchor", "middle")
+			.style("font-size", "10px")
+			.style("font-style", function(d) { return d.fontstyle; })
+			.style("fill-opacity", function(d) {return PRES.liveAttributes.nodeFillOpacity(d.node);})
+			.style("fill", function(d) { return d.fontcolor; });
+		
+		$("#showsums").css("color","#000");
+	
+	} else {
+	
+		PRES.svg.selectAll("text")
+			.data("")
+			.exit().remove();
+			
+		$("#showsums").css("color","#777");
+	}
+	
+}
+
+function hidesums(){
+
+    var PRES = Visualisations.current().presentation;
+
+
+	if (PRES.showingsums){
+	PRES.showingsums = !PRES.showingsums; 
+	
+		PRES.svg.selectAll("text")
+			.data("")
+			.exit().remove();
+			
+		$("#showsums").css("color","#777");
+	}
+	
+}
+
+
+function changevisualization(){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+	
+	ABSTR.timevisualization = !ABSTR.timevisualization;
+	
+	//change right_bar properties when going back to original visualization
+	
+	if (!ABSTR.timevisualization){
+
+		cancellink();
+		
+		$(".right_bar").resizable( "destroy" )
+		
+		$("#right_bar").html(rightbarhtml);
+		
+		$(".right_bar").resizable({
+			handles: 'w',
+			minWidth: 335,
+			resize: function() {
+				$(this).css("left", 0);
+			}
+		});	
+	
+		
+		$("#right_bar").css({
+			"width": $("#right_bar").width()-20,
+			"height": "auto",
+			"overflow": "visible",
+			"padding": "0px 10px 12px 10px",
+		});
+		
+		$('#rightpanelspace').html(rightpanelhtmlspace);
+		
+		if (oldindex !== ""){
+			PRES.liveAttributes.click(timednodes[oldindex]);
+		}
+		
+		
+		
+		return;
+	}
+	
+	//change right_bar properties when going to time visualization
+	
+	oldindex = "";
+	oldoverindex = 1;
+	
+	cancellink();
+	
+	$(".right_bar").resizable( "destroy" )
+	
+	$("#right_bar").html(timevisrightbarhtml);
+	
+	$(".right_bar").resizable({
+		handles: 'w',
+		minWidth: 335,
+		resize: function() {
+			$(this).css("left", 0);
+		}
+	});	
+		
+	oldrbwidth = $("#right_bar").width();
+	
+	$("#right_bar").css({
+		"width": $("#right_bar").width()+20,
+		"height": $(window).height()-50,
+		"overflow": "auto",
+		"padding": "0px 0px 0px 0px",
+	});
+	
+	
+	$("#timevisdiv").css({
+		"height": $(window).height()-50-53-0,
+	});	
+	
+	var html = "<br>";
+	
+	//array of all the nodes shorted by creation time
+	timednodes = Model.model.nodes;
+	timednodes.sort(function(a,b){a.time-b.time;});	
+	
+	//add divs with the node contents to the right_bar
+	
+	for (var i=0; i< timednodes.length; i++){
+		
+		var color = d3.rgb(PRES.nodecolor[timednodes[i].type]).darker(0).toString();
+		var legend = timednodes[i].author+' - '+timeAgo(timednodes[i].time);
+		
+		html += '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div>'; 
+		
+		html += '<div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 2px'+color+'" onclick="clickdivcontent(this.id);" onmouseover="overdivcontent(this.id);" onmouseout="outdivcontent(this.id);"></div>'; 
+		
+		html += '<div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
+	}
+	
+	$("#timevisdiv").html(html+"<br><br><br> <br><br><br><br>");
+	
+	for (var i=0; i< timednodes.length; i++){
+	
+		var content = URLlinks(nl2br(timednodes[i].content));	
+		$("#nodecontent"+i).html(content);
+		
+	//	if ($("#nodecontent"+i).height()>200){$("#nodecontent"+i).height(200)}; //maximun height (thought still resizable)
+	}
+	
+	if (ABSTR.clickednode !== ""){
+		var index = $.inArray(ABSTR.clickednode, timednodes);
+		selectdivcontent(index);
+		
+		$('#timevisdiv').scrollTop($('#timevisdiv').scrollTop()+$("#nodecontent"+index).position().top-60);
+		
+	} else {
+		$('#timevisdiv').scrollTop(0);
+	}
+	
+}
+
+function clickdivcontent (id){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+	
+	var index=id.slice(11);
+	var selnode=timednodes[index];
+
+	if (ABSTR.creatinglink){
+		index = oldindex;
+		PRES.liveAttributes.click(selnode)
+		return;
+	}
+	
+	selectdivcontent(index);
+
+	nodefocus(selnode, PRES.scaler.zoomval);
+	
+}
+
+function selectdivcontent(index){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+
+	var id="nodecontent"+index;
+	var selnode=timednodes[index];
+	
+	if (oldindex !== ""){
+		var color = d3.rgb(PRES.nodecolor[timednodes[oldindex].type]).darker(0).toString();
+		$("#nodecontent"+oldindex).css({
+				"border": "solid 2px"+color,
+		});
+		
+		var oldinteractheight = $("#nodeinteract"+oldindex).height();
+		$("#nodeinteract"+oldindex).height("24px");
+		$("#nodeinteract"+oldindex).html("");
+		var newinteractheight = $("#nodeinteract"+oldindex).height();
+		
+		if (index>oldindex){
+			$('#timevisdiv').scrollTop($('#timevisdiv').scrollTop()-oldinteractheight+newinteractheight);
+		}
+	}
+	
+	oldindex = index;
+
+//	$("#"+id).animate({height: $("#"+id)[0].scrollHeight-10},200); //make the div taller, to show all its content without scrollbar
+	
+	$("#"+id).css({
+			"border": "solid 2px"+PRES.bordercolor.clicked,
+	});
+	
+	$("#nodeinteract"+oldindex).height("24px");
+	$("#nodeinteract"+index).html(timevisinteracthtml);
+
+	document.getElementById("nodepos").innerHTML = "+" + selnode.evalpos;
+	document.getElementById("nodeneg").innerHTML = ((selnode.evalneg===0) ? "" : "-") + selnode.evalneg;	
+	
+	ABSTR.clickednodehash = selnode.hash;
+	ABSTR.clickednode = selnode;
+	ABSTR.clickedlinkhash = "";
+	if (ABSTR.replying){
+		cancellink();
+		ABSTR.replying = false;
+	}
+	
+	if($.inArray(selnode.hash, PRES.readnodes) < 0){
+		PRES.readnodes.push(selnode.hash);
+	}
+				
+					
+//	updateNodes(PRES);
+	PRES.svg.selectAll(".node")
+		.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
+		.style("stroke", PRES.liveAttributes.nodeStroke)
+		.style("fill",PRES.liveAttributes.nodeFill);
+}
+
+function overdivcontent (id){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+	
+	var overindex=id.slice(11);
+	var selnode=timednodes[overindex];
+	
+	if (oldindex != overindex){
+		$("#"+id).css({
+			"border": "solid 2px"+PRES.bordercolor.over,
+		});
+	}
+	
+	oldoverindex = overindex;
+	
+	ABSTR.overnodehash = selnode.hash;
+	
+//	updateNodes(PRES);
+
+	PRES.svg.selectAll(".node")
+		.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
+		.style("stroke", PRES.liveAttributes.nodeStroke)
+		.style("fill",PRES.liveAttributes.nodeFill);
+	
+	if (ABSTR.creatinglink && selectedconnectlinktype != 0){
+			var x1 = timednodes[oldindex].x,
+				y1 = timednodes[oldindex].y,
+				x2 = timednodes[overindex].x,
+				y2 = timednodes[overindex].y;
+		
+		PRES.prelink
+			.attr("x1", x1)
+			.attr("y1", y1)
+			.attr("x2", x2)
+			.attr("y2", y2)
+			.style("stroke", PRES.linecolor);
+	}
+}
+
+function outdivcontent(id){
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+	
+	var outindex=id.slice(11);
+
+	if (oldindex != outindex){
+		var color =  d3.rgb(PRES.nodecolor[timednodes[oldoverindex].type]).darker(0).toString();
+		$("#nodecontent"+outindex).css({
+			"border": "solid 2px " + color,
+		});
+	}
+	
+	ABSTR.overnodehash = "";
+	ABSTR.overnode = "";
+
+	PRES.svg.selectAll(".node")
+		.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
+		.style("stroke", PRES.liveAttributes.nodeStroke);
+}
+
+
+function egg1(){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+
+	if (ABSTR.showingevolution){
+		clearInterval(addone);
+		$("#showevolution").html("Ver evolución");
+		$("#showevolution").html("You're not alone");
+		ABSTR.youarenotalone = true;
+		startevolution();
+	}	
+}			
 
 //converts from hex color to rgba color
 function hex2rgb(hex, opacity) {
@@ -2650,6 +3513,14 @@ function URLlinks(text) {
 function nl2br (str, is_xhtml) {   
 	var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
 	return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
+}
+
+function clearSelection() {
+    if ( document.selection ) {
+        document.selection.empty();
+    } else if ( window.getSelection ) {
+        window.getSelection().removeAllRanges();
+    }
 }
 
 

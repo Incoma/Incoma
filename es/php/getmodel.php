@@ -1,4 +1,4 @@
-﻿<?
+<?
 $conversation= $_GET['conversation'];
 
 $lines = file('incomadb.conf');

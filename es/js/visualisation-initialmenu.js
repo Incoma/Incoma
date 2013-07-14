@@ -22,6 +22,7 @@ function InitialMenu() {
 function InitialMenu_Abstraction() {
 
     this.model = null;
+
 	
     this.linkFilters = {
 	1: {name: "General",state: true, typeId: 1},
@@ -46,7 +47,7 @@ function InitialMenu_Abstraction() {
 	nodes: {name: "Boxes", state: true},
         links: {name: "Threads", state: true},
     };
-	
+
     this.init = function (model) {
         this.model = model;
     };
@@ -57,7 +58,7 @@ function InitialMenu_Abstraction() {
 function InitialMenu_Presentation(VIS, ABSTR) {
 
     this.container = null;
-    this.nodeSizeDefault = 16;
+    this.nodeSizeDefault = 12;
     this.width = $(window).width();
     this.height = $(window).height();
     this.bordercolor = {
@@ -107,13 +108,13 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 						<div class="big_panel noselect">    \
 						  <center>  \
 							<div class="big_button" onclick="bt_create()">Crear</div>   \
-							<div class="big_label noselect">Crea una nueva conversación</div>   \
+							<div class="big_label noselect">Crea una nueva conversación</div>   \
 						  </center>   \
 						</div>   \
 						<div class="big_panel noselect">    \
 						  <center>  \
 							<div class="big_button" onclick="bt_join()">Participar</div>   \
-							<div class="big_label noselect">Únete a una conversación</div>   \
+							<div class="big_label noselect">Únete a una conversación</div>   \
 						  </center>   \
 						</div>   \
 					 </center>   \
@@ -126,7 +127,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 						Ordenar por&nbsp;<select id="orderselect" style="display:inline"></select>  \
 						</td>  \
 						<td>  \
-						Filtrar por idioma: <select id="languagefilter" style="display:inline"></select> \
+						Filtrar por idioma <select id="languagefilter" style="display:inline"></select> \
 						</td>  \
 						</tr></table>  \
 						</center>  \
@@ -143,25 +144,25 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 					  </div>   \
 					  \
 					  <div id="new_panel" class="huge_panel_3 noselect">   \
-						<div class="new_header noselect">Escribe un título para la conversación</div>  \
+						<div class="new_header noselect">Escribe un título para la conversación</div>  \
 						<textarea id="new_title" class="new_title" spellcheck="false" maxlength="100"></textarea> \
-						<center><div id="titlealert" class="alerttext noselect">&nbsp</div><center>  \
-						<div class="new_header noselect">Escribe el primer pensamiento de la conversación</div>  \
+						<center><div id="titlealert" class="alerttext noselect">&nbsp</div><div id="firstthoughtalert" class="alerttext noselect">&nbsp</div><center>  \
+						<div class="new_header noselect">Escribe el primer pensamiento de la conversación</div>  \
 						<textarea id="new_firstcomment" class="new_first" spellcheck="false" maxlength="5000"></textarea> \
-						<center><div id="firstthoughtalert" class="alerttext noselect">&nbsp</div><center>  \
-						<div style="display:block">  \
+						<br>Resumen de tu pensamiento (opcional):<textarea id="new_firstsum" class="areareplysum" spellcheck="false" maxlength="100"></textarea>  \
+						<div style="display:block;padding:5px">  \
 							<div style="Float:left;">  \
-								<div class="new_name_header noselect">Tu nombre:</div>  \
+								<div class="new_name_header noselect">Tu nombre</div>  \
 								<textarea id="new_name" class="new_name" spellcheck="false" maxlength="20"></textarea> \
 							</div>  \
 							<div class="new_selectlanguage">  \
-								Elige el idioma: \
+								Elige el idioma:  \
 								<br><select id="selectlanguage" style="display:inline;"></select>  \
 							</div>  \
 						</div>  \
 						<div class="radiosel">  \
-							<input type="radio" name="typeconv" value="Private" checked> Privada (solo accesible con su link)<br>  \
-							<input type="radio" name="typeconv" value="Public"> Pública (aparecerá en la lista de conversaciones)<br> \
+							<input type="radio" name="typeconv" value="Private" checked>Privada (solo accesible con su link)<br>  \
+							<input type="radio" name="typeconv" value="Public">Pública (aparecerá en la lista de conversaciones)<br> \
 						</div>  \
 							<div class="bt_panel noselect">  \
 							<center>  \
@@ -172,8 +173,8 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 					  </div>   \
 			  </div>   \
 			  <div id="language_panel" class="language_panel shadow noselect">   \
-				En este momento no hay más idiomas disponibles.<br><br>Si quieres ayudar con la traducción a otro idioma, <br>puedes hacerlo entrando aquí:  \
-				<a href="http://titanpad.com/incomatranslations" target="_blank">titanpad.com/incomatranslations</a>  \
+				En este momento no hay más idiomas disponibles.<br><br>Si quieres ayudar con la traducción a otro idioma, <br>puedes hacerlo entrando aquí:  \
+				<a href="http://titanpad.com/incomatranslation" target="_blank">titanpad.com/incomatranslation</a>  \
 				<div id="language_button" class="language_button button">OK</div>  \
 			  </div>   \
 		 </div>  \
@@ -301,33 +302,43 @@ function InitialMenu_Presentation(VIS, ABSTR) {
         };
 
         this.nodeHeight = function (d) {
-
+            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
+                return PRES.nodeSizeDefault * Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
+            } else {
                 return PRES.nodeSizeDefault;
-
+            }
         };
 
         this.nodeWidth = function (d) {
-
+            if (ABSTR.sizeFilters.nodes.state && (d.evalpos-d.evalneg> 0)) {
+                return PRES.nodeSizeDefault *Math.sqrt(Math.sqrt(1+d.evalpos-d.evalneg));
+            } else {
                 return PRES.nodeSizeDefault;
-
+            }
         };
 
         this.nodeStrokeWidth = function (d) {
-
+            if (ABSTR.nodeFilters[d.type].state) {
                 return "2px";
-
+            } else {
+                return "0px";
+            }
         };
 		
 		this.nodeFillOpacity = function (d) {
-
+            if (ABSTR.nodeFilters[d.type].state) {
                 return "1";
-
+            } else {
+				return "0";
+            }
         };
 		
 		this.nodeStrokeOpacity = function (d) {
-
+            if (ABSTR.nodeFilters[d.type].state) {
                 return "1";
-
+            } else {
+				return "0";
+            }
         };
 
         this.linkStroke = function (d) {
@@ -335,16 +346,22 @@ function InitialMenu_Presentation(VIS, ABSTR) {
         };
 
         this.linkStrokeWidth = function (d) {
-
-                    return 4;
-					
+            if (ABSTR.linkFilters[d.type].state) {
+                if (ABSTR.sizeFilters.links.state && d.evalpos > d.evalneg)
+                    return 3*Math.sqrt(1 + d.evalpos-d.evalneg);
+                else
+                    return 3;
+            } else {
+                return 0;
+            }
         };
 
 		this.linkStrokeOpacity = function (d) {
-
+            if (ABSTR.linkFilters[d.type].state) {
                 return "1";
-
-
+            } else {
+				return "0";
+            }
         };
 	
 	};
@@ -434,10 +451,12 @@ function bt_new_ok(){
 
 	var title = document.getElementById("new_title").value,
 		content = document.getElementById("new_firstcomment").value;
+		var contentsum = document.getElementById("new_firstsum").value;
+
 
 	if (title==""){
 		var alert = document.getElementById("titlealert");
-		alert.innerHTML = "Escribe un título";
+		alert.innerHTML = "Escribe un título";
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		$('#new_title').effect('highlight',2000);
 		return;
@@ -465,12 +484,12 @@ function bt_new_ok(){
 
 	Model.clear(IncomaEmptyModel);
 	Model.currentAuthor(author);	
-	Model.createNode(1, content, author, 2, time); //creates the initial node, type="general", seed=2
+	Model.createNode(1, content, contentsum, author, 2, time); //creates the initial node, type="general", seed=2
 	Model.title = title;
 	
 	
 	//creates a hash conversation checking that a similar one doesn't exist already
-	var stringforhash = title + content + author + time;
+	var stringforhash = title + content + contentsum + author + time;
 	conversation = createconvhash(stringforhash);
 
 	//creates the tables for the new conversation and stores the first node	
@@ -489,7 +508,7 @@ function bt_new_ok(){
 
 function prepareconvlistselect(){
 	
-	//obtains the width of join_panel to adapt the width of the ddslickconvs select control
+	//obtains the width of join_panel (where the 'join' menu elements are) to adapt the width of the ddslickconvs select control
 	element = document.getElementById('join_panel');
 	style = window.getComputedStyle(element);
 	panelwidth = parseInt(style.getPropertyValue('width'))*.99;
@@ -498,7 +517,6 @@ function prepareconvlistselect(){
 	var ddData = [];
 	
 	for (var i=0;i<conversationlist.length;i++){
-		
 		var idioma = conversationlist[i].language;
 		switch(conversationlist[i].language){
 			case "English":
@@ -508,7 +526,6 @@ function prepareconvlistselect(){
 				idioma = "Español";
 				break;
 		}
-		
 		ddData.push({
 			text: conversationlist[i].title,
 			value: i,
@@ -526,7 +543,7 @@ function prepareconvlistselect(){
 	
 	$('#selectconversation').ddCslick({
 		data: ddData,
-		selectText: "Selecciona una conversación",
+		selectText: "Selecciona una conversación de la lista",
 		width: panelwidth,
 		height:heightdd,
 		background: "#fff",
@@ -582,7 +599,7 @@ function orderconversationlist(){
 
 function preparelangselect(){
 	
-	//@@language dependent, 'text' are the options showed, 'text2' are the options in english, used internally
+	//@@language dependent
 	//the languages that will be shown at the top of the list
 	var ddData = [
 		{text: "------------------", text2: "------------------", value: 0, selected: false}, 
@@ -605,7 +622,7 @@ function preparelangselect(){
 	$('#selectlanguage').ddTslick({
 		data: ddData,
 		selectText: "Elige un idioma...",
-		width: 120,
+		width: 140,
 		height:150,
 		background: "#fff",
 		onSelected: function(selectedData){
@@ -626,13 +643,13 @@ function preparelangselect(){
 
 function preparelangfilter(){
 	
-	//@@language dependent ('text' are the options showed, 'text2' are the options used internally, for saving in db, etc)
+	//@@language dependent
 	var ddData = [
 		{text: "------------------", text2: "------------------", value: 0, selected: false},
 		{text: "(Todos)", text2: "(All languages)", value: 1, selected: false},
 		{text: "Español", text2: "Spanish", value: 2, selected: true}, 
 		{text: "Inglés", text2: "English", value: 3, selected: false},
-		{text: "------------------", text2: "------------------", value: 4, selected: false}		
+		{text: "------------------", text2: "------------------", value: 4, selected: false}	
 	]
 	
 	//@@language dependent
@@ -649,7 +666,7 @@ function preparelangfilter(){
 	$('#languagefilter').ddTslick({
 		data: ddData,
 		selectText: "Elige un idioma...",
-		width: 120,
+		width: 140,
 		height:250,
 		background: "#fff",
 		onSelected: function(selectedData){
@@ -674,7 +691,7 @@ function prepareorderselect(){
 
 	var ddData = [
 		{
-			text: "última actividad",
+			text: "última actividad",
 			value: 1,
 			selected: true,
 		},
@@ -684,12 +701,12 @@ function prepareorderselect(){
 			selected: false,
 		},
 		{
-			text: "núm. de pensamientos",
+			text: "nº de pensamientos",
 			value: 3,
 			selected: false,
 		},
 		{
-			text: "título",
+			text: "título",
 			value: 4,
 			selected: false,
 		},
@@ -703,8 +720,8 @@ function prepareorderselect(){
 	
 	$('#orderselect').ddTslick({
 		data: ddData,
-		selectText: "Elige un orden",
-		width: 160,
+		selectText: "Elige el órden",
+		width: 140,
 		height:25*5,
 		background: "#fff",
 		onSelected: function(selectedData){

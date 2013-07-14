@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
 <link rel="stylesheet" href="plugins/ezMark-master/css/ezmark.css" media="all">
@@ -8,6 +8,7 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 <title  id="window_title">INCOMA</title>
+<link rel="shortcut icon" href="img/favicon.ico">
 </head>
 
 
@@ -20,20 +21,20 @@
 
     <div id="headerMain">
         <div id="headerName" class="header noselect">
-        <a  id="headerName" href="http://think.incomaproject.org/es">
+        <a  id="headerName" href="http://incoma.org/es">
             INCOMA<sup>beta</sup></a>
         </div>
 		<div id="headerMenu"  class="header noselect" onclick="bt_menu()" style="visibility:hidden;">
             Menú
         </div>
-        <a id="headerUrl" class="header" href="http://incomaproject.org" target="_blank">
-            incomaproject.org
+        <a id="headerUrl" class="header" href="http://blog.incoma.org" target="_blank">
+            blog.incoma.org
         </a>
         <div id="headerLangSelection" class="header noselect">
 			Idioma:
             <select id="headerlangselect" class="header noselect" onchange="changelanguage(this)">
-				<option value="English" >Inglés</option>
 				<option value="Spanish" selected="selected">Español</option>
+				<option value="English">Inglés</option>
 				<option value="More">Más idiomas</option>
             </select>
         </div>
@@ -48,10 +49,11 @@
 <!-- This tag will be filled by the visualization scripts -->
     <div id="visualisationMain">
 		<div id="noconversation_panel" class="language_panel shadow noselect" style="position:absolute; visibility:hidden;">
-		No existe ninguna conversación con esta dirección.
-		<div id="noconversation_button" class="language_button button" onclick="bt_menu();">Ir al menú</div>
+			No hay ninguna conversación con esta URL.
+			<div id="noconversation_button" class="language_button button" onclick="bt_menu();">Ir al menú</div>
 		</div>
     </div>  
+
 
 <!-- Javascript -->
 <!-- opensave: Open and save conversations -->
@@ -100,7 +102,7 @@ $(function() {$('.resizable').resizable();});
                             OpenSave.blobToText( file, function(text) { Model.importFile(text); reInit(Visualisations.current()); } );
                         }; 
 
-    OpenSave.addExportListener( $( "#headerExport" )[0], "Export", "Incoma-conversation.json", saveModelFile );
+    OpenSave.addExportListener( $( "#headerExport" )[0], "Exportar", "Incoma-conversation.json", saveModelFile );
 	
 	
 // dbcode ***
@@ -120,13 +122,18 @@ $(function() {$('.resizable').resizable();});
 		reInit(Visualisations.select(2));
 			
 	} else {
-
+		if (conversation=="sandbox"){conversation="sandbox_es";}
 		db_loadconversation();
 		
 	};
 
 
 	function db_loadconversation(){
+
+
+	//Update the tags from the conversation
+        $.post("php/updatetags.php", {conversation: conversation});
+
 
 	//Get the conversation from the DB
 		db_getmodel();
@@ -195,6 +202,20 @@ $(function() {$('.resizable').resizable();});
 	}
 	
 	
+	function db_gettags(){
+
+                $.ajax({
+                dataType: 'json',
+                url: 'php/gettags.php',
+                data: { conversation: conversation},
+                async: false,
+                }).done(function(data) {
+                data.tags.pop()
+                Model.tags = data.tags[0].tags;
+                });
+
+        }
+
 	
 	function db_getmodel(){
 	//Get the conversation from the DB
@@ -208,13 +229,14 @@ $(function() {$('.resizable').resizable();});
 		data.nodes.pop();
 		data.links.pop();
 		modelfromdb =  { nodes: data.nodes, links: data.links, authors: []};
-		});
+		}).fail(function(data) {
+	        });
 	}
 	
 	
 	function db_generatemodel(){
 	//From the previous DB conversation generate a valid JS conversation
-		
+	
 		var nodesjs=modelfromdb.nodes;
 		var linksjs=modelfromdb.links;
 		var numnodesdb=modelfromdb.nodes.length;
@@ -223,8 +245,10 @@ $(function() {$('.resizable').resizable();});
 		var nodeslist = [];
 	
 		for (var i=0; i<numnodesdb; i++) {
-		
-			onenodedb = {"hash":parseInt(nodesjs[i]['hash']),"content":nodesjs[i]['content'],"evalpos":parseInt(nodesjs[i]['evalpos']),"evalneg":parseInt(nodesjs[i]['evalneg']),"evaluatedby":(nodesjs[i]['evaluatedby']).split("@@@@"),"type":parseInt(nodesjs[i]['type']),"author":nodesjs[i]['author'],"seed":parseInt(nodesjs[i]['seed']),"time":parseInt(nodesjs[i]['time'])};
+
+
+			onenodedb = {"hash":parseInt(nodesjs[i]['hash']),"content":nodesjs[i]['content'],"contentsum":nodesjs[i]['contentsum'],"evalpos":parseInt(nodesjs[i]['evalpos']),"evalneg":parseInt(nodesjs[i]['evalneg']),"evaluatedby":(nodesjs[i]['evaluatedby']).split("@@@@"),"type":parseInt(nodesjs[i]['type']),"author":nodesjs[i]['author'],"seed":parseInt(nodesjs[i]['seed']),"time":parseInt(nodesjs[i]['time'])};
+	
 
 			nodeslist.push(onenodedb);
 		}
@@ -245,8 +269,8 @@ $(function() {$('.resizable').resizable();});
 
 	function db_savenode(newnode){
 
-	    if(conversation != "sandbox"){
-			var newnodejs = ["hash",newnode.hash,"content",newnode.content,"evalpos",newnode.evalpos,"evalneg",newnode.evalneg,"evaluatedby",(newnode.evaluatedby).join("@@@@"),"type",newnode.type,"author",newnode.author,"seed",newnode.seed,"time",newnode.time];
+	    if(conversation != "sandbox" && conversation != "sandbox_es"){
+			var newnodejs = ["hash",newnode.hash,"content",newnode.content,"contentsum",newnode.contentsum,"evalpos",newnode.evalpos,"evalneg",newnode.evalneg,"evaluatedby",(newnode.evaluatedby).join("@@@@"),"type",newnode.type,"author",newnode.author,"seed",newnode.seed,"time",newnode.time];
 			
 			newnodestring = newnodejs.join('####');
 
@@ -257,7 +281,7 @@ $(function() {$('.resizable').resizable();});
 
 	function db_savelink(newlink){
 
-	    if(conversation != "sandbox"){
+	    if(conversation != "sandbox" && conversation != "sandbox_es"){
 			var newlinkjs = ["hash",newlink.hash,"source",newlink.source,"target",newlink.target,"direct", newlink.direct, "evalpos",newlink.evalpos,"evalneg",newlink.evalneg,"evaluatedby",(newlink.evaluatedby).join("@@@@"),"type",newlink.type,"author",newlink.author,"time",newlink.time];
 					
 			newlinkstring = newlinkjs.join('####');
@@ -269,7 +293,7 @@ $(function() {$('.resizable').resizable();});
 
 	function db_update_eval_node(variable,value){
 
-	    if(conversation != "sandbox"){
+	    if(conversation != "sandbox" && conversation != "sandbox_es"){
 			var table="nodes_" + conversation,
 				hash = parseInt(targetnode.hash);
 		
@@ -284,7 +308,7 @@ $(function() {$('.resizable').resizable();});
 
 	function db_update_eval_link(variable,value){
 
-	    if(conversation != "sandbox"){
+	    if(conversation != "sandbox" && conversation != "sandbox_es"){
 			var table="links_" + conversation,
 				hash = parseInt(targetlink.hash);
 		
@@ -307,7 +331,10 @@ $(function() {$('.resizable').resizable();});
 	function updateConversation(){
 	//Compares the DB conversation with the one showed, and updates this last one (only the new nodes and links) if there are changes
 
+		var ABSTR = Visualisations.current().abstraction;
 		var PRES = Visualisations.current().presentation;
+		
+		if (ABSTR.showingevolution){return;}
 		
 		nodes = PRES.force.nodes();
 		links = PRES.force.links();
@@ -406,12 +433,14 @@ $(function() {$('.resizable').resizable();});
 	function changelanguage(selection){
 	
 		switch (selection.value){
-			case "English":
+				case "English":
 				weblanguage = "English";
+				if (conversation=="sandbox_es"){conversation="sandbox";}
 				var str = (conversation == "") ? "../" : "../?c=" + conversation;
 				window.location.href = str;
 				
 				break;
+			
 				
 			case "More":
 				$("#headerlangselect").val(weblanguage);
@@ -423,6 +452,7 @@ $(function() {$('.resizable').resizable();});
 
 	function loadsandbox(){
 	
+		
 		$('#svg').fadeOut(700);
 		setTimeout(function(){window.location.href = "?c=sandbox";},700);
 	}
@@ -431,8 +461,9 @@ $(function() {$('.resizable').resizable();});
 	function loadmenu(){
 
 		setTimeout(function(){
-			window.history.pushState("", "", "?"); //with this the page is not refreshed
-			reInit(Visualisations.select(2));
+			// window.history.pushState("", "", "?"); //with this the page is not refreshed
+			// reInit(Visualisations.select(2));
+			window.location.href = "?";
 		},300);
 		
 	}
@@ -533,8 +564,8 @@ $(function() {$('.resizable').resizable();});
 
 		return hash.join("");
 	}
-	
-	
+
+
 	function timeAgo(date) {
 		// Transform Epoch timestamp in human time
 		var seconds = Math.floor(Date.now()/1000) - date;
@@ -572,12 +603,13 @@ $(function() {$('.resizable').resizable();});
 			return "hace " + interval + " minuto";
 		}
 		if (seconds > 1) {
-			return "hace " + interval + " segundos";
+			return "hace " + seconds + " segundos";
 		}
 		return "ahora mismo";
 	}
 
 
 </script>
+
 </body>
 </html>

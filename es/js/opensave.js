@@ -1,4 +1,4 @@
-﻿// module namespace:
+// module namespace:
 var OpenSave = {};
 
 /*
@@ -53,6 +53,7 @@ OpenSave.addImportListener = function (node, accept, fileselect, onerror) {
         node.appendChild(control);
     }
     control.setAttribute("type", "file");
+    control.setAttribute("id", "inputimport");
     if (accept) {
         control.setAttribute("accept", accept);
     }

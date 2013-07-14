@@ -100,15 +100,17 @@ body {
 #headerMenu {
     position: absolute;
     left: 460px;
+    border: solid thin #ddd;
+    padding:2px 0.5em;
+	margin:10px 20px 0px 0px;
     font-size: 11pt;
-	line-height: 45px;
 	cursor:pointer;
 }
 
 
 #headerUsername {
 	position: absolute;
-    left: 550px;
+    left: 560px;
     font-size: 11pt;
 	line-height:45px;
 }

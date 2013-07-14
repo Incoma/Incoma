@@ -15,7 +15,7 @@ mysql_connect(localhost,$username,$password);
 
 
 $sqlnodestable = 'CREATE TABLE nodes_'.$conversation.
-    	     '( hash bigint, content text, evalpos int, evalneg int, evaluatedby longtext, type int, author tinytext, seed tinyint, time bigint )';
+    	     '( hash bigint, content text, contentsum tinytext, evalpos int, evalneg int, evaluatedby longtext, type int, author tinytext, seed tinyint, time bigint )';
 
 mysql_query($sqlnodestable);
 

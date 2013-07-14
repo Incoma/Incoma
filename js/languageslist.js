@@ -1,4 +1,4 @@
-var languageslist = {
+Ôªøvar languageslist = {
     "ab":{
         "name":"Abkhaz",
         "nativeName":"?????"
@@ -29,7 +29,7 @@ var languageslist = {
     },
     "an":{
         "name":"Aragonese",
-        "nativeName":"AragonÈs"
+        "nativeName":"Aragon√©s"
     },
     "hy":{
         "name":"Armenian",
@@ -100,8 +100,8 @@ var languageslist = {
         "nativeName":"?????"
     },
     "ca":{
-        "name":"Catalan; Valencian",
-        "nativeName":"Catal‡"
+        "name":"Catalan",
+        "nativeName":"Catal√†"
     },
     "ch":{
         "name":"Chamorro",
@@ -112,12 +112,12 @@ var languageslist = {
         "nativeName":"??????? ????"
     },
     "ny":{
-        "name":"Chichewa; Chewa; Nyanja",
+        "name":"Chichewa",
         "nativeName":"chiChewa, chinyanja"
     },
     "zh":{
         "name":"Chinese",
-        "nativeName":"?? (ZhongwÈn), ??, ??"
+        "nativeName":"?? (Zhongw√©n), ??, ??"
     },
     "cv":{
         "name":"Chuvash",
@@ -141,14 +141,14 @@ var languageslist = {
     },
     "cs":{
         "name":"Czech",
-        "nativeName":"cesky, ceötina"
+        "nativeName":"cesky, ce≈°tina"
     },
     "da":{
         "name":"Danish",
         "nativeName":"dansk"
     },
     "dv":{
-        "name":"Divehi; Dhivehi; Maldivian;",
+        "name":"Divehi",
         "nativeName":"??????"
     },
     "nl":{
@@ -173,7 +173,7 @@ var languageslist = {
     },
     "fo":{
         "name":"Faroese",
-        "nativeName":"f¯royskt"
+        "nativeName":"f√∏royskt"
     },
     "fj":{
         "name":"Fijian",
@@ -185,10 +185,10 @@ var languageslist = {
     },
     "fr":{
         "name":"French",
-        "nativeName":"franÁais, langue franÁaise"
+        "nativeName":"fran√ßais, langue fran√ßaise"
     },
     "ff":{
-        "name":"Fula; Fulah; Pulaar; Pular",
+        "name":"Fula",
         "nativeName":"Fulfulde, Pulaar, Pular"
     },
     "gl":{
@@ -204,27 +204,27 @@ var languageslist = {
         "nativeName":"Deutsch"
     },
     "el":{
-        "name":"Greek, Modern",
+        "name":"Greek",
         "nativeName":"????????"
     },
     "gn":{
-        "name":"GuaranÌ",
-        "nativeName":"AvaÒe?"
+        "name":"Guaran√≠",
+        "nativeName":"Ava√±e?"
     },
     "gu":{
         "name":"Gujarati",
         "nativeName":"???????"
     },
     "ht":{
-        "name":"Haitian; Haitian Creole",
-        "nativeName":"KreyÚl ayisyen"
+        "name":"Haitian",
+        "nativeName":"Krey√≤l ayisyen"
     },
     "ha":{
         "name":"Hausa",
         "nativeName":"Hausa, ??????"
     },
     "he":{
-        "name":"Hebrew (modern)",
+        "name":"Hebrew",
         "nativeName":"?????"
     },
     "hz":{
@@ -265,7 +265,7 @@ var languageslist = {
     },
     "ik":{
         "name":"Inupiaq",
-        "nativeName":"IÒupiaq, IÒupiatun"
+        "nativeName":"I√±upiaq, I√±upiatun"
     },
     "io":{
         "name":"Ido",
@@ -273,7 +273,7 @@ var languageslist = {
     },
     "is":{
         "name":"Icelandic",
-        "nativeName":"Õslenska"
+        "nativeName":"√çslenska"
     },
     "it":{
         "name":"Italian",
@@ -292,7 +292,7 @@ var languageslist = {
         "nativeName":"basa Jawa"
     },
     "kl":{
-        "name":"Kalaallisut, Greenlandic",
+        "name":"Kalaallisut",
         "nativeName":"kalaallisut, kalaallit oqaasii"
     },
     "kn":{
@@ -316,7 +316,7 @@ var languageslist = {
         "nativeName":"?????????"
     },
     "ki":{
-        "name":"Kikuyu, Gikuyu",
+        "name":"Kikuyu",
         "nativeName":"Gikuyu"
     },
     "rw":{
@@ -324,7 +324,7 @@ var languageslist = {
         "nativeName":"Ikinyarwanda"
     },
     "ky":{
-        "name":"Kirghiz, Kyrgyz",
+        "name":"Kirghiz",
         "nativeName":"?????? ????"
     },
     "kv":{
@@ -341,10 +341,10 @@ var languageslist = {
     },
     "ku":{
         "name":"Kurdish",
-        "nativeName":"KurdÓ, ??????"
+        "nativeName":"Kurd√Æ, ??????"
     },
     "kj":{
-        "name":"Kwanyama, Kuanyama",
+        "name":"Kwanyama",
         "nativeName":"Kuanyama"
     },
     "la":{
@@ -352,20 +352,20 @@ var languageslist = {
         "nativeName":"latine, lingua latina"
     },
     "lb":{
-        "name":"Luxembourgish, Letzeburgesch",
-        "nativeName":"LÎtzebuergesch"
+        "name":"Luxembourgish",
+        "nativeName":"L√´tzebuergesch"
     },
     "lg":{
         "name":"Luganda",
         "nativeName":"Luganda"
     },
     "li":{
-        "name":"Limburgish, Limburgan, Limburger",
+        "name":"Limburgish",
         "nativeName":"Limburgs"
     },
     "ln":{
         "name":"Lingala",
-        "nativeName":"Ling·la"
+        "nativeName":"Ling√°la"
     },
     "lo":{
         "name":"Lao",
@@ -381,7 +381,7 @@ var languageslist = {
     },
     "lv":{
         "name":"Latvian",
-        "nativeName":"latvieöu valoda"
+        "nativeName":"latvie≈°u valoda"
     },
     "gv":{
         "name":"Manx",
@@ -412,12 +412,12 @@ var languageslist = {
         "nativeName":"te reo Maori"
     },
     "mr":{
-        "name":"Marathi (Mara?hi)",
+        "name":"Marathi",
         "nativeName":"?????"
     },
     "mh":{
         "name":"Marshallese",
-        "nativeName":"Kajin M∏ajel"
+        "nativeName":"Kajin M¬∏ajel"
     },
     "mn":{
         "name":"Mongolian",
@@ -428,12 +428,12 @@ var languageslist = {
         "nativeName":"Ekakairu Naoero"
     },
     "nv":{
-        "name":"Navajo, Navaho",
-        "nativeName":"DinÈ bizaad, DinÈk'ehjÌ"
+        "name":"Navajo",
+        "nativeName":"Din√© bizaad, Din√©k'ehj√≠"
     },
     "nb":{
-        "name":"Norwegian BokmÂl",
-        "nativeName":"Norsk bokmÂl"
+        "name":"Norwegian Bokm√•l",
+        "nativeName":"Norsk bokm√•l"
     },
     "nd":{
         "name":"North Ndebele",
@@ -468,11 +468,11 @@ var languageslist = {
         "nativeName":"Occitan"
     },
     "oj":{
-        "name":"Ojibwe, Ojibwa",
+        "name":"Ojibwe",
         "nativeName":"????????"
     },
     "cu":{
-        "name":"Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic",
+        "name":"Church Slavonic",
         "nativeName":"????? ??????????"
     },
     "om":{
@@ -484,11 +484,11 @@ var languageslist = {
         "nativeName":"?????"
     },
     "os":{
-        "name":"Ossetian, Ossetic",
-        "nativeName":"???? Ê????"
+        "name":"Ossetian",
+        "nativeName":"???? √¶????"
     },
     "pa":{
-        "name":"Panjabi, Punjabi",
+        "name":"Panjabi",
         "nativeName":"??????, ???????"
     },
     "pi":{
@@ -504,12 +504,12 @@ var languageslist = {
         "nativeName":"polski"
     },
     "ps":{
-        "name":"Pashto, Pushto",
+        "name":"Pashto",
         "nativeName":"????"
     },
     "pt":{
         "name":"Portuguese",
-        "nativeName":"PortuguÍs"
+        "nativeName":"Portugu√™s"
     },
     "qu":{
         "name":"Quechua",
@@ -524,15 +524,15 @@ var languageslist = {
         "nativeName":"kiRundi"
     },
     "ro":{
-        "name":"Romanian, Moldavian, Moldovan",
-        "nativeName":"rom‚na"
+        "name":"Romanian",
+        "nativeName":"rom√¢na"
     },
     "ru":{
         "name":"Russian",
         "nativeName":"??????? ????"
     },
     "sa":{
-        "name":"Sanskrit (Sa?sk?ta)",
+        "name":"Sanskrit",
         "nativeName":"?????????"
     },
     "sc":{
@@ -545,7 +545,7 @@ var languageslist = {
     },
     "se":{
         "name":"Northern Sami",
-        "nativeName":"Davvis·megiella"
+        "nativeName":"Davvis√°megiella"
     },
     "sm":{
         "name":"Samoan",
@@ -553,22 +553,22 @@ var languageslist = {
     },
     "sg":{
         "name":"Sango",
-        "nativeName":"y‚ng‚ tÓ s‰ngˆ"
+        "nativeName":"y√¢ng√¢ t√Æ s√§ng√∂"
     },
     "sr":{
         "name":"Serbian",
         "nativeName":"?????? ?????"
     },
     "gd":{
-        "name":"Scottish Gaelic; Gaelic",
-        "nativeName":"G‡idhlig"
+        "name":"Scottish Gaelic",
+        "nativeName":"G√†idhlig"
     },
     "sn":{
         "name":"Shona",
         "nativeName":"chiShona"
     },
     "si":{
-        "name":"Sinhala, Sinhalese",
+        "name":"Sinhala",
         "nativeName":"?????"
     },
     "sk":{
@@ -577,7 +577,7 @@ var languageslist = {
     },
     "sl":{
         "name":"Slovene",
-        "nativeName":"slovenöcina"
+        "nativeName":"sloven≈°cina"
     },
     "so":{
         "name":"Somali",
@@ -588,8 +588,8 @@ var languageslist = {
         "nativeName":"Sesotho"
     },
     "es":{
-        "name":"Spanish; Castilian",
-        "nativeName":"espaÒol, castellano"
+        "name":"Spanish",
+        "nativeName":"espa√±ol, castellano"
     },
     "su":{
         "name":"Sundanese",
@@ -628,12 +628,12 @@ var languageslist = {
         "nativeName":"????"
     },
     "bo":{
-        "name":"Tibetan Standard, Tibetan, Central",
+        "name":"Tibetan Standard",
         "nativeName":"???????"
     },
     "tk":{
         "name":"Turkmen",
-        "nativeName":"T¸rkmen, ???????"
+        "nativeName":"T√ºrkmen, ???????"
     },
     "tl":{
         "name":"Tagalog",
@@ -644,12 +644,12 @@ var languageslist = {
         "nativeName":"Setswana"
     },
     "to":{
-        "name":"Tonga (Tonga Islands)",
+        "name":"Tonga",
         "nativeName":"faka Tonga"
     },
     "tr":{
         "name":"Turkish",
-        "nativeName":"T¸rkÁe"
+        "nativeName":"T√ºrk√ße"
     },
     "ts":{
         "name":"Tsonga",
@@ -657,7 +657,7 @@ var languageslist = {
     },
     "tt":{
         "name":"Tatar",
-        "nativeName":"???????, tatarÁa, ????????"
+        "nativeName":"???????, tatar√ßa, ????????"
     },
     "tw":{
         "name":"Twi",
@@ -668,7 +668,7 @@ var languageslist = {
         "nativeName":"Reo Tahiti"
     },
     "ug":{
-        "name":"Uighur, Uyghur",
+        "name":"Uighur",
         "nativeName":"Uy?urq?, ?????????"
     },
     "uk":{
@@ -692,8 +692,8 @@ var languageslist = {
         "nativeName":"Ti?ng Vi?t"
     },
     "vo":{
-        "name":"Volap¸k",
-        "nativeName":"Volap¸k"
+        "name":"Volap√ºk",
+        "nativeName":"Volap√ºk"
     },
     "wa":{
         "name":"Walloon",
@@ -721,10 +721,10 @@ var languageslist = {
     },
     "yo":{
         "name":"Yoruba",
-        "nativeName":"Yor˘b·"
+        "nativeName":"Yor√πb√°"
     },
     "za":{
-        "name":"Zhuang, Chuang",
+        "name":"Zhuang",
         "nativeName":"Sa? cue??, Saw cuengh"
     }
 }
@@ -766,11 +766,11 @@ var languageslist2 = {
 	},
 	"ca":{
 		"name":"Catalan",
-		"nativeName":"Catal‡"
+		"nativeName":"Catal√†"
 	},
 	"zh":{
 		"name":"Chinese",
-		"nativeName":"?? (ZhongwÈn), ??, ??"
+		"nativeName":"?? (Zhongw√©n), ??, ??"
 	},
 	"hr":{
 		"name":"Croatian",
@@ -778,7 +778,7 @@ var languageslist2 = {
 	},
 	"cs":{
 		"name":"Czech",
-		"nativeName":"cesky, ceötina"
+		"nativeName":"cesky, ce≈°tina"
 	},
 	"da":{
 		"name":"Danish",
@@ -806,7 +806,7 @@ var languageslist2 = {
 	},
 	"fr":{
 		"name":"French",
-		"nativeName":"franÁais, langue franÁaise"
+		"nativeName":"fran√ßais, langue fran√ßaise"
 	},
 	"de":{
 		"name":"German",
@@ -838,7 +838,7 @@ var languageslist2 = {
 	},
 	"is":{
 		"name":"Icelandic",
-		"nativeName":"Õslenska"
+		"nativeName":"√çslenska"
 	},
 	"it":{
 		"name":"Italian",
@@ -854,7 +854,7 @@ var languageslist2 = {
 	},
 	"ku":{
 		"name":"Kurdish",
-		"nativeName":"KurdÓ, ??????"
+		"nativeName":"Kurd√Æ, ??????"
 	},
 	"lt":{
 		"name":"Lithuanian",
@@ -882,7 +882,7 @@ var languageslist2 = {
 	},
 	"pt":{
 		"name":"Portuguese",
-		"nativeName":"PortuguÍs"
+		"nativeName":"Portugu√™s"
 	},
 	"qu":{
 		"name":"Quechua",
@@ -890,7 +890,7 @@ var languageslist2 = {
 	},
 	"ro":{
 		"name":"Romanian",
-		"nativeName":"rom‚na"
+		"nativeName":"rom√¢na"
 	},
 	"ru":{
 		"name":"Russian",
@@ -906,7 +906,7 @@ var languageslist2 = {
 	},
 	"gd":{
 		"name":"Gaelic",
-		"nativeName":"G‡idhlig"
+		"nativeName":"G√†idhlig"
 	},
 	"sk":{
 		"name":"Slovak",
@@ -914,7 +914,7 @@ var languageslist2 = {
 	},
 	"sl":{
 		"name":"Slovene",
-		"nativeName":"slovenöcina"
+		"nativeName":"sloven≈°cina"
 	},
 	"so":{
 		"name":"Somali",
@@ -922,7 +922,7 @@ var languageslist2 = {
 	},
 	"es":{
 		"name":"Spanish",
-		"nativeName":"espaÒol, castellano"
+		"nativeName":"espa√±ol, castellano"
 	},
 	"sv":{
 		"name":"Swedish",
@@ -934,7 +934,7 @@ var languageslist2 = {
 	},
 	"tr":{
 		"name":"Turkish",
-		"nativeName":"T¸rkÁe"
+		"nativeName":"T√ºrk√ße"
 	},
 	"ty":{
 		"name":"Tahitian",
