@@ -1,9 +1,9 @@
+Last versión: Incoma Akiba Edition. Released on 10th of March of 2014.
+
 Incoma
 ======
 
 Incoma is a free software debate platform whose aim is to facilitate conversations between thousands of people simultaneously, to allow the construction of a real global collective intelligence.
-
-The default index.php version is the PHP/MySQL version of Incoma which uses the MySQL database to store the conversations. A local version without PHP/MySQL can be executed loading index-local.html without no installation.
 
 Try Incoma in its main page: [incoma.org] [1]
 
@@ -11,10 +11,9 @@ Try Incoma in its main page: [incoma.org] [1]
 Installing and understanding Incoma
 ===================================
 
-For using the local version nothing needs to be installed, just copy the files and open index-local.html from any browser.
-
-For using the PHP/MySQL version you need to configure the MySQL database of your server. Information, definitions of the tables and scripts for configurating the database can be found in the folder incomadb-installation.
+Incoma is coded in Javascript/HTML/PHP/MySQL. To install Incoma just upload the zip file containing all the code in the public directory of your server (with php enabled), rename the file htaccess to .htaccess, and configure the MySQL database. Information, definitions of the tables and scripts for configurating the database can be found in the folder incomadb-installation. [the .htaccess file and the MySQL instructions are not valid for all systems, we recommend you to understand their content and adapt it for your system]
 Do not forget to configure the file incomadb.conf with the configuration info of your database.
+Once installed just open the index.php file in a web browser.
 
 Information about all the files and folders can be found in the file README.structure
 

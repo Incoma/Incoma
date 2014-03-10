@@ -1,0 +1,161 @@
+1. Sandbox
+2. Aprende y experimenta
+3. Crear
+4. Crea una nueva conversación
+5. Participar
+6. Únete a una conversación
+7. No hay ninguna conversación con esta URL
+8. Ir al menú
+9. Escribe un título para la conversación
+10. Escribe el primer pensamiento de la conversación
+11. Resumen de tu pensamiento (opcional)
+12. Tu nombre
+13. Elige el idioma
+14. Privada (solo accesible con su enlace)
+15. Pública (aparecerá en la lista de conversaciones)
+16. OK
+17. Cancelar
+18. Ordenar por
+19. última actividad
+20. fecha de creación
+21. nº de pensamientos
+22. título
+23. idioma
+24. Elige el órden
+25. Selecciona una conversación de la lista
+26. Filtrar por idioma
+27. Todos los idiomas
+28. Menú
+29. Nombre
+30. Exportar
+31. Importar conversación
+32. timeline
+33. Responder
+34. Conectar
+35. Tipo de respuesta
+36. Tipo de conexión
+37. Tipo de relación 
+38. Resumen de tu respuesta (opcional)
+39. Guardar
+40. Un error ha ocurrido al intentar salvar en la base de datos, la página se recargará. 
+41. Cargando conversación
+42. Leyenda
+43. Ocultar
+44. Mostrar 
+45.  Pensamientos
+46. General
+47. Pregunta
+48. Propuesta
+49. Información
+50. Conexiones
+51. Consecuencia
+52. Acuerdo
+53. Desacuerdo
+54. Alternativa
+55. Equivalencia
+56. Sin relación
+57. Tamaños
+58. Evaluaciones
+59. Mostrar etiquetas
+60. Mostrar resúmenes
+61. Ya has evaluado este nodo
+62. Escribe algo primero
+63. Escribe un título primero
+64. Haz click en cualquier elemento para ocultarlo o mostrarlo en la conversación
+65. Si eliges que la conversación privada sea editable, cualquiera participando en ella podrá modificar todos los pensamientos y conexiones en cualquier momento. 
+66. Hace 1 segundo
+67. Hace 2 segundos
+68. Hace 2 minutos
+69. Hace 2 horas
+70. Hace 2 días
+71. Hace 2 meses
+72. Hace 2 años
+73. Ver tutorial
+74. ¿Quieres que esta conversación sea editable?
+75. En este momento no hay más idiomas disponibles. 
+76. Si quieres ayudar con la traducción a otro idioma, puedes hacerlo entrando aquí
+77. Selecciona un pensamiento que sea consecuencia de este
+78. Selecciona un pensamiento que esté de acuerdo con este
+79. Selecciona un pensamiento que esté en desacuerdo con este 
+80. Selecciona un pensamiento relacionado con este 
+81. Selecciona un pensamiento que esté en contradicción con este
+82. Selecciona un pensamiento que sea una alternativa a este 
+83. Selecciona un pensamiento que sea una respuesta a este
+84. Selecciona un pensamiento que sea equivalente a este
+85. Si quieres ayudar con la traducción a otro idioma, 
+86. puedes hacerlo entrando aquí:
+87. Creada
+88. Hace 1 año
+89. Hace 1 día
+90. Hace 1 hora
+91. Hace 1 minuto
+92. Ahora mismo
+93. Mostrar timeline
+94. Expandir
+95. Ocultar timeline
+96. Mostrar todas las conexiones
+97. Etiquetas
+98. Resúmenes
+99. Puntuación mín.
+100. Introduce un nombre de usuario para participar en esta conversación
+101. Conexión por
+102. Conexión
+103. por
+104. Ya has valorado este pensamiento
+105. Ya has
+106. valorado este pensamiento
+107. Ya has valorado esta conexión
+108. Ya has 
+109. valorado esta conexión
+110. Haz click para continuar
+111. Mostrar sólo conexiones directas
+112. ¡Bienvenido a Incoma!
+113. En este panel encontrarás un tutorial para aprender a usarlo. En cualquier momento puedes cerrarlo, o hacer click para seguir avanzando. 
+114. Puedes jugar con este Sandbox libremente! (los cambios no se guardan)
+115. El gráfico que ves en medio de la pantalla es una conversación. Los círculos representan pensamientos y las líneas las relaciones entre ellos.
+116. Esta conversación llamada 'Sandbox' es un ejemplo de una conversación típica. Puedes jugar libremente con ella, los cambios que hagas no se guardarán, a diferencia de lo que ocurre en las otras conversaciones.
+117. Para leer los diferentes pensamientos, pasa el ratón sobre los círculos. En el panel de la derecha verás el pensamiento junto con cierta información: quién lo creó, cuándo, el tipo de pensamiento y la puntuación que le ha dado otra gente.
+118. El color de los círculos indica el tipo de pensamiento que contienen (un pensamiento general, una pregunta, una propuesta, información,...), y el color de las líneas el tipo de relación que existe entre los  círculos que conectan (los pensamientos pueden estar de acuerdo, en desacuerdo, ser equivalentes, ser uno la consecuencia de otro,...)
+119. Puedes ver el significado de los colores en el panel de leyenda en la parte inferior de la pantalla. También puedes usar este panel para ocultar o mostrar un tipo específico de pensamiento o conexión, haciendo click en su nombre.
+120. Por defecto el tamaño de los círculos y enlaces depende de su puntuación. Si quieres verlos todos del mismo tamaño haz click en la palabra "Evaluaciones" en la sección "Tamaños" del panel.
+121. Haciendo click en 'Mostrar etiquetas' aparecerá una línea de texto sobre cada círculo mostrando sus etiquetas (generadas automáticamente entre las palabras más usadas en la conversación). Haciendo click en "Mostrar resúmenes" el texto mostrará el resumen del nodo, creado por el usuario o uno con el comienzo del comentario. 
+122. Si quieres ocultar la leyenda, haz click en el botón 'Ocultar' de la esquina superior derecha.
+123. Para interactuar con un pensamiento, haz click en su círculo y en el panel de la derecha aparecerán nuevos botones que te permitirán responder a este pensamiento ("Responder"), conectarlo con otro pensamiento ("Conectar") y evaluarlo (botones verde y rojo).
+124. Al responder, puedes añadir información sobre tu respuesta, y así facilitar a todo el mundo el seguir la conversación más fácilmente.
+125. En primer lugar, tienes un menú para seleccionar el tipo de comentario que estás haciendo: lo que escribes es una pregunta? una propuesta? información (en lugar de una opinón)?
+126. En segundo lugar, tienes otro menú para seleccionar el tipo de relación entre tu pensamiento y el otro que has clickeado. Dependiendo del tipo  de comentario que selecciones, encontrarás ciertos tipo de posibles conexiones.
+127. Debajo de esos dos menús puedes escribir tu respuesta y un resúmen del pensamiento (si quieres). Cuando acabes haz click en "Salvar" y observa cómo aparece tu respuesta en el gráfico!
+128. Si quieres escribir un pensamiento que no esté conectado a ningún otro, selecciona "Sin relación" en el menú "Tipo de conexión"
+129. Si crees que dos pensamientos tienen una relación entre ellos y quieres mostrarlo en el gráfico, selecciona uno de ellos y haz click en el botón "Conectar". Elije el tipo de relación en el menú y haz click en el otro pensamiento. Ten en cuenta que el orden importa en la relaciones "Consecuencia" (uno de los pensamientos es la consecuencia del otro, pero no al revés).
+130. Para evaluar un pensamiento haz click en él, y después en los botones verde o rojo de debajo del pensamiento. Los números de votos positivos y negativos se muestran en los botones.
+131. Para deseleccionar un círculo, haz click en cualquier parte vacía de la pantalla.
+132. También  puedes hacer click y arrastrar para moverla, y acercarte o alejarte usando los botones de la parte superior izquierda de la ventana o con la rueda del ratón. También es posible arrastrar los círculos si quieres cambiarles de posición, y  haciéndoles doble click la vista se centrará en ellos.
+133. Juega con la Sandbox hasta que te sientas cómodo con el uso de Incoma. Una vez que veas cómo funciona todo, puedes crear una conversación nueva o unirte a una que ya exista. Para ello, haz click en el menú y elige la opción que quieras: "Crear" o "Participar". Recuerda que en las demás conversaciones que no son la Sandbox, los cambios se guardarán en la base de datos.
+134. Puedes encontrar más información sobre Incoma en el blog del proyecto blog.incoma.org.  
+135. Si tienes dudas, sugerencias, si encuentras algún error, quieres compartir con nosotros algo bonito, o lo que sea, escríbenos a incomaproject.contact@gmail.com
+136. Recuerda que Incoma es SOFTWARE LIBRE. Así que es tuyo y del resto de la humanidad. Porque amamos al 99%.
+137. ¡Disfrútalo!
+138. Haz click para terminar
+139. Blog
+140. Más idiomas
+141. Pensamiento inicial
+142. Autores
+143. Escribe tu nombre primero
+144. Sí
+145. No
+146. Edita tu pensamiento
+147. Cambia la categoría
+148. Observa la evolución de la conversación
+149. Guardando...
+150. Cambio de categoría
+151. Puedes proponer una categoría diferente para este pensamiento
+152. Puedes proponer una categoría diferente para esta conexión
+153. (La categoría se cambiará cuando suficiente gente lo haya propuesto)
+154. Cambiar
+155. Ya has propuesto una nueva categoría para este pensamiento
+156. Ya has propuesto una nueva categoría para esta conexión
+157. Nueva categoría para el pensamiento
+158. Nueva categoría para la conexión
+159. Selecciona primero una nueva categoría
+
+

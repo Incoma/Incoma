@@ -10,22 +10,19 @@ $localhost = rtrim(str_replace(array("\$localhost=\"", "\";"), "", $lines[3]));
 mysql_connect($localhost,$username,$password);
 @mysql_select_db($database) or die( "Unable to select database");
 
-$querynodes="SELECT * FROM nodes_".$conversation;
-$resultnodes=mysql_query($querynodes);
-while($nodesphp[]=mysql_fetch_array($resultnodes));
-$numnodes=mysql_numrows($resultnodes);
+$querytitle="SELECT title FROM conversations WHERE hash='".$conversation."'";
+$resulttitle=mysql_query($querytitle);
+while($titlephp[]=mysql_fetch_array($resulttitle));
 
-$querylinks="SELECT * FROM links_".$conversation;
-$resultlinks=mysql_query($querylinks);
-while($linksphp[]=mysql_fetch_array($resultlinks));
-$numlinks=mysql_numrows($resultlinks);
+$queryeditable="SELECT editable FROM conversations WHERE hash='".$conversation."'";
+$resulteditable=mysql_query($queryeditable);
+while($editablephp[]=mysql_fetch_array($resulteditable));
 
 mysql_close();
 
-
 $data = array();
-$data['nodes'] = $nodesphp;
-$data['links'] = $linksphp;
+$data['title'] = $titlephp;
+$data['editable'] = $editablephp;
 
 echo json_encode($data);
 

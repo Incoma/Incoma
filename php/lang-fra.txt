@@ -1,0 +1,159 @@
+1. Sandbox 
+2. Découvrir et essayer
+3. Créer
+4. Démarrer une nouvelle conversation
+5. Participer
+6. Rejoindre une conversation existante
+7. Il n'y a aucune conversation à cette URL
+8. Aller au menu
+9. Donner un titre à cette conversation
+10. Saisir la première pensée de la conversation
+11. Résumé de ta pensée (optionnel)
+12. Ton nom
+13. Choisir la langue
+14. Privée (accessible seulement via son lien)
+15. Publique (apparaîtra dans la liste de conversations)
+16. OK
+17. Annuler
+18. Trier par
+19. Dernière activité
+20.  Temps de création
+21. Nombre de pensées
+22. Titre
+23. Langue
+24. Choisir un ordre
+25. Choisir une conversation
+26. Filtrer par langue
+27. Toutes les langues
+28. Menu
+29. Nom
+30. Exporter
+31. Importer une conversation
+32. Timeline
+33. Répondre
+34. Relier
+35. Type de réponse
+36. Type de connexion
+37. Type de relation
+38. Résumé de ta réponse
+39. Enregistrer
+40. Une erreur s'est ocurred en essayant de sauver de la base de données, la page sera rechargée.
+41. Chargement en cours
+42. Légende
+43. Masquer
+44. Montrer
+45. Pensées
+46. Général
+47. Question
+48. Proposition
+49. Info
+50. Connexions
+51. Conséquences
+52. Accord
+53. Désaccord
+54. Alternative
+55. Équivalence
+56. Sans rapport
+57. Tailles
+58. Évaluations
+59. Montrer les mots-clefs
+60. Montrer les résumés
+61. Tu as déjà évalué ce nœud
+62. Saisie d'abord quelque chose
+63. Saisie d'abord un titre
+64. Clique sur n'importe quel élément pour le cacher ou le montrer dans la conversation
+65. Si vous choisissez une conversation privée à être modifiable, toute personne participant à la conversation sera en mesure de modifier tous les commentaires et les connexions existantes à tout moment.
+66. il y a 1 seconde
+67. il y a 2 secondes
+68. il y a 2 minutes
+69. il y a 2 heures
+70. il y a 2 jours
+71. il y a 2 mois
+72. il y a 2 ans
+73. Tutoriel
+74. Voulez-vous de cette conversation pour être modifiable?
+75. Pour le moment il n'y a pas d'autres langues disponibles
+76. Si tu veux aider à la traduction vers une autre langue, tu peux le faire en allant ici
+77. Sélectionne une pensée qui est une conséquence de celle-ci
+78. Sélectionne une pensée qui est en accord avec celle-ci
+79. Sélectionne une pensée qui est en désaccord avec celle-ci
+80. Sélectionne une pensée qui est en rapport avec celle-ci
+81. Sélectionne une pensée qui est en contradiction avec celle-ci
+82. Sélectionne une pensée qui est une alternative à celle-ci
+83. Sélectionne une pensée qui est une réponse à celle-ci
+84. Sélectionne une pensée qui est équivalente à celle-ci
+85. Si tu veux aider à la traduction vers une autre langue, 
+86. tu peux le faire en allant ici:
+87. Créé
+88. il y a 1 année
+89. il y a 1 jour
+90. il y a 1 heure
+91. il y a 1 minute
+92. tout à l'heure
+93. Afficher la chronologie
+94. Développer
+95. Masquer la chronologie
+96. Voir toutes les connexions
+97. Mots-clefs
+98. Résumés
+99. Note minimum
+100. Entrez un nom pour participer à la conversation
+101. Raccordement par
+102. Raccordement
+103. par
+104. Vous avez déjà noté cette pensée
+105. Vous avez déjà
+106. noté cette pensée
+107. Vous avez déjà noté cette connexion
+108. Vous avez déjà
+109. noté cette connexion
+110. Cliquez pour continuer
+111. Afficher les connexions directes ne
+112. Bienvenue dans Incoma! 
+113. Dans ce panneau tu verras un tutoriel pour apprendre comment s'en servir. À tout moment, tu peux le fermer, ou cliquer pour avancer.
+114. Vous pouvez jouer librement avec ce Sandox! (modifications ne seront pas sauvegardées)
+115. Le graphe que tu vois au milieu de l'écran est la conversation. Les cercles représentent des pensées et les lignes représentent les relations entre elles.
+116. La conversation intitulée 'Sandbox' est juste l'example d'une conversation typique. Tu peux jouer librement avec, les changements que tu feras ne seront pas enregistrés comme ils le sont dans le reste des conversations.
+117. Pour lire les différentes pensées, tu peux faire passer ta souris sur les cercles. Dans le panneau de droite, tu verras la pensée, avec des infos: qui l'a créée, quand elle fut créee, le type de pensée, et comment d'autres personnes l'ont évaluée.
+118. La couleur des cercles indique quel type de pensée ils contiennent (une pensée générale, une réponse, une proposition, de l'info),  et la couleur des lignes indique le type de relation qui existe entre les cercles qu'ils relient (il pourrait y avoir accord ou désaccord entre elles, elles pourraient être contradictoires, l'une pourrait être une réponse à la question d'une autre...)
+119. Tu peux voir la signification de toutes les couleurs dans le panneau de légende au bas de l'écran. Tu peux aussi utiliser ce panneau pour cacher ou montrer un type de pensée ou lien en particulier, en cliquant sur son nom.
+120. Par défaut, la taille des cercles et des liens dépends de leurs évaluations. Si tu veux les voir tous à la même taille, clique sur le mot 'Évaluations' sous la section Taille.
+121. En cliquant sur 'Montrer les mots-clefs', une ligne de texte apparaîtra au-dessus de chaque cercle montrant ses mots-clefs (automatiquement collectés depuis les mots les plus utilisés dans toute la conversation). En cliquant 'Montrer les résumés', le texte montrera le résumé d'un nœud, soit celui saisi par l'utilisateur qui a créé ce cercle, ou le début du commentaire. 
+122. Si tu veux masquer la légende, clique le bouton 'Masquer' situé à son coin inférieur droit.
+123. Pour intéragir avec une pensée, clique simplement sur son cercle, et dans le panneau droit apparaitront de nouveaux boutons qui te permettront de répondre à cette pensée ('Répondre'), de la lier à une autre pensée ('Relier') et de l'évaluer (boutons rouges et verts).
+124. En répondant, tu peux ajouter de l'information sur ta réponse, afin d'aider tout le monde à suivre la conversation facilement.
+125. D'abord, un menu déroulant te permet de sélectionner le type de réponse que tu fais : es-tu en train de formuler une question ? Une proposition ? Une information (plutôt qu'une opinion)?
+126. Ensuite, un autre menu déroulant te permet de sélectionner le type de lien entre ce que tu écris et la pensée que tu as cliquée. Selon le type de pensée dont il s'agit, tu trouveras différents types de connexions possibles.
+127. Sous ces menus, tu peux saisir ta pensée et un résumé de ta pensée (si tu le souhaites). Quand tu as fini, cliques sur 'Enregistrer' et observe comme elle apparait dans le graphe! 
+128. Si tu veux écrire une pensée sans rapport avec aucune autre, choisie 'Sans rapport' dans le menu 'Type de connexion'.
+129. Si tu penses que deux pensées ont un lien entre elles et que tu souhaites le montrer dans la conversation, sélectionne l'une d'entre elles et clique sur le bouton 'Relier'. Fais attention au fait que l'ordre est important lorsqu'il s'agit d'une 'Conséquence' (l'une des pensées est la conséquence de l'autre, et non l'inverse).
+130. Pour évaluer une pensée, clique là, puis cliques sur les boutons vert et rouge sous la pensée. Le nombre de votes positifs et négatifs de chaque pensée apparaissent dans les boutons.
+131. Pour désélectionner un cercle, clique juste sur n'importe quelle partie vide de l'écran.
+132. Tu peux cliquer-déplacer, avec ta souris, pour réformer la conversation, et (dé)zommer en utilisant les boutons en haut à gauche de la fenêtre, ou utiliser la roulette de ta souris. Il est aussi possible de déplacer les cercles si tu souhaites les repositionner, et double-cliquer un cercle recentrera la vue autour de lui.
+133. Joue dans le Sandbox jusqu'à ce que tu te sentes à l'aise en utilisant Incoma. Une fois que tu vois comme tout fonctionne, tu peux créer une nouvelle conversation ou en rejoindre une existante. Pour cela, clique sur le menu et choisi l'option que tu veux : 'Créer' ou 'Participer'. Souviens-toi que ces autres conversations, au contraire du Bac à sable, seront enregistrées ou modifiées dans la base de données.
+134. Tu peux trouver plus d'informations sur le blog du projet Incoma : blog.incoma.org.  
+135. Si tu as des questions, suggestions, si tu trouves un bogue, souhaites partager quelque chose de bien avec nous, ou toute autre chose, écris-nous s'il te plaît à  incomaproject.contact@gmail
+136. Souviens-toi que Incoma est un LOGICIEL LIBRE (libre comme dans Braveheart). Donc il est à toi et au reste de l'humanité. Parce qu'on aime les 99%. 
+137. Enjoy!
+138. Cliquez pour terminer
+139. Blog
+140. Plus de langues
+141. Pensée initiale
+142. Auteurs
+143. Saisie d'abord un nom
+144. Oui
+145. Non
+146. Modifier votre pensée
+147. Changer la catégorie
+148. Regarder l'évolution de la conversation
+149. Saving...
+150. Changement de catégorie
+151. Vous pouvez proposer une catégorie différente de cette pensée
+152. Vous pouvez proposer une catégorie différente de ce lien
+153. (La catégorie sera changée après suffisamment de personnes le proposent)
+154. Changer
+155. Vous avez déjà proposé une nouvelle catégorie pour cette pensée
+156. Vous avez déjà proposé une nouvelle catégorie pour cette connexion
+157. Nouvelle catégorie pour la pensée
+158. Nouvelle catégorie pour la connexion
+159. Sélectionnez d'abord une nouvelle catégorie

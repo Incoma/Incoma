@@ -1,0 +1,159 @@
+1. Sandbox 
+2. Learn and experiment
+3. Create
+4. Start a new conversation 
+5. Participate
+6. Join an existing conversation
+7. There is no conversation with this URL
+8. Go to menu
+9. Introduce a title for the conversation
+10. Write the first thought of the conversation
+11. Summary of your thought (optional)
+12. Your name
+13. Select language
+14. Private (only accessible with its link)
+15. Public (will appear in the conversations list)
+16. OK
+17. Cancel
+18. Order by
+19. Last activity
+20. Creation time
+21. Number of thoughts
+22. Title
+23. Language
+24. Select order
+25. Select a conversation
+26. Filter by language
+27. All languages
+28. Menu
+29. Name
+30. Export
+31. Import conversation 
+32. Timeline
+33. Reply
+34. Connect
+35. Type of reply
+36. Type of connection
+37. Type of relation
+38. Summary of your reply (optional)
+39. Save
+40. An error has ocurred when trying to save to the database, the page will be reloaded.
+41. Loading conversation
+42. Legend
+43. Hide 
+44. Show
+45. Thoughts
+46. General
+47. Question
+48. Proposal
+49. Info
+50. Connections
+51. Consequence
+52. Agreement
+53. Disagreement
+54. Alternative
+55. Equivalence
+56. No relation
+57. Sizes
+58. Evaluations
+59. Show tags
+60. Show summaries
+61. You have already rated this node
+62. Write something first
+63. Write a title first
+64. Click on any element for hiding or showing it in the conversation
+65. If you choose a private conversation to be editable, anyone participating in the conversation will be able of modifying all the existing thoughts and connections at any moment. 
+66. 1 second ago
+67. 2 seconds ago
+68. 2 minutes ago
+69. 2 hours ago
+70. 2 days ago
+71. 2 months ago
+72. 2 years ago
+73. Watch tutorial 
+74. Do you want this conversation to be editable?
+75. At the moment there are no more languages available.
+76. If you want to help with the translation to another language, you can do it entering here
+77. Select a thought that is a consequence of this one
+78. Select a thought that agrees with this one
+79. Select a thought that disagrees with this one
+80. Select a thought related with this one
+81. Select a thought that is contradictory with this one
+82. Select a thought that is an alternative to this one
+83. Select a thought that is an answer to this one
+84. Select a thought that is equivalent to this one
+85. If you want to help with the translation to another language,
+86. you can do it entering here:
+87. Created
+88. 1 year ago
+89. 1 day ago
+90. 1 hour ago
+91. 1 minute ago
+92. just now
+93. Show timeline
+94. Expand
+95. Hide timeline
+96. Show all the connections
+97. Tags
+98. Summaries
+99. Minimum rating
+100. Introduce a username to participate in the conversation
+101. Connection by
+102. Connection
+103. by
+104. You have already rated this thought
+105. You have already
+106. rated this thought
+107. You have already rated this connection
+108. You have already
+109. rated this connection
+110. Click to continue
+111. Show direct connections only
+112. Welcome to Incoma!
+113. In this panel you will see a tutorial to learn how to use it. At any moment you can close it, or click on it to advance.
+114. You can play with this sandbox freely! (changes will not be saved)
+115. The graph you see in the middle of the screen is a conversation. The circles represent thoughts and the lines represent the relationships among them. 
+116. This conversation entitled 'Sandbox' is just an example of a typical conversation. You can play freely with it, the changes you make will not be saved as they are in the rest of conversations.
+117. To read the different thoughts, you can pass your mouse over the circles. In the right  panel, you will see the thought, together with some info: who created it, when was created, the type of thought, and the rating given to it by other people.
+118. The color of the circles indicates what type of thought they contain (a general thought, a question, a proposal, some info...), and the color of the lines indicates the type of relation that exist between the circles they connect (there could be agreement or disagreement between them, they could be equivalent, one could be the consequence of the other,...)
+119. You can see the meaning of all the colors in the legend panel at the bottom of the screen. You  can also click in their names to hide or show a specific type of thought or connection.
+120. By default the size of circles and links depends on their evaluations. If you want to see all of them with the same size then click on the word 'Evaluations' under the Size section.
+121. By clicking on 'Tags', a line of text will appear above each circle showing its tags (automatically generated among the most used words in all the conversation). By clicking on 'Summaries' the text will show the summary of the node, either the one created by the user who made that circle or one with the beggining of the comment.
+122. If you want to hide the legend, click on the 'Hide' button of its right corner.
+123. To interact with a thought, just click on its circle, and in the right panel will appear new buttons that allow you to reply to this thought ('Reply'), to connect it with another thought ('Connect'), and to evaluate it (green and red buttons).
+124. When replying, you can add information about your reply, so you help everybody to follow the conversation easily.
+125. First, you have a pull-down menu to select the type of reply you are doing: is it question? a proposal? information (instead of an opinion)?). 
+126. Second, you have another pull-down menu to select the type of relation between what you write and the thought you clicked. Depending on the type of thought you will find certain types of possible connections
+127. Below these menus you can write your thought and a summary of your thought (if you want). When you finish click on 'Save' and see how it appears in the graph! 
+128. If you want to write a thought not connected to any other, select 'No relation' in the menu 'type of connection'.
+129. If you think two thoughts have a relationship between them and you want to show it in the conversation, select one of them and click on the button 'Connect'. Chose the type of relation in the menu and click on the other thought. Take into account that the order matters with the relation 'Consequence' (one of the thoughts is the consequence of the other, but not the other way around).
+130. To evaluate a thought click it, and then click on the green and red buttons below the thought. The number of positive and negative votes of each thought is shown in the buttons.
+131. To deselect a circle, just click on any empty part of the screen. 
+132. You  can click and drag with your  mouse to move around the conversation,  and zoom in and out using the  buttons in the top left side of the  window, or using your mousewheel. Is possible also to drag circles if you want to reposition them, and double-clicking a circle will center the view on it.
+133. Play around with the Sandbox until you feel yourself comfortable with the use of Incoma. Once you see how everything works, you can create a new conversation or join an existing one. For this, click on the menu and then choose the option you want: 'Create' or 'Participate'. Remember that those other conversations, different from the Sandbox, will be saved or modified in the database.
+134. You can find more information in the Incoma project blog blog.incoma.org. 
+135. If you have questions, suggestions, if you find a bug, want to share something nice with us, or anything else, please write us to incomaproject.contact@gmail.com
+136. Remember that Incoma is FREE SOFTWARE (free as in Braveheart). So it is yours and from the rest of the humanity. Because we love the 99%.
+137. Enjoy!
+138. Click to finish
+139. Blog
+140. More languages
+141. Initial thought
+142. Authors
+143. Write your name first
+144. Yes
+145. No
+146. Edit your thought
+147. Change the category
+148. Watch the evolution of the conversation
+149. Saving...
+150. Change of category
+151. You can propose a different category for this thought
+152. You can propose a different category for this link
+153. (The category will be changed after enough people propose it)
+154. Change
+155. You have already proposed a new category for this thought
+156. You have already proposed a new category for this connection
+157. New category for the thought
+158. New category for the link
+159. Select first a new category

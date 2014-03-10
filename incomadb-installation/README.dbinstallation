@@ -1,6 +1,6 @@
 The database can be created and configured with the scripts provided in this folder. 
 
-Before executing any of them, open with a text editor createuser.mysh, giveperms.mysh and php/incomadb.conf and introduce instead of NAMEOFTHEDATABASE, THEUSERNAME, THEPASSWORD the names of your choice. After doing it, execute the scripts from your MySQL admin program or trough the Linux shell with the following commands:
+Before executing any of them, open with a text editor createuser.mysh, giveperms.mysh and php/incomadb.conf and introduce instead of NAMEOFTHEDATABASE, THEUSERNAME, THEPASSWORD, LOCALHOST the names of your choice. After doing it, execute the scripts from your MySQL admin program or trough the Linux shell with the following commands:
 
 mysql -u root -p < createemptydb.mysh
 mysql -u root -p < createuser.mysh

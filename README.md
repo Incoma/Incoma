@@ -1,9 +1,9 @@
 Incoma
 ======
 
-Incoma is a free software debate platform whose aim is to facilitate conversations between thousands of people simultaneously, to allow the construction of a real global collective intelligence.
+Last versión: Incoma Akiba Edition. Released on 10th of March of 2014.
 
-The default index.php version is the PHP/MySQL version of Incoma which uses the MySQL database to store the conversations. A local version without PHP/MySQL can be executed loading index-local.html without no installation.
+Incoma is a free software debate platform whose aim is to facilitate conversations between thousands of people simultaneously, to allow the construction of a real global collective intelligence.
 
 Try Incoma in its main page: [incoma.org] [1]
 

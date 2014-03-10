@@ -1,9 +1,7 @@
 <?
-$conversation = $_POST['conversation'];
-$table = $_POST['table'];
-$variable = $_POST['variable'];
-$value = $_POST['value'];
-$hash = $_POST['hash'];
+$conversation= $_POST['conversation'];
+$type= $_POST['type'];
+$hash= $_POST['hash'];
 
 $lines = file('incomadb.conf');
 $username = rtrim(str_replace(array("\$username=\"", "\";"), "", $lines[0]));
@@ -15,11 +13,12 @@ mysql_connect($localhost,$username,$password);
 @mysql_select_db($database) or die( "Unable to select database");
 
 
-$sqlupdate = 'UPDATE '.$table.' SET '.$variable.'="'.$value.'" WHERE hash='.$hash; 
-
-mysql_query($sqlupdate);
-
+$query="SELECT hash FROM ".$type."s_".$conversation." WHERE hash='".$hash."'";
+$result=mysql_query($query);
+while($resultphp[]=mysql_fetch_array($result));
 
 mysql_close();
+
+echo $resultphp[0][0];
 
 ?>

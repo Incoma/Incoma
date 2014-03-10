@@ -1,4 +1,0 @@
-<Files incomadb.conf>
-    Order deny,allow
-    Deny from all
-</Files>

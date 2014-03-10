@@ -1,5 +1,3 @@
-The default index.php version is the PHP/MySQL version of Incoma which uses the MySQL database to store the conversations. A local version without PHP/MySQL can be executed loading index-local.html
-
 Files/Modules:
 
 "incomadb.conf"
@@ -8,6 +6,7 @@ name of the MySQL database, user and password with the following format:
 $username="THEUSERNAME";
 $password="THEPASSWORD";
 $database="NAMEOFTHEDATABASE";
+$localhost="LOCALHOST OR NAME OF THE DB HOST";
 
 "opensave.js"
 =============
@@ -57,12 +56,26 @@ Contains the html code of the initial menu and the visualization for the backgro
 
 Some json predefined models, 
 - emptymodel (used when creating a new conversation) 
-- sandboxmodel (for the sandbox)
-- sandboxesmodel (for the sandbox in Spanish)
+- sandboxmodel (for the sandbox) [not used anymore]
+- sandboxesmodel (for the sandbox in Spanish) [not used anymore]
 - menumodel (for the animated background of the initial menu)
 
+"languageslist.js"
+==================
 
-"index.php"/"index-local.html" (PHP-MySQL/local version)
+List of languages for chosing when creating a conversation
+
+"lang-xxx.txt" in the php directory
+===================================
+
+All the texts appearing in Incoma in the different languages are contained in these files
+
+"webtext.js"
+=============
+
+This script takes the previous texts and substitute them in the appropiate part of the code.
+
+"index.php"
 =================
 The php/html file which puts it all together
 
@@ -72,7 +85,7 @@ These files are used in the PHP-MySQL version to read/write in the database. All
 
 file-maps folder
 =================
-The MAP files contain the functions defined in each file, and some of the calls. We hope these files helps you to understand better the code
+The MAP files contain the functions defined in each file, and some of the calls. We hope these files helps you to understand better the code [the maps are not updated for the last version of 10th of March of 2014, but anyway can help to understand the code]
 
 incomadb-installation
 =================

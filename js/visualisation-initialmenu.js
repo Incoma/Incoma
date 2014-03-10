@@ -25,23 +25,22 @@ function InitialMenu_Abstraction() {
 
 	
     this.linkFilters = {
-	1: {name: "General",state: true, typeId: 1},
-        2: {name: "Consequence", state: true, typeId: 2},
-        3: {name: "Agree", state: true, typeId: 3},
-        4: {name: "Disagree", state: true, typeId: 4},
-        5: {name: "Related", state: true, typeId: 5},
-        6: {name: "Contradiction", state: true, typeId: 6},
-        7: {name: "Alternative", state: true, typeId: 7},
-        8: {name: "Answer", state: true, typeId: 8},
+		1: {name: tx_general,state: true, typeId: 1},
+		2: {name: tx_agreement, state: true, typeId: 2},
+		3: {name: tx_disagreement, state: true, typeId: 3},
+		4: {name: tx_consequence, state: true, typeId: 4},		
+		5: {name: tx_alternative, state: true, typeId: 5},
+		6: {name: tx_equivalence, state: true, typeId: 6},
     };
 	
     this.nodeFilters = {
-	1: {name: "General", state: true, typeId: 1},
-        2: {name: "Question", state: true, typeId: 2},
-        3: {name: "Answer", state: true, typeId: 3},
-        4: {name: "Proposal", state: true, typeId: 4},
-        5: {name: "Info", state: true, typeId: 5},
+		1: {name: tx_general, state: true, typeId: 1},
+        2: {name: tx_question, state: true, typeId: 2},
+        3: {name: tx_proposal, state: true, typeId: 3},
+        4: {name: tx_info, state: true, typeId: 4},
     };
+
+
 	
     this.sizeFilters = {
 	nodes: {name: "Boxes", state: true},
@@ -87,7 +86,8 @@ function InitialMenu_Presentation(VIS, ABSTR) {
     this.init = function (html5node) {
         this.scaler = new Scaler(this);
         this.container = html5node;
-		
+
+
         html5node.innerHTML =
           '   \
 		  <div class="svg_and_right_bar" >   \
@@ -101,20 +101,20 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 					<center>  \
 						<div class="big_panel noselect">  \
 						  <center>  \
-							<div class="big_button" onclick="bt_sandbox()">Sandbox</div>   \
-							<div class="big_label noselect">Learn and experiment</div>   \
+							<div class="big_button" onclick="bt_sandbox()">'+tx_sandbox+'</div>   \
+							<div class="big_label noselect">'+tx_learn+'</div>   \
 						   </center>   \
 						 </div>   \
 						<div class="big_panel noselect">    \
 						  <center>  \
-							<div class="big_button" onclick="bt_create()">Create</div>   \
-							<div class="big_label noselect">Start a new conversation</div>   \
+							<div class="big_button" onclick="bt_create()">'+tx_create+'</div>   \
+							<div class="big_label noselect">'+tx_start+'</div>   \
 						  </center>   \
 						</div>   \
 						<div class="big_panel noselect">    \
 						  <center>  \
-							<div class="big_button" onclick="bt_join()">Participate</div>   \
-							<div class="big_label noselect">Join an existing conversation</div>   \
+							<div class="big_button" onclick="bt_join()">'+tx_participate+'</div>   \
+							<div class="big_label noselect">'+tx_join+'</div>   \
 						  </center>   \
 						</div>   \
 					 </center>   \
@@ -124,10 +124,10 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 						<center>  \
 						<table style="border-spacing: 20px 0;"><tr>  \
 						<td>  \
-						Order by&nbsp;<select id="orderselect" style="display:inline"></select>  \
+						'+tx_order_by+'&nbsp;<select id="orderselect" style="display:inline"></select>  \
 						</td>  \
 						<td>  \
-						Filter by language <select id="languagefilter" style="display:inline"></select> \
+						'+tx_filter_lang+' <select id="languagefilter" style="display:inline"></select> \
 						</td>  \
 						</tr></table>  \
 						</center>  \
@@ -137,46 +137,50 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 						</div>  \
 						<div class="bt_panel2 noselect">  \
 							<center>  \
-								<div id="bt_join_ok" onclick="bt_join_ok()" class="conv_ok button">OK</div>  \
-								<div id="bt_join_cancel" onclick="bt_cancel()" class="conv_cancel button">Cancel</div>  \
+								<div id="bt_join_ok" onclick="bt_join_ok()" class="conv_ok button">'+tx_ok+'</div>  \
+								<div id="bt_join_cancel" onclick="bt_cancel()" class="conv_cancel button">'+tx_cancel+'</div>  \
 							</center>  \
 						</div>  \
 					  </div>   \
 					  \
 					  <div id="new_panel" class="huge_panel_3 noselect">   \
-						<div class="new_header noselect">Introduce a title for the conversation</div>  \
-						<textarea id="new_title" class="new_title" spellcheck="false" maxlength="100"></textarea> \
+						<div class="new_header noselect">'+tx_introduce_title+'</div>  \
+						<textarea id="new_title" class="new_title" spellcheck="false" maxlength="60"></textarea> \
 						<center><div id="titlealert" class="alerttext noselect">&nbsp</div><div id="firstthoughtalert" class="alerttext noselect">&nbsp</div><center>  \
-						<div class="new_header noselect">Write the first thought of the conversation</div>  \
+						<div class="new_header noselect">'+tx_write_first_thought+'</div>  \
 						<textarea id="new_firstcomment" class="new_first" spellcheck="false" maxlength="5000"></textarea> \
-						<br>Summary of your thought (optional):<textarea id="new_firstsum" class="areareplysum" spellcheck="false" maxlength="100"></textarea>  \
-						<div style="display:block;padding:5px">  \
+						<br>'+tx_summary_thought+':<textarea id="new_firstsum" class="areareplysum" spellcheck="false" maxlength="100"></textarea>  \
+						<div style="display:block;padding:0px">  \
 							<div style="Float:left;">  \
-								<div class="new_name_header noselect">Your name</div>  \
+								<div class="new_name_header noselect">'+tx_your_name+'&nbsp;</div>  \
 								<textarea id="new_name" class="new_name" spellcheck="false" maxlength="20"></textarea> \
 							</div>  \
 							<div class="new_selectlanguage">  \
-								Select language:  \
+								'+tx_select_language+':  \
 								<br><select id="selectlanguage" style="display:inline;"></select>  \
 							</div>  \
 						</div>  \
 						<div class="radiosel">  \
-							<input type="radio" name="typeconv" value="Private" checked> Private (only accesible with its link)<br>  \
-							<input type="radio" name="typeconv" value="Public"> Public (will appear in the conversations list)<br> \
+							<input type="radio" name="typeconv" value="Private" checked>'+tx_private+'<br>  \
+							<input type="radio" name="typeconv" value="Public">'+tx_public+'<br> \
 						</div>  \
-							<div class="bt_panel noselect">  \
-							<center>  \
-								<div id="bt_new_vok" onclick="bt_new_ok()" class="conv_ok button">OK</div>  \
-								<div id="bt_new_cancel" onclick="bt_cancel()" class="conv_cancel button">Cancel</div>  \
-							</center>  \
-							</div>  \
+                        <div class="bt_panel noselect">  \
+                            <center>  \
+                                <div id="bt_new_vok" onclick="bt_new_ok()" class="conv_ok button">'+tx_ok+'</div>  \
+                                <div id="bt_new_cancel" onclick="bt_cancel()" class="conv_cancel button">'+tx_cancel+'</div>  \
+                            </center>  \
+                        </div>  \
 					  </div>   \
 			  </div>   \
 			  <div id="language_panel" class="language_panel shadow noselect">   \
-				At the moment there are no more languages available.<br><br>If you want to help with the translation to another language, <br>you can do it entering here:  \
+				'+tx_no_more_lang+'<br><br>'+tx_help_translate1+' <br>'+tx_help_translate2+'  \
 				<a href="http://titanpad.com/incomatranslation" target="_blank">titanpad.com/incomatranslation</a>  \
-				<div id="language_button" class="language_button button">OK</div>  \
+				<div id="language_button" class="language_button button">'+tx_ok+'</div>  \
 			  </div>   \
+              <div id="editable_panel" class="noselect">'+tx_if_editable+'<br></br>'+tx_want_editable+'<br></br>  \
+                <div id="btn_editable_yes" onclick="btn_editable_yes()" class="btn_editable button">'+tx_yes+'</div> \
+                <div id="btn_editable_no" onclick="btn_editable_no()" class="btn_editable button">'+tx_no+'</div>  \
+            </div>  \
 		 </div>  \
 			 ' 
 			 
@@ -185,10 +189,10 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 		//hides some elements of the header
 	 	document.getElementById("headerMenu").setAttribute("style","visibility:hidden;");
 		document.getElementById("headerExport").setAttribute("style","visibility:hidden;"); 
-		document.getElementById("headerUsername").setAttribute("style","visibility:hidden;"); 
 
 		$('#big_background').fadeOut(0);
 		$('#language_panel').fadeOut(0);
+        $('#editable_panel').fadeOut(0);
 		$('#big_background').fadeIn(1200);
 
 		$( "#language_button" )[0].onclick = closelanguagepanel;
@@ -240,7 +244,7 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 			.style("stroke-opacity",0);
 
 
-        var graph = ABSTR.model;
+        var graph = Model.model;
 
         force
             .nodes(graph.nodes)
@@ -368,6 +372,9 @@ function InitialMenu_Presentation(VIS, ABSTR) {
 
 };
 
+function closelanguagepanel(){
+	$('#language_panel').fadeOut(300);
+}	
 
 function bt_menu(){
 
@@ -381,6 +388,7 @@ function bt_menu(){
 	$("#legend_bar").fadeOut(300);
 	$('#info_panel').fadeOut(300);
 	$("#headerMenu").fadeOut(200);
+    //$("#headerBlog").fadeOut(200);
 	$("#headerExport").fadeOut(200);
 	$("#headerUsername").fadeOut(200);
 
@@ -439,9 +447,11 @@ function bt_join_ok(){
 	if (conversation == ""){return;}
 	
 	$('#join_panel').animate({left: "-70%"},700,'easeInOutCubic');
-
-	$('#svg').fadeOut(700);
-	setTimeout(function(){window.location.href = "?c=" + conversation;},700);
+    $('#svg').fadeOut(500);
+	//$('#svg').fadeOut(700);
+	//setTimeout(function(){window.location.href = "?c=" + conversation;},700);
+    setTimeout(function(){ db_reloadconversation(); }, 730);
+    
 
 }
 
@@ -449,14 +459,14 @@ function bt_join_ok(){
 //creates a new conversation
 function bt_new_ok(){
 
-	var title = document.getElementById("new_title").value,
-		content = document.getElementById("new_firstcomment").value;
-		var contentsum = document.getElementById("new_firstsum").value;
+    title = document.getElementById("new_title").value;
+    content = document.getElementById("new_firstcomment").value;
+    var contentsum = document.getElementById("new_firstsum").value;
 
 
 	if (title==""){
 		var alert = document.getElementById("titlealert");
-		alert.innerHTML = "Write a title first";
+		alert.innerHTML = tx_write_title;
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		$('#new_title').effect('highlight',2000);
 		return;
@@ -464,26 +474,31 @@ function bt_new_ok(){
 	
 	if (content==""){
 		var alert = document.getElementById("firstthoughtalert");
-		alert.innerHTML = "Write something first";
+		alert.innerHTML = tx_write_something;
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		$('#new_firstcomment').effect('highlight',2000);
 		return;
 	}
 
-	var	author = document.getElementById("new_name").value;
-	if (author == ""){author = "anonymous"};
+	author = document.getElementById("new_name").value.replace(/[\W]/g,'');
+	if (author == ""){
+		//var alert = document.getElementById("namealert");
+		//alert.innerHTML = tx_write_your_name;
+		//setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+		$('#new_name').effect('highlight',2000);
+		return;
+	};
 	
-	var	time = Math.floor((new Date()).getTime() / 1000);
+	time = Math.floor((new Date()).getTime() / 1000);
 	
 	var radios = document.getElementsByName('typeconv');
-	var ispublic = 0;
+	ispublic = 0;
 	if (radios[1].checked) {
 		ispublic = 1;
 	}
 
 
-	Model.clear(IncomaEmptyModel);
-	Model.currentAuthor(author);	
+	Model.clear(IncomaEmptyModel);	
 	Model.createNode(1, content, contentsum, author, 2, time); //creates the initial node, type="general", seed=2
 	Model.title = title;
 	
@@ -493,18 +508,35 @@ function bt_new_ok(){
 	conversation = createconvhash(stringforhash);
 
 	//creates the tables for the new conversation and stores the first node	
-	db_createconversation(conversation,title,time,ispublic, convlanguage);
-	db_savenode(Model.model.nodes[0]);
+    
+    $('#new_panel').animate({left: "-65%"},700,'easeInOutCubic');
+    
+    
+    if (ispublic == 0) {
+        setTimeout(function(){ $("#editable_panel").fadeIn(300) }, 400);
+        return;
+    }
+    
+    $('#svg').fadeOut(500);
+	db_createconversation(conversation,title,time,ispublic, convlanguage, false);
 	
-	$('#new_panel').animate({left: "-65%"},700,'easeInOutCubic');
-
-	db_reloadconversation();
+	
 	
 }
 
+function btn_editable_yes(){
+    $("#svg").fadeOut(300);
+    $("#editable_panel").fadeOut(300);
+    db_createconversation(conversation,title,time,ispublic, convlanguage, 1);
+}
+
+function btn_editable_no(){
+    $("#svg").fadeOut(300);
+    $("#editable_panel").fadeOut(300);
+    db_createconversation(conversation,title,time,ispublic, convlanguage, 0);
+}
 
 //
-
 
 function prepareconvlistselect(){
 	
@@ -521,7 +553,7 @@ function prepareconvlistselect(){
 			text: conversationlist[i].title,
 			value: i,
 			selected:false,
-			description: conversationlist[i].thoughtnum + " thoughts&nbsp&nbsp&nbsp Created: " + timeAgo(conversationlist[i].creationtime) + "&nbsp&nbsp&nbsp Last activity: " + timeAgo(conversationlist[i].lasttime) + "&nbsp&nbsp&nbsp Language: " + conversationlist[i].language, 
+			description: conversationlist[i].thoughtnum + " "+tx_thoughts+"&nbsp&nbsp&nbsp " + tx_created + ": " + timeAgo(conversationlist[i].creationtime) + "&nbsp&nbsp&nbsp" + tx_activity +": " + timeAgo(conversationlist[i].lasttime) + "&nbsp&nbsp&nbsp " + tx_language + ": " + conversationlist[i].language, 
 		});
 	}
 
@@ -534,7 +566,7 @@ function prepareconvlistselect(){
 	
 	$('#selectconversation').ddCslick({
 		data: ddData,
-		selectText: "Select a conversation",
+		selectText: tx_select_conv,
 		width: panelwidth,
 		height:heightdd,
 		background: "#fff",
@@ -591,7 +623,7 @@ function orderconversationlist(){
 
 function preparelangselect(){
 	
-	//@@language dependent
+	//@@language dependent (?)
 	//the languages that will be shown at the top of the list
 	var ddData = [
 		{text: "------------------", value: 0, selected: false}, 
@@ -600,7 +632,7 @@ function preparelangselect(){
 		{text: "------------------", value: 3, selected: false}
 	];
 	
-	//@@language dependent
+	//@@language dependent (?)
 	convlangindex = 1;
 	
 	var j= ddData.length+1;
@@ -613,7 +645,7 @@ function preparelangselect(){
 
 	$('#selectlanguage').ddTslick({
 		data: ddData,
-		selectText: "Select language...",
+		selectText: tx_select_language + "...",
 		width: 140,
 		height:150,
 		background: "#fff",
@@ -635,16 +667,16 @@ function preparelangselect(){
 
 function preparelangfilter(){
 	
-	//@@language dependent
+	//@@language dependent (?)
 	var ddData = [
 		{text: "------------------", value: 0, selected: false},
-		{text: "(All languages)", value: 1, selected: false},
+		{text: "("+tx_all_lang+")", value: 1, selected: false},
 		{text: "English", value: 2, selected: true}, 
 		{text: "Spanish", value: 3, selected: false},
 		{text: "------------------", value: 4, selected: false}		
 	]
 	
-	//@@language dependent
+	//@@language dependent (?)
 	langfilterindex = 2;
 	
 	var j=ddData.length;
@@ -657,7 +689,7 @@ function preparelangfilter(){
 
 	$('#languagefilter').ddTslick({
 		data: ddData,
-		selectText: "Select language...",
+		selectText: tx_select_language + "...",
 		width: 140,
 		height:250,
 		background: "#fff",
@@ -683,27 +715,27 @@ function prepareorderselect(){
 
 	var ddData = [
 		{
-			text: "last activity",
+			text: tx_activity,
 			value: 1,
 			selected: true,
 		},
 		{
-			text: "creation time",
+			text: tx_creation,
 			value: 2,
 			selected: false,
 		},
 		{
-			text: "number of thoughts",
+			text: tx_number_thoughts,
 			value: 3,
 			selected: false,
 		},
 		{
-			text: "title",
+			text: tx_title,
 			value: 4,
 			selected: false,
 		},
 		{
-			text: "language",
+			text: tx_language,
 			value: 5,
 			selected: false,
 		}
@@ -712,7 +744,7 @@ function prepareorderselect(){
 	
 	$('#orderselect').ddTslick({
 		data: ddData,
-		selectText: "Select order",
+		selectText: tx_select_order,
 		width: 140,
 		height:25*5,
 		background: "#fff",
@@ -738,7 +770,7 @@ function filterbylanguage(){
 	
 	conversationlist = cl;
 	
-	if (langfilter=="(All languages)"){
+	if (langfilter=="("+tx_all_lang+")"){
 		conversationlist = ccl;
 	}
 	

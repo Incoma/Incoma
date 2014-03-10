@@ -1,8 +1,6 @@
 <?
 $conversation = $_POST['conversation'];
-$table = $_POST['table'];
-$variable = $_POST['variable'];
-$value = $_POST['value'];
+$type = $_POST['type'];
 $hash = $_POST['hash'];
 
 $lines = file('incomadb.conf');
@@ -14,12 +12,13 @@ $localhost = rtrim(str_replace(array("\$localhost=\"", "\";"), "", $lines[3]));
 mysql_connect($localhost,$username,$password);
 @mysql_select_db($database) or die( "Unable to select database");
 
-
-$sqlupdate = 'UPDATE '.$table.' SET '.$variable.'="'.$value.'" WHERE hash='.$hash; 
+$table="links_".$conversation;
+$sqlupdate = 'UPDATE '.$table.' SET type="'.$type.'" WHERE hash="'.$hash.'"';
 
 mysql_query($sqlupdate);
 
-
 mysql_close();
+
+echo $sqlupdate;
 
 ?>

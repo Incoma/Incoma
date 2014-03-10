@@ -2,6 +2,7 @@
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
 <link rel="stylesheet" href="plugins/ezMark-master/css/ezmark.css" media="all">
+<link rel="stylesheet" href="plugins/dragdealer-v0.9.5/dragdealer.css" media="all">
 <link rel="stylesheet" media="screen and (min-height: 486px) and (max-height: 2000px)" type="text/css" href="css/zoomout-large.css"/>
 <link rel="stylesheet" media="screen and (min-height: 100px) and (max-height: 485px)" type="text/css" href="css/zoomout-small.css"/>
 
@@ -13,9 +14,29 @@
 
 
 <body>
+
+<script> 
+// Add trailing slash to the url to avoid problems with the .htaccess redirection
+url = window.location.href;
+if ((url.slice(-9) !== "index.php") && (url.slice(-1) !== "/") && (url.indexOf("?") == -1)) {
+window.location.href = window.location.href+"/";		
+} else {
+};
+</script>
+
     <script src="js/jquery-1.9.1.js"></script>
 	<!-- ezMark is a script to make more beauty the checkboxes -->
 	<script type="text/javascript" language="Javascript" src="plugins/ezMark-master/js/jquery.ezmark.js"></script>
+
+<!-- This script loads all the text for the website in the proper language (English by default)-->
+<script>
+	<? $weblangphp= $_GET['lang']; ?>
+	var weblangphp="<?php echo $weblangphp; ?>"; 
+	this.weblang = (weblangphp == "") ? "eng" : weblangphp;
+</script>
+<script src="js/webtext.js"></script>
+<!--  -->
+
 
 <!-- HTML frame -->
 
@@ -24,35 +45,49 @@
         <a  id="headerName" href="http://incoma.org">
             INCOMA<sup>beta</sup></a>
         </div>
-		<div id="headerMenu"  class="header noselect" onclick="bt_menu()" style="visibility:hidden;">
-            Menu
-        </div>
-        <a id="headerUrl" class="header" href="http://blog.incoma.org" target="_blank">
-            blog.incoma.org
-        </a>
         <div id="headerLangSelection" class="header noselect">
-			Language:
             <select id="headerlangselect" class="header noselect" onchange="changelanguage(this)">
-				<option value="English" selected="selected">English</option>
-				<option value="Spanish">Spanish</option>
-				<option value="More">More languages</option>
+				<option value="eng" selected="selected">English</option>
+				<option value="es">Spanish</option>
+				<option value="fra">French</option>
+// ADD HERE THE NEW LANGUAGES (+ the language file in the php directory) (and check webtext.js and txvars.txt)
+				<option id="morelang" value="More"></option>
             </select>
+<script>
+				$("#headerlangselect").val(weblang);
+</script>
         </div>
-        <div id="headerUsername" class="header noselect" style="visibility:hidden;">
-            Name:&nbsp;
-            <textarea id='headerNamebox' class="header" spellcheck='false' maxlength='20'></textarea>
+		<div id="headerMenu"  class="header headerborder noselect" onclick="bt_menu()" style="visibility:hidden;">
+   <!--         Menu    (text defined in the javascript)-->
         </div>
-        <div id="headerExport" class="header noselect" style="visibility:hidden;">
+        <a id="headerBlog" class="header headerborder" href="http://blog.incoma.org" target="_blank">
+   <!--         Blog    (text defined in the javascript)-->
+        </a>
+        <div id="headerExport" class="header headerborder noselect" style="visibility:hidden;">
             <a class="header" href="" id="headerExportLink" >&nbsp;</a>
         </div>
     </div>
 <!-- This tag will be filled by the visualization scripts -->
     <div id="visualisationMain">
 		<div id="noconversation_panel" class="language_panel shadow noselect" style="position:absolute; visibility:hidden;">
-			There is no conversation with this URL.
-			<div id="noconversation_button" class="language_button button" onclick="bt_menu();">Go to menu</div>
+        <div id="noconversation_panel_text">
+   <!--  There is no conversation with this URL.    (text defined in the javascript)-->
+    </div>
+			<div id="noconversation_button" class="language_button button" onclick="bt_menu();">
+   <!--  Go to menu    (text defined in the javascript)-->
+</div>
 		</div>
     </div>  
+
+<script> 
+// Set the text for the elements in the header
+	 	document.getElementById("headerMenu").innerHTML = tx_menu;
+//	 	document.getElementById("headerExport").innerHTML = tx_export;
+	 	document.getElementById("headerBlog").innerHTML = tx_blog;
+	 	document.getElementById("noconversation_panel_text").innerHTML = tx_no_conversation;
+	 	document.getElementById("noconversation_button").innerHTML = tx_goto_menu;
+	 	document.getElementById("morelang").innerHTML = tx_morelang;
+</script>
 
 
 <!-- Javascript -->
@@ -66,6 +101,7 @@
 <script src="js/d3.v3.min.js"></script>
 <script src="plugins/jquery.ddCslick.js"></script>
 <script src="plugins/jquery.ddTslick.js"></script>
+<script src="plugins/dragdealer-v0.9.5/dragdealer.js"></script>
 <script src="js/jquery-ui.js"></script>
 <script src="js/opensave.js"></script>
 <script src="js/jsonmodels.js"></script>
@@ -81,14 +117,7 @@ $(function() {$('.resizable').resizable();});
 
 <script>
 
-	weblanguage = "English";
 
-	//gets the current user name from the name box in the header
-    var author = $("#headerNamebox")[0];
-    author.onchange = function(e) {
-        Model.currentAuthor(author.value);
-    };
-      
     function reInit(newVisualisation) {
         if (newVisualisation) {
             newVisualisation.init( $( "#visualisationMain" )[0], Model.model);
@@ -102,7 +131,7 @@ $(function() {$('.resizable').resizable();});
                             OpenSave.blobToText( file, function(text) { Model.importFile(text); reInit(Visualisations.current()); } );
                         }; 
 
-    OpenSave.addExportListener( $( "#headerExport" )[0], "Export", "Incoma-conversation.json", saveModelFile );
+    OpenSave.addExportListener( $( "#headerExport" )[0], tx_export, "Incoma-conversation.json", saveModelFile );
 	
 	
 // dbcode ***
@@ -111,8 +140,8 @@ $(function() {$('.resizable').resizable();});
 	//look for a conversation parameter in the URL
 	<? $conversation= $_GET['c']; ?>
 	
-	var conversation="<?php echo $conversation; ?>"; 
-	
+	conversation="<?php echo $conversation; ?>"; 
+    author = "";
     this.modelfromdb = "";
 
 	//if a conversation is being loaded, gets it from the db, if not, shows the initial menu
@@ -137,18 +166,71 @@ $(function() {$('.resizable').resizable();});
 
 	//Get the conversation from the DB
 		db_getmodel();
-		
-		if (modelfromdb == ""){
-			opennoconversationpanel();
-			return;
-		}
-		
+        
+        db_getinfo();
+		db_gettags();
+        
 	//From the previous DB conversation generate a valid JS conversation
 		db_generatemodel();
 
 		//loads the 'zoom-out' visualization with the conversation data loaded from the db and converted to the js format
 		Model.clear(modeldb);
-		
+        
+        
+
+// If the model should be cloned, this code can be used in between
+//
+//		fullnodes = [];
+//		fulllinks = [];
+//	
+//	for (var i=0; i<Model.model.nodes.length; i++) {
+//        var tempadvevalby = [];
+//	for (var j=0; j<Model.model.nodes[i].advevalby.length; j++) {
+//	tempadvevalby.push(Model.model.nodes[i].advevalby[j].slice(0));
+//        };
+//	var copyNode = {
+//        "hash": Model.model.nodes[i].hash,
+//        "content": Model.model.nodes[i].content,
+//        "contentsum": Model.model.nodes[i].contentsum,
+//        "evalpos": Model.model.nodes[i].evalpos,
+//	  "evalneg": Model.model.nodes[i].evalneg,
+//        "evaluatedby": Model.model.nodes[i].evaluatedby.slice(0),
+//        "adveval": Model.model.nodes[i].adveval.slice(0),
+//        "advevalby": tempadvevalby,
+//        "type": Model.model.nodes[i].type,
+//        "author":  Model.model.nodes[i].author,
+//   	  "seed": Model.model.nodes[i].seed,
+//        "time": Model.model.nodes[i].time,
+//	};
+//	fullnodes.push(copyNode);
+//	};
+//
+//	for (var i=0; i<Model.model.links.length; i++) {
+//        var tempadvevalby = [];
+//	for (var j=0; j<Model.model.links[i].advevalby.length; j++) {
+//	tempadvevalby.push(Model.model.links[i].advevalby[j].slice(0));
+//        };
+//	var copyLink = {
+//        "hash": Model.model.links[i].hash,
+//        "source": Model.model.links[i].source,
+//        "target": Model.model.links[i].target,
+//        "direct": Model.model.links[i].direct,
+//	  "evalpos": Model.model.links[i].evalpos,
+//	  "evalneg": Model.model.links[i].evalneg,
+//        "evaluatedby": Model.model.links[i].evaluatedby.slice(0),
+//        "adveval": Model.model.links[i].adveval.slice(0),
+//        "advevalby": tempadvevalby,
+//        "type": Model.model.links[i].type,
+//        "author":  Model.model.links[i].author,
+//        "time": Model.model.links[i].time,
+//	};
+//	fulllinks.push(copyLink);
+//	};
+//
+//		fullmodel =  { nodes: fullnodes, links: fulllinks, authors: []};
+//
+//	     Fullmodel = { fullmodel: fullmodel, title: "", tags: ""};
+
 		reInit(Visualisations.select(1));
 
 	}
@@ -169,34 +251,56 @@ $(function() {$('.resizable').resizable();});
 	}
 
 
-	function db_createconversation(conversation,title,time,ispublic, language){
+	function db_createconversation(conversation,title,time,ispublic, language, editable){
 	//Create a conversation in the DB list of conversations
-		$.post("php/createconversation.php", {conversation: conversation, title:title, time:time, ispublic:ispublic, language:language});
-
+		$.post("php/createconversation.php", {conversation: conversation, title:safejstringsfordb(title), time:time, ispublic:ispublic, language:language, editable: editable})
+			.done(function(){
+				setTimeout(function(){db_saveinitialnode(Model.model.nodes[0]);},200);
+			});
 	}
 
+	function db_saveinitialnode(newnode){
+	    if(conversation != "sandbox" && conversation != "sandbox_es"){
+			var newnodejs = ["hash",newnode.hash,"content",safejstringsfordb(newnode.content),"contentsum",safejstringsfordb(newnode.contentsum),"evalpos",newnode.evalpos,"evalneg",newnode.evalneg,"evaluatedby",(newnode.evaluatedby).join("@@@@"),"adveval",(newnode.adveval).join("@@@@"),"advevalby",(newnode.advevalby[0]).join("@@@@")+'$$$$'+(newnode.advevalby[1]).join("@@@@")+'$$$$'+(newnode.advevalby[2]).join("@@@@")+'$$$$'+(newnode.advevalby[3]).join("@@@@"),"type",newnode.type,"author",newnode.author,"seed",newnode.seed,"time",newnode.time];
+			
+			newnodestring = newnodejs.join('####');
 
+			$.post("php/savenode.php", {newnodephp: newnodestring, conversation: conversation});
+
+            var actualtime = new Date().getTime();
+            checkifsavedinitialnode(newnode.hash, actualtime, newnode);
+		}
+	}
+	
 	function db_reloadconversation(){
-
+		
 		setTimeout(function(){
 			window.history.pushState("", "", "?c=" + conversation); //with this alternative two lines, the page is not refreshed
-			reInit(Visualisations.select(1));
-			//window.location.href = "?c=" + conversation;
-		},700);
+            db_loadconversation();
+            clearInterval(pulses);
+            //reInit(Visualisations.select(1));
+		    //window.location.href = "?c=" + conversation +"&a="+author;
+		},0);
 
 	}
 
 	
-	function db_gettitle(){
+	function db_getinfo(){
 	
 		$.ajax({
 		dataType: 'json',
-		url: 'php/gettitle.php',
+		url: 'php/getinfo.php',
 		data: { conversation: conversation},
 		async: false,
 		}).done(function(data) {
+        if (typeof data.title[0].title == "undefined"){
+			opennoconversationpanel();
+			return;
+		}
 		data.title.pop()
+        data.editable.pop()
 		Model.title = data.title[0].title;
+        Model.editable = data.editable[0].editable;
 		});
 
 	}
@@ -204,17 +308,17 @@ $(function() {$('.resizable').resizable();});
 	
 	function db_gettags(){
 
-                $.ajax({
-                dataType: 'json',
-                url: 'php/gettags.php',
-                data: { conversation: conversation},
-                async: false,
-                }).done(function(data) {
-                data.tags.pop()
-                Model.tags = data.tags[0].tags;
-                });
+        $.ajax({
+        dataType: 'json',
+        url: 'php/gettags.php',
+        data: { conversation: conversation},
+        async: false,
+        }).done(function(data) {
+        data.tags.pop()
+        Model.tags = data.tags[0].tags;
+        });
 
-        }
+    }
 
 	
 	function db_getmodel(){
@@ -226,11 +330,17 @@ $(function() {$('.resizable').resizable();});
 		data: { conversation: conversation},
 		async: false,
 		}).done(function(data) {
+
 		data.nodes.pop();
 		data.links.pop();
+            
+        if (data.nodes == ""){
+			opennoconversationpanel();
+			return;
+		}
 		modelfromdb =  { nodes: data.nodes, links: data.links, authors: []};
 		}).fail(function(data) {
-	        });
+	    });
 	}
 	
 	
@@ -243,11 +353,12 @@ $(function() {$('.resizable').resizable();});
 		var numlinksdb=modelfromdb.links.length;
 		
 		var nodeslist = [];
-	
+
 		for (var i=0; i<numnodesdb; i++) {
 
+			var tempadvevalby=(nodesjs[i]['advevalby']).split("$$$$");
 
-			onenodedb = {"hash":parseInt(nodesjs[i]['hash']),"content":nodesjs[i]['content'],"contentsum":nodesjs[i]['contentsum'],"evalpos":parseInt(nodesjs[i]['evalpos']),"evalneg":parseInt(nodesjs[i]['evalneg']),"evaluatedby":(nodesjs[i]['evaluatedby']).split("@@@@"),"type":parseInt(nodesjs[i]['type']),"author":nodesjs[i]['author'],"seed":parseInt(nodesjs[i]['seed']),"time":parseInt(nodesjs[i]['time'])};
+			onenodedb = {"hash":parseInt(nodesjs[i]['hash']),"content":nodesjs[i]['content'],"contentsum":nodesjs[i]['contentsum'],"evalpos":parseInt(nodesjs[i]['evalpos']),"evalneg":parseInt(nodesjs[i]['evalneg']),"evaluatedby":(nodesjs[i]['evaluatedby']).split("@@@@"),"adveval":(nodesjs[i]['adveval']).split("@@@@").map(Number),"advevalby":[tempadvevalby[0].split("@@@@"),tempadvevalby[1].split("@@@@"),tempadvevalby[2].split("@@@@"),tempadvevalby[3].split("@@@@")],"type":parseInt(nodesjs[i]['type']),"author":nodesjs[i]['author'],"seed":parseInt(nodesjs[i]['seed']),"time":parseInt(nodesjs[i]['time'])};
 	
 
 			nodeslist.push(onenodedb);
@@ -256,39 +367,172 @@ $(function() {$('.resizable').resizable();});
 		var linkslist = [];
 		
 		for (var i=0; i<numlinksdb; i++) {
-		
-			onelinkdb = {"hash":parseInt(linksjs[i]['hash']),"source":parseInt(linksjs[i]['source']),"target":parseInt(linksjs[i]['target']),"direct":parseInt(linksjs[i]['direct']),"evalpos":parseInt(linksjs[i]['evalpos']),"evalneg":parseInt(linksjs[i]['evalneg']),"evaluatedby":(linksjs[i]['evaluatedby']).split("@@@@"),"type":linksjs[i]['type'],"author":linksjs[i]['author'],"time":parseInt(linksjs[i]['time'])};
+	
+			var tempadvevalby=(linksjs[i]['advevalby']).split("$$$$");
+
+			onelinkdb = {"hash":parseInt(linksjs[i]['hash']),"source":parseInt(linksjs[i]['source']),"target":parseInt(linksjs[i]['target']),"direct":parseInt(linksjs[i]['direct']),"evalpos":parseInt(linksjs[i]['evalpos']),"evalneg":parseInt(linksjs[i]['evalneg']),"evaluatedby":(linksjs[i]['evaluatedby']).split("@@@@"),"adveval":(linksjs[i]['adveval']).split("@@@@").map(Number),"advevalby":[tempadvevalby[0].split("@@@@"),tempadvevalby[1].split("@@@@"),tempadvevalby[2].split("@@@@"),tempadvevalby[3].split("@@@@"),tempadvevalby[4].split("@@@@"),tempadvevalby[5].split("@@@@")],"type":linksjs[i]['type'],"author":linksjs[i]['author'],"time":parseInt(linksjs[i]['time'])};
 
 			linkslist.push(onelinkdb);
 		}
 
-		modeldb = { nodes: nodeslist, links: linkslist, authors: []};
-		
+		modeldb = { nodes: nodeslist, links: linkslist, authors: []};	
 	}
 
 
-	function db_savenode(newnode){
+    function db_saveandchecknode(newnode, newlink){
+        if(conversation == "sandbox" || conversation == "sandbox_es") return;
+        showingsavingicon = true;
+        $("#saving").show();
+        db_savenode(newnode);
+        var actualtime = new Date().getTime();
+        setTimeout(function(){checkifsaved("node", newnode.hash, actualtime, newlink)}, 300);
+    }
 
+    function db_saveandcheckonlynode(newnode){
+        if(conversation == "sandbox" || conversation == "sandbox_es") return;
+        showingsavingicon = true;
+        $("#saving").show();
+        db_savenode(newnode);
+        var actualtime = new Date().getTime();
+        setTimeout(function(){checkifsavedonlynode("node", newnode.hash, actualtime)}, 300);
+    }
+
+    function db_saveandchecklink(newlink){
+        if(conversation == "sandbox" || conversation == "sandbox_es") return;
+        $("#saving").show();
+        showingsavingicon = true;
+        db_savelink(newlink);
+    }
+
+    
+function safejstringsfordb(text){
+    return text.replace(/\\/g,"\\\\").replace(/"/g,'\\"');
+}
+
+
+	function db_savenode(newnode){
 	    if(conversation != "sandbox" && conversation != "sandbox_es"){
-			var newnodejs = ["hash",newnode.hash,"content",newnode.content,"contentsum",newnode.contentsum,"evalpos",newnode.evalpos,"evalneg",newnode.evalneg,"evaluatedby",(newnode.evaluatedby).join("@@@@"),"type",newnode.type,"author",newnode.author,"seed",newnode.seed,"time",newnode.time];
+			var newnodejs = ["hash",newnode.hash,"content",safejstringsfordb(newnode.content),"contentsum",safejstringsfordb(newnode.contentsum),"evalpos",newnode.evalpos,"evalneg",newnode.evalneg,"evaluatedby",(newnode.evaluatedby).join("@@@@"),"adveval",(newnode.adveval).join("@@@@"),"advevalby",(newnode.advevalby[0]).join("@@@@")+'$$$$'+(newnode.advevalby[1]).join("@@@@")+'$$$$'+(newnode.advevalby[2]).join("@@@@")+'$$$$'+(newnode.advevalby[3]).join("@@@@"),"type",newnode.type,"author",newnode.author,"seed",newnode.seed,"time",newnode.time];
 			
 			newnodestring = newnodejs.join('####');
-
-			$.post("php/savenode.php", {newnodephp: newnodestring, conversation: conversation});
+            
+			$.post("php/savenode.php", {newnodephp: newnodestring, conversation: conversation});            
 		}
 	}
 
 
 	function db_savelink(newlink){
-
 	    if(conversation != "sandbox" && conversation != "sandbox_es"){
-			var newlinkjs = ["hash",newlink.hash,"source",newlink.source,"target",newlink.target,"direct", newlink.direct, "evalpos",newlink.evalpos,"evalneg",newlink.evalneg,"evaluatedby",(newlink.evaluatedby).join("@@@@"),"type",newlink.type,"author",newlink.author,"time",newlink.time];
+			var newlinkjs = ["hash",newlink.hash,"source",newlink.source,"target",newlink.target,"direct", newlink.direct, "evalpos",newlink.evalpos,"evalneg",newlink.evalneg,"evaluatedby",(newlink.evaluatedby).join("@@@@"),"adveval",(newlink.adveval).join("@@@@"),"advevalby",(newlink.advevalby[0]).join("@@@@")+'$$$$'+(newlink.advevalby[1]).join("@@@@")+'$$$$'+(newlink.advevalby[2]).join("@@@@")+'$$$$'+(newlink.advevalby[3]).join("@@@@")+'$$$$'+(newlink.advevalby[4]).join("@@@@")+'$$$$'+(newlink.advevalby[5]).join("@@@@"),"type",newlink.type,"author",newlink.author,"time",newlink.time];
 					
 			newlinkstring = newlinkjs.join('####');
+            
+            $.post("php/savelink.php", {newlinkphp: newlinkstring, conversation: conversation});
+            
+            var actualtime = new Date().getTime();
+            checkifsaved("link", newlink.hash, actualtime);
 
-			$.post("php/savelink.php", {newlinkphp: newlinkstring, conversation: conversation});
         }
 	}
+
+    
+    function checkifsaved(type, hash, checktime, newlink){
+        $.post("php/checkifsaved.php", {conversation: conversation, type: type, hash: hash}, function(data){
+            if (data == hash){
+                if (typeof newlink != "undefined") {
+                    db_savelink(newlink);
+                } else {
+                    if (showingsavingicon) setTimeout( function() {$("#saving").fadeOut(300)}, 400);
+                    showingsavingicon = false;
+                }
+            } else {
+                var actualtime = new Date().getTime();
+                if (actualtime - checktime < 10000){
+                    setTimeout(function(){checkifsaved(type, hash, checktime, newlink)}, 400);
+                } else {
+                    alert(tx_an_error);
+                    location.reload(true);
+                }
+            }
+        });
+    }
+
+    function checkifsavedonlynode(type, hash, checktime){
+        $.post("php/checkifsaved.php", {conversation: conversation, type: type, hash: hash}, function(data){
+            if (data == hash){
+                if (showingsavingicon) setTimeout( function() {$("#saving").fadeOut(300)}, 400);
+                showingsavingicon = false;
+            } else {
+                var actualtime = new Date().getTime();
+                if (actualtime - checktime < 10000){
+                    setTimeout(function(){checkifsavedonlynode(type, hash, checktime)}, 200);
+                } else {
+                    alert(tx_an_error);
+                    location.reload(true);
+                }
+            }
+        });
+    }
+
+
+    function checkifsavedinitialnode(hash, checktime, newnode){
+        $.post("php/checkifsaved.php", {conversation: conversation, type: "node", hash: hash}, function(data){
+            if (data == hash){
+                
+                //if (showingsavingicon) setTimeout( function() {$("#saving").fadeOut(300)}, 400);
+                //showingsavingicon = false;
+                db_reloadconversation();
+                
+            } else {
+                
+                var actualtime = new Date().getTime();
+                if (actualtime - checktime < 10000){
+                    setTimeout(function(){checkifsavedinitialnode(hash, checktime, newnode)}, 400);
+                } else {
+                    alert(tx_an_error);
+                    location.reload(true);
+                }
+                
+            }
+        });
+    }
+
+    function db_editnode(hash, content, contentsum, type){
+        
+        $.post("php/editnode.php", {conversation:conversation, content:safejstringsfordb(content), contentsum:safejstringsfordb(contentsum), type:type, hash:hash}, function(data){
+        });
+    }
+
+    function db_editlink(hash, type){
+        
+        $.post("php/editlink.php", {conversation:conversation, type:type, hash:hash}, function(data){
+        });
+    }
+
+	function db_update_adveval_node(){
+	    if(conversation != "sandbox" && conversation != "sandbox_es"){
+			var table="nodes_" + conversation,
+				hash = parseInt(targetnode.hash);
+
+			var value = (targetnode.adveval).join("@@@@");
+		
+
+			$.post("php/updateadveval.php", {conversation:conversation, table:table, variable:"adveval", value:value, hash:hash});
+			var variable = "advevalby";
+			var value = "";
+
+			for (var i=0;i<targetnode.advevalby.length;i++){
+			var tempvalue = (targetnode.advevalby[i]).join("@@@@");
+			value = value+tempvalue+"$$$$";
+			};
+		
+			value = value.substring(0, value.length - 4);
+
+			$.post("php/updateadvevalby.php", {conversation:conversation, table:table, variable:variable, value:value, hash:hash});
+
+
+        }
+}
 
 
 	function db_update_eval_node(variable,value){
@@ -321,6 +565,30 @@ $(function() {$('.resizable').resizable();});
 	}
 
 
+	function db_update_adveval_link(){
+	    if(conversation != "sandbox" && conversation != "sandbox_es"){
+			var table="links_" + conversation,
+				hash = parseInt(targetlink.hash);
+
+			var value = (targetlink.adveval).join("@@@@");
+		
+			$.post("php/updateadveval.php", {conversation:conversation, table:table, variable:"adveval", value:value, hash:hash});
+			var variable = "advevalby";
+			var value = "";
+
+			for (var i=0;i<targetlink.advevalby.length;i++){
+			var tempvalue = (targetlink.advevalby[i]).join("@@@@");
+			value = value+tempvalue+"$$$$";
+			};
+				
+			value = value.substring(0, value.length - 4);
+
+			$.post("php/updateadvevalby.php", {conversation:conversation, table:table, variable:variable, value:value, hash:hash});
+
+
+        }
+	}
+
 	function db_update_public_conv(){
 	//Update the list of conversations in Participate from the DB list
 			$.post("php/updatepublicconv.php");
@@ -338,7 +606,6 @@ $(function() {$('.resizable').resizable();});
 		
 		nodes = PRES.force.nodes();
 		links = PRES.force.links();
-		
 		
 		var old_model = Model.model;
 		
@@ -374,7 +641,7 @@ $(function() {$('.resizable').resizable();});
 				updatedlinks.push(new_model.links[i]);
 			}
 		}		
-			
+
 		
 		if (updatedlinks.length>0 || updatednodes.length>0){
 		
@@ -382,6 +649,7 @@ $(function() {$('.resizable').resizable();});
 			
 			for (var i=0;i<updatednodes.length;i++){
 				nodes.push(updatednodes[i]);
+                Model.model.nodes.push(updatednodes[i]);
 				
 				var linkednode = "";
 				
@@ -414,6 +682,8 @@ $(function() {$('.resizable').resizable();});
 			
 			for (var i=0;i<updatedlinks.length;i++){
 				links.push(updatedlinks[i]);
+                Model.model.links.push(updatedlinks[i]);
+
 				drawnewlinks();
 				
 				if (updatedlinks[i].direct == 1){
@@ -422,46 +692,73 @@ $(function() {$('.resizable').resizable();});
 					var expcolor = PRES.linkcolor[updatedlinks[i].type];
 					explode(coordx, coordy, expcolor);
 				}
-			}	
+			}
 		}
 	}
 	
 
 // end of dbcode ***
 
-	//@@language dependent
 	function changelanguage(selection){
 	
-		switch (selection.value){
-			case "Spanish":
-				weblanguage = "Spanish";
-				var str = (conversation == "") ? "/es" : "/es/?c=" + conversation;
-				window.location.href = str;
-				
+        var path = "/"+window.location.pathname.match(/_[A-Za-z0-9-_]+/)+"/";
+        if (window.location.pathname.match(/_[A-Za-z0-9-_]+/) == "") {		
+        path="/";
+        };
+
+		switch (selection.value){	
+			case "eng":
+				var str = (conversation == "") ? path : path+"?c=" + conversation;
+				window.location.href = str;				
 				break;
-				
 			case "More":
-				$("#headerlangselect").val(weblanguage);
+				$("#headerlangselect").val(weblang);
 				openlanguagepanel();
 				break;
+
+			default:
+				var str = (conversation == "") ? path+selection.value+"/" : path+selection.value+"/?c=" + conversation;
+				window.location.href = str;				
 		}
 	}
 	
 
 	function loadsandbox(){
-	
-		$('#svg').fadeOut(700);
-		setTimeout(function(){window.location.href = "?c=sandbox";},700);
+
+         if(weblang == "es") {
+
+             //$('#svg').fadeOut(700);
+             //setTimeout(function(){window.location.href = "?c=sandbox_es";},700);
+             conversation = "sandbox_es";
+             db_reloadconversation();
+
+         }else{
+
+             //$('#svg').fadeOut(700);
+             //setTimeout(function(){window.location.href = "?c=sandbox";},700);
+             conversation = "sandbox";
+             db_reloadconversation();
+
+         }
 	}
 
 	
 	function loadmenu(){
 
 		setTimeout(function(){
-			// window.history.pushState("", "", "?"); //with this the page is not refreshed
-			// reInit(Visualisations.select(2));
-			window.location.href = "?";
-		},300);
+            Model.clear(IncomaMenuModel);
+            if (Visualisations.current() != null){
+                var PRES = Visualisations.current().presentation;
+                PRES.force.nodes([]);
+                PRES.force.links([]);
+            }
+            $('#htmlcontent').fadeOut(300);
+            $('#lower_bar').fadeOut(300);
+            
+			window.history.pushState("", "", "?"); //with this the page is not refreshed
+			setTimeout(function(){ reInit(Visualisations.select(2)) }, 320);
+			//window.location.href = "?";
+		},10);
 		
 	}
 
@@ -569,40 +866,40 @@ $(function() {$('.resizable').resizable();});
 		var interval = Math.floor(seconds / 31536000);
 
 		if (interval > 1) {
-			return interval + " years ago";
+			return webtextaux[72] + " " + interval + " " + tx_2year;
 		}
 		if (interval > 0) {
-			return interval + " year ago";
+			return webtextaux[88] + " " + interval + " " + tx_1year;
 		}
 		interval = Math.floor(seconds / 2592000);
 		if (interval > 1) {
-			return interval + " months ago";
+			return webtextaux[71] + " " + interval + " " + tx_2month;
 		}
 		interval = Math.floor(seconds / 86400);
 		if (interval > 1) {
-			return interval + " days ago";
+			return webtextaux[70] + " " + interval + " " + tx_2day;
 		}
 		if (interval > 0) {
-			return interval + " day ago";
+			return webtextaux[89] + " " + interval + " " + tx_1day;
 		}
 		interval = Math.floor(seconds / 3600);
 		if (interval > 1) {
-			return interval + " hours ago";
+			return webtextaux[69] + " " + interval + " " + tx_2hour;
 		}
 		if (interval > 0) {
-			return interval + " hour ago";
+			return webtextaux[90] + " " + interval + " " + tx_1hour;
 		}
 		interval = Math.floor(seconds / 60);
 		if (interval > 1) {
-			return interval + " minutes ago";
+			return webtextaux[68] + " " + interval + " " + tx_2min;
 		}
 		if (interval > 0) {
-			return interval + " minute ago";
+			return webtextaux[91] + " " + interval + " " + tx_1min;
 		}
 		if (seconds > 1) {
-			return seconds + " seconds ago";
+			return webtextaux[67] + " " + seconds + " " + tx_2sec;
 		}
-		return "just now";
+		return " " + tx_justnow;
 	}
 
 

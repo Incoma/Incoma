@@ -1,4 +1,4 @@
-* {
+{
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     font-size: 11pt;
 }
@@ -30,7 +30,6 @@ body {
 	-moz-user-select: none;
 	user-select: none;
     cursor: default;
-	
 }
 
 .header {
@@ -38,6 +37,13 @@ body {
 	color: #ddd;
     -webkit-transition: color 300ms;
     transition: color 300ms;
+}
+
+.headerborder {
+    border: solid thin #ccc;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 }
 
 .header:hover{
@@ -73,12 +79,16 @@ body {
 	cursor:pointer;
 }
 
+#headerName:hover {
+    color:#ffffff;
+}
+
 
 #headerLangSelection {
     position: absolute;
-    left: 220px;
+    left: 240px;
     font-size: 11pt;
-	line-height: 45px;
+	line-height: 42px;
 }
 
 #headerlangselect {
@@ -99,48 +109,28 @@ body {
 
 #headerMenu {
     position: absolute;
-    left: 460px;
-    border: solid thin #ddd;
+    left: 410px; 
     padding:2px 0.5em;
 	margin:10px 20px 0px 0px;
-    font-size: 11pt;
+    font-size: 10pt;
 	cursor:pointer;
 }
 
-
-#headerUsername {
-	position: absolute;
-    left: 560px;
-    font-size: 11pt;
-	line-height:45px;
-}
-
-#headerNamebox {
-  position:absolute;
-  top:11px;
-  width: 120px;
-  height: 20px;
-  resize: none;
-  border: solid thin #ddd;
-  padding: 0px 5px;
-  background: rgba(0,0,0,0);
-
-}
-
-
-
-#headerUrl {
-    position: absolute;
-    right: 120px;
-    font-size: 11pt;
-	line-height: 45px;
+#headerBlog {
+    float:right;
+    text-align: right;
+    padding:2px 0.5em;
+	margin:10px 25px 0px 0px;
+    font-size: 10pt;
+    cursor:pointer;
+    text-decoration:none;
 }
 
 
 #headerExport {
-    border: solid thin #ddd;
+    float:right;
     padding:2px 0.5em;
-	margin:10px 20px 0px 0px;
+	margin:10px 60px 0px 0px;
 	cursor:pointer;
 }
 
@@ -157,4 +147,3 @@ body {
 #visualisationMain {
     width: 100%;
 }
-

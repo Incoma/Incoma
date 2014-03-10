@@ -1,4 +1,4 @@
-﻿//definition of the html code of the right panel bar for different situations:
+//definition of the html code of the right panel bar for different situations:
 // Reply and Connect buttons
 // Eval buttons
 // Eval buttons with a message
@@ -6,27 +6,37 @@
 // Connect button clicked
 // No buttons
 
-var rightpanelhtmlreplyandlink = "<div id='showreply' class='showreplypanel button' onClick='showreplypanel()'>Reply</div><div id='showconnect' class='showconnectpanel button' onClick='showcreatelink()'>Connect</div>";
+rightpanelhtmlreplyandlink = "<div id='showreply' class='showreplypanel button' onClick='showreplypanel(false)'>"+tx_reply+"</div><div id='showconnect' class='showconnectpanel button' onClick='showcreatelink(false)'>"+tx_connect+"</div><div id='showeditnode' class='button showedit' onClick='showreplypanel(true)' title='"+tx_edit_thought+"'><div id='showediticon'></div></div>";
+
+rightpanelhtmleval = "<div style='float:right; width: 105px;'><div style='float:right;'><div id='nodepos' class='evalpos' onClick='evalpos()'>+</div><div id='nodeneg' class='evalneg' onClick='evalneg()'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div><div id='arrowadveval' style='background-image: url(img/nodechangelight.png)'; class='advevalicon' title='"+tx_change_category+"' onClick='openadvevalnodepanel()';></div></div>";
+
+rightpanelhtmlevalover = "<div style='float:right; width: 105px;'><div style='float:right;'><div id='nodepos' class='evalpos' onClick='evalpos()'>+</div><div id='nodeneg' class='evalneg' onClick='evalneg()'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
+
+//rightpanelhtmleval = "<div style='float:right;'><div style='float:right;'><div id='nodepos' class='evalpos' onClick='evalpos()'>+</div><div id='nodeneg' class='evalneg' onClick='evalneg()'>-</div></div><br><div id='arrowadveval' style='background-image: url(img/nodechangelight.png)'; class='advevalicon' title='"+tx_change_category+"' onClick='openadvevalnodepanel()';></div><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
+
+rightpanelhtmllinkeval = "<div id='showeditlink' class='button showedit' onClick='showeditlink()' style='margin-top:4px;' title='"+tx_edit_thought+"'><div id='showediticon'></div></div><div style='float:right;'><div id='evalalert' class='alerttext noselect'></div><div id='linkpos' class='evalpos' onClick='linkevalpos()'>+</div><div id='linkneg' class='evalneg' onClick='linkevalneg()'>-</div></div><br><div id='arrowadveval' style='background-image: url(img/nodechangelight.png)'; class='advevaliconlink' title='"+tx_change_category+"' onClick='openadvevallinkpanel()';></div><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
+
+rightpanelhtmllinkevalover = "<div id='showeditlink' class='button showedit' style='margin-top:4px;' onClick='showeditlink()' title='"+tx_edit_thought+"'><div id='showediticon'></div></div><div style='float:right;'><div id='evalalert' class='alerttext noselect'></div><div id='linkpos' class='evalpos' onClick='linkevalpos()'>+</div><div id='linkneg' class='evalneg' onClick='linkevalneg()'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
+
+rightpanelhtmlreply = "<table><tr><td id='tdnodetype'>"+tx_type_reply+":&nbsp<select id='replynodetype'></select></td><td>&nbsp&nbsp&nbsp&nbsp</td><td id='tdlinktype'>"+tx_type_connection+":&nbsp<select id=\"replylinktype\" style='display:inline-block;'></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false' maxlength='5000'></textarea>"+tx_summary_reply+":<textarea id='replyboxsum' class='areareplysum' spellcheck='false' maxlength='100'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='replysavecancel'><center><div class='save button' onClick='savenode()'>"+tx_save+"</div><div class='cancel button' onClick='hidereplypanel()'>"+tx_cancel+"</div></center><div id='replyalert' class='alerttext noselect' style='text-align:right;'>&nbsp</div></div>";
+
+rightpanelhtmllink = "<table><tr><td id='tdconnect'><select id='connectlinktype'></select></td><td><p>&nbsp&nbsp</p></td><td><div class='cancel button' onClick='cancellink()'>"+tx_cancel+"</div></td></tr></table><br><div id='connecttext' class='connecttext'>&nbsp</div>";
+
+rightpaneleditlink = "<table><tr><td id='tdconnect'><select id='connectlinktype'></select></td><td><p>&nbsp&nbsp</p></td><td><div class='save button' onClick='editlink()'>"+tx_save+"</div></td></tr></table><br>";
+
+rightpanelhtmlspace = "<div style='float:left;visibility:hidden;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div></div><br></div>"; 
 
 
-var rightpanelhtmleval = "<div style='float:right;'><div style='float:right;'><div id='nodepos' class='evalpos' onClick='evalpos()'>+</div><div id='nodeneg' class='evalneg' onClick='evalneg()'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
+rightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+tx_show_timeline+'</div></center><div id="right_bar_header" class="right_bar_header "><div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div></div><div id="contbox" class="divareacontent"></div><div id="rightpaneleval"></div><div id="rightpanel"></div><div id="rightpanelspace"></div>';
 
+// var timevisrightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
 
-var rightpanelhtmllinkeval = "<div style='float:right;'><div id='evalalert' class='alerttext noselect'></div><div id='linkpos' class='evalpos' onClick='linkevalpos()'>+</div><div id='linkneg' class='evalneg' onClick='linkevalneg()'>-</div></div>";
+//timevisrightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
 
-var rightpanelhtmlreply = "<table><tr><td id='tdnodetype'>Type of reply:&nbsp<select id='replynodetype'></select></td><td>&nbsp&nbsp&nbsp&nbsp</td><td id='tdlinktype'>Type of connection:&nbsp<select id=\"replylinktype\" style='display:inline-block;'></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false' maxlength='5000'></textarea>Summary of your reply (optional):<textarea id='replyboxsum' class='areareplysum' spellcheck='false' maxlength='100'></textarea>Name:&nbsp<textarea id='namebox2' class='areaname' spellcheck='false' maxlength='20'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='replysavecancel'><center><div class='save button' onClick='savenode()'>Save</div><div class='cancel button' onClick='hidereplypanel()'>Cancel</div></center><div id='replyalert' class='alerttext noselect' style='text-align:right;'>&nbsp</div></div>";
+timevisrightbarhtml = '<div id="saving" style="display:none;"><div id="savingicon"></div><div id="savingtext">'+tx_saving+'</div></div><center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
+                        
+timevisinteracthtml = "<div id='evalalert' class='linkalerttext noselect' style='float:left;'></div><div style='float:right;'><div id='showreply' class='smallshowreplypanel justbutton' onClick='showreplypanel(false)'>"+tx_reply+"</div><div id='showconnect' class='smallshowconnectpanel justbutton' onClick='showcreatelink(false)'>"+tx_connect+"</div><div id='nodepos' class='smallevalpos justbutton' onClick='evalpos()'>+</div><div id='nodeneg' class='smallevalneg justbutton' onClick='evalneg()'>-</div></div>";
 
-var rightpanelhtmllink = "<table><tr><td id='tdconnect'><select id='connectlinktype'></select></td><td><p>&nbsp&nbsp</p></td><td><div class='cancel button' onClick='cancellink()'>Cancel</div></td></tr></table><br><div id='connecttext' class='connecttext'>&nbsp</div>";
-
-var rightpanelhtmlspace = "<div style='float:left;visibility:hidden;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div></div><br></div>"; 
-
-var rightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">Show timeline</div></center><div id="right_bar_header" class="right_bar_header "><div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div></div><div id="contbox" class="divareacontent"></div><div id="rightpaneleval"></div><div id="rightpanel"></div><div id="rightpanelspace"></div>';
-
-var timevisrightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">Hide timeline</div></center><div id="timevisdiv" class="timevisdiv"></div>';
-
-var timevisrightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">Hide timeline</div></center><div id="timevisdiv" class="timevisdiv"></div>';
-
-var timevisinteracthtml = "<div id='evalalert' class='linkalerttext noselect' style='float:left;'></div><div style='float:right;'><div id='showreply' class='smallshowreplypanel justbutton' onClick='showreplypanel()'>Reply</div><div id='showconnect' class='smallshowconnectpanel justbutton' onClick='showcreatelink()'>Connect</div><div id='nodepos' class='smallevalpos justbutton' onClick='evalpos()'>+</div><div id='nodeneg' class='smallevalneg justbutton' onClick='evalneg()'>-</div></div>";
   
 Visualisations.register(new ZoomOut()); //adds the ZoomOut visualization to the Visualizations array
 /*
@@ -64,7 +74,6 @@ function ZoomOut() {
     }
 
     this.destroy = function () {}
-
 }
 
 //*****************************************************************************************************************************
@@ -74,26 +83,30 @@ function ZoomOut_Abstraction() {
     this.model = null;
 	
     this.linkFilters = {
-		1: {name: "General",state: true, typeId: 1},
-		2: {name: "Agreement", state: true, typeId: 2},
-		3: {name: "Disagreement", state: true, typeId: 3},
-		4: {name: "Consequence", state: true, typeId: 4},		
-		5: {name: "Alternative", state: true, typeId: 5},
-		6: {name: "Equivalence", state: true, typeId: 6},
+		1: {name: tx_general,state: true, typeId: 1},
+		2: {name: tx_agreement, state: true, typeId: 2},
+		3: {name: tx_disagreement, state: true, typeId: 3},
+		4: {name: tx_consequence, state: true, typeId: 4},		
+		5: {name: tx_alternative, state: true, typeId: 5},
+		6: {name: tx_equivalence, state: true, typeId: 6},
     };
 	
     this.nodeFilters = {
-		1: {name: "General", state: true, typeId: 1},
-        2: {name: "Question", state: true, typeId: 2},
-        3: {name: "Proposal", state: true, typeId: 3},
-        4: {name: "Info", state: true, typeId: 4},
+		1: {name: tx_general, state: true, typeId: 1},
+        2: {name: tx_question, state: true, typeId: 2},
+        3: {name: tx_proposal, state: true, typeId: 3},
+        4: {name: tx_info, state: true, typeId: 4},
     };
 	
     this.sizeFilters = {
-		evaluations: {name: "Evaluations", state: true},
+		evaluations: {name: tx_evaluations, state: true},
     };
 	
-	
+    this.showFilters = {
+		summaries: {name: "Summaries", state: true},
+        tags: {name: "Tags", state: true},
+    };
+    
     this.init = function (model) {
         this.model = model;
 		this.clickednode = "";
@@ -103,6 +116,8 @@ function ZoomOut_Abstraction() {
 		this.selectedlink = "";
         this.creatinglink = false;
 		this.replying = false;
+        this.advevalnode = false;
+        this.advevallink = false;
 		this.overnode = false;
 		this.overlink = false;
 		this.overseed = false;
@@ -110,9 +125,20 @@ function ZoomOut_Abstraction() {
 		this.tutorialopened=false;
 		this.showingevolution=false;
 		this.evolutionpause=false;
+        this.evolutionstop=false;
 		this.timevisualization=false;
 		this.youarenotalone=false;
-		this.firsttick=true;
+		this.treeview=false;
+		this.loading=true;
+        this.name="";
+        this.namepanelcaller="";
+        this.namepanelparameter="";
+        this.freezelink=false;
+        
+/*      this.treeonimg = new Image();
+        this.treeoffimg = new Image();
+        this.treeonimg.src = "img/treeicon.png";
+        this.treeoffimg.src = "img/compicon.png";*/
     }
 };
 // End of this == abstraction
@@ -121,11 +147,26 @@ function ZoomOut_Abstraction() {
 // Start of this == presentation [initialized passing it (html5node, abstraction)]
 function ZoomOut_Presentation(VIS, ABSTR) {
     // public interface
+
+// There are two sets of nodes and links with different ways to call them
+// Model.model.nodes contains all the nodes of the db
+// PRES.force.nodes() [aka remainingnodes aka timednodes] contains the nodes above the minimum rating
+// PRES.svg.selectAll(".node") acts over all the nodes of PRES.force.nodes()
+//
+// Pushing a new node into PRES.force.nodes() automatically adds it to Model.model.nodes, but 
+// doing a PRES.force.nodes(arrayofnodes) does not add them to Model.model.nodes
+//
+// PRES.readnodes    array of Hashes of read nodes
+// PRES.sessionnodes  array of Nodes created during the current session
+// allnodes
+// danodes
+
+// At the beginning of changevisualization can be seen the change.log of each one of these
 	
     this.container = null;
     this.nodeSizeDefault = 15;
-    this.linkStrokeWidthDefault = 4;
-    this.seedSizeDefault = 1;
+    this.linkStrokeWidthDefault = 5;
+    this.seedSizeDefault = 2;
     this.linkOpacityDefault = 1;
     this.nodeOpacityDefault = 1;
     this.updateinterval = 60000;
@@ -134,14 +175,18 @@ function ZoomOut_Presentation(VIS, ABSTR) {
     this.filtershelp = true;
     this.darkerarrowsseeds = 2;
     this.darkernodes = 0.3;
-	this.showfilters = true;
+	this.showfilters = false;
 	this.evolutionvelocity = 1;
 	this.readnodes = [];
 	this.drawexplosions = true;
-	this.showingtexts = false;
+	this.elasticdraw = true;
+	this.showingtags = false;
 	this.showingsums = false;
+	this.showingauthors = false;
 	this.savelinks = "";
-
+    this.sessionnodes = [];
+    this.sessionlinks = [];
+    this.editingnode = false;
 	
     this.bordercolor = {
         "normal": "#888",
@@ -186,9 +231,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         this.scaler = new Scaler(this);
         this.container = html5node;
 
-		db_gettitle();
-		db_gettags();
-	
+		//db_gettitle();
+		//db_gettags();
+
 		//defines the html content of the visualization (except the header, defined in index)
         html5node.innerHTML =
             '   \
@@ -200,23 +245,26 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 	 \
 	 			  <div id="left_bar" class="mod noselect">   \
                     <div class="left_bar_header noselect">   \
-						<center><div class="zoombutton justbutton shadow" id="cmd_zoomout" style="float:left;">-</div>   \
-						zoom \
-						<div class="zoombutton justbutton shadow" id="cmd_zoomin" style="float:right;">+</div></center>   \
+						<center>   \
+                            <div class="zoombutton shadow" id="cmd_zoomin" style="float:right;">+</div>    \
+                            <div class="zoombutton shadow" id="cmd_zoomout" style="float:left;">-</div>   \
+                        </center>   \
                     </div>   \
 				  </div>   \
 	\
-				  <div>  \
-				    <div id="showevolution" class="showevolution shadow noselect">Show evolution</div>  \
-					<div id="controlevolution" class="controlevolution shadow noselect">  \
-						<div id="evolutionslow" class="evolutioncontrols">≪</div>  \
-						<div id="evolutionpause" class="evolutioncontrols">ll</div>  \
-						<div id="evolutionfast" class="evolutioncontrols">≫</div>  \
-						<div id="evolvelocity" class="evolutionvelocity">&nbsp</div>  \
-						<div id="evolutionclose" class="evolutionclose noselect">x</div>  \
+					<div id="viewtype" class="viewtype noselect">  \
+					  <center>  \
+					    <div id="treeview" style="background-image: url(img/treeicon.png)"; class="viewicon button noselect" title="'+tx_show_all_connections+'";></div>  \
+					  </center>  \
 					</div>  \
+	\
+				  <div>  \
+                    <div id="showevolution" class="showevolution shadow noselect" title="'+tx_watch_the_evol+'">  \
+                        <div id="evolutionpause" class="evolutioncontrols">ll</div>  \
+                        <div id="evolutionplay" class="evolutioncontrols">&#9654;</div>  \
+                    </div>  \
                   </div>   \
-    \
+	\
 	 			  <div class="title_container noselect">  \
 					<div id="conversation_title" class="conversation_title noselect" onclick="egg1()";>   \
 						title \
@@ -228,20 +276,18 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					<div class="tutorial_panel_click noselect"></div>  \
                   </div>   \
 	\
-	 			  <div id="language_panel" class="language_panel shadow ">   \
-					At the moment there are no more languages available.<br><br>If you want to help with the translation to another language, <br>you can do it entering here:  \
-					<a href="http://titanpad.com/incomatranslation" target="_blank">titanpad.com/incomatranslation</a>  \
-					<div id="language_button" class="language_button button">OK</div>  \
-                  </div>   \
-	\
                   <div id="right_bar" class="right_bar shadow">   \
+                    <div id="saving">  \
+                        <div id="savingicon"></div>  \
+                        <div id="savingtext">'+tx_saving+'</div>  \
+                    </div>  \
 					<center>  \
 					  <div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">  \
-						Show timeline  \
+						'+tx_show_timeline+'  \
 					  </div>  \
 					</center>  \
-                    <div id="right_bar_header" class="right_bar_header ">   \
-                      <div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div>   \
+                    <div id="right_bar_header" class="right_bar_header noselect">   \
+                      <div id="contentlabel" class="right_bar_title noselect" ondblclick="rbexpand()">&nbsp</div>   \
                     </div>   \
                     <div id="contbox" class="divareacontent"></div>   \
 					<div id="rightpaneleval"></div> \
@@ -254,39 +300,109 @@ function ZoomOut_Presentation(VIS, ABSTR) {
              <div id= "lower_bar" class="lower_bar shadow ">  \
                   <div class="lower_bar_elems">   \
                     <div id="filters_title" class="lower_title" style="Float:left" >   \
-                      <b>Legend</b> \
+                      <b>  <div id="legendarrow" style="Float:left">&#8679;</div>  '+tx_legend+'</b> \
                     </div>   \
-                    <center><div id="filters_text" class="lower_text">  \
-					  (Click on any element for hiding or showing it in the conversation) \
-					</div></center>   \
+                    <div id="filters_text" class="lower_text"  style="Float:right">  \
+					  ('+tx_click_hide_show+') \
+					</div>   \
                     <div id="filt_nodes" class="lower_nodes" style="Float:left;" >   \
-                      <u><b>Thoughts</b></u>             \
+                      <u><b>'+tx_thoughts+'</b></u>             \
                     </div>   \
    \
                     <div id="filt_links" class="lower_links" style="Float:left; ">   \
-                      <u><b>Connections</b></u>    \
+                      <u><b>'+tx_connections+'</b></u>    \
                     </div>   \
    \
                     <div id="filt_sizes" class="lower_sizes" style="Float:left;">   \
-                      <u><b>Sizes</b></u>    \
+                      <u><b>'+tx_sizes+'</b></u>    \
                     </div>   \
-                    <div id="showtexts" class="lower_showtexts noselect">   \
-                      Show tags    \
+   \
+                    <div id="filt_show" class="lower_show" style="Float:left;">   \
+                        <u><b>'+tx_show+'</b></u>    \
+                        <div id="showtags" class="lower_showtexts noselect">   \
+                          '+tx_tags+'    \
+                        </div>   \
+                        <div id="showauthors" class="lower_showauthors">   \
+                          '+tx_authors+'    \
+                        </div>   \
+                        <div id="showsums" class="lower_showsums">   \
+                          '+tx_summaries+'    \
+                        </div>   \
                     </div>   \
-                    <div id="showsums" class="lower_showsums">   \
-                      Show summaries    \
-                    </div>   \
+    \
+				  <div id="sliderpanel" class="sliderpanel noselect">  \
+				    <div class="slidercaption"><u><b>'+tx_min_rating+'</b></u></div>  \
+                    <div id="slider1" class="dragdealer">  \
+						<div id="handle1" class="red-bar handle" title="'+tx_thoughts+'"></div>  \
+					</div>  \
+					<div id="slider2" class="dragdealer">  \
+						<div id="handle2" class="red-bar handle" title="'+tx_connections+'"></div>  \
+					</div>  \
+				  </div>  \
+    \
                     <div id="filt_hide" class="lower_hide" style="Float:right">   \
-                      <div class="lower_hide_button button" id="cmd_hideshowfilters">Hide</div>   \
+                   <div class="lower_hide_button" id="cmd_hideshowfilters"></div>   \
                     </div>   \
                  </div>   \
     \
              </div>   \
+	 			  <div id="language_panel" class="language_panel shadow ">   \
+					'+tx_no_more_lang+'<br><br>'+tx_help_translate1+' <br>'+tx_help_translate2+'  \
+					<a href="http://titanpad.com/incomatranslation" target="_blank">titanpad.com/incomatranslation</a>  \
+					<div id="language_button" class="language_button button">'+tx_ok+'</div>  \
+                  </div>   \
+	\
+	 			  <div id="advevalnode_panel" class="advevalnode_panel shadow ">   \
+					<b>'+tx_change_of_cat+'</b> \
+                                     <br></br>'+tx_propose_new_node+'<center><table><tr><td id="tdnewcat"><select id="newcatnodetype"></select></td></tr> \
+                                    </table></center>'+tx_changed_after+'<div id="advevalalert" class="linkalerttext noselect"></div>\
+                    <div class="advevalnode_panel_buttons">  \
+                        <div id="advevalnode_panel_ok" class="advevalnode_panel_button button">'+tx_change+'</div>  \
+                        <div id="advevalnode_panel_cancel" class="advevalnode_panel_button button">'+tx_cancel+'</div>  \
+                    </div>  \
+                  </div>   \
+	 			  <div id="advevallink_panel" class="advevallink_panel shadow ">   \
+					<b>'+tx_change_of_cat+'</b> \
+                                     <br></br>'+tx_propose_new_link+'<center><table><tr><td id="tdnewcat"> \
+	 		<select id="newcatlinktype"></select></td></tr></table></center>'+tx_changed_after+'<div id="advevalalertlink" class="linkalerttext noselect"></div>\
+                    <div class="advevallink_panel_buttons">  \
+                        <div id="advevallink_panel_ok" class="advevallink_panel_button button">'+tx_change+'</div>  \
+                        <div id="advevallink_panel_cancel" class="advevallink_panel_button button">'+tx_cancel+'</div>  \
+                    </div>  \
+                  </div>   \
+	 			  <div id="name_panel" class="name_panel shadow ">   \
+					'+tx_intro_username+': \
+                    <textarea id="name_textarea" class="areaname" spellcheck="false" maxlength="20"></textarea>  \
+                    <div class="name_panel_buttons">  \
+                        <div id="name_panel_ok" class="name_panel_button button">'+tx_ok+'</div>  \
+                        <div id="name_panel_cancel" class="name_panel_button button">'+tx_cancel+'</div>  \
+                    </div>  \
+                  </div>   \
+              <div id="loading_conv_panel" class="noselect">   \
+				<div id="loading_conv_icon"></div>  \
+                <div id="loading_conv_text">'+tx_loading+'</div>  \
+			  </div>   \
+	\
         '; // end of innerHTML
 
+		nodescutvalue = -1000;
+		linkscutvalue = -1000;
+	
+		slid1 = new Dragdealer('slider1',
+		{
+			// steps: 30,
+			// snap: true,
+			animationCallback: nodeslider
+		});
 
+		slid2 = new Dragdealer('slider2',
+		{
+			// steps: 30,
+			// snap: true,
+			animationCallback: linkslider
+		});
+        
 		$('#rightpanelspace').html(rightpanelhtmlspace);
-
 		
 		//stablish the onclick functions for the html elements of html5node
 		$( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
@@ -296,12 +412,25 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		$( "#tutorial_panel" )[0].onclick = changetutorialpanel;
 		$( "#tutorial_panel_close" )[0].onclick = closetutorialpanel;
 		$( "#language_button" )[0].onclick = closelanguagepanel;
-		$( "#showevolution" )[0].onclick = showevolution;
-		$( "#evolutionclose" )[0].onclick = showevolution;
+        $( "#name_panel_ok" )[0].onclick = namepanelok;
+        $( "#name_panel_cancel" )[0].onclick = namepanelcancel;
+        $( "#advevalnode_panel_ok" )[0].onclick = advevalnodepanelok;
+        $( "#advevalnode_panel_cancel" )[0].onclick = advevalnodepanelcancel;
+        $( "#advevallink_panel_ok" )[0].onclick = advevallinkpanelok;
+        $( "#advevallink_panel_cancel" )[0].onclick = advevallinkpanelcancel;
+        $( "#showevolution" )[0].onclick = bigevolutionclick;
+		$( "#evolutionplay" )[0].onclick = evolutionplay;
 		$( "#evolutionpause" )[0].onclick = evolutionpause;
-		$( "#evolutionfast" )[0].onclick = evolutionfast;
-		$( "#evolutionslow" )[0].onclick = evolutionslow;
-	    $( "#showsums" )[0].onclick = showsums;
+	    $( "#showsums" )[0].onclick = filtershowsums;
+	    $( "#showauthors" )[0].onclick = filtershowauthors;
+//		$( "#rbexpand" )[0].onclick = rbexpand;
+		$( "#treeview" )[0].onclick = treeview;
+		$( "#treeview" )[0].onmouseover = treeviewover;
+		$( "#treeview" )[0].onmouseout = treeviewout;
+        
+		
+		//$("#completeview").addClass('active');
+		$("#completeview").css("box-shadow", "inset -1px 1px 1px 0px rgba(0, 0, 0, 0.5)");
 		
 		$( "#conversation_title" ).html(Model.title);		
 		$( "#window_title" ).html("INCOMA ("+Model.title+")");
@@ -309,7 +438,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		//makes visible some elements of the header
 	 	document.getElementById("headerMenu").setAttribute("style","visibility:visible;");
 		document.getElementById("headerExport").setAttribute("style","visibility:visible;");
-		document.getElementById("headerUsername").setAttribute("style","visibility:visible;"); 
 		
 		//fadein animation
 		$("#htmlcontent").fadeOut(0);
@@ -317,21 +445,28 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		$("#legend_bar").fadeOut(0);
 		$('#tutorial_panel').fadeOut(0);
 		$('#language_panel').fadeOut(0);
-		$('#controlevolution').fadeOut(0);
-		$('#htmlcontent').fadeIn(800);
-		$('#lower_bar').fadeIn(800);
+        $('#name_panel').fadeOut(0);
+        $('#advevalnode_panel').fadeOut(0);
+        $('#advevallink_panel').fadeOut(0);
 		$('#svg').fadeOut(0);
-		
-		
+        $('#filters_text').fadeOut(0);
+        $('#saving').fadeOut(0);
+        $('#evolutionpause').fadeOut(0);
+        $('#loading_conv_panel').fadeOut(0);
+        
+        
+		//$('#htmlcontent').fadeIn(800);
+		//$('#lower_bar').fadeIn(800);
+        
 		if (Model.tags == null){
-			document.getElementById("showtexts").setAttribute("style","visibility:hidden; cursor:default;");
+			document.getElementById("showtags").setAttribute("style","visibility:hidden; cursor:default;");
 		} else {
-			$( "#showtexts" )[0].onclick = showtexts;
+			$( "#showtags" )[0].onclick = filtershowtags;
 		}
 		
 		//makes the right_bar resizable
 		$(".right_bar").resizable({
-			handles: 'w',
+			handles: 'w, s',
 			minWidth: 335,
   			resize: function() {
 				$(this).css("left", 0);
@@ -350,8 +485,6 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			$('#tutorial_panel').delay(800).fadeIn(600)
 			changetutorialpanel();
 		}		
-
-        document.getElementById("headerNamebox").value = Model.currentAuthor();
 		
 	//Create the svg
         initSVG(this, ABSTR, this.width, this.height);
@@ -362,6 +495,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
         initNodeFilters(this, "filt_nodes", ABSTR.nodeFilters);
         initLinkFilters(this, "filt_links", ABSTR.linkFilters);
         initSizeFilters(this, "filt_sizes", ABSTR.sizeFilters);
+        //initShowFilters(this, "filt_show", ABSTR.showFilters);
 
     };
     // End of init function of presentation
@@ -442,7 +576,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
             .nodes(graph.nodes)
             .links(graph.links)
             .start();
-		
+        
 		//appends all the visual elements to the SVG
 		PRES.linkselect = svg.append("line")
 			.attr("class", "linkselect")
@@ -477,9 +611,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		//Add the links	
         PRES.links = svg.selectAll(".link")
             .data(graph.links)
-            .enter().append("polyline")
+            .enter().append("line")
             .attr("class", "link")
-			.attr("marker-mid", PRES.liveAttributes.linkArrow)
+			.attr("marker-start", PRES.liveAttributes.linkArrow)
             .style("stroke", PRES.liveAttributes.linkStroke)
             .style("stroke-width", PRES.liveAttributes.linkStrokeWidth)
 			.style("stroke-dasharray", PRES.liveAttributes.linkStrokeDashArray)
@@ -523,8 +657,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			PRES.arrows = svg.append("defs").append("marker")
 				.attr("id", "arrow"+i)
 				.attr("class", "arrowmarker")
-				.attr("refX", 3.1) 
-				.attr("refY", 0.45)
+			.attr("refX", -3)
+			.attr("refY", 0.45)
 				// Displacement to put the arrow in the middle of the link
 				.attr("fill", PRES.liveAttributes.arrowColor(i))
 				.attr("stroke", PRES.liveAttributes.arrowColor(i))
@@ -545,7 +679,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			PRES.inversearrows = svg.append("defs").append("marker")
 				.attr("id", "inversearrow"+i)
 				.attr("class", "arrowmarker")
-				.attr("refX", 1) 
+				.attr("refX", -6) 
 				.attr("refY", 0.45)
 				.attr("fill", PRES.liveAttributes.arrowColor(i))
 				.attr("stroke", PRES.liveAttributes.arrowColor(i))
@@ -565,56 +699,67 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		//initial loading of the conversation		
 		var numnodes = Model.model.nodes.length;
-		var delay=1000*Math.sqrt(numnodes);
-				
-		//in the middle of the loading, gives a random shift to the nodes positions and changes the charge to its correct value 
-		// setTimeout(function(){
-			// Model.model.nodes.forEach(function(d, i) {		
-				// d.x += 20*Math.random(); 
-				// d.y += 20*Math.random(); 
-			// });
-
-			// PRES.force
-				// .charge(-500)
-				// .start();
-		// },delay*0.7);
-		
-		//end of the loading, nodes become draggables
+		var delay=600*Math.sqrt(numnodes);
+        console.log(delay);
+        
+        $('#loading_conv_panel').css("left", ( $(window).width()-$("#right_bar").width() - 255 )/2 + "px"); 
+        if (delay > 2500) $('#loading_conv_panel').fadeIn(700);
+        
 		setTimeout(function(){
-			ABSTR.letmouseover = true;
-			
-			PRES.nodes
-				.call(force.drag);
-		},delay+750);
-
+            $('#htmlcontent').fadeIn(800);
+            $('#lower_bar').fadeIn(800);            
+        },0); //delay-1000
+        
 		//fadeIn animation of all the svg elements
 		PRES.nodes
 			.style("fill-opacity",0)
-			.style("stroke-opacity",0)
-			.transition().delay(delay).duration(700)
-			.style("fill-opacity",1 )
-			.style("stroke-opacity",1);	
+			.style("stroke-opacity",0);	
 			
 		PRES.links
-			.style("stroke-opacity",0)
-			.transition().delay(delay).duration(900)
-			.style("stroke-opacity",1);
+			.style("stroke-opacity",0);
 
 		svg.selectAll(".seed")
 			.style("fill-opacity",0)
-			.style("stroke-opacity",0)
-			.transition().delay(delay).duration(700)
-			.style("fill-opacity",1 )
-			.style("stroke-opacity",1);				
+			.style("stroke-opacity",0);				
 			
 		svg.selectAll(".arrowmarker")
 			.style("fill-opacity",0)
-			.style("stroke-opacity",0)
-			.transition().delay(delay).duration(900)
-			.style("fill-opacity",1 )
-			.style("stroke-opacity",1);		
-			
-			
+			.style("stroke-opacity",0);		
+        
+		setTimeout(function(){
+            PRES.nodes
+                .transition().duration(700)
+                .style("fill-opacity",1 )
+                .style("stroke-opacity",1);	
+                
+            PRES.links
+                .transition().duration(900)
+                .style("stroke-opacity",1);
+    
+            svg.selectAll(".seed")
+                .transition().duration(700)
+                .style("fill-opacity",1 )
+                .style("stroke-opacity",1);				
+                
+            svg.selectAll(".arrowmarker")
+                .transition().duration(900)
+                .style("fill-opacity",1 )
+                .style("stroke-opacity",1);		
+		},delay);
+        
+		setTimeout(function(){
+           $('#loading_conv_panel').fadeOut(500);
+            console.log("fade out");
+		},delay-2500);
+        startevolution();
+        
+        //end of the loading, nodes become draggable
+		setTimeout(function(){
+			ABSTR.letmouseover = true;
+			PRES.nodes.call(force.drag);
+		},delay+750);
+        
+        
 		//activation of the periodic conversation update with the nodes and links created by other users simultaneously
 		autoupdate = setInterval(function(){updateConversation();},PRES.updateinterval); 
 		
@@ -632,17 +777,25 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		PRES.force.charge(-9000);
 		PRES.force.gravity(0.1);
 		PRES.force.linkStrength(1);
-		startevolution();		
-		
+		// startevolution();		
+		treeview();
+		ABSTR.loading = false;
 		
 		//defines the movement of the nodes and links
         force.on("tick", function () {
-				
-			PRES.svg.selectAll(".link")
-			.attr("points", function(d) {
-			return d.source.x + "," + d.source.y + " " +
-			(d.source.x + d.target.x)/2 + "," + (d.source.y + d.target.y)/2 + " " +
-			d.target.x + "," + d.target.y; });
+            
+//			PRES.svg.selectAll(".link")
+//			.attr("points", function(d) {
+//			return d.source.x + "," + d.source.y + " " +
+//			(d.source.x + d.target.x)/2 + "," + (d.source.y + d.target.y)/2 + " " +
+//			d.target.x + "," + d.target.y; });
+
+	       PRES.svg.selectAll(".link")
+                .attr("x1", function (d) {return d.source.x;})
+                .attr("y1", function (d) {return d.source.y ;})
+                .attr("x2", function (d) {return d.target.x ;})
+                .attr("y2", function (d) {return d.target.y ;});
+
 
             PRES.svg.selectAll(".node")
 				.attr("cx", function (d) {return d.x;})
@@ -656,6 +809,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				.attr("x", function (d) {return d.node.x;})
                 .attr("y", function (d) {return (parseInt(d.node.y)-parseInt(PRES.liveAttributes.nodeRadius(d.node)))-1;});
 							
+//Y
 			if (ABSTR.selectedlink != ""){
 				PRES.svg.selectAll(".linkselect")
 					.attr("x1", function (d) {return ABSTR.selectedlink.source.x;})
@@ -883,7 +1037,15 @@ function ZoomOut_Presentation(VIS, ABSTR) {
                 return PRES.nodeSizeDefault;
             }
         };
-		
+	
+        this.nodeRadiusCount = function (d) {
+            if (ABSTR.sizeFilters.evaluations.state) {
+				return PRES.renormalizednode(d.evalpos-d.evalneg);
+            } else {
+                return PRES.nodeSizeDefault;
+            }
+        };
+
         this.nodeFill = function (d) {
 			if($.inArray(d.hash, PRES.readnodes) < 0){
 				return PRES.nodecolor[d.type];
@@ -946,13 +1108,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
 		
         this.linkArrow = function (d) {
-            if (ABSTR.linkFilters[d.type].state) {
+            if (ABSTR.linkFilters[d.type].state && !(ABSTR.treeview && d.direct == 1)) {
 				if ( d.type != 5 && d.type != 6 ) {                
 					//  alternative and equivalence have no direction
 					if (d.type == 2 && d.direct==1){
 						return "";
 						// agree and disagree have no direction if it is a connection
 					} else if (d.type == 3 && d.direct==1) {
+						return "";
+						// general have no direction if it is a connection
+					} else if (d.type == 1 && d.direct==1) {
 						return "";
 					} else {
 						
@@ -1003,10 +1168,11 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
 
 		this.linkStrokeOpacity = function (d) {
-            if (ABSTR.linkFilters[d.type].state) {
-                return PRES.linkOpacityDefault;
+            if ((!ABSTR.linkFilters[d.type].state) || (ABSTR.treeview && d.direct == 1 && d.source.hash != ABSTR.overnodehash && d.target.hash != ABSTR.overnodehash && d.source.hash != ABSTR.clickednodehash && d.target.hash != ABSTR.clickednodehash)) {
+                if (ABSTR.selectedlink == d) hidelinkselect();
+                return "0";
             } else {
-				return "0";
+				return (ABSTR.treeview && d.direct == 1) ? PRES.linkOpacityDefault*0.7 : PRES.linkOpacityDefault;
             }
         };
 		
@@ -1082,7 +1248,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 				PRES.svg.selectAll(".link")
 					.filter(function (e) {return e.source.hash == d.hash;})
-					.attr("marker-mid", "");
+					.attr("marker-start", "");
 
 				PRES.svg.selectAll(".link")
 					.filter(function (e) {return e.target.hash == d.hash;})
@@ -1090,7 +1256,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 				PRES.svg.selectAll(".link")
 					.filter(function (e) {return e.target.hash == d.hash;})
-					.attr("marker-mid", "");
+					.attr("marker-start", "");
 
             }
 			return PRES.nodecolor[d.type];
@@ -1102,7 +1268,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
 		//if the user is creating a new link, updates the prelink line position and color
         this.mousemove = function (d) {
-			if (ABSTR.creatinglink && selectedconnectlinktype != 0){
+			if (ABSTR.creatinglink && selectedconnectlinktype != 0 && !ABSTR.freezelink){
                 var nodes = PRES.force.nodes();
                 var index = searchhash(nodes, ABSTR.clickednodehash);
                 PRES.linecolor = PRES.linkcolor[selectedconnectlinktype];
@@ -1135,7 +1301,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			
 			ABSTR.overnode = true;
 						
-			if ((ABSTR.clickednodehash === "" && ABSTR.clickedlinkhash === "") || (ABSTR.creatinglink && (ABSTR.clickednodehash != d.hash || ABSTR.timevisualization))){
+			//if ((ABSTR.clickednodehash === "" && ABSTR.clickedlinkhash === "") || (ABSTR.creatinglink && (ABSTR.clickednodehash != d.hash || ABSTR.timevisualization))){
 								
 				ABSTR.overnodehash = d.hash;
 				
@@ -1144,6 +1310,9 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 					.style("stroke", PRES.liveAttributes.nodeStroke);
 				
+				PRES.svg.selectAll(".link")
+					.transition().delay(100).duration(0)
+					.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
 				
 				timednodecontentlabel = setTimeout(function(){
 
@@ -1160,18 +1329,23 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					} else {
 					
 						$("#right_bar").height('auto');
-						$('#rightpaneleval').html(rightpanelhtmleval);
+						$('#rightpaneleval').html(rightpanelhtmlevalover);
 						$('#rightpanelspace').html("");
 						document.getElementById("nodepos").innerHTML = "+" + d.evalpos;
 						document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
 						
 						$("#contbox").stop().slideDown(0);
 						document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");
-						document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author + " - "+timeAgo(d.time)+")";
+					    if (d.seed == 2){
+				 	              document.getElementById("contentlabel").innerHTML = "<b>" +tx_initial_thought+ "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +d.author + " - "+timeAgo(d.time)+")";			
+					    } else {
+	    				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +d.author + " - "+timeAgo(d.time)+")";
+					    };
+					
 						document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
 					}
 				},150);
-			}
+			//}
         };
 		
 		
@@ -1183,6 +1357,8 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 
         this.mouseoverlink = function (d) {
 		
+	    if (ABSTR.treeview && d.direct == 1){return;}
+
 			ABSTR.overlink = true;
 			
 			var strokeopacity = PRES.svg.selectAll(".link")
@@ -1201,13 +1377,17 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				
 					if (ABSTR.timevisualization){return;}
 					
-					$('#rightpaneleval').html(rightpanelhtmllinkeval);
+					$('#rightpaneleval').html(rightpanelhtmllinkevalover);
+                    $("#showeditlink").hide();
 					$('#rightpanelspace').html("");
 					document.getElementById("linkpos").innerHTML = "+" + d.evalpos;
 					document.getElementById("linkneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
+
 					
 					document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[d.type].typeId],0.5) +";");
-					document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[d.type].name + " connection" + "</b>" + "&nbsp&nbsp" + " (by " +d.author + " - "+timeAgo(d.time)+")";
+
+				        document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +d.author + " - "+timeAgo(d.time)+")";
+
 					
 					$("#right_bar").height($("#right_bar").height());
 					$("#contbox").stop().slideUp(0);
@@ -1234,6 +1414,10 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.transition().duration(1)
 					.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 					.style("stroke", PRES.liveAttributes.nodeStroke);
+					
+				PRES.svg.selectAll(".link")
+					.transition().duration(1)
+					.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
 				
 					
 				if(ABSTR.clickednodehash === "" && ABSTR.clickedlinkhash === ""){
@@ -1249,7 +1433,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					}
 				}
 				
-				if(ABSTR.creatinglink){
+				//if(ABSTR.creatinglink){
 				
 					timednodecontentlabel = setTimeout(function(){
 						
@@ -1257,18 +1441,57 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 							var index = $.inArray(d, timednodes);
 							var id = "nodecontent"+index;
 							outdivcontent(id);
+                            return;
 						}
-						
+		
+				
+				if(ABSTR.clickednodehash !== ""){
 						document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[ABSTR.clickednode.type].typeId],0.5) +";");
-						document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[ABSTR.clickednode.type].name + "</b>" + "&nbsp&nbsp" + " (by " +ABSTR.clickednode.author + " - "+timeAgo(ABSTR.clickednode.time)+")";
+					    if (ABSTR.clickednode.seed == 2){
+					                                 document.getElementById("contentlabel").innerHTML = "<b>"  +tx_initial_thought+ "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +ABSTR.clickednode.author + " - "+timeAgo(ABSTR.clickednode.time)+")";
+					    } else {
+					    document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[ABSTR.clickednode.type].name + "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +ABSTR.clickednode.author + " - "+timeAgo(ABSTR.clickednode.time)+")";
+					    };
+
 						document.getElementById("contbox").innerHTML = URLlinks(nl2br(ABSTR.clickednode.content));
 						
 						document.getElementById("nodepos").innerHTML = "+" + ABSTR.clickednode.evalpos;
 						document.getElementById("nodeneg").innerHTML = ((ABSTR.clickednode.evalneg===0) ? "" : "-") + ABSTR.clickednode.evalneg;	
-						
+		
+				};
+
+
+
+				if(ABSTR.clickedlinkhash !== ""){
+
+                var links2 = PRES.force.links();
+                var targetindex2 = searchhash(links2, ABSTR.clickedlinkhash);
+                clickedlink2 = links2[targetindex2];
+				$('#rightpaneleval').html(rightpanelhtmllinkeval);
+				$('#rightpanel').html("");
+				$('#rightpanelspace').html("");
+                var elapsedtime = (new Date().getTime() / 1000) - ABSTR.selectedlink.time;
+                var recentnewlink = ($.inArray(ABSTR.selectedlink, PRES.sessionlinks) > -1 && elapsedtime < 300);
+                (recentnewlink || Model.editable == "1") ? $("#showeditlink").show() : $("#showeditlink").hide();
+
+			document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[clickedlink2.type].typeId],0.5) +";");
+
+		document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[clickedlink2.type].name + " " + "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +clickedlink2.author + " - "+timeAgo(clickedlink2.time)+")";
+
+					
+					document.getElementById("linkpos").innerHTML = "+" + clickedlink2.evalpos;
+					document.getElementById("linkneg").innerHTML = ((clickedlink2.evalneg===0) ? "" : "-") + clickedlink2.evalneg;	
+					$('#nodepos').addClass('evalbutton').css("border-color", "#888");
+					$('#nodeneg').addClass('evalbutton').css("border-color", "#888");
+			
+					$("#right_bar").height($("#right_bar").height());
+					$('#right_bar').stop().fadeTo(200,1);
+					$("#contbox").stop().slideUp(0);
+				};
+					
 					},0);				
 				
-				}
+				//}
 				
 			},10);
         };
@@ -1278,7 +1501,7 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			
 			ABSTR.overlink = false;
 			
-			clearTimeout(timedlinkcontentlabel);
+			if (typeof timedlinkcontentlabel != "undefined") clearTimeout(timedlinkcontentlabel);
 			
 			if (ABSTR.clickedlinkhash === ""){
 			
@@ -1308,18 +1531,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				hidelinkselect();
 				
 				if (ABSTR.timevisualization){
-					var color = d3.rgb(PRES.nodecolor[timednodes[oldindex].type]).darker(0).toString();
-					$("#nodecontent"+oldindex).css({
-							"border": "solid 2px "+color,
-					});
-					
-					$("#nodeinteract"+oldindex).height("24px");
-					$("#nodeinteract"+oldindex).html("");
-					
-					oldindex = "";
+                    
+                    if (oldindex != ""){
+                        var color = d3.rgb(PRES.nodecolor[timednodes[oldindex].type]).darker(0).toString();
+                        $("#nodecontent"+oldindex).css({"border": "solid 1px "+color});
+                        $("#nodeinteract"+oldindex).height("24px");
+                        $("#nodeinteract"+oldindex).html("");
+                        oldindex = "";
+                    }
 					
 				}else{
-				
 					clearcontentlabel();
 				}
 				
@@ -1328,13 +1549,23 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				ABSTR.clickedlinkhash = "";
 				ABSTR.overnodehash = "";
 				ABSTR.replying = false;
+                if (ABSTR.advevalnode){
+                    advevalnodepanelcancel();
+                };
+                if (ABSTR.advevallink){
+                    advevallinkpanelcancel();
+                };
+				ABSTR.advevalnode = false;
+				ABSTR.advevallink = false;
 				
 				PRES.svg.selectAll(".node")
 					.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 					.style("stroke", PRES.liveAttributes.nodeStroke);
 				
 				PRES.svg.selectAll(".link")
-					.style("stroke", PRES.liveAttributes.linkStroke);	
+					.style("stroke", PRES.liveAttributes.linkStroke)
+					.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
+				
 				
 
 			};
@@ -1343,12 +1574,21 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
         this.click = function (d) {
 		
+	    if (ABSTR.advevalnode){
+		advevalnodepanelcancel();
+	    };
+	    if (ABSTR.advevallink){
+		advevallinkpanelcancel();
+	    };
+	    ABSTR.advevalnode = false;
+	    ABSTR.advevallink = false;
+
 			var fillopacity = PRES.svg.selectAll(".node")
 									.filter(function (e) {return e.hash == d.hash;})
 									.style("fill-opacity");	
 									
 			if (fillopacity == 0){
-				PRES.liveAttributes.backgroundclick;
+				PRES.liveAttributes.backgroundclick();
 				return;
 			};
 				
@@ -1365,7 +1605,17 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				ABSTR.clickednode = d;
 				ABSTR.clickedlinkhash = "";
 				ABSTR.replying = false;
-				
+                
+                if (ABSTR.advevalnode){
+                    advevalnodepanelcancel();
+                };
+                if (ABSTR.advevallink){
+                    advevallinkpanelcancel();
+                };
+                
+                ABSTR.advevalnode = false;
+				ABSTR.advevallink = false;
+
 				if($.inArray(d.hash, PRES.readnodes) < 0){
 					PRES.readnodes.push(d.hash);
 				}
@@ -1375,11 +1625,17 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 					.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 					.style("stroke", PRES.liveAttributes.nodeStroke)
 					.style("fill",PRES.liveAttributes.nodeFill);
+					
+				PRES.svg.selectAll(".link")
+					.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
 		
 				if (!ABSTR.timevisualization){
 					$("#right_bar").height('auto');
 					$('#rightpaneleval').html(rightpanelhtmleval);
 					$('#rightpanel').html(rightpanelhtmlreplyandlink);
+                    var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
+                    var recentnewnode = ($.inArray(ABSTR.clickednode, PRES.sessionnodes) > -1 && elapsedtime < 300);
+                    (recentnewnode || Model.editable == "1") ? $("#showeditnode").show() : $("#showeditnode").hide();
 					$('#rightpanelspace').html("");
 					$('#nodepos').addClass('evalbutton').css("border-color", "#888");
 					$('#nodeneg').addClass('evalbutton').css("border-color", "#888");
@@ -1401,12 +1657,16 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 						$('#right_bar').stop().fadeTo(200, 1);
 							$("#contbox").stop().slideDown(0);
 							
-							document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");
-							document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author + " - "+timeAgo(d.time)+")";
-							document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
-							
-							document.getElementById("nodepos").innerHTML = "+" + d.evalpos;
-							document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
+                        document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");	
+					   if (d.seed == 2){
+						  document.getElementById("contentlabel").innerHTML = "<b>" +tx_initial_thought+ "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +d.author + " - "+timeAgo(d.time)+")";			
+					   } else {
+				            document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +d.author + " - "+timeAgo(d.time)+")";
+					   };
+                        document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
+                        
+                        document.getElementById("nodepos").innerHTML = "+" + d.evalpos;
+                        document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
 					}	
 				},0);
 				
@@ -1422,7 +1682,18 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 		
 		//if the user is not creating a new link, selects the clicked link, changing its stroke color and showing its information in the content label
         this.clicklink = function (d) {
-			if (!ABSTR.creatinglink){
+
+	    if (ABSTR.advevalnode){
+		advevalnodepanelcancel();
+	    };
+	    if (ABSTR.advevallink){
+		advevallinkpanelcancel();
+	    };
+	    ABSTR.advevalnode = false;
+	    ABSTR.advevallink = false;
+
+            //if (!ABSTR.creatinglink && !(ABSTR.treeview && d.direct == 1)){
+			if (!ABSTR.creatinglink && PRES.liveAttributes.linkStrokeOpacity(d) != 0){
 				
 				drawlinkselect(d, PRES.bordercolor.clicked, 0, 0);
 				
@@ -1438,14 +1709,18 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 				$('#rightpaneleval').html(rightpanelhtmllinkeval);
 				$('#rightpanel').html("");
 				$('#rightpanelspace').html("");
-
+                var elapsedtime = (new Date().getTime() / 1000) - ABSTR.selectedlink.time;
+                var recentnewlink = ($.inArray(ABSTR.selectedlink, PRES.sessionlinks) > -1 && elapsedtime < 300);
+                (recentnewlink || Model.editable == "1") ? $("#showeditlink").show() : $("#showeditlink").hide();
+                
 				
 				timedcontentlabel = setTimeout(function(){
 				
 					if (ABSTR.timevisualization){return;}
 					
 					document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[d.type].typeId],0.5) +";");
-					document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[d.type].name + " connection" + "</b>" + "&nbsp&nbsp" + " (by " +d.author + " - "+timeAgo(d.time)+")";
+		document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[d.type].name + " " + "</b>" + "&nbsp&nbsp" + " ("+tx_by+" " +d.author + " - "+timeAgo(d.time)+")";
+
 					
 					document.getElementById("linkpos").innerHTML = "+" + d.evalpos;
 					document.getElementById("linkneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
@@ -1480,13 +1755,14 @@ function ZoomOut_Presentation(VIS, ABSTR) {
 			.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
 
 		PRES.svg.selectAll(".link")
-			.attr("marker-mid", PRES.liveAttributes.linkArrow);
+			.attr("marker-start", PRES.liveAttributes.linkArrow);
+
 
     };
 
     function updateNodes(PRES) {
         PRES.svg.selectAll(".node")
-			.style("fill",PRES.liveAttributes.nodeFill)
+			.style("fill", PRES.liveAttributes.nodeFill)
 			.style("stroke", PRES.liveAttributes.nodeStroke)
 			.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 			.attr("r", PRES.liveAttributes.nodeRadius)
@@ -1521,10 +1797,19 @@ function hideshowfilters() {
 	
 	PRES.showfilters = !PRES.showfilters;	
 
-	var str = (PRES.showfilters) ? "Hide" : "Show";
-	$("#cmd_hideshowfilters").html(str);
-	
-    legendfiltersupdate();
+//	var str = (PRES.showfilters) ? tx_hide : tx_show;
+//	$("#cmd_hideshowfilters").html(str);
+	var arrowstr = (PRES.showfilters) ? "&#8681;" : "&#8679;" ;
+	$("#legendarrow").html(arrowstr);
+
+    legendfiltersupdate();	
+
+    if (PRES.filtershelp){ 
+	$("#filters_text").show();
+	PRES.filtershelp = false;
+    } else {
+	$("#filters_text").delay(300).fadeOut(600);
+    };
 	
 };
 
@@ -1533,7 +1818,7 @@ function legendfiltersupdate() {
     var PRES = Visualisations.current().presentation;
     var lower_bar = document.getElementById("lower_bar");
 	
-    (PRES.showfilters) ? lower_bar.style.bottom = "-75px" : lower_bar.style.bottom = "-155px";
+    (PRES.showfilters) ? $("#lower_bar").css("height", "105px") : $("#lower_bar").css("height", "25px");
 
 };
 
@@ -1555,34 +1840,122 @@ function linkevalneg(){
 }
 
 
+function advevalnode(advevalnodevote) {
+
+    var PRES = Visualisations.current().presentation;   
+    var ABSTR = Visualisations.current().abstraction;
+	
+
+   if (author == ""){
+        ABSTR.namepanelcaller = "advevalnode";
+        ABSTR.namepanelparameter = advevalnodevote;
+        opennamepanel();
+        return;
+    }
+    
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+  
+    var targetindex = searchhash(nodes, ABSTR.clickednodehash);
+    targetnode = nodes[targetindex];
+
+
+    if (($.inArray(author, targetnode.advevalby[0]) > -1)||($.inArray(author, targetnode.advevalby[1]) > -1)||($.inArray(author, targetnode.advevalby[2]) > -1)||($.inArray(author, targetnode.advevalby[3]) > -1)){
+
+		var alert = document.getElementById("advevalalert");
+		alert.innerHTML = tx_already_propos_node;
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+		return;
+	}
+	
+	targetnode.advevalby[advevalnodevote].push(author);
+        targetnode.adveval[advevalnodevote] += 1;
+
+    if (targetnode.advevalby[advevalnodevote][0] == ""){targetnode.advevalby[advevalnodevote].splice(0,1);};
+
+	db_update_adveval_node();
+
+	explode(targetnode.x, targetnode.y, "blue");
+	
+    checkadvevalnode();
+
+};
+
+function advevallink(advevallinkvote) {
+    var PRES = Visualisations.current().presentation;   
+    var ABSTR = Visualisations.current().abstraction;
+	
+
+   if (author == ""){
+        ABSTR.namepanelcaller = "advevallink";
+        ABSTR.namepanelparameter = advevallinkvote;
+        opennamepanel();
+        return;
+    }
+    
+    var nodes = PRES.force.nodes();
+    var links = PRES.force.links();
+  
+    var targetindex = searchhash(links, ABSTR.clickedlinkhash);
+    targetlink = links[targetindex];
+
+
+    if(($.inArray(author, targetlink.advevalby[0]) > -1)||($.inArray(author, targetlink.advevalby[1]) > -1)||($.inArray(author, targetlink.advevalby[2]) > -1)||($.inArray(author, targetlink.advevalby[3]) > -1)||($.inArray(author, targetlink.advevalby[4]) > -1)||($.inArray(author, targetlink.advevalby[5]) > -1)){
+		
+		var alert = document.getElementById("advevalalertlink");
+		alert.innerHTML = tx_already_propos_link;
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+		return;
+	}
+
+	targetlink.advevalby[advevallinkvote].push(author);
+        targetlink.adveval[advevallinkvote] += 1;
+
+    if (targetlink.advevalby[advevallinkvote][0] == ""){targetlink.advevalby[advevallinkvote].splice(0,1);};
+
+	db_update_adveval_link();
+
+	var coordx = (targetlink.source.x + targetlink.target.x)/2;
+	var coordy = (targetlink.source.y + targetlink.target.y)/2;
+	explode(coordx, coordy, "yellow");
+
+    checkadvevallink();
+
+};
+
+
 function evalnode(vote) {
 
     var PRES = Visualisations.current().presentation;   
 	var ABSTR = Visualisations.current().abstraction;
 	
+    if (author == ""){
+        ABSTR.namepanelcaller = "evalnode";
+        ABSTR.namepanelparameter = vote;
+        opennamepanel();
+        return;
+    }
+    
 	var nodes = PRES.force.nodes();
     var links = PRES.force.links();
   
     var targetindex = searchhash(nodes, ABSTR.clickednodehash);
     targetnode = nodes[targetindex];
-	
-    var name = document.getElementById("headerNamebox").value;    
-    if (name == ""){name = "anonymous";}
-	
-	if($.inArray(name, targetnode.evaluatedby) > -1){
+
+	if($.inArray(author, targetnode.evaluatedby) > -1){
 		
 		var alert = document.getElementById("evalalert");
 		
 		var brornot = ($(window).height()<486) ? "<br>" : " ";
 		if (ABSTR.timevisualization){brornot=" ";}
 		
-		alert.innerHTML = "You have already" + brornot + "rated this thought";
+		alert.innerHTML = tx_you_already_rated1 + brornot + tx_you_already_rated2;
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		return;
 	}
 	
-	targetnode.evaluatedby.push(name);
-	
+	targetnode.evaluatedby.push(author);
+
 	if (vote=="pos"){
 		targetnode.evalpos += 1; 
 		document.getElementById("nodepos").innerHTML = "+" + targetnode.evalpos;
@@ -1614,27 +1987,30 @@ function evallink(vote) {
     var PRES = Visualisations.current().presentation;   
     var ABSTR = Visualisations.current().abstraction;
 	
+    if (author == ""){
+        ABSTR.namepanelcaller = "evallink";
+        ABSTR.namepanelparameter = vote;
+        opennamepanel();
+        return;
+    }
+    
     var nodes = PRES.force.nodes();
     var links = PRES.force.links();
   
     var targetindex = searchhash(links, ABSTR.clickedlinkhash);
     targetlink = links[targetindex];
 	
-    var name = document.getElementById("headerNamebox").value;    
-    if (name == ""){name = "anon";}
-	
-	if($.inArray(name, targetlink.evaluatedby) > -1){
-	
+	if($.inArray(author, targetlink.evaluatedby) > -1){
 
 		var alert = document.getElementById("evalalert");
 		var brornot = ($(window).height()<486) ? "<br>" : " ";
 		
-		alert.innerHTML = "You have already" + brornot + "rated this connection";
+		alert.innerHTML = tx_you_already_rated_con1 + brornot + tx_you_already_rated_con2 + " <br>";
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		return;
 	} 
 	
-	targetlink.evaluatedby.push(name);
+	targetlink.evaluatedby.push(author);
 	
 	if (vote=="pos"){
 		targetlink.evalpos += 1; 
@@ -1666,10 +2042,13 @@ function evallink(vote) {
 
 
 //shows the reply options and cancel the creation of a new link, or hides the options if they are already showed
-function showreplypanel(){
-
+function showreplypanel(editing){
+    
+    var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
 	
+    (editing) ? PRES.editingnode = true : PRES.editingnode = false;
+    
 	if (ABSTR.creatinglink){
 		cancellink();
 	}
@@ -1677,6 +2056,10 @@ function showreplypanel(){
 	if (ABSTR.replying){
 		hidereplypanel();
 		return;
+	}
+
+	if (ABSTR.advevalnode){
+		advevalnodepanelcancel();
 	}
 	
 	if (ABSTR.timevisualization){
@@ -1692,22 +2075,31 @@ function showreplypanel(){
 	
 		var brornot = ($(window).height()<486) ? "" : "<br><br>";
 		$('#rightpanel').html(rightpanelhtmlreplyandlink + brornot+ rightpanelhtmlreply);
+        
+        $("#showeditnode").hide();
+        if (editing){
+            $("#showeditnode").show();
+            $("#replybox").val( ABSTR.clickednode.content );
+            $("#replyboxsum").val( ABSTR.clickednode.contentsum );
+            $("#tdlinktype").hide();   
+        }
 		$('#rightpanelspace').html("");
 	}
 	ABSTR.replying = true;
 	
-	document.getElementById("namebox2").value = Model.currentAuthor();
 	document.getElementById("showreply").setAttribute("style", "box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5);");
 	document.getElementById("replybox").focus();
 	
-	selectedreplynodetype = 1;
+    selectedreplynodetype = (editing) ? ABSTR.clickednode.type : 1;
+	preparereplynodetype(selectedreplynodetype);
+    
 	selectedreplylinktype = 1;
-	preparereplynodetype();
 	preparereplylinktype();
 }
 
 
 function hidereplypanel(){
+    var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
 	ABSTR.replying = false; 
 		 
@@ -1721,14 +2113,17 @@ function hidereplypanel(){
 	} else {
 			
 		 $('#rightpanel').html(rightpanelhtmlreplyandlink);	
+        var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
+        var recentnewnode = ($.inArray(ABSTR.clickednode, PRES.sessionnodes) > -1 && elapsedtime < 300);
+        (recentnewnode || Model.editable == "1") ? $("#showeditnode").show() : $("#showeditnode").hide();
 		 $('#rightpanelspace').html("");
 	}
 }
 
 
 //shows the create link options
-function showcreatelink(){
-
+function showcreatelink(editing){
+    var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
 	
 	if (ABSTR.creatinglink){
@@ -1740,6 +2135,9 @@ function showcreatelink(){
 		hidereplypanel();
 	}
 
+	if (ABSTR.advevalnode){
+		advevalnodepanelcancel();
+	}
 
 	if (ABSTR.timevisualization){
 
@@ -1753,21 +2151,63 @@ function showcreatelink(){
 	} else {
 
 		var brornot = ($(window).height()<486) ? "" : "<br><br>";
-		$('#rightpanel').html(rightpanelhtmlreplyandlink + brornot + rightpanelhtmllink);
+		(editing) ? $('#rightpanel').html(rightpanelhtmllink) : $('#rightpanel').html(rightpanelhtmlreplyandlink + brornot + rightpanelhtmllink);
+        var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
+        var recentnewnode = ($.inArray(ABSTR.clickednode, PRES.sessionnodes) > -1 && elapsedtime < 300);
+        (recentnewnode || Model.editable == "1") ? $("#showeditnode").show() : $("#showeditnode").hide();
 		$('#rightpanelspace').html("");
 		
 	}
 	
 	ABSTR.creatinglink = true;
 	ABSTR.replying = false;
-	button = document.getElementById("showconnect");
-	button.setAttribute("style", "box-shadow: inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5);");
-	
-	selectedconnectlinktype = 0;
-	prepareconnectlinktype();
+    
+	if (!editing) $("#showconnect").css("box-shadow", "inset -1px 1px 2px 0px rgba(0, 0, 0, 0.5);");
 
+    if (editing) $("#connecttext").hide();
+    selectedconnectlinktype = (editing) ? ABSTR.selectedlink.type : 0;
+	prepareconnectlinktype(selectedconnectlinktype);
 
 }
+
+function showeditlink(){
+    var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+	
+	if (ABSTR.editinglink){
+		$('#rightpanel').html("");
+        ABSTR.editinglink = false;
+		return;
+	}
+
+	if (ABSTR.advevalnode){
+		advevalnodepanelcancel();
+	}
+
+	if (ABSTR.timevisualization){
+
+		$("#nodeinteract"+oldindex).height("auto");
+		$("#nodeinteract"+oldindex).html(timevisinteracthtml +  "<br></br>" + rightpaneleditlink + "<br>"); 
+		
+		$('#timevisdiv').animate({
+			scrollTop: $('#timevisdiv').scrollTop()+$("#nodecontent"+oldindex).position().top-60
+		}, 400);
+
+	} else {
+
+		var brornot = ($(window).height()<486) ? "" : "<br><br>";
+		$('#rightpanel').html(rightpaneleditlink);
+		$('#rightpanelspace').html("");
+	}
+	
+	ABSTR.editinglink = true;
+	ABSTR.replying = false;
+
+    selectedconnectlinktype = ABSTR.selectedlink.type;
+	prepareconnectlinktype(selectedconnectlinktype);
+
+}
+
 
 function cancellink(){
 
@@ -1780,6 +2220,9 @@ function cancellink(){
 	} else {
 	
 		$('#rightpanel').html(rightpanelhtmlreplyandlink);
+        var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
+        var recentnewnode = ($.inArray(ABSTR.clickednode, PRES.sessionnodes) > -1 && elapsedtime < 300);
+        (recentnewnode || Model.editable == "1") ? $("#showeditnode").show() : $("#showeditnode").hide();
 		$('#rightpanelspace').html("");
 	}
 	
@@ -1798,26 +2241,73 @@ function savenode() {
 		
 	if (document.getElementById("replybox").value == ""){
 		var alert = document.getElementById("replyalert");
-		alert.innerHTML = "Write something first!";
+		alert.innerHTML = tx_write_something+"!";
 		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
 		$('#replybox').effect('highlight',2000);
 		return;
 	}
     var PRES = Visualisations.current().presentation;
 	
-    createnode(PRES);
+    (PRES.editingnode) ? editnode() : createnode();
 };
 
+
+function editnode(){
+    var PRES = Visualisations.current().presentation;
+    var ABSTR = Visualisations.current().abstraction;
+    var index = $.inArray(ABSTR.clickednode, Model.model.nodes);
+    
+    db_editnode(ABSTR.clickednode.hash, $("#replybox").val(), $("#replyboxsum").val(), selectedreplynodetype);
+    
+    ABSTR.clickednode.content = $("#replybox").val();
+    ABSTR.clickednode.contentsum = $("#replyboxsum").val();
+    ABSTR.clickednode.type = selectedreplynodetype;
+    
+    PRES.svg.selectAll(".node")
+		.style("fill",PRES.liveAttributes.nodeFill);
+    
+    var color = PRES.liveAttributes.nodeFill(ABSTR.clickednode); 
+    explode(ABSTR.clickednode.x, ABSTR.clickednode.y, color)
+    
+    $("#contbox").html( $("#replybox").val() );
+    cancellink();
+    PRES.force.start();
+}
+
+function editlink(){
+    var PRES = Visualisations.current().presentation;
+    var ABSTR = Visualisations.current().abstraction;
+    var index = $.inArray(ABSTR.clickednode, Model.model.nodes);
+    
+    db_editlink(ABSTR.selectedlink.hash, selectedconnectlinktype);
+    
+    ABSTR.selectedlink.type = selectedconnectlinktype;
+    
+    PRES.svg.selectAll(".link")
+        .style("stroke", PRES.liveAttributes.linkStroke);
+    
+    
+    var color = PRES.liveAttributes.linkStroke(ABSTR.selectedlink); 
+	var coordx = (ABSTR.selectedlink.source.x + ABSTR.selectedlink.target.x)/2;
+	var coordy = (ABSTR.selectedlink.source.y + ABSTR.selectedlink.target.y)/2;
+	explode(coordx, coordy, color);
+    
+    $('#rightpanel').html(""); 
+    ABSTR.editinglink = false;
+    PRES.force.start();
+}
+
+function createnode(){
 	
-function createnode(PRES){
+    var PRES = Visualisations.current().presentation;
+    var ABSTR = Visualisations.current().abstraction;
+    
+    if (author == ""){
+        ABSTR.namepanelcaller = "createnode";
+        opennamepanel();
+        return;
+    }
 	
-	var author=document.getElementById("namebox2").value;
-	if (author != ""){
-		Model.currentAuthor(author);
-		document.getElementById("headerNamebox").value = author;
-	}
-	
-	var ABSTR = Visualisations.current().abstraction;
     var nodes = PRES.force.nodes();
 
     var content = document.getElementById("replybox").value;
@@ -1827,7 +2317,6 @@ function createnode(PRES){
 	var targetindex = searchhash(nodes, ABSTR.clickednodehash), 
     targetnode = nodes[targetindex];
 	
-	var author = Model.currentAuthor();
     var time = Math.floor((new Date()).getTime() / 1000);
 
 	var seed=(selectedreplylinktype != 0) ? 0 : 1;
@@ -1844,6 +2333,8 @@ function createnode(PRES){
         "evalpos": 1,
 		"evalneg": 0,
         "evaluatedby": [author],
+        "adveval": [0,0,0,0],
+        "advevalby": [[],[],[],[]],
         "type": nodetype,
         "author": author,
 		"seed":seed,
@@ -1853,9 +2344,11 @@ function createnode(PRES){
     };
 	
     nodes.push(newnode);
+    Model.model.nodes.push(newnode); //zzcheck
 
-	db_savenode(newnode);	
-	update_hash_lookup([newnode], []);
+    //remainingnodes.push(newnode);
+
+    PRES.sessionnodes.push(newnode);
 	
 	var linktype = selectedreplylinktype;
 	
@@ -1873,12 +2366,19 @@ function createnode(PRES){
 			"evalpos": 1,
 			"evalneg": 0,
 			"evaluatedby": [author],
+   		        "adveval": [0,0,0,0,0,0],
+		        "advevalby": [[],[],[],[],[],[]],
 			"type": linktype,
 			"author": author,
 			"time": time
 		};
 		
-		links.push(newlink);
+	    links.push(newlink);
+        Model.model.links.push(newlink); //zzcheck
+
+	    //remaininglinks.push(newlink);
+
+            PRES.sessionlinks.push(newlink);
 		
 		var newlinkfordb = {
 			"hash": newlink.hash, 
@@ -1888,16 +2388,23 @@ function createnode(PRES){
 			"evalpos": 1,
 			"evalneg": 0,
 			"evaluatedby": [author],
+   		        "adveval": [0,0,0,0,0,0],
+		        "advevalby": [[],[],[],[],[],[]],
 			"type": linktype,
 			"author": author,
 			"time": time
 		};
 		
-		db_savelink(newlinkfordb);
+       	db_saveandchecknode(newnode, newlinkfordb);	
+	    update_hash_lookup([newnode], []);
 		
 		drawnewlinks();
-    } 
-	
+	}else{
+       	db_saveandcheckonlynode(newnode);	
+	    update_hash_lookup([newnode], []);
+
+	};
+
 	hidereplypanel();
 	
 	drawnewnodes();
@@ -1911,7 +2418,7 @@ function createnode(PRES){
 		var legend = timednodes[i].author+' - '+timeAgo(timednodes[i].time);
 		var color = d3.rgb(PRES.nodecolor[timednodes[i].type]).darker(0).toString();
 		
-		var html = '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div><div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 2px '+color+';" onclick="clickdivcontent(this.id);" onmouseover="overdivcontent(this.id);" onmouseout="outdivcontent(this.id);"></div><div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
+		var html = '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div><div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 1px '+color+';" onclick="clickdivcontent(this.id);" onmouseover="overdivcontent(this.id);" onmouseout="outdivcontent(this.id);"></div><div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
 		
 		$("#timevisdiv").html($("#timevisdiv").html().replace("<br><br><br> <br><br><br><br>","") + html + "<br><br><br> <br><br><br><br>");
 		
@@ -1941,9 +2448,9 @@ function drawnewlinks() {
     
     var link = PRES.svg.selectAll(".link")
         .data(links)
-        .enter().insert("polyline",".node")
+        .enter().insert("line",".node")
         .attr("class", "link")
-		.attr("marker-mid", PRES.liveAttributes.linkArrow)
+		.attr("marker-start", PRES.liveAttributes.linkArrow)
 		.style("stroke", PRES.liveAttributes.linkStroke)
 		.style("stroke-width", PRES.liveAttributes.linkStrokeWidth)
 		.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity)
@@ -1961,6 +2468,8 @@ function drawnewnodes() {
     
 	var PRES = Visualisations.current().presentation;
  
+	var elasticduration = (PRES.elasticdraw) ? 1000 : 0;
+ 
     var nodes = PRES.force.nodes();
     
     var node = PRES.svg.selectAll(".node")
@@ -1971,6 +2480,7 @@ function drawnewnodes() {
         .attr("cy", function (d) {coordy = d.y; return d.y;})
 		.attr("r", 0)
 		.style("fill", function(d) {var color = PRES.liveAttributes.nodeFill(d); explode(coordx, coordy, color); return color;})
+			.style("fill-opacity",PRES.liveAttributes.nodeFillOpacity)
 		.style("stroke", PRES.liveAttributes.nodeStroke)
 		.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 		.on("mouseover", PRES.liveAttributes.mouseover)
@@ -1978,7 +2488,7 @@ function drawnewnodes() {
 		.on("click", PRES.liveAttributes.click)
 		.on("dblclick", PRES.liveAttributes.dblclick)
         .call(PRES.force.drag)
-		.transition().ease("elastic").duration(1000)
+		.transition().ease("elastic").duration(elasticduration)
 		.attr("r", PRES.liveAttributes.nodeRadius);
 	
     PRES.force.start();
@@ -2000,12 +2510,46 @@ function addseed(newnode){
 		.on("mouseout", PRES.liveAttributes.mouseoutseed);
 }
 
+function updateSeeds(){
+
+	var PRES = Visualisations.current().presentation;
+
+        var nodes = PRES.force.nodes();
+
+	var seedsdata = [];
+
+		nodes.forEach(function(d, i) {		
+			if (d.seed > 0){
+				seedsdata.push({homenode:d, seedtype:d.seed});
+			}					
+		});
+
+	
+	PRES.svg.selectAll(".seed")
+		.data(seedsdata)
+		.enter().append("circle")
+		.attr("class", "seed")
+		.attr("r", PRES.liveAttributes.seedRadius)
+		.style("fill", PRES.liveAttributes.seedColor)
+		.on("mouseover", PRES.liveAttributes.mouseoverseed)
+		.on("mouseout", PRES.liveAttributes.mouseoutseed);
+}
+
+
 //creation of a new link
 function savelink(d){
+//MOD
 
     var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
 	
+    if (author == ""){
+        ABSTR.namepanelcaller = "savelink";
+        ABSTR.namepanelparameter = d;
+        opennamepanel();
+        return;
+    }
+    
     var nodes = PRES.force.nodes();
     var links = PRES.force.links();
 
@@ -2014,7 +2558,6 @@ function savelink(d){
     var sourceindex = searchhash(nodes, ABSTR.clickednodehash);
     var sourcenode = nodes[sourceindex];
 	
-    var author = Model.currentAuthor();
 	var time = Math.floor((new Date()).getTime() / 1000);
 	
 	var hash = linkhashit(sourcenode.hash + d.hash + author + linktype + time);
@@ -2027,13 +2570,19 @@ function savelink(d){
 		"evalpos": 1, 
 		"evalneg": 0,
 		"evaluatedby": [author],
+	        "adveval": [0,0,0,0,0,0],
+                "advevalby": [[],[],[],[],[],[]],
 		"type":linktype,
 		"author": author,
 		"time": time
 	};
 	
     links.push(newlink);
-	
+    Model.model.links.push(newlink); //zzcheck
+    
+    //remaininglinks.push(newlink);
+    PRES.sessionlinks.push(newlink);
+    
 		var newlinkfordb = {
 			"hash": newlink.hash, 
 			"source": sourcenode.hash, 
@@ -2042,18 +2591,20 @@ function savelink(d){
 			"evalpos": 1,
 			"evalneg": 0,
 			"evaluatedby": [author],
+   		        "adveval": [0,0,0,0,0,0],
+		        "advevalby": [[],[],[],[],[],[]],
 			"type":linktype,
 			"author": author,
 			"time": time
 		};
 		
-		db_savelink(newlinkfordb);
+		db_saveandchecklink(newlinkfordb);
 	
     var link = PRES.svg.selectAll(".link")
         .data(links)
-        .enter().insert("polyline",".node")
+       .enter().insert("line",".node")
         .attr("class", "link")
-		.attr("marker-mid", PRES.liveAttributes.linkArrow)
+		.attr("marker-start", PRES.liveAttributes.linkArrow)
 		.style("stroke", PRES.liveAttributes.linkStroke)
 		.style("stroke-width", PRES.liveAttributes.linkStrokeWidth)
 		.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity)
@@ -2330,24 +2881,6 @@ function hidelinkselect(){
 }
 
 
-function updatecontentlabel(d, time, votes){
-
-    var PRES = Visualisations.current().presentation;
-	var ABSTR = Visualisations.current().abstraction;
-	
-	timedcontentlabel = setTimeout(function(){
-		document.getElementById("contentlabel").setAttribute ("style", "background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5)   + ";");
-		document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " (by " +d.author + " - "+timeAgo(d.time)+")";
-		document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
-		
-		if (votes){
-			document.getElementById("linkpos").innerHTML = "+" + d.evalpos;
-			document.getElementById("linkneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
-		}
-		
-	},time);
-}
-
 
 function clearcontentlabel(){
 
@@ -2367,14 +2900,23 @@ function clearcontentlabel(){
 	ABSTR.clickedlinkhash = "";
 	
 	ABSTR.replying = false;
+	if (ABSTR.advevalnode){
+		advevalnodepanelcancel();
+	};
+	if (ABSTR.advevallink){
+		advevallinkpanelcancel();
+	};
+	ABSTR.advevalnode = false;
+	ABSTR.advevallink = false;
 	ABSTR.creatinglink = false;
 }
 
-function preparereplynodetype(){
+function preparereplynodetype(selectedtype){
 
     var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
 
+    var selected = selectedtype || 1; 
 	var ddData=[];
 	
 	for (var i=0;i<Model.nodeTypesArray.length;i++){
@@ -2382,9 +2924,9 @@ function preparereplynodetype(){
 		nodetype = Model.nodeTypesArray[i];
 		
 		ddData.push({
-			text: Model.nodeTypes[nodetype].text,
+		    text: Model.nodeTypes[nodetype].text,
 			value: Model.nodeTypes[nodetype].value,
-			selected:(Model.nodeTypes[nodetype].text=="General"),
+			selected:(Model.nodeTypes[nodetype].value==selected),
 			imageSrc: Model.nodeTypes[nodetype].image
 		});
 	}
@@ -2393,7 +2935,7 @@ function preparereplynodetype(){
 	$('#replynodetype').ddTslick({
 
 		data: ddData,
-		selectText: "Type of reply",
+		selectText: tx_type_reply,
 		width: 135,
 		height:25*(Model.nodeTypesArray.length),
 		background: "#fff",
@@ -2411,7 +2953,7 @@ function preparereplylinktype(){
 	var nodetype = selectedreplynodetype;
 	var ddData=[];
 	
-	var defaultselected = "General";
+	var defaultselected = tx_general;
 	
 	var typeslist = Model.connectionList(nodetype)
 	
@@ -2431,7 +2973,7 @@ function preparereplylinktype(){
 	$('#replylinktype').ddTslick({
 
 		data: ddData,
-		selectText: "Type of relation",
+		selectText: tx_type_relation,
 		width: 135,
 		height: 25*(typeslist.length),
 		background: "#fff",
@@ -2442,10 +2984,99 @@ function preparereplylinktype(){
 		
 }
 
-function prepareconnectlinktype(){
+
+function prepareadvevalnodetype(){
+
+    var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+
+    advevalnodevote = "";
+
+	var ddData=[];
+	
+	for (var i=0;i<Model.nodeTypesArray.length;i++){
+		
+		nodetype = Model.nodeTypesArray[i];
+		
+		ddData.push({
+			text: Model.nodeTypes[nodetype].text,
+			value: Model.nodeTypes[nodetype].value,
+		    selected:false,
+			imageSrc: Model.nodeTypes[nodetype].image
+		});
+	}
+
+
+	$('#newcatnodetype').ddTslick('destroy');
+
+
+	$('#newcatnodetype').ddTslick({
+
+		data: ddData,
+		selectText: tx_new_cat_thought,
+		width: 260,
+		height:25*(Model.nodeTypesArray.length),
+		background: "#fff",
+		onSelected: function(selectedData){
+		    selectednewcatnodetype = ddData[selectedData.selectedIndex].value;
+// -1 because the arrays (the vote is the position in the array) start in 0 [see advevalnode(advevalnodevote)]
+		    advevalnodevote = selectednewcatnodetype-1;
+		}
+	});
+
+		
+}
+
+function prepareadvevallinktype(){
+
+    var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+
+    advevallinkvote = "";
+
+	var ddData=[];
+
+// "No relation" is not shown
+	for (var i=0;i<Model.linkTypesArray.length-1;i++){
+		
+		linktype = Model.linkTypesArray[i];
+		
+		ddData.push({
+			text: Model.linkTypes[linktype].text,
+			value: Model.linkTypes[linktype].value,
+		    selected:false,
+			imageSrc: Model.linkTypes[linktype].image
+		});
+	}
+
+
+	$('#newcatlinktype').ddTslick('destroy');
+
+
+// "No relation" is not shown
+	$('#newcatlinktype').ddTslick({
+
+		data: ddData,
+		selectText: tx_new_cat_link,
+		width: 260,
+		height:25*(Model.linkTypesArray.length-1),
+		background: "#fff",
+		onSelected: function(selectedData){
+		    selectednewcatlinktype = ddData[selectedData.selectedIndex].value;
+// -1 because the arrays (the vote is the position in the array) start in 0 [see advevallink(advevallinkvote)]
+		    advevallinkvote = selectednewcatlinktype-1;
+		}
+	});
+		
+}
+
+
+
+function prepareconnectlinktype(selectedtype){
 
 	var PRES = Visualisations.current().presentation;
-	
+	 var selected = selectedtype || 0; 
+    
 	var ddData=[];
 	
 	for (var i=0;i<Model.linkConnectTypesArray.length;i++){
@@ -2455,7 +3086,7 @@ function prepareconnectlinktype(){
 		ddData.push({
 			text: Model.linkTypes[linktype].text,
 			value: Model.linkTypes[linktype].value,
-			selected:false,
+			selected:(Model.linkTypes[linktype].value==selected),
 			imageSrc: Model.linkTypes[linktype].image
 		});
 	}
@@ -2465,7 +3096,7 @@ function prepareconnectlinktype(){
 	$('#connectlinktype').ddTslick({
 
 		data: ddData,
-		selectText: "Type of relation",
+		selectText: tx_type_relation,
 		width: 135,
 		height:25*(Model.linkConnectTypesArray.length),
 		background: "#fff",
@@ -2483,22 +3114,22 @@ function showconnecttext(){
 
 	switch (selectedconnectlinktype){
 		case 1:
-			str = "Select a thought that is related with this one"
+			str = tx_select_related_thought;
 			break;
 		case 2:
-			str = "Select a thought that agrees with this one"
+			str = tx_select_agree_thought;
 			break;
 		case 3:
-			str = "Select a thought that disagrees with this one"
+			str = tx_select_disagree_thought;
 			break;
 		case 4:
-			str = "Select a thought that is a consequence of this one"
+			str = tx_select_conseq_thought;
 			break;
 		case 5:
-			str = "Select a thought that is an alternative to this one"
+			str = tx_select_alternat_thought;
 			break;
 		case 6:
-			str = "Select a thought that is equivalent to this one"
+			str = tx_select_equiv_thought;
 			break;
 	}
 	
@@ -2515,6 +3146,7 @@ function mouseup(){}
 function searchhash(elements, objective){
     for (i=0;i<elements.length;i++){
 	if (elements[i].hash == objective){return i;}
+	if (i == elements.length-1){return -1;}
     };
 }
 
@@ -2557,53 +3189,56 @@ function changetutorialpanel(){
 	
 	var text= "";
 	var textclose = "<div id='tutorial_panel_close' class='tutorial_panel_close noselect' onclick='closetutorialpanel()'>&times</div>";
-	var textclick = "<div class='tutorial_panel_click'>(Click to continue)</div>";
+	var textclick = "<div class='tutorial_panel_click'>("+tx_click_cont+")</div>";
 	
 	switch (ABSTR.tutorialstep){
 	
 		case -1:
-		text = "Welcome to Incoma!  &nbsp;&nbsp; ヽ(^。^)ノ ヽ(^。^)ノ  <br>&nbsp;&nbsp;&nbsp;&nbsp; (ﾉ^ ヮ^)ﾉ *:･ﾟ✧ <br><br>In this panel you will see a tutorial to learn how to use it. At any moment you can close it, or click on it to advance. <i>You can play with this sandbox freely! (changes will not be saved)</i>";
+		text = tx_tut1+"  &nbsp;&nbsp; ヽ(^。^)ノ ヽ(^。^)ノ  <br>&nbsp;&nbsp;&nbsp;&nbsp; (ﾉ^ ヮ^)ﾉ *:･ﾟ✧ <br><br>"+tx_tut2+" <i>"+tx_tut3+"</i>";
 		break;
 		
 		
 		case 0:
-		text = "The graph you see in the middle of the screen is a conversation. The circles represent thoughts and the lines represent the relationships among them. <br><br>This conversation entitled 'Sandbox' is just an example of a typical conversation. You can play freely with it, the changes you make will not be saved as they are in the rest of conversations." 
+	        text = tx_tut4+" <br><br>"+tx_tut5;
 		break;
 	
 		
 		case 1:
-		text = "To read the different thoughts, you can pass your mouse over the circles. In the right  panel, you will see the thought, together with some info: who created it, when was created, the type of thought, and the rating given to it by other people.";
+		text = tx_tut6;
 		
 		PRES.liveAttributes.mouseover(Model.model.nodes[0]);
 		ABSTR.overnode = false;
-		$("#right_bar").css({"border-left": "solid 2px red", "border-bottom": "solid 2px red"});
+		$("#right_bar").css({"border-left": "solid 1px red", "border-bottom": "solid 1px red"});
 		break;
 		
 		
 		case 2:
-		text = "The color of the circles indicates what type of thought they contain (a general thought, a question, a proposal, some info...), and the color of the lines indicates the type of relation that exist between the circles they connect (there could be agreement or disagreement between them, they could be equivalent, one could be the consequence of the other,...)";
+		text = tx_tut7;
 
 		$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
 		break;
 		
 		
 		case 3:
-		text = "You can see the meaning of all the colors in the legend panel at the bottom of the screen. You  can also click in their names to hide or show a specific type of thought or connection.<br><br>By default the size of circles and links depends on their evaluations. If you want to see all of them with the same size then click on the word 'Evaluations' under the Size section.";
+		text = tx_tut8+"<br><br>"+tx_tut9;
 		
+	    if (!PRES.showfilters) hideshowfilters();
 		$("#lower_bar").css("border", "solid 2px red");
+            
 		break;
 		
 
 		case 4:
-		text = "By clicking on 'Show tags', a line of text will appear above each circle showing its tags (automatically generated among the most used words in all the conversation). By clicking on 'Show summaries' the text will show the summary of the node, either the one created by the user who made that circle or one with the beggining of the comment.<br><br> If you want to hide the legend, click on the 'Hide' button of its right corner.";
+		text = tx_tut10+"<br><br> "+tx_tut11;
 		
 		break;
 
 		
 		case 5:
-		text = "To interact with a thought, just click on its circle, and in the right panel will appear new buttons that allow you to reply to this thought ('Reply'), to connect it with another thought ('Connect'), and to evaluate it (green and red buttons).";
-		
-		$("#lower_bar").css("border", "solid 1px rgba(51,51,153, 0.6)");
+		text = tx_tut12;
+            
+	    if (PRES.showfilters) hideshowfilters();
+		$("#lower_bar").css({"border": "solid 1px #bbb", "border-bottom": "none"});
 		
 		$("#right_bar").css({"border-left": "solid 2px red", "border-bottom": "solid 2px red"});
 		PRES.liveAttributes.click(Model.model.nodes[0]);
@@ -2611,18 +3246,18 @@ function changetutorialpanel(){
 		
 		
 		case 6:
-		text = "When replying, you can add information about your reply, so you help everybody to follow the conversation easily.";
+		text = tx_tut13;
 		
 	
 		$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
-		showreplypanel();
+		showreplypanel(false);
 		$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
 		$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");	
 		break;
 		
 		
 		case 7:
-		text = "First, you have a pull-down menu to select the type of reply you are doing: is it question? a proposal? information (instead of an opinion)?). <br>Second, you have another pull-down menu to select the type of relation between what you write and the thought you clicked. Depending on the type of thought you will find certain types of possible connections"
+	        text = tx_tut14+" <br>"+tx_tut15;
 		
 		$("#tdnodetype").css("border", "solid 2px red");
 		$("#tdlinktype").css("border", "solid 2px red");
@@ -2631,34 +3266,31 @@ function changetutorialpanel(){
 		
 		
 		case 8:
-		text = "Below these menus you can write your thought, a summary of your thought (if you want), and your name. When you finish click on 'Save' and see how it appears in the graph! <br><br>If you want to write a thought not connected to any other, select 'No relation' in the menu 'type of connection'.";
+		text = tx_tut16+" <br><br>"+tx_tut17;
 		
 		$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
 		$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");		
 		
 		$("#replybox").css("border-color", "red");
 		$("#replyboxsum").css("border-color", "red");
-		$("#namebox2").css("border-color", "red");
 		break;
 		
 		
 		case 9:
-		text = "If you think two thoughts have a relationship between them and you want to show it in the conversation, select one of them and click on the button 'Connect'. Chose the type of relation in the menu and click on the other thought. Take into account that the order matters with the relation 'Consequence' (one of the thoughts is the consequence of the other, but not the other way around).";
+		text = tx_tut18;
 		
 		$("#replybox").css("border-color", "#bbb");
 		$("#replyboxsum").css("border-color", "#bbb");
-		$("#namebox2").css("border-color", "#bbb");
 		
-		showcreatelink();
+		showcreatelink(false);
 		$("#tdconnect").css("border", "solid 2px red");
 		break;
 		
 		
 		case 10:
-		text = "To evaluate a thought click it, write your name on the 'Name' box on the top of the screen (if you haven't introduced it yet anywhere), and then click on the green and red buttons below the thought. The number of positive and negative votes of each thought is shown in the buttons.";
+		text = tx_tut19;
 		
 		$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");
-		$("#headerNamebox").css("border", "solid 2px red");
 		$("#nodepos").css("border", "solid 2px red");
 		$("#nodeneg").css("border", "solid 2px red");
 		cancellink();
@@ -2666,20 +3298,19 @@ function changetutorialpanel(){
 		
 		
 		case 11:
-		text = "To deselect a circle, just click on any empty part of the screen. <br><br>You  can click and drag with your  mouse to move around the conversation,  and zoom in and out using the  buttons in the top left side of the  window, or using your mousewheel. Is possible also to drag circles if you want to reposition them, and double-clicking a circle will center the view on it.";
+		text = tx_tut20+"<br><br>"+tx_tut21;
 		
 		ABSTR.overnode = false;
 		PRES.liveAttributes.backgroundclick();
 		
 		$("#left_bar").css("border-color", "red");
-		$("#headerNamebox").css("border", "solid thin #ddd");
 		$("#nodepos").css("border", "solid 2px rgba(0,0,0,0)");
 		$("#nodeneg").css("border", "solid 2px rgba(0,0,0,0)");
 		break;
 
 		
 		case 12: 
-		text = "Play around with the Sandbox until you feel yourself comfortable with the use of Incoma. Once you see how everything works, you can create a new conversation or join an existing one. For this, click on the menu and then choose the option you want: 'Create' or 'Participate'. Remember that those other conversations, different from the Sandbox, will be saved or modified in the database.";
+		text = tx_tut22;
 		
 		$("#left_bar").css("border-color", "rgba(0,0,0,0)");
 		$("#headerMenu").css("color", "#f53d3d");
@@ -2687,7 +3318,7 @@ function changetutorialpanel(){
 		
 		
 		case 13:
-		text = "You can find more information in the Incoma project blog blog.incoma.org. <br><br>If you have questions, suggestions, if you find a bug, want to share something nice with us, or anything else, please write us to incomaproject.contact@gmail.com";
+		text = tx_tut23+" <br><br>"+tx_tut24;
 		
 		$("#headerMenu").css("color", "#ddd");
 		$("#headerUrl").css("color", "#f53d3d");
@@ -2695,10 +3326,10 @@ function changetutorialpanel(){
 	
 	
 		case 14:
-		text = "Remember that Incoma is FREE SOFTWARE (free as in Braveheart). So it is yours and from the rest of the humanity. Because we love the 99%.<br><br>Enjoy!";
+		text = tx_tut25+"<br><br>"+tx_tut26;
 		
 		$("#headerUrl").css("color", "#ddd");
-		textclick = "<div class='tutorial_panel_click'>(Click to finish)</div>";
+		textclick = "<div class='tutorial_panel_click'>("+tx_tut27+")</div>";
 		break;		
 		
 		
@@ -2737,14 +3368,13 @@ function closetutorialpanel(){
 		$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");		
 		$("#replybox").css("border-color", "#bbb");
 		$("#replyboxsum").css("border-color", "#bbb");
-		$("#namebox2").css("border-color", "#bbb");
 	}
 	
 	//closes the tutorial panel
-	$("#tutorial_panel").html("").animate({height: 20},300).animate({width: 92},300);
+	$("#tutorial_panel").html("").animate({height: 20},300).animate({width: 100},300);
 	
 	setTimeout(function(){
-		$("#tutorial_panel").css({"font-size":"11pt", "cursor":"pointer"}).html("Watch tutorial");
+		$("#tutorial_panel").css({"font-size":"11pt", "cursor":"pointer", "text-align":"center"}).html(tx_watch_tutorial);
 		$("#tutorial_panel")[0].onclick = opentutorialpanel;
 	},700);
 	
@@ -2757,7 +3387,7 @@ function opentutorialpanel(){
     var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
 	
-	$("#tutorial_panel").html("").css({"font-size":tutorialfont, "cursor":"default"}).animate({width: searchCssProp('.tutorial_panel','width')},300).animate({height: searchCssProp('.tutorial_panel','height')},300);
+	$("#tutorial_panel").html("").css({"font-size":tutorialfont, "cursor":"default", "text-align":"left"}).animate({width: searchCssProp('.tutorial_panel','width')},300).animate({height: searchCssProp('.tutorial_panel','height')},300);
 	
 	ABSTR.tutorialopened = true;
 	ABSTR.tutorialstep = 0;
@@ -2821,6 +3451,189 @@ function closelanguagepanel(){
 	$('#language_panel').fadeOut(300);
 }	
 
+
+function openadvevalnodepanel(){
+
+    prepareadvevalnodetype();
+
+    var ABSTR = Visualisations.current().abstraction;
+    ABSTR.freezelink = true;
+    
+
+	if (ABSTR.creatinglink){
+		cancellink();
+	}
+	
+	if (ABSTR.replying){
+		hidereplypanel();
+	}
+
+	if (ABSTR.advevalnode){
+		advevalnodepanelcancel();
+	    return;
+	}
+
+	ABSTR.advevalnode = true;
+
+	var width = 425;
+	var height = 175;
+	
+	$('#advevalnode_panel').css({ 
+		"width": width,
+		"height": height,
+		"top": ($("#right_bar").height()-height+55), 
+		"left": ($(window).width()-$('#right_bar').width()-width-65)
+	});
+	
+	$('#advevalnode_panel').fadeIn(200);
+//    $("#_textarea").focus();
+}
+
+
+function openadvevallinkpanel(){
+
+    prepareadvevallinktype();
+
+    var ABSTR = Visualisations.current().abstraction;
+    ABSTR.freezelink = true;
+    
+
+	if (ABSTR.creatinglink){
+		cancellink();
+	}
+	
+	if (ABSTR.advevallink){
+		advevallinkpanelcancel();
+	    return;
+	}
+
+	ABSTR.advevallink = true;
+
+	var width = 425;
+	var height = 175;
+	
+	$('#advevallink_panel').css({ 
+		"width": width,
+		"height": height,
+		"top": ($("#right_bar").height()-height+55), 
+		"left": ($(window).width()-$('#right_bar').width()-width-65)
+	});
+	
+	$('#advevallink_panel').fadeIn(200);
+//    $("#_textarea").focus();
+}
+
+
+function advevalnodepanelok(){
+
+
+	if(advevalnodevote === ""){
+		var alert = document.getElementById("advevalalert");
+		alert.innerHTML = tx_select_first_cat;
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+		return;
+	}
+
+       advevalnode(advevalnodevote);
+
+//		var alert = document.getElementById("advevalalert");
+//		alert.innerHTML = "Nueva categoria propuesta: " + advevalnodevote + " ";
+//		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+
+}	
+
+function advevalnodepanelcancel(){
+    advevalnodevote = "";
+    var ABSTR = Visualisations.current().abstraction;
+    ABSTR.freezelink = false;
+	ABSTR.advevalnode = false;
+	$('#advevalnode_panel').fadeOut(100);
+}	
+
+function advevallinkpanelok(){
+
+	if(advevallinkvote === ""){
+		var alert = document.getElementById("advevalalertlink");
+		alert.innerHTML = tx_select_first_cat;
+		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+		return;
+	}
+
+    advevallink(advevallinkvote);
+
+//		var alert = document.getElementById("advevalalertlink");
+//		alert.innerHTML = "Nueva categoria propuesta: " + advevallinkvote + " ";
+//		setTimeout(function(){alert.innerHTML = "&nbsp";},2000);
+
+}	
+
+function advevallinkpanelcancel(){
+    advevallinkvote = "";
+    var ABSTR = Visualisations.current().abstraction;
+    ABSTR.freezelink = false;
+	ABSTR.advevallink = false;
+	$('#advevallink_panel').fadeOut(100);
+}	
+
+
+function opennamepanel(){
+    
+    var ABSTR = Visualisations.current().abstraction;
+    ABSTR.freezelink = true;
+    
+	var width = 350;
+	var height = 120;
+	
+	$('#name_panel').css({ 
+		"width": width,
+		"height": height,
+		"top": ($("#right_bar").height()-height+10), 
+		"left": ($(window).width()-$('#right_bar').width()-width-65)
+	});
+	
+	$('#name_panel').fadeIn(200);
+    $("#name_textarea").focus();
+}
+
+function namepanelok(){
+	var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+    
+    ABSTR.freezelink = false;
+    
+    author = $("#name_textarea").val().replace(/[\W]/g,'');
+
+	$('#name_panel').fadeOut(100);
+    
+    switch(ABSTR.namepanelcaller){
+        case ("evalnode"):
+            evalnode(ABSTR.namepanelparameter);
+            break;
+        case ("evallink"):
+            evallink(ABSTR.namepanelparameter);
+            break;
+        case ("createnode"):
+            createnode();
+            break;
+        case ("savelink"):
+            savelink(ABSTR.namepanelparameter);
+            break;
+        case ("advevalnode"):
+            advevalnode(ABSTR.namepanelparameter);
+            break;
+        case ("advevallink"):
+            advevallink(ABSTR.namepanelparameter);
+            break;
+    }
+    
+}	
+
+function namepanelcancel(){
+    var ABSTR = Visualisations.current().abstraction;
+    ABSTR.freezelink = false;
+	$('#name_panel').fadeOut(100);
+}	
+
 function opennoconversationpanel(){
 	var width = 300;
 	var height = 100;
@@ -2847,7 +3660,7 @@ function definerenormalization(){
 	var maxnodesize = 30;
 	var minlinksize = 1;
 	var maxlinksize = 9;
-	var variation = 5; //sets the variation of the sizes, they are bigger when 'variation' is closer to zero.
+	var variation = 3; //sets the variation of the sizes, they are bigger when 'variation' is closer to zero.
 	
 	// var evalminlimit = -10;
 	// var evalmaxlimit = 15;
@@ -2882,39 +3695,59 @@ function definerenormalization(){
 
 }
 
-function showevolution(){
+
+function evolutionplay(){
 
 	var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
 	
-	ABSTR.showingevolution = !ABSTR.showingevolution;
 	
-	if (!ABSTR.showingevolution){
-		$("#controlevolution").slideUp(200);
-		$("#showevolution").html("Show evolution");
-		clearInterval(addone);
+	
+	if (ABSTR.showingevolution){
+		$("#evolutionplay").html("&#9654;");
+        $("#evolutionpause").hide();
+		clearTimeout(addone);
 		PRES.evolutionvelocity = 9000;
+        ABSTR.evolutionstop = true;
 		addbytime(); 
 		
 	} else {
-		$("#controlevolution").slideDown(200);
 		PRES.drawexplosions = false;
 		ABSTR.evolutionpause = false;
 		ABSTR.letmouseover = false;
 		PRES.force.friction(0.7);
-		PRES.force.charge(-500);
-		PRES.force.linkStrength(0.5);
+		//PRES.force.charge(-500);
+		//PRES.force.linkStrength(0.5);
 		$("#evolutionpause").html("ll");
+        $("#evolutionplay").html("&#8718;");
+        $("#evolutionpause").show();
+		hidelinkselect();
 		
 		startevolution();
 	}
+    
+    ABSTR.showingevolution = !ABSTR.showingevolution;
+}
 
+function bigevolutionclick(){
+    var ABSTR = Visualisations.current().abstraction;
+    if (!ABSTR.showingevolution && !ABSTR.evolutionstop) evolutionplay();
 }
 
 
 function startevolution(){
     var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
+    
+    allnodes = PRES.force.nodes().slice();
+    alllinks = PRES.force.links().slice();
+	
+	allnodes.sort(function(a,b){return a.time-b.time;});
+	alllinks.sort(function(a,b){return a.time-b.time;});
+	
+	danodes = [];
+	dalinks = [];
+    
 	
 	PRES.force.nodes([]);
 	PRES.force.links([]);
@@ -2935,15 +3768,11 @@ function startevolution(){
         .data("")
         .exit().remove();
 		
-	allnodes = Model.model.nodes.slice();
-	alllinks = Model.model.links.slice();
-	
-	allnodes.sort(function(a,b){a.time-b.time;});
-	alllinks.sort(function(a,b){a.time-b.time;});
-	
-	danodes = [];
-	dalinks = [];
-	
+	//allnodes = Model.model.nodes.slice();
+	//alllinks = Model.model.links.slice();
+    
+    hidenodetexts();
+	PRES.liveAttributes.backgroundclick();
 	addbytime(); 
 	
 }
@@ -2953,83 +3782,112 @@ function addbytime(){
 	var ABSTR = Visualisations.current().abstraction;
     var PRES = Visualisations.current().presentation;
 	
+    updatetimevisualization();
+
+	if (PRES.showingtags){
+	    showtags();
+	};
+	if (PRES.showingauthors){
+	    showauthors();
+	};
+	if (PRES.showingsums){
+	    showsums();
+	};
+
+
 	if (allnodes.length> 0 && alllinks.length> 0){
 	
 		if ((allnodes[0].time < alllinks[0].time && allnodes[0].seed > 0)||(ABSTR.youarenotalone)){
-			danodes.push(allnodes[0]);
-			PRES.force.nodes(danodes);
-			drawnewnodes();
-			if(allnodes[0].seed>0){addseed(allnodes[0]);}
-			allnodes.shift();
-		} else {
-			dalinks.push(alllinks[0]);
-			PRES.force.links(dalinks);
-			drawnewlinks();		
-			if (alllinks[0].direct == 0){
-				danodes.push(allnodes[0]);
-				PRES.force.nodes(danodes);
-				drawnewnodes();
-				if(allnodes[0].seed>0){addseed(allnodes[0]);}
-				allnodes.shift();
-			}
-			alllinks.shift();
-		}
-	}else if(allnodes.length > 0){
-			danodes.push(allnodes[0]);
-			PRES.force.nodes(danodes);
-			drawnewnodes();
-			if (allnodes[0].seed > 0){addseed(allnodes[0]);}
-			allnodes.shift();
-	} else if(alllinks.length > 0){
-			dalinks.push(alllinks[0]);
-			PRES.force.links(dalinks);
-			drawnewlinks();		
-			alllinks.shift();
+            evolutionaddnode();
+		}else{
+            var directlink = alllinks[0].direct;
+            evolutionaddlink();
+			if (directlink == 0) evolutionaddnode();
+            if (directlink == 1 && ABSTR.treeview){
+                addbytime();
+                return;
+            }
+        }
+        
+    }else if(allnodes.length > 0){
+        evolutionaddnode();
+    }else if(alllinks.length > 0){
+        evolutionaddlink();
+        
 	} else {
-		clearInterval(addone);
-		ABSTR.showingevolution = false;
-		ABSTR.youarenotalone = false;
-		ABSTR.letmouseover = true;
-		PRES.evolutionvelocity = 1;
-		$("#evolvelocity").html("");
-		$("#showevolution").html("Show evolution");
-		$("#controlevolution").slideUp(200);
-		
-		PRES.force.friction(0.85);
-	   	PRES.force.charge(-500);
-		PRES.force.linkStrength(1);
-		PRES.force.gravity(0.1);
-		PRES.force.start();
-		PRES.drawexplosions = true;
-		
-		Model.model.nodes = PRES.force.nodes();
-		Model.model.links = PRES.force.links();
-		
-		$("#svg").delay(800).fadeIn(500);
+        evolutionend();
 		return;
 	}
 	
 	addone = setTimeout("addbytime()",250/PRES.evolutionvelocity); 
+
 }
 
+function evolutionaddnode(){
+    var PRES = Visualisations.current().presentation;
+    
+    danodes.push(allnodes[0]);
+    PRES.force.nodes(danodes);
+    drawnewnodes();
+    if (allnodes[0].seed > 0){addseed(allnodes[0]);}
+    allnodes.shift();    
+}
+
+function evolutionaddlink(){
+    var PRES = Visualisations.current().presentation;
+    
+    dalinks.push(alllinks[0]);
+    PRES.force.links(dalinks);
+    drawnewlinks();		
+    alllinks.shift();
+}
 
 function evolutionpause(){
 	
 	var PRES = Visualisations.current().presentation;
 	var ABSTR = Visualisations.current().abstraction;
-
-	ABSTR.evolutionpause = !ABSTR.evolutionpause;
-	
-	if (ABSTR.evolutionpause){
-		clearInterval(addone);
-		$("#evolutionpause").html("▶");
+    
+	if (! ABSTR.evolutionpause){
+		clearTimeout(addone);
+		$("#evolutionpause").html("&#9654;");
 	} else {
 		addbytime();
 		$("#evolutionpause").html("ll");
 	}
+    
+    ABSTR.evolutionpause = !ABSTR.evolutionpause;
 }
 
-function evolutionfast(){
+function evolutionend(){
+    
+	var PRES = Visualisations.current().presentation;
+	var ABSTR = Visualisations.current().abstraction;
+    
+    clearInterval(addone);
+    ABSTR.showingevolution = false;
+    ABSTR.evolutionstop = false;
+    ABSTR.evolutionpause = false;
+    ABSTR.youarenotalone = false;
+    ABSTR.letmouseover = true;
+    PRES.evolutionvelocity = 1;
+    $("#evolvelocity").html("");
+    $("#evolutionplay").html("&#9654;");
+    $("#evolutionpause").hide();
+    
+    PRES.force.friction(0.85);
+    PRES.force.charge(-500);
+    //PRES.force.linkStrength(1);
+    PRES.force.gravity(0.1);
+    PRES.force.start();
+    PRES.drawexplosions = true;
+    
+    //Model.model.nodes = PRES.force.nodes();
+    //Model.model.links = PRES.force.links();
+    
+    $("#svg").delay(800).fadeIn(500);    
+}
+
+/*function evolutionfast(){
 	var PRES = Visualisations.current().presentation;
 
 	if (PRES.evolutionvelocity < 8){PRES.evolutionvelocity *= 2;}
@@ -3046,7 +3904,6 @@ function evolutionfast(){
 	}
 }
 
-
 function evolutionslow(){
 	var PRES = Visualisations.current().presentation;
 
@@ -3057,7 +3914,7 @@ function evolutionslow(){
 	if (PRES.evolutionvelocity != 1){str="(x"+PRES.evolutionvelocity+")";}
 	
 	$("#evolvelocity").html(str);
-}
+}*/
 
 
 
@@ -3076,27 +3933,44 @@ function findstringsontext (strings, text) {
 
 }
 
-
-function showtexts(){
+function filtershowtags(){
 
     var PRES = Visualisations.current().presentation;
-	PRES.showingtexts = !PRES.showingtexts; 
-
 
 	if (PRES.showingsums){
-	hidesums();	
+	filtershowsums();	
 	}
 
+	if (PRES.showingauthors){
+	filtershowauthors();	
+	}
+
+	PRES.showingtags = !PRES.showingtags; 
+
+	if (PRES.showingtags){
+	    $("#showtags").css("color","#000");
+	    showtags();
+	} else {
+	    $("#showtags").css("color","#777");
+	    hidenodetexts();
+	}
+
+}
+
+
+function showtags(){
+
+    var PRES = Visualisations.current().presentation;
+
 	var textdata = [];
-	
-	Model.model.nodes.forEach(function(d, i) {		
+
+	//Model.model.nodes.forEach(function(d, i) {		
+    PRES.force.nodes().forEach(function(d, i) {		
 
 			textdata.push({node:d, text: findstringsontext(Model.tags, d.content)});
 	});
 		
 		
-	if (PRES.showingtexts){
-	
 		PRES.svg.selectAll("text")
 			.data(textdata)
 			.enter().append("text")
@@ -3106,52 +3980,95 @@ function showtexts(){
 		    .style("font-size", "12px")
 			.attr("text-anchor", "middle")
 			.style("fill-opacity", function(d) {return PRES.liveAttributes.nodeFillOpacity(d.node);})
-			.style("fill", "#333");
-		
-		$("#showtexts").css("color","#000");
-	
-	} else {
-	
-		PRES.svg.selectAll("text")
-			.data("")
-			.exit().remove();
-			
-		$("#showtexts").css("color","#777");
-	}
+			.style("fill", "#333");	
 	
 }
 
 
-
-function hidetexts(){
+function filtershowauthors(){
 
     var PRES = Visualisations.current().presentation;
 
-	if (PRES.showingtexts){
-	PRES.showingtexts = !PRES.showingtexts; 
-	
-		PRES.svg.selectAll("text")
-			.data("")
-			.exit().remove();
-			
-		$("#showtexts").css("color","#777");
+	if (PRES.showingsums){
+	filtershowsums();	
 	}
-	
+
+	if (PRES.showingtags){
+	filtershowtags();	
+	}
+
+	PRES.showingauthors = !PRES.showingauthors; 
+
+	if (PRES.showingauthors){
+	    $("#showauthors").css("color","#000");
+	    showauthors();
+	} else {
+	    $("#showauthors").css("color","#777");
+	    hidenodetexts();
+	}
+
 }
 
+function showauthors(){
+
+    var PRES = Visualisations.current().presentation;
+
+	var textdata3 = [];
+	
+//	Model.model.nodes.forEach(function(d, i) {		
+    PRES.force.nodes().forEach(function(d, i) {		
+
+			textdata3.push({node:d});
+	});
+		
+		
+		PRES.svg.selectAll("text")
+			.data(textdata3)
+			.enter().append("text")
+			.text( function (d) { return d.node.author;})
+			.attr("x", function(d) { return d.node.x; })
+			.attr("y", function(d) { return (parseInt(d.node.y)-parseInt(PRES.liveAttributes.nodeRadius(d.node))-1); })
+		    .style("font-size", "12px")
+			.attr("text-anchor", "middle")
+			.style("fill-opacity", function(d) {return PRES.liveAttributes.nodeFillOpacity(d.node);})
+			.style("fill", "#333");
+		
+}
+
+
+function filtershowsums(){
+
+    var PRES = Visualisations.current().presentation;
+
+	if (PRES.showingtags){
+	filtershowtags();	
+	}
+
+	if (PRES.showingauthors){
+	filtershowauthors();	
+	}
+
+	PRES.showingsums = !PRES.showingsums; 
+
+	if (PRES.showingsums){
+	    $("#showsums").css("color","#000");
+	    showsums();
+	} else {
+	    $("#showsums").css("color","#777");
+	    hidenodetexts();
+	}
+
+}
 
 function showsums(){
 
     var PRES = Visualisations.current().presentation;
-	PRES.showingsums = !PRES.showingsums; 
 
-	if (PRES.showingtexts){
-	hidetexts();	
-	}
-		
 	var textdata2 = [];
 	
-	Model.model.nodes.forEach(function(d, i) {	
+//	Model.model.nodes.forEach(function(d, i) {	
+    PRES.force.nodes().forEach(function(d, i) {		
+
 			//if a node has no summary, an automatic summary is created with the 60 first character of its content
 			var fontcolor = "#000";
 			var fontstyle = "normal";
@@ -3174,7 +4091,7 @@ function showsums(){
 	});
 		
 	
-	if (PRES.showingsums){
+
 	
 		PRES.svg.selectAll("text")
 		    .data(textdata2)
@@ -3186,45 +4103,41 @@ function showsums(){
 			.style("font-size", "10px")
 			.style("font-style", function(d) { return d.fontstyle; })
 			.style("fill-opacity", function(d) {return PRES.liveAttributes.nodeFillOpacity(d.node);})
-			.style("fill", function(d) { return d.fontcolor; });
-		
-		$("#showsums").css("color","#000");
-	
-	} else {
-	
-		PRES.svg.selectAll("text")
-			.data("")
-			.exit().remove();
-			
-		$("#showsums").css("color","#777");
-	}
-	
+			.style("fill", function(d) { return d.fontcolor; });	
+
+
 }
 
-function hidesums(){
+function hidenodetexts(){
 
     var PRES = Visualisations.current().presentation;
-
-
-	if (PRES.showingsums){
-	PRES.showingsums = !PRES.showingsums; 
 	
 		PRES.svg.selectAll("text")
 			.data("")
-			.exit().remove();
-			
-		$("#showsums").css("color","#777");
-	}
-	
+			.exit().remove();			
 }
 
+
+//TIMELINE VISUALIZATION
 
 function changevisualization(){
 
 	var ABSTR = Visualisations.current().abstraction;
 	var PRES = Visualisations.current().presentation;
-	
-	ABSTR.timevisualization = !ABSTR.timevisualization;
+
+        var nodes = PRES.force.nodes();
+
+	    ABSTR.timevisualization = !ABSTR.timevisualization;
+
+	    if (ABSTR.advevalnode){
+		advevalnodepanelcancel();
+	    };
+	    if (ABSTR.advevallink){
+		advevallinkpanelcancel();
+	    };
+	    ABSTR.advevalnode = false;
+	    ABSTR.advevallink = false;
+
 	
 	//change right_bar properties when going back to original visualization
 	
@@ -3235,6 +4148,7 @@ function changevisualization(){
 		$(".right_bar").resizable( "destroy" )
 		
 		$("#right_bar").html(rightbarhtml);
+		$("#rbexpand").css("margin-right", "4px");
 		
 		$(".right_bar").resizable({
 			handles: 'w',
@@ -3273,6 +4187,7 @@ function changevisualization(){
 	$(".right_bar").resizable( "destroy" )
 	
 	$("#right_bar").html(timevisrightbarhtml);
+	$("#rbexpand").css("margin-right", "8px");
 	
 	$(".right_bar").resizable({
 		handles: 'w',
@@ -3299,8 +4214,89 @@ function changevisualization(){
 	var html = "<br>";
 	
 	//array of all the nodes shorted by creation time
-	timednodes = Model.model.nodes;
-	timednodes.sort(function(a,b){a.time-b.time;});	
+//	timednodes = Model.model.nodes;
+	timednodes = nodes;
+	timednodes.sort(function(a,b){return a.time-b.time;});	
+	
+	//add divs with the node contents to the right_bar
+	
+	for (var i=0; i< timednodes.length; i++){
+		
+		var color = d3.rgb(PRES.nodecolor[timednodes[i].type]).darker(0).toString();
+		var legend = timednodes[i].author+' - '+timeAgo(timednodes[i].time);
+		
+		html += '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div>'; 
+		
+		html += '<div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 1px'+color+'" onclick="clickdivcontent(this.id);" onmouseover="overdivcontent(this.id);" onmouseout="outdivcontent(this.id);"></div>'; 
+		
+		html += '<div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
+	}
+	
+	$("#timevisdiv").html(html+"<br><br><br> <br><br><br><br>");
+	
+	for (var i=0; i< timednodes.length; i++){
+	
+		var content = URLlinks(nl2br(timednodes[i].content));	
+		$("#nodecontent"+i).html(content);
+		
+	//	if ($("#nodecontent"+i).height()>200){$("#nodecontent"+i).height(200)}; //maximun height (thought still resizable)
+	}
+	
+	if (ABSTR.clickednode !== "" && !ABSTR.showingevolution){
+		var index = $.inArray(ABSTR.clickednode, timednodes);
+		selectdivcontent(index);
+		
+		$('#timevisdiv').scrollTop($('#timevisdiv').scrollTop()+$("#nodecontent"+index).position().top-60);
+		
+	} else {
+		$('#timevisdiv').scrollTop(0);
+	}
+	
+}
+
+function updatetimevisualization(){
+
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+
+        var nodes = PRES.force.nodes();
+
+	if (ABSTR.timevisualization){
+		
+	//change right_bar properties when going to time visualization
+
+	$(".right_bar").resizable( "destroy" )
+	
+	$("#right_bar").html(timevisrightbarhtml);
+//	$("#rbexpand").css("margin-right", "8px");
+	
+	$(".right_bar").resizable({
+		handles: 'w',
+		minWidth: 335,
+		resize: function() {
+			$(this).css("left", 0);
+		}
+	});	
+		
+//	$("#right_bar").css({
+//		"width": $("#right_bar").width()+20,
+//		"height": $(window).height()-50,
+//		"overflow": "auto",
+//		"padding": "0px 0px 0px 0px",
+//	});
+	
+	
+//	$("#timevisdiv").css({
+//		"height": $(window).height()-50-53-0,
+//	});	
+	
+	var html = "<br>";
+	
+	//array of all the nodes shorted by creation time
+//	timednodes = Model.model.nodes;
+	timednodes = nodes;
+	timednodes.sort(function(a,b){return a.time-b.time;});	
 	
 	//add divs with the node contents to the right_bar
 	
@@ -3326,7 +4322,7 @@ function changevisualization(){
 	//	if ($("#nodecontent"+i).height()>200){$("#nodecontent"+i).height(200)}; //maximun height (thought still resizable)
 	}
 	
-	if (ABSTR.clickednode !== ""){
+	if (ABSTR.clickednode !== "" && !ABSTR.showingevolution){
 		var index = $.inArray(ABSTR.clickednode, timednodes);
 		selectdivcontent(index);
 		
@@ -3335,8 +4331,13 @@ function changevisualization(){
 	} else {
 		$('#timevisdiv').scrollTop(0);
 	}
+
+	}
 	
 }
+
+
+//TIMELINE INTERACTION
 
 function clickdivcontent (id){
 
@@ -3369,7 +4370,7 @@ function selectdivcontent(index){
 	if (oldindex !== ""){
 		var color = d3.rgb(PRES.nodecolor[timednodes[oldindex].type]).darker(0).toString();
 		$("#nodecontent"+oldindex).css({
-				"border": "solid 2px"+color,
+				"border": "solid 1px"+color,
 		});
 		
 		var oldinteractheight = $("#nodeinteract"+oldindex).height();
@@ -3387,7 +4388,7 @@ function selectdivcontent(index){
 //	$("#"+id).animate({height: $("#"+id)[0].scrollHeight-10},200); //make the div taller, to show all its content without scrollbar
 	
 	$("#"+id).css({
-			"border": "solid 2px"+PRES.bordercolor.clicked,
+			"border": "solid 1px"+PRES.bordercolor.clicked,
 	});
 	
 	$("#nodeinteract"+oldindex).height("24px");
@@ -3414,7 +4415,12 @@ function selectdivcontent(index){
 		.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 		.style("stroke", PRES.liveAttributes.nodeStroke)
 		.style("fill",PRES.liveAttributes.nodeFill);
+		
+	PRES.svg.selectAll(".link")
+		.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
+
 }
+
 
 function overdivcontent (id){
 
@@ -3426,7 +4432,7 @@ function overdivcontent (id){
 	
 	if (oldindex != overindex){
 		$("#"+id).css({
-			"border": "solid 2px"+PRES.bordercolor.over,
+			"border": "solid 1px"+PRES.bordercolor.over,
 		});
 	}
 	
@@ -3440,6 +4446,10 @@ function overdivcontent (id){
 		.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 		.style("stroke", PRES.liveAttributes.nodeStroke)
 		.style("fill",PRES.liveAttributes.nodeFill);
+		
+	PRES.svg.selectAll(".link")
+		.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
+
 	
 	if (ABSTR.creatinglink && selectedconnectlinktype != 0){
 			var x1 = timednodes[oldindex].x,
@@ -3465,7 +4475,7 @@ function outdivcontent(id){
 	if (oldindex != outindex){
 		var color =  d3.rgb(PRES.nodecolor[timednodes[oldoverindex].type]).darker(0).toString();
 		$("#nodecontent"+outindex).css({
-			"border": "solid 2px " + color,
+			"border": "solid 1px " + color,
 		});
 	}
 	
@@ -3475,7 +4485,12 @@ function outdivcontent(id){
 	PRES.svg.selectAll(".node")
 		.style("stroke-width", PRES.liveAttributes.nodeStrokeWidth)
 		.style("stroke", PRES.liveAttributes.nodeStroke);
+		
+	PRES.svg.selectAll(".link")
+		.style("stroke-opacity", PRES.liveAttributes.linkStrokeOpacity);
 }
+
+//END OF TIMELINE VISUALIZATION
 
 
 function egg1(){
@@ -3485,12 +4500,68 @@ function egg1(){
 
 	if (ABSTR.showingevolution){
 		clearInterval(addone);
-		$("#showevolution").html("Show evolution");
-		$("#showevolution").html("You're not alone");
+		//$("#evolutionplay").html("&#9654;");
 		ABSTR.youarenotalone = true;
 		startevolution();
 	}	
+}		
+
+
+function treeview(){ 
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+	
+    ABSTR.treeview = !ABSTR.treeview;
+    
+    if (ABSTR.treeview){
+        PRES.force.linkStrength(function(d){return 1-d.direct;});
+        PRES.svg.selectAll(".link")
+            .attr("marker-start", PRES.liveAttributes.linkArrow)
+            .style("stroke-opacity", function(d){return (d.direct==1) ? 0 : PRES.linkOpacityDefault; });
+        $("#treeview").css("background-image", "url('img/treeicon.png')");
+        $("#treeview").attr("title", tx_show_all_connections);
+    } else {
+        PRES.force
+            //.transition().duration(2000)
+            .linkStrength(0.4);
+        PRES.svg.selectAll(".link")
+            .attr("marker-start", PRES.liveAttributes.linkArrow)
+            .style("stroke-opacity", PRES.linkOpacityDefault );   
+        $("#treeview").css("background-image", "url('img/compicon.png')");
+        $("#treeview").attr("title", tx_show_direct_connections);
+    }
+    
+	PRES.force.start();
+}		
+
+
+function treeviewover(){
+    var ABSTR = Visualisations.current().abstraction;
+    var PRES = Visualisations.current().presentation;
+    
+    if (ABSTR.treeview){
+         $("#treeview").css("background-image", "url('img/compicon.png')");      
+         PRES.svg.selectAll(".link")
+            .style("stroke-opacity", function(d){return (d.direct==1) ? 0.4 : PRES.linkOpacityDefault; });        
+    } else {
+         $("#treeview").css("background-image", "url('img/treeicon.png')");   
+    }
 }			
+
+function treeviewout(){
+    var ABSTR = Visualisations.current().abstraction;
+    var PRES = Visualisations.current().presentation;
+    
+    if (!ABSTR.treeview){
+         $("#treeview").css("background-image", "url('img/compicon.png')");      
+    } else {
+         $("#treeview").css("background-image", "url('img/treeicon.png')");   
+         PRES.svg.selectAll(".link")
+            .style("stroke-opacity", function(d){return (d.direct==1) ? 0 : PRES.linkOpacityDefault; });  
+    }
+}
+
 
 //converts from hex color to rgba color
 function hex2rgb(hex, opacity) {
@@ -3508,7 +4579,7 @@ function hex2rgb(hex, opacity) {
 
 //replace multiple URLs inside a string in html links
 function URLlinks(text) {
-    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9é-ú+&@#\/%?=~_|!:,.;]*[-A-Z0-9é-ú+&@#\/%=~_|])/ig;
     return text.replace(exp,"<a href='$1' target='_blank'>$1</a>");
 }
 
@@ -3529,3 +4600,308 @@ function clearSelection() {
 
 function ZoomOut_Control(VIS, ABSTR, PRES) {};
 // End of var ZoomOut
+
+
+function nodeslider (x){
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+
+	var nodesdifevalarray = Model.model.nodes.map(function(e){return e.evalpos-e.evalneg;});
+
+	var nodesmaxeval = d3.max(nodesdifevalarray);
+	var nodesmineval = d3.min(nodesdifevalarray);
+	
+	nodescutvalue = Math.ceil(nodesmineval + (nodesmaxeval-nodesmineval)*x);
+	
+	if (!ABSTR.loading){
+		if (oldnodescutvalue == nodescutvalue){return;}
+	};
+	
+    if (ABSTR.showingevolution) evolutionend();
+	slidersupdatenodes(nodescutvalue);
+
+	oldnodescutvalue = nodescutvalue;
+}
+
+function linkslider (x){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+
+	var linksdifevalarray = Model.model.links.map(function(e){return e.evalpos-e.evalneg;});
+	
+	var linksmaxeval = d3.max(linksdifevalarray);
+	var linksmineval = d3.min(linksdifevalarray);
+
+	linkscutvalue = Math.ceil(linksmineval + (linksmaxeval-linksmineval)*x);
+	
+	if (!ABSTR.loading){
+		if (oldlinkscutvalue == linkscutvalue){return;}
+	};
+    
+    if (ABSTR.showingevolution) evolutionend();
+    
+	slidersupdatelinks(linkscutvalue);
+
+	oldlinkscutvalue = linkscutvalue;	
+
+}
+
+
+function slidersupdatenodes (nodescutvalue){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+
+    var nodes = Model.model.nodes;
+    var links = Model.model.links;
+
+	remainingnodes = [];
+	remaininglinks = [];
+	
+	
+	nodes.forEach(function(d) {
+		if ((d.evalpos-d.evalneg)>=nodescutvalue){
+			remainingnodes.push(d);
+		};
+	});
+	
+
+	var nodesign = (nodescutvalue>0) ? "+" : "";
+
+	document.getElementById("handle1").innerHTML = nodesign + nodescutvalue;
+	
+	if (ABSTR.loading){return;}
+	
+	PRES.force.nodes(remainingnodes);
+
+	PRES.drawexplosions = false;
+	PRES.elasticdraw = false;
+	
+	PRES.svg.selectAll(".node")
+		.data("")
+		.exit().remove();	
+
+	PRES.svg.selectAll(".seed")
+		.data("")
+		.exit().remove();
+
+	if (PRES.showingauthors || PRES.showingtags || PRES.showingsums){
+	    hidenodetexts();
+	};
+
+	drawnewnodes();
+
+	links.forEach(function(d) {
+		if ((d.evalpos-d.evalneg)>=linkscutvalue && $.inArray(d.source, remainingnodes)>=0 && $.inArray(d.target, remainingnodes)>=0){
+			remaininglinks.push(d);
+		};
+	});
+
+    if (isNaN(linkscutvalue)){
+	   PRES.force.links(Model.model.links);
+	}else{
+	   PRES.force.links(remaininglinks);   
+	};
+
+
+	PRES.svg.selectAll(".link")
+		.data("")
+		.exit().remove();
+
+	drawnewlinks();
+
+		PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedNodesOpacity);
+		PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedSeedRadius);
+        PRES.svg.selectAll(".node").style("fill", PRES.liveAttributes.relatedLinksOpacity);
+
+
+	if (PRES.showingsums){
+	var textdata2 = [];	
+	remainingnodes.forEach(function(d, i) {	
+			//if a node has no summary, an automatic summary is created with the 60 first character of its content
+			var fontcolor = "#000";
+			var fontstyle = "normal";
+			var summary = d.contentsum;			
+			if (summary == ""){			
+				var fontcolor = "#555";
+				var fontstyle = "italic";				
+				if (d.content.length > 60){
+					summary = "[" + d.content.slice(0, 60) + "...]";
+				} else {
+					summary = "[" + d.content + "]";
+				}
+			}			
+			textdata2.push({node:d, fontcolor:fontcolor, fontstyle: fontstyle, summary: summary});
+	});	
+		PRES.svg.selectAll("text")
+		    .data(textdata2)
+		    .enter().append("text")
+		    .text( function (d) { return d.summary;})
+		    .attr("x", function(d) { return d.node.x; })
+		    .attr("y", function(d) { return (parseInt(d.node.y)-parseInt(PRES.liveAttributes.nodeRadius(d.node)))-1; })
+			.attr("text-anchor", "middle")
+			.style("font-size", "10px")
+			.style("font-style", function(d) { return d.fontstyle; })
+			.style("fill-opacity", function(d) {return PRES.liveAttributes.nodeFillOpacity(d.node);})
+			.style("fill", function(d) { return d.fontcolor; });	
+	}
+
+	if (PRES.showingauthors){
+	var textdata3 = [];	
+	remainingnodes.forEach(function(d, i) {		
+			textdata3.push({node:d});
+	});
+		PRES.svg.selectAll("text")
+			.data(textdata3)
+			.enter().append("text")
+			.text( function (d) { return d.node.author;})
+			.attr("x", function(d) { return d.node.x; })
+			.attr("y", function(d) { return (parseInt(d.node.y)-parseInt(PRES.liveAttributes.nodeRadius(d.node))-1); })
+		    .style("font-size", "12px")
+			.attr("text-anchor", "middle")
+			.style("fill-opacity", function(d) {return PRES.liveAttributes.nodeFillOpacity(d.node);})
+			.style("fill", "#333");	
+	}
+
+	if (PRES.showingtags){
+	var textdata = [];	
+	remainingnodes.forEach(function(d, i) {		
+			textdata.push({node:d, text: findstringsontext(Model.tags, d.content)});
+	});		
+		PRES.svg.selectAll("text")
+			.data(textdata)
+			.enter().append("text")
+			.text( function (d) { return d.text;})
+			.attr("x", function(d) { return d.node.x; })
+			.attr("y", function(d) { return (parseInt(d.node.y)-parseInt(PRES.liveAttributes.nodeRadius(d.node))-1); })
+		    .style("font-size", "12px")
+			.attr("text-anchor", "middle")
+			.style("fill-opacity", function(d) {return PRES.liveAttributes.nodeFillOpacity(d.node);})
+			.style("fill", "#333");	
+	}
+
+
+//	remainingnodes.forEach(function(d){
+//		if (d.seed>0){addseed(d);}
+//	});
+
+    updateSeeds();
+
+	if (!ABSTR.showingevolution) PRES.drawexplosions = true;
+	PRES.elasticdraw = true;
+
+    updatetimevisualization();
+
+}
+
+
+function slidersupdatelinks (linkscutvalue){
+
+	var ABSTR = Visualisations.current().abstraction;
+	var PRES = Visualisations.current().presentation;
+
+
+        var links = Model.model.links;
+
+	remaininglinks = [];
+	
+	links.forEach(function(d) {
+		if ((d.evalpos-d.evalneg)>=linkscutvalue && $.inArray(d.source, remainingnodes)>=0 && $.inArray(d.target, remainingnodes)>=0){
+			remaininglinks.push(d);
+		};
+	});
+
+	var linksign = (linkscutvalue>0) ? "+" : "";
+
+	 	document.getElementById("slider2").setAttribute("style","visibility:visible;");
+        if (isNaN(linkscutvalue)){
+	 	document.getElementById("slider2").setAttribute("style","visibility:hidden;");
+	};
+
+	document.getElementById("handle2").innerHTML = linksign + linkscutvalue;
+	
+	if (ABSTR.loading){return;}
+	
+
+        if (isNaN(linkscutvalue)){
+	PRES.force.links(Model.model.links);
+	}else{
+	PRES.force.links(remaininglinks);
+	};
+
+	
+	PRES.drawexplosions = false;
+	PRES.elasticdraw = false;
+	
+
+	PRES.svg.selectAll(".link")
+		.data("")
+		.exit().remove();
+
+	drawnewlinks();
+
+
+		PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedNodesOpacity);
+		PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedSeedRadius);
+        PRES.svg.selectAll(".node").style("fill", PRES.liveAttributes.relatedLinksOpacity);
+
+		
+	if (ABSTR.showingevolution) PRES.drawexplosions = true;
+	PRES.elasticdraw = true;
+
+    updatetimevisualization();
+
+}
+
+
+function checkadvevalnode(){
+
+    var ABSTR = Visualisations.current().abstraction;
+    var PRES = Visualisations.current().presentation;
+
+    var nodevotes = ABSTR.clickednode.adveval.slice();	    
+    nodevotes.sort(function(a,b){return b-a});
+    if (nodevotes[0]-nodevotes[1]>=3){
+	var newtype=$.inArray(nodevotes[0], ABSTR.clickednode.adveval)+1;
+	if (newtype !== ABSTR.clickednode.type){
+	    db_editnode(ABSTR.clickednode.hash, ABSTR.clickednode.content, ABSTR.clickednode.contentsum, newtype);
+	    ABSTR.clickednode.type = newtype;
+	    PRES.svg.selectAll(".node")
+		.style("fill",PRES.liveAttributes.nodeFill);
+	    var color = PRES.liveAttributes.nodeFill(ABSTR.clickednode); 
+	    explode(ABSTR.clickednode.x, ABSTR.clickednode.y, color)
+	    
+	    cancellink();
+	    PRES.force.start();
+	};
+    };
+
+}
+    
+function checkadvevallink(){
+
+    var ABSTR = Visualisations.current().abstraction;
+    var PRES = Visualisations.current().presentation;
+
+    var linkvotes = ABSTR.selectedlink.adveval.slice();	    
+    linkvotes.sort(function(a,b){return b-a});
+    if (linkvotes[0]-linkvotes[1]>=3){
+	var newtype=$.inArray(linkvotes[0], ABSTR.selectedlink.adveval)+1;
+	if (newtype !== ABSTR.selectedlink.type){
+	    db_editlink(ABSTR.selectedlink.hash, newtype);
+	    ABSTR.selectedlink.type = newtype;
+    
+	    PRES.svg.selectAll(".link")
+		.style("stroke", PRES.liveAttributes.linkStroke);
+       
+	    var color = PRES.liveAttributes.linkStroke(ABSTR.selectedlink); 
+	    var coordx = (ABSTR.selectedlink.source.x + ABSTR.selectedlink.target.x)/2;
+	    var coordy = (ABSTR.selectedlink.source.y + ABSTR.selectedlink.target.y)/2;
+	    explode(coordx, coordy, color);
+    
+	    PRES.force.start();
+	};
+    };
+
+}

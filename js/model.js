@@ -21,20 +21,20 @@ Model.linkTypesArray = ["General", "Agreement", "Disagreement", "Consequence", "
 Model.linkConnectTypesArray = ["General", "Consequence", "Agreement", "Disagreement", "Alternative" , "Equivalence"];
 
 Model.nodeTypes = {
-    "General" : {text: "General", value: 1, image: "img/node1.png"},
-    "Question" : {text: "Question", value: 2, image: "img/node2.png"},
-    "Proposal" : {text: "Proposal", value: 3, image: "img/node3.png"},
-    "Info" : {text: "Info", value: 4, image: "img/node4.png"},
+    "General" : {text: tx_general, value: 1, image: "img/node1.png"},
+    "Question" : {text: tx_question, value: 2, image: "img/node2.png"},
+    "Proposal" : {text: tx_proposal, value: 3, image: "img/node3.png"},
+    "Info" : {text: tx_info, value: 4, image: "img/node4.png"},
 };
 
 Model.linkTypes = {
-    "General" : {text: "General", value: 1, image: "img/link1.png"}, 
-    "Agreement" : {text: "Agreement", value: 2, image: "img/link2.png"},
-    "Disagreement" : {text: "Disagreement", value: 3, image: "img/link3.png"}, 
-    "Consequence" : {text: "Consequence", value: 4, image: "img/link4.png"}, 
-    "Alternative" : {text: "Alternative", value: 5, image: "img/link5.png"},
-	"Equivalence": {text: "Equivalence", value: 6, image: "img/link6.png"},
-    "No relation": {text: "No relation", value: 0, image: "img/link0.png"},
+    "General" : {text: tx_general, value: 1, image: "img/link1.png"}, 
+    "Agreement" : {text: tx_agreement, value: 2, image: "img/link2.png"},
+    "Disagreement" : {text: tx_disagreement, value: 3, image: "img/link3.png"}, 
+    "Consequence" : {text: tx_consequence, value: 4, image: "img/link4.png"}, 
+    "Alternative" : {text: tx_alternative, value: 5, image: "img/link5.png"},
+	"Equivalence": {text: tx_equivalence, value: 6, image: "img/link6.png"},
+    "No relation": {text: tx_norelation, value: 0, image: "img/link0.png"},
 };
 
 
@@ -74,12 +74,14 @@ Model.connectionList = function(nodeType) {
 Model.nodeFields = [ 
 		    "hash", "content", "contentsum",
     "evalpos", "evalneg", "evaluatedby",
+    "adveval", "advevalby",
     "type", "author", "seed", "time"
 ];
 
 Model.linkFields = [
     "hash", "source", "target", "direct", 
     "evalpos", "evalneg", "evaluatedby",
+    "adveval", "advevalby",
     "type", "author", "time"
 ];
 //*******************
@@ -97,7 +99,7 @@ Model.currentAuthor = function(name) {
 };
 
 Model.clear = function(model) {
-    this.model = model || { nodes: [], links: [], authors: [Model.currentAuthor]}
+    this.model = model || { nodes: [], links: [], authors: author};
 };
 
 
@@ -113,14 +115,15 @@ Model.createNode = function(nodetype, content, contentsum, author, seed, time) {
         "evalpos": 1,
 		"evalneg": 0,
         "evaluatedby": [author],
+        "adveval": [0,0,0,0],
+        "advevalby": [[],[],[],[]],
         "type": nodetype,
-        "author":  (author || Model.model.currentAuthor),
+        "author":  author,
 		"seed":seed,
         "time": (time || Math.floor((new Date()).getTime() / 1000)),
   };
   Model.model.nodes.push(newNode);
 };
-
 
 Model.createLink = function(linktype, source, target, author, time) {
 
@@ -134,8 +137,10 @@ Model.createLink = function(linktype, source, target, author, time) {
 	"evalpos": 1, 
         "evalneg": 0,
       "evaluatedby": [author],
+      "adveval": [0,0,0,0,0,0],
+      "advevalby": [[],[],[],[],[],[]],
       "type": linktype,
-      "author": (author || Model.model.currentAuthor),
+      "author": author,
       "time": (time || Math.floor((new Date()).getTime() / 1000)),
   };
   Model.model.links.push(newLink);

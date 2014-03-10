@@ -1,8 +1,8 @@
 <?
 $conversation = $_POST['conversation'];
-$table = $_POST['table'];
-$variable = $_POST['variable'];
-$value = $_POST['value'];
+$content = $_POST['content'];
+$contentsum = $_POST['contentsum'];
+$type = $_POST['type'];
 $hash = $_POST['hash'];
 
 $lines = file('incomadb.conf');
@@ -14,12 +14,13 @@ $localhost = rtrim(str_replace(array("\$localhost=\"", "\";"), "", $lines[3]));
 mysql_connect($localhost,$username,$password);
 @mysql_select_db($database) or die( "Unable to select database");
 
-
-$sqlupdate = 'UPDATE '.$table.' SET '.$variable.'="'.$value.'" WHERE hash='.$hash; 
+$table="nodes_".$conversation;
+$sqlupdate = 'UPDATE '.$table.' SET content="'.$content.'", type="'.$type.'", contentsum="'.$contentsum.'" WHERE hash="'.$hash.'"';
 
 mysql_query($sqlupdate);
 
-
 mysql_close();
+
+echo $sqlupdate;
 
 ?>

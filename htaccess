@@ -1,0 +1,15 @@
+RewriteEngine On 
+
+RewriteCond %{QUERY_STRING} ^c=(.*)$
+RewriteRule ^([A-Za-z]+)/(.*)$ index.php?lang=$1 [QSA,NC,L]
+
+RewriteRule ^([A-Za-z]+)/index.php$ index.php?lang=$1 [QSA,NC,L]
+RewriteRule ^([A-Za-z]+)/$ index.php?lang=$1 [NC,L]
+RewriteRule ^([A-Za-z]+)$ $1/ [NC,L]
+
+RewriteRule ^([A-Za-z]+)/js/(.*)$ js/$2 [NC,L]
+RewriteRule ^([A-Za-z]+)/php/(.*)$ php/$2 [NC,L]
+RewriteRule ^([A-Za-z]+)/css/(.*)$ css/$2 [NC,L]
+RewriteRule ^([A-Za-z]+)/plugins/(.*)$ plugins/$2 [NC,L]
+RewriteRule ^([A-Za-z]+)/img/(.*)$ img/$2 [NC,L]
+

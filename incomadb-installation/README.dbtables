@@ -28,6 +28,8 @@ conversations:
 | ispublic     | tinyint(4) |
 | language     | tinytext   |
 | tags         | text       |
+| editable     | tinyint(4) |
+
 
 nodes_*:
 | hash        | bigint(20) |
@@ -36,6 +38,8 @@ nodes_*:
 | evalpos     | int(11)    |
 | evalneg     | int(11)    |
 | evaluatedby | longtext   |
+| adveval     | text       |
+| advevalby   | longtext   |
 | type        | int(11)    |
 | author      | tinytext   |
 | seed        | tinyint(4) |
@@ -49,6 +53,8 @@ links_*:
 | evalpos     | int(11)    |
 | evalneg     | int(11)    |
 | evaluatedby | longtext   |
+| adveval     | text       |
+| advevalby   | longtext   |
 | type        | int(11)    |
 | author      | tinytext   |
 | time        | bigint(20) |
