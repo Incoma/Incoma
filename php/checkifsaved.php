@@ -1,4 +1,4 @@
-<?
+<?php
 $conversation= $_POST['conversation'];
 $type= $_POST['type'];
 $hash= $_POST['hash'];

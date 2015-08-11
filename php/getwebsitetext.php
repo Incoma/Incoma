@@ -1,4 +1,4 @@
-<?
+<?php
 $weblang= $_GET['weblang'];
 
 $langfile = file('lang-'.$weblang.'.txt');

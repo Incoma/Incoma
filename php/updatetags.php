@@ -1,4 +1,4 @@
-<?
+<?php
 $conversation = $_POST['conversation'];
 
 $lines = file('incomadb.conf');

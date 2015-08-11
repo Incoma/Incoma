@@ -1,4 +1,4 @@
-<?
+<?php
 $newnodephp = $_POST['newnodephp'];
 $conversation = $_POST['conversation'];
 

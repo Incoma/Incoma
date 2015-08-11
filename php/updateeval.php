@@ -1,4 +1,4 @@
-<?
+<?php
 $conversation = $_POST['conversation'];
 $table = $_POST['table'];
 $variable = $_POST['variable'];

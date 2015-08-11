@@ -30,7 +30,7 @@ window.location.href = window.location.href+"/";
 
 <!-- This script loads all the text for the website in the proper language (English by default)-->
 <script>
-	<? $weblangphp= $_GET['lang']; ?>
+	<?php $weblangphp= isset($_GET['lang']) && $_GET['lang']; ?>
 	var weblangphp="<?php echo $weblangphp; ?>"; 
 	this.weblang = (weblangphp == "") ? "eng" : weblangphp;
 </script>
@@ -138,7 +138,7 @@ $(function() {$('.resizable').resizable();});
 // All the functions that call to the PHP code to interact with the MySQL database
 
 	//look for a conversation parameter in the URL
-	<? $conversation= $_GET['c']; ?>
+	<?php $conversation= isset($_GET['c']) && $_GET['c']; ?>
 	
 	conversation="<?php echo $conversation; ?>"; 
     author = "";
