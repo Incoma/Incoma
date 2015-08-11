@@ -138,7 +138,10 @@ $(function() {$('.resizable').resizable();});
 // All the functions that call to the PHP code to interact with the MySQL database
 
 	//look for a conversation parameter in the URL
-	<?php $conversation= isset($_GET['c']) && $_GET['c']; ?>
+	<?php
+		if(isset($_GET['c'])) $conversation= $_GET['c'];
+		else $conversation = ""; 
+	?>
 	
 	conversation="<?php echo $conversation; ?>"; 
     author = "";
@@ -149,9 +152,10 @@ $(function() {$('.resizable').resizable();});
 		
 		Model.clear(IncomaMenuModel);
 		reInit(Visualisations.select(2));
-			
+	} else if(conversation == "sandbox") {
+		loadsandbox();
 	} else {
-
+		console.log("conversation: ", conversation);
 		db_loadconversation();
 		
 	};
@@ -277,7 +281,7 @@ $(function() {$('.resizable').resizable();});
 		setTimeout(function(){
 			window.history.pushState("", "", "?c=" + conversation); //with this alternative two lines, the page is not refreshed
             db_loadconversation();
-            clearInterval(pulses);
+            clearInterval(pulses); //TODO: ERROR pulses undefined
             //reInit(Visualisations.select(1));
 		    //window.location.href = "?c=" + conversation +"&a="+author;
 		},0);

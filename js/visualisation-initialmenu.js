@@ -225,7 +225,6 @@ function InitialMenu_Presentation(VIS, ABSTR) {
             .size([width, height]);
         var force = PRES.force;
 
-		
         PRES.svg = d3.select(".svg").append("svg")
             .attr("width", width)
             .attr("height", height);
