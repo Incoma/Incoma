@@ -122,7 +122,6 @@ define(['webtext'], function(webtextModule) {
 	};
 	
 	Model.clear = function(model) {
-		console.log('clear');
 	    this.model = model || { nodes: [], links: [], authors: author};
 	};
 	
@@ -130,7 +129,7 @@ define(['webtext'], function(webtextModule) {
 	//*************************
 	Model.createNode = function(nodetype, content, contentsum, author, seed, time) {
 	
-	    var newHash = parseInt(this.nodehashit(content + contentsum + nodetype + author + time));
+	    var newHash = parseInt(nodehashit(content + contentsum + nodetype + author + time));
 	    
 	   var newNode = {
 	        "hash": newHash,
@@ -197,64 +196,7 @@ define(['webtext'], function(webtextModule) {
 	             links:   cleanArray(old.links, Model.linkFields, rplHash), 
 	             authors: old.authors };
 	};
-	
-	Model.nodehashit = function(string){
-	// Create a hash to identify a node
-		///var PRES = Visualisations.current().presentation;
-		///nodes = PRES.force.nodes();
-		var nodes = this.model.nodes;
-		///
-		var current_model = this.model;
-		var current_model_nodeshashlist = [];
-		
-		for (var i=0;i<current_model.nodes.length;i++){	
-			current_model_nodeshashlist.push(current_model.nodes[i].hash);
-		}
-				
-		var temphash = hashit(string);
-
-	    while($.inArray(temphash, current_model_nodeshashlist) > -1){
-			var newstring = string + Date.now();
-	        temphash = hashit(newstring);
-	    }
-	
-	    return temphash;
-	}
-
-
-	Model.linkhashit = function(string){
-		// Create a hash to identify a link
-		///var PRES = Visualisations.current().presentation;
-		///links = PRES.force.links();
-		var links = this.model.links;
-		var current_model = this.model;
-		var current_model_linkshashlist = [];
-		
-		for (var i=0;i<current_model.links.length;i++){	
-			current_model_linkshashlist.push(current_model.links[i].hash);
-		}
-				
-		var temphash = hashit(string);
-
-	    while($.inArray(temphash, current_model_linkshashlist) > -1){
-			var newstring = string + Date.now();
-	        temphash = hashit(newstring);
-	    }
-	
-	    return temphash;
-	}
-
-
-	function hashit(str){
-		// Generate a hash from a string (v1)
-		var hash = 5381;
-		for (i = 0; i < str.length; i++) {
-			char = str.charCodeAt(i);
-			hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
-		}
-		return Math.abs(parseInt(hash));
-	}
 	                            
 	})(); // end anonymous namespace
-	return Model;
+	exports = Model;
 });
