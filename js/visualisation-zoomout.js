@@ -1041,7 +1041,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	    };
 		
 		   
-		//functions that define the attributes for nodes and links, depending on the filter states.
+			//functions that define the attributes for nodes and links, depending on the filter states.
 	    function LiveAttributes(ABSTR, PRES) {
 	
 	        this.nodeRadius = function (d) {
@@ -1519,7 +1519,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 				
 				if (ABSTR.clickedlinkhash === ""){
 				
-					hidelinkselect();
+					hidelinkselect(); //TODO: why is this in LiveAttributes?!
 					
 					if (ABSTR.clickednodehash === "" && ABSTR.overnodehash === ""){	
 						if (ABSTR.timevisualization){return;}
@@ -1750,9 +1750,15 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			};
 	
 	    };
-		
-		// end of this == LiveAttributes
-		
+	    
+	    
+		function clearSelection() {
+		    if ( document.selection ) {
+		        document.selection.empty();
+		    } else if ( window.getSelection ) {
+		        window.getSelection().removeAllRanges();
+		    }
+		}
 		
 		
 	    // update functions (svg, nodes and links)
@@ -2888,7 +2894,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			.style("stroke-opacity", 1);
 	}
 	
-	
 	function hidelinkselect(){
 	
 		var PRES = Visualisations.current().presentation;
@@ -2900,8 +2905,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			.attr("y2", 0)
 			.style("stroke-width", 0);
 	}
-	
-	
 	
 	function clearcontentlabel(){
 	
@@ -4607,14 +4610,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 		return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
 	}
 	
-	function clearSelection() {
-	    if ( document.selection ) {
-	        document.selection.empty();
-	    } else if ( window.getSelection ) {
-	        window.getSelection().removeAllRanges();
-	    }
-	}
-	
 	
 	function ZoomOut_Control(VIS, ABSTR, PRES) {};
 	// End of var ZoomOut
@@ -4924,5 +4919,5 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	    };
 	
 	}
-	return { Scaler: Scaler };
+	return { Scaler: Scaler }; //TODO: is this still necessary?
 });
