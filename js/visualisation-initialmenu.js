@@ -148,7 +148,7 @@ define(["webtext", "visualisation", "languageslist", "jsonmodels", "model", "vis
 							</div>  \
 							<div class="bt_panel2 noselect">  \
 								<center>  \
-									<div id="bt_join_ok" onclick="bt_join_ok()" class="conv_ok button">'+Webtext.tx_ok+'</div>  \
+									<div id="bt_join_ok" class="conv_ok button">'+Webtext.tx_ok+'</div>  \
 									<div id="bt_join_cancel" class="conv_cancel button">'+Webtext.tx_cancel+'</div>  \
 								</center>  \
 							</div>  \
@@ -189,8 +189,8 @@ define(["webtext", "visualisation", "languageslist", "jsonmodels", "model", "vis
 					<div id="language_button" class="language_button button">'+Webtext.tx_ok+'</div>  \
 				  </div>   \
 	              <div id="editable_panel" class="noselect">'+Webtext.tx_if_editable+'<br></br>'+Webtext.tx_want_editable+'<br></br>  \
-	                <div id="btn_editable_yes" onclick="btn_editable_yes()" class="btn_editable button">'+Webtext.tx_yes+'</div> \
-	                <div id="btn_editable_no" onclick="btn_editable_no()" class="btn_editable button">'+Webtext.tx_no+'</div>  \
+	                <div id="bt_editable_yes" class="btn_editable button">'+Webtext.tx_yes+'</div> \
+	                <div id="bt_editable_no" class="btn_editable button">'+Webtext.tx_no+'</div>  \
 	            </div>  \
 			 </div>  \
 				 ' 
@@ -211,10 +211,12 @@ define(["webtext", "visualisation", "languageslist", "jsonmodels", "model", "vis
 			$( "#bt_sandbox" )[0].onclick = this.bindings.bt_sandbox.bind(this);
 			$( "#bt_create" )[0].onclick = this.bindings.bt_create.bind(this);
 			$( "#bt_join" )[0].onclick = this.bindings.bt_join.bind(this);
+			$( "#bt_join_ok" )[0].onclick = this.bindings.bt_join_ok.bind(this);
 			$( "#bt_join_cancel" )[0].onclick = this.bindings.bt_cancel.bind(this);
 			$( "#bt_new_cancel" )[0].onclick = this.bindings.bt_cancel.bind(this);
 			$( "#bt_new_ok" )[0].onclick = this.bindings.bt_new_ok.bind(this);
-	
+			$( "#bt_editable_yes" )[0].onclick = this.bindings.bt_editable_yes.bind(this);
+			$( "#bt_editable_no" )[0].onclick = this.bindings.bt_editable_no.bind(this);
 	
 	        initSVG(this, ABSTR, this.width, this.height);
 			
@@ -388,23 +390,6 @@ define(["webtext", "visualisation", "languageslist", "jsonmodels", "model", "vis
 		};
 	
 		this.bindings = {
-			bt_menu: function() {
-				$( "#window_title" ).html("INCOMA");
-				clearTimeout(autoupdate);
-			    Model.clear(JsonModels.Menu);
-				conversation = "";
-			    
-				$("#htmlcontent").fadeOut(300);
-				$("#lower_bar").fadeOut(300);
-				$("#legend_bar").fadeOut(300);
-				$('#info_panel').fadeOut(300);
-				$("#headerMenu").fadeOut(200);
-			    //$("#headerBlog").fadeOut(200);
-				$("#headerExport").fadeOut(200);
-				$("#headerUsername").fadeOut(200);
-			
-				loadmenu();
-			},
 			bt_create: function() {
 		
 				$('#menu_panel').animate({left: "-100%"},700,'easeInOutCubic');
@@ -434,7 +419,7 @@ define(["webtext", "visualisation", "languageslist", "jsonmodels", "model", "vis
 				
 				$('#join_panel').animate({left: "-70%"},700,'easeInOutCubic');
 				$('#svg').fadeOut(500);
-				setTimeout(function(){ ConversationManager.reloadconversation(); }, 730);
+				setTimeout(function(){ ConversationManager.reloadConversation(); }, 730);
 			},
 			//creates a new conversation
 			bt_new_ok: function(){
@@ -500,28 +485,26 @@ define(["webtext", "visualisation", "languageslist", "jsonmodels", "model", "vis
 				ConversationManager.create(conversation,title,time,ispublic, convlanguage, false);
 			},
 			//returns to the initial screen
-			bt_cancel: function(){
+			bt_cancel: function() {
 				$('#menu_panel').animate({left: "0%"},700,'easeInOutCubic');
 				$('#join_panel').animate({left: "130%"},700,'easeInOutCubic');
 				$('#new_panel').animate({left: "135%"},700, 'easeInOutCubic');
+			},
+			bt_editable_yes: function() {
+				$("#svg").fadeOut(300);
+				$("#editable_panel").fadeOut(300);
+				ConversationManager.create(conversation,title,time,ispublic, convlanguage, 1);
+			},
+			bt_editable_no: function() {
+			    $("#svg").fadeOut(300);
+			    $("#editable_panel").fadeOut(300);
+			    ConversationManager.create(conversation,title,time,ispublic, convlanguage, 0);
 			}
 		};
 	};
 	
 	function closelanguagepanel(){
 		$('#language_panel').fadeOut(300);
-	}
-	
-	function btn_editable_yes(){
-	    $("#svg").fadeOut(300);
-	    $("#editable_panel").fadeOut(300);
-	    ConversationManager.create(conversation,title,time,ispublic, convlanguage, 1);
-	}
-	
-	function btn_editable_no(){
-	    $("#svg").fadeOut(300);
-	    $("#editable_panel").fadeOut(300);
-	    ConversationManager.create(conversation,title,time,ispublic, convlanguage, 0);
 	}
 	
 	//

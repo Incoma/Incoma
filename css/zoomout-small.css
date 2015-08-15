@@ -661,7 +661,7 @@ div.showconnectpanel{
 }
 
 #showediticon{
-    background: url("img/icon_edit.png") no-repeat;
+    background: url("../img/icon_edit.png") no-repeat;
     background-size: contain;   
     width: 20px;
 	height: 20px;

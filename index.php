@@ -34,7 +34,7 @@
 				<option id="morelang" value="More"></option>
          </select>
 		</div>
-		<div id="headerMenu"  class="header headerborder noselect" onclick="bt_menu()" style="visibility:hidden;">
+		<div id="headerMenu"  class="header headerborder noselect" style="visibility:hidden;">
 			<!--         Menu    (text defined in the javascript)-->
      </div>
      <a id="headerBlog" class="header headerborder" href="http://blog.incoma.org" target="_blank">

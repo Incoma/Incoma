@@ -1,4 +1,5 @@
-define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visualisations, DateTime, Model) {
+define(['webtext', 'visualisation', 'datetime', 'model', 'conversations'], 
+function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 
 	//definition of the html code of the right panel bar for different situations:
 	// Reply and Connect buttons
@@ -28,16 +29,27 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 	
 	rightpanelhtmlspace = "<div style='float:left;visibility:hidden;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div></div><br></div>"; 
 	
+	function insertRightBarHtml(node) {
+		var rightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_show_timeline+'</div></center><div id="right_bar_header" class="right_bar_header "><div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div></div><div id="contbox" class="divareacontent"></div><div id="rightpaneleval"></div><div id="rightpanel"></div><div id="rightpanelspace"></div>';
+		insertHtml(rightbarhtml, node);
+		bindTimeVisualisation();
+	}
 	
-	rightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_show_timeline+'</div></center><div id="right_bar_header" class="right_bar_header "><div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div></div><div id="contbox" class="divareacontent"></div><div id="rightpaneleval"></div><div id="rightpanel"></div><div id="rightpanelspace"></div>';
-	
-	// var timevisrightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
-	
-	//timevisrightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
-	
-	timevisrightbarhtml = '<div id="saving" style="display:none;"><div id="savingicon"></div><div id="savingtext">'+Webtext.tx_saving+'</div></div><center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
-	                        
+	function insertTimevisRightBarHtml(node) {
+		var timevisrightbarhtml = '<div id="saving" style="display:none;"><div id="savingicon"></div><div id="savingtext">'+Webtext.tx_saving+'</div></div><center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
+		insertHtml(timevisrightbarhtml, node);
+		bindTimeVisualisation();
+	}
+	                     
 	timevisinteracthtml = "<div id='evalalert' class='linkalerttext noselect' style='float:left;'></div><div style='float:right;'><div id='showreply' class='smallshowreplypanel justbutton' onClick='showreplypanel(false)'>"+Webtext.tx_reply+"</div><div id='showconnect' class='smallshowconnectpanel justbutton' onClick='showcreatelink(false)'>"+Webtext.tx_connect+"</div><div id='nodepos' class='smallevalpos justbutton' onClick='evalpos()'>+</div><div id='nodeneg' class='smallevalneg justbutton' onClick='evalneg()'>-</div></div>";
+	
+	function insertHtml(html, node) {
+		node.innerHTML = html;
+	}
+	
+	function bindTimeVisualisation() {
+		$('#changevisualization')[0].onclick = changevisualization;
+	}
 	
 	Visualisations.register(new ZoomOut()); //adds the ZoomOut visualization to the Visualizations array
 	/*
@@ -428,6 +440,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 			$( "#treeview" )[0].onclick = treeview;
 			$( "#treeview" )[0].onmouseover = treeviewover;
 			$( "#treeview" )[0].onmouseout = treeviewout;
+			bindTimeVisualisation();
 	        
 			
 			//$("#completeview").addClass('active');
@@ -762,7 +775,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 	        
 	        
 			//activation of the periodic conversation update with the nodes and links created by other users simultaneously
-			autoupdate = setInterval(function(){updateConversation();},PRES.updateinterval); 
+			autoupdate = setInterval(function(){ConversationManager.updateConversation();},PRES.updateinterval); 
 			
 			//initialposition of the screen
 			PRES.setViewport(PRES.scaler.despx0, PRES.scaler.despy0, 1, 0);
@@ -2419,11 +2432,12 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 			var legend = timednodes[i].author+' - '+DateTime.timeAgo(timednodes[i].time);
 			var color = d3.rgb(PRES.nodecolor[timednodes[i].type]).darker(0).toString();
 			
-			var html = '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div><div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 1px '+color+';" onclick="clickdivcontent(this.id);" onmouseover="overdivcontent(this.id);" onmouseout="outdivcontent(this.id);"></div><div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
+			var html = '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div><div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 1px '+color+';"></div><div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
 			
 			$("#timevisdiv").html($("#timevisdiv").html().replace("<br><br><br> <br><br><br><br>","") + html + "<br><br><br> <br><br><br><br>");
 			
 			$("#nodecontent"+i).html(URLlinks(nl2br(timednodes[i].content)));
+			assignNodeContentBindings($("#nodecontent"+i)[0]);
 			
 			$('#timevisdiv').animate({
 				scrollTop: $('#timevisdiv').scrollTop()+$("#nodecontent"+i).position().top-60
@@ -2439,6 +2453,12 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 			
 		}
 		
+	}
+	
+	function assignNodeContentBindings(node) {
+		node.onmouseover = function() { overdivcontent(this.id) };
+		node.onmouseout = function() { outdivcontent(this.id) };
+		node.onclick = function() { clickdivcontent(this.id) };
 	}
 	
 	function drawnewlinks() {
@@ -4143,7 +4163,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 			
 			$(".right_bar").resizable( "destroy" )
 			
-			$("#right_bar").html(rightbarhtml);
+			insertRightBarHtml($("#right_bar"));
 			$("#rbexpand").css("margin-right", "4px");
 			
 			$(".right_bar").resizable({
@@ -4182,7 +4202,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 		
 		$(".right_bar").resizable( "destroy" )
 		
-		$("#right_bar").html(timevisrightbarhtml);
+		insertTimevisRightBarHtml($("#right_bar")[0]);
 		$("#rbexpand").css("margin-right", "8px");
 		
 		$(".right_bar").resizable({
@@ -4223,7 +4243,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 			
 			html += '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div>'; 
 			
-			html += '<div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 1px'+color+'" onclick="clickdivcontent(this.id);" onmouseover="overdivcontent(this.id);" onmouseout="outdivcontent(this.id);"></div>'; 
+			html += '<div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 1px'+color+'"></div>'; 
 			
 			html += '<div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
 		}
@@ -4234,6 +4254,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 		
 			var content = URLlinks(nl2br(timednodes[i].content));	
 			$("#nodecontent"+i).html(content);
+			assignNodeContentBindings($("#nodecontent"+i)[0]);
 			
 		//	if ($("#nodecontent"+i).height()>200){$("#nodecontent"+i).height(200)}; //maximun height (thought still resizable)
 		}
@@ -4264,7 +4285,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 	
 		$(".right_bar").resizable( "destroy" )
 		
-		$("#right_bar").html(timevisrightbarhtml);
+		insertTimevisRightBarHtml($("#right_bar")[0]);
 	//	$("#rbexpand").css("margin-right", "8px");
 		
 		$(".right_bar").resizable({
@@ -4303,7 +4324,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 			
 			html += '<div id="nodelegend'+i+'" class="divnodelegend">'+legend+'</div>'; 
 			
-			html += '<div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 2px'+color+'" onclick="clickdivcontent(this.id);" onmouseover="overdivcontent(this.id);" onmouseout="outdivcontent(this.id);"></div>'; 
+			html += '<div id="nodecontent'+i+'" class="divnodecontent" style="border: solid 2px'+color+'"></div>'; 
 			
 			html += '<div id="nodeinteract'+i+'" class="divnodeinteract">&nbsp</div>'; 
 		}
@@ -4314,6 +4335,7 @@ define(['webtext', 'visualisation', 'datetime', 'model'], function(Webtext, Visu
 		
 			var content = URLlinks(nl2br(timednodes[i].content));	
 			$("#nodecontent"+i).html(content);
+			assignNodeContentBindings($("#nodecontent"+i)[0]);
 			
 		//	if ($("#nodecontent"+i).height()>200){$("#nodecontent"+i).height(200)}; //maximun height (thought still resizable)
 		}

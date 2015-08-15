@@ -82,6 +82,106 @@ define(['model', 'visualisation', 'db', 'webtext'], function(Model, Visualisatio
 		this.loadCompleteConversationList = function() {
 			Db.getconversations(function(list) { completeConversationList = list });
 		};
+		
+		this.updateConversation = function() {
+			//Compares the DB conversation with the one showed, and updates this last one (only the new nodes and links) if there are changes
+
+			var ABSTR = Visualisations.current().abstraction;
+			var PRES = Visualisations.current().presentation;
+			
+			if (ABSTR.showingevolution){return;}
+			
+			nodes = PRES.force.nodes();
+			links = PRES.force.links();
+			
+			var old_model = Model.model;
+			
+			Db.getmodel();
+			Db.generatemodel();
+			
+			var new_model = modeldb;
+		
+				
+			updatednodes = [];
+			old_nodeshash = [];
+			
+			for (var i=0;i<old_model.nodes.length;i++){	
+				old_nodeshash.push(old_model.nodes[i].hash);
+			}
+			
+			for (var i=0;i<new_model.nodes.length;i++){		
+				if($.inArray(new_model.nodes[i].hash, old_nodeshash) < 0){
+					updatednodes.push(new_model.nodes[i]);
+				}
+			}		
+			
+	
+			updatedlinks = [];
+			old_linkshash = [];
+			
+			for (var i=0;i<old_model.links.length;i++){		
+				old_linkshash.push(old_model.links[i].hash);
+			}
+			
+			for (var i=0;i<new_model.links.length;i++){		
+				if($.inArray(new_model.links[i].hash, old_linkshash) < 0){
+					updatedlinks.push(new_model.links[i]);
+				}
+			}		
+	
+			
+			if (updatedlinks.length>0 || updatednodes.length>0){
+			
+				update_hash_lookup(updatednodes, updatedlinks);
+				
+				for (var i=0;i<updatednodes.length;i++){
+					nodes.push(updatednodes[i]);
+	                Model.model.nodes.push(updatednodes[i]);
+					
+					var linkednode = "";
+					
+					for (j=0;j<updatedlinks.length;j++){
+						if (updatedlinks[j].source.hash == updatednodes[i].hash){
+							linkednode = updatedlinks[j].target;
+						} else if(updatedlinks[j].target.hash == updatednodes[i].hash){
+							linkednode = updatedlinks[j].source;
+						}
+					}				
+					
+					if (typeof linkednode.x !="undefined"){
+						updatednodes[i].x = linkednode.x;
+						updatednodes[i].y = linkednode.y;
+					} else {
+						updatednodes[i].x = PRES.scaler.midx;
+						updatednodes[i].y = PRES.scaler.midy;
+					}
+					
+					var randomplusminus = Math.random() < 0.5 ? -1 : 1;
+					updatednodes[i].x += randomplusminus*10*(Math.random()+1);
+					updatednodes[i].y += randomplusminus*10*(Math.random()+1);
+					
+					drawnewnodes();
+					
+					if (updatednodes[i].seed > 0){
+						addseed(updatednodes[i]);
+					}
+				}	
+				
+				for (var i=0;i<updatedlinks.length;i++){
+					links.push(updatedlinks[i]);
+	                Model.model.links.push(updatedlinks[i]);
+	
+					drawnewlinks();
+					
+					if (updatedlinks[i].direct == 1){
+						var coordx = (updatedlinks[i].source.x + updatedlinks[i].target.x)/2;
+						var coordy = (updatedlinks[i].source.y + updatedlinks[i].target.y)/2;
+						var expcolor = PRES.linkcolor[updatedlinks[i].type];
+						explode(coordx, coordy, expcolor);
+					}
+				}
+			}
+		}
 	}
 	return new ConversationManager();
 });
