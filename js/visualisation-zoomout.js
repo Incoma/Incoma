@@ -1,7 +1,7 @@
-define(['webtext', 'visualisation', 'datetime', 'model', 'conversations'], 
-function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
-
-	//definition of the html code of the right panel bar for different situations:
+define(['webtext', 'visualisation', 'datetime', 'model', 'conversations', 'conversationtools'], 
+function(Webtext, Visualisations, DateTime, Model, ConversationManager, ConversationTools) {
+	
+		//definition of the html code of the right panel bar for different situations:
 	// Reply and Connect buttons
 	// Eval buttons
 	// Eval buttons with a message
@@ -29,6 +29,8 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 	rightpanelhtmlspace = "<div style='float:left;visibility:hidden;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div></div><br></div>"; 
 	
+	timevisinteracthtml = "<div id='evalalert' class='linkalerttext noselect' style='float:left;'></div><div style='float:right;'><div id='showreply' class='smallshowreplypanel justbutton' onClick='showreplypanel(false)'>"+Webtext.tx_reply+"</div><div id='showconnect' class='smallshowconnectpanel justbutton' onClick='showcreatelink(false)'>"+Webtext.tx_connect+"</div><div id='nodepos' class='smallevalpos justbutton' onClick='evalpos()'>+</div><div id='nodeneg' class='smallevalneg justbutton' onClick='evalneg()'>-</div></div>";
+	
 	function insertRightBarHtml(node) {
 		var rightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_show_timeline+'</div></center><div id="right_bar_header" class="right_bar_header "><div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div></div><div id="contbox" class="divareacontent"></div><div id="rightpaneleval"></div><div id="rightpanel"></div><div id="rightpanelspace"></div>';
 		insertHtml(rightbarhtml, node);
@@ -41,8 +43,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 		bindTimeVisualisation();
 	}
 	                     
-	timevisinteracthtml = "<div id='evalalert' class='linkalerttext noselect' style='float:left;'></div><div style='float:right;'><div id='showreply' class='smallshowreplypanel justbutton' onClick='showreplypanel(false)'>"+Webtext.tx_reply+"</div><div id='showconnect' class='smallshowconnectpanel justbutton' onClick='showcreatelink(false)'>"+Webtext.tx_connect+"</div><div id='nodepos' class='smallevalpos justbutton' onClick='evalpos()'>+</div><div id='nodeneg' class='smallevalneg justbutton' onClick='evalneg()'>-</div></div>";
-	
 	function insertHtml(html, node) {
 		node.innerHTML = html;
 	}
@@ -84,6 +84,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	    this.init = function (html5node, model) {
 	        this.abstraction.init(model);
 	        this.presentation.init(html5node);
+	        this.control.init();
 	    }
 	
 	    this.destroy = function () {}
@@ -94,31 +95,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	function ZoomOut_Abstraction() {
 	
 	    this.model = null;
-		
-	    this.linkFilters = {
-			1: {name: Webtext.tx_general,state: true, typeId: 1},
-			2: {name: Webtext.tx_agreement, state: true, typeId: 2},
-			3: {name: Webtext.tx_disagreement, state: true, typeId: 3},
-			4: {name: Webtext.tx_consequence, state: true, typeId: 4},		
-			5: {name: Webtext.tx_alternative, state: true, typeId: 5},
-			6: {name: Webtext.tx_equivalence, state: true, typeId: 6},
-	    };
-		
-	    this.nodeFilters = {
-			1: {name: Webtext.tx_general, state: true, typeId: 1},
-	        2: {name: Webtext.tx_question, state: true, typeId: 2},
-	        3: {name: Webtext.tx_proposal, state: true, typeId: 3},
-	        4: {name: Webtext.tx_info, state: true, typeId: 4},
-	    };
-		
-	    this.sizeFilters = {
-			evaluations: {name: Webtext.tx_evaluations, state: true},
-	    };
-		
-	    this.showFilters = {
-			summaries: {name: "Summaries", state: true},
-	        tags: {name: "Tags", state: true},
-	    };
 	    
 	    this.init = function (model) {
 	        this.model = model;
@@ -142,16 +118,17 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			this.timevisualization=false;
 			this.youarenotalone=false;
 			this.treeview=false;
-			this.loading=true;
+			//this.loading=true; //TODO: yes or no?
 	        this.name="";
 	        this.namepanelcaller="";
 	        this.namepanelparameter="";
 	        this.freezelink=false;
-	        
-	/*      this.treeonimg = new Image();
-	        this.treeoffimg = new Image();
-	        this.treeonimg.src = "img/treeicon.png";
-	        this.treeoffimg.src = "img/compicon.png";*/
+	        this.filters = {
+	        	sizeFilter: 'none',
+	        	showFilter: 'none',
+	        	nodeFilters: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true },
+	        	linkFilters: { 1: true, 2: true, 3: true, 4: true },
+	        }
 	    }
 	};
 	// End of this == abstraction
@@ -185,10 +162,10 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	    this.updateinterval = 60000;
 	    this.width = $(window).width();
 	    this.height = $(window).height()-50;
-	    this.filtershelp = true;
+	    //this.filtershelp = true;
 	    this.darkerarrowsseeds = 2;
 	    this.darkernodes = 0.3;
-		this.showfilters = false;
+		//this.showfilters = false;
 		this.evolutionvelocity = 1;
 		this.readnodes = [];
 		this.drawexplosions = true;
@@ -311,53 +288,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	             </div>   \
 		\
 	             <div id= "lower_bar" class="lower_bar shadow ">  \
-	                  <div class="lower_bar_elems">   \
-	                    <div id="filters_title" class="lower_title" style="Float:left" >   \
-	                      <b>  <div id="legendarrow" style="Float:left">&#8679;</div>  '+Webtext.tx_legend+'</b> \
-	                    </div>   \
-	                    <div id="filters_text" class="lower_text"  style="Float:right">  \
-						  ('+Webtext.tx_click_hide_show+') \
-						</div>   \
-	                    <div id="filt_nodes" class="lower_nodes" style="Float:left;" >   \
-	                      <u><b>'+Webtext.tx_thoughts+'</b></u>             \
-	                    </div>   \
-	   \
-	                    <div id="filt_links" class="lower_links" style="Float:left; ">   \
-	                      <u><b>'+Webtext.tx_connections+'</b></u>    \
-	                    </div>   \
-	   \
-	                    <div id="filt_sizes" class="lower_sizes" style="Float:left;">   \
-	                      <u><b>'+Webtext.tx_sizes+'</b></u>    \
-	                    </div>   \
-	   \
-	                    <div id="filt_show" class="lower_show" style="Float:left;">   \
-	                        <u><b>'+Webtext.tx_show+'</b></u>    \
-	                        <div id="showtags" class="lower_showtexts noselect">   \
-	                          '+Webtext.tx_tags+'    \
-	                        </div>   \
-	                        <div id="showauthors" class="lower_showauthors">   \
-	                          '+Webtext.tx_authors+'    \
-	                        </div>   \
-	                        <div id="showsums" class="lower_showsums">   \
-	                          '+Webtext.tx_summaries+'    \
-	                        </div>   \
-	                    </div>   \
-	    \
-					  <div id="sliderpanel" class="sliderpanel noselect">  \
-					    <div class="slidercaption"><u><b>'+Webtext.tx_min_rating+'</b></u></div>  \
-	                    <div id="slider1" class="dragdealer">  \
-							<div id="handle1" class="red-bar handle" title="'+Webtext.tx_thoughts+'"></div>  \
-						</div>  \
-						<div id="slider2" class="dragdealer">  \
-							<div id="handle2" class="red-bar handle" title="'+Webtext.tx_connections+'"></div>  \
-						</div>  \
-					  </div>  \
-	    \
-	                    <div id="filt_hide" class="lower_hide" style="Float:right">   \
-	                   <div class="lower_hide_button" id="cmd_hideshowfilters"></div>   \
-	                    </div>   \
-	                 </div>   \
-	    \
 	             </div>   \
 		 			  <div id="language_panel" class="language_panel shadow ">   \
 						'+Webtext.tx_no_more_lang+'<br><br>'+Webtext.tx_help_translate1+' <br>'+Webtext.tx_help_translate2+'  \
@@ -400,28 +330,13 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 			nodescutvalue = -1000;
 			linkscutvalue = -1000;
-		
-			slid1 = new Dragdealer('slider1',
-			{
-				// steps: 30,
-				// snap: true,
-				animationCallback: nodeslider
-			});
-	
-			slid2 = new Dragdealer('slider2',
-			{
-				// steps: 30,
-				// snap: true,
-				animationCallback: linkslider
-			});
 	        
 			$('#rightpanelspace').html(rightpanelhtmlspace);
 			
 			//stablish the onclick functions for the html elements of html5node
 			$( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
 	        $( "#cmd_zoomout" )[0].onclick = this.scaler.zoomout;
-	        $( "#cmd_hideshowfilters" )[0].onclick = hideshowfilters;
-	        $( "#filters_title" )[0].onclick = hideshowfilters;
+	        //$( "#filters_title" )[0].onclick = hideshowfilters;
 			$( "#tutorial_panel" )[0].onclick = changetutorialpanel;
 			$( "#tutorial_panel_close" )[0].onclick = closetutorialpanel;
 			$( "#language_button" )[0].onclick = closelanguagepanel;
@@ -434,8 +349,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	        $( "#showevolution" )[0].onclick = bigevolutionclick;
 			$( "#evolutionplay" )[0].onclick = evolutionplay;
 			$( "#evolutionpause" )[0].onclick = evolutionpause;
-		    $( "#showsums" )[0].onclick = filtershowsums;
-		    $( "#showauthors" )[0].onclick = filtershowauthors;
 	//		$( "#rbexpand" )[0].onclick = rbexpand;
 			$( "#treeview" )[0].onclick = treeview;
 			$( "#treeview" )[0].onmouseover = treeviewover;
@@ -463,20 +376,9 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	        $('#advevalnode_panel').fadeOut(0);
 	        $('#advevallink_panel').fadeOut(0);
 			$('#svg').fadeOut(0);
-	        $('#filters_text').fadeOut(0);
 	        $('#saving').fadeOut(0);
 	        $('#evolutionpause').fadeOut(0);
 	        $('#loading_conv_panel').fadeOut(0);
-	        
-	        
-			//$('#htmlcontent').fadeIn(800);
-			//$('#lower_bar').fadeIn(800);
-	        
-			if (Model.tags == null){
-				document.getElementById("showtags").setAttribute("style","visibility:hidden; cursor:default;");
-			} else {
-				$( "#showtags" )[0].onclick = filtershowtags;
-			}
 			
 			//makes the right_bar resizable
 			$(".right_bar").resizable({
@@ -502,14 +404,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			
 		//Create the svg
 	        initSVG(this, ABSTR, this.width, this.height);
-		//Create the legend
-	        initNodeLegend(this, "legend_nodes", ABSTR.nodeFilters);
-	        initLinkLegend(this, "legend_links", ABSTR.linkFilters);
-		//Create the filters
-	        initNodeFilters(this, "filt_nodes", ABSTR.nodeFilters);
-	        initLinkFilters(this, "filt_links", ABSTR.linkFilters);
-	        initSizeFilters(this, "filt_sizes", ABSTR.sizeFilters);
-	        //initShowFilters(this, "filt_show", ABSTR.showFilters);
 	
 	    };
 	    // End of init function of presentation
@@ -793,7 +687,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			PRES.force.linkStrength(1);
 			// startevolution();		
 			treeview();
-			ABSTR.loading = false;
+			ABSTR.loading = false; //TODO
 			
 			//defines the movement of the nodes and links
 	        force.on("tick", function () {
@@ -837,215 +731,11 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	    };
 	    // End of initSVG
 	
-		
-	    // Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
-	    function initNodeFilters(PRES, columnId, filterlist) {
-	
-		// 5 filters with 3 per column for the nodes
-	        var numfilts = 4;
-	        var filtspercol = 2 ;
-	        var filtsperrow = Math.ceil(numfilts/filtspercol);
-	
-	    	var column = document.getElementById(columnId);
-	
-		//It creates a table to justify the elements properly
-			var table  = document.createElement("table");
-			table.style.width = "100%";
-			table.setAttribute('border','0');
-			table.setAttribute('cellpadding','1');
-			table.setAttribute('cellspacing','2');
-			
-			tb = document.createElement("tbody");
-	
-			var boxeslegend = new Array();
-	
-	        for (var i = 1; i < numfilts+1; ++i) {
-				var filter = filterlist[i];
-				
-				if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
-					tr = document.createElement("tr");
-				}
-		
-				tdname = document.createElement("td");
-				tdname.setAttribute("style","cursor: pointer");
-				tdname.id = i;
-				
-				tdname.onclick = function () {
-					
-					filterlist[this.id].state = !filterlist[this.id].state; 	
-	
-					var textcolor = (filterlist[this.id].state) ? "#000" : "#777";	
-					this.setAttribute("style","cursor: pointer; color: " + textcolor);
-					
-					$("#filters_text").delay(300).fadeOut(600);
-					PRES.filtershelp = false;
-	
-					PRES.update(); 
-					PRES.force.start();
-				};
-				
-				tdimage = document.createElement("td");
-	            tdimage.setAttribute("style","width: 32px; height: 20px; background:url('img/node" + filter.typeId + ".png') no-repeat;");
-	 		
-				tdspace = document.createElement("td");
-				tdspace.style.width = "25px";
-				
-				if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow) {
-					tdspace.style.width = "5px";
-				}
-			
-				spaces = Visualisations.makeText(" ");
-				
-				var name = Visualisations.makeText(filter.name)
-					
-				tdname.appendChild(name);
-				tdspace.appendChild(spaces);
-							
-				tr.appendChild(tdimage);
-				tr.appendChild(tdname);
-				tr.appendChild(tdspace);
-				
-				if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
-					tb.appendChild(tr);
-					table.appendChild(tb);
-				}
-	        }
-			
-		column.appendChild(table);
-	    };
-		
-		
-		
-	    function initLinkFilters(PRES, columnId, filterlist) {
-		// 9 filters with 3 per column for the links
-	        var numfilts = 6 ;
-	        var filtspercol = 2 ;
-	        var filtsperrow = Math.ceil(numfilts/filtspercol);
-	
-	    	var column = document.getElementById(columnId);
-	
-			var table  = document.createElement("table");
-			table.style.width = "100%";
-			table.setAttribute('border','0');
-			table.setAttribute('cellpadding','1');
-			table.setAttribute('cellspacing','2');
-			
-			tb = document.createElement("tbody");
-	
-			var threadslegend = new Array();
-	
-	        for (var i = 1; i < numfilts+1; ++i) {
-	            var filter = filterlist[i];
-	            if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
-					tr = document.createElement("tr");
-				}
-				
-				tdimage = document.createElement("td");
-				tdimage.setAttribute("style","width: 20px; height: 20px; background:url('img/link" + filter.typeId + ".png') no-repeat;");
-				
-				tdname = document.createElement("td");
-				tdname.setAttribute("style","cursor: pointer");
-				tdname.id = i;
-				
-				tdname.onclick = function () {
-					
-					filterlist[this.id].state = !filterlist[this.id].state; 	
-	
-					var textcolor = (filterlist[this.id].state) ? "#000" : "#777";	
-					this.setAttribute("style","cursor: pointer; color: " + textcolor);
-					
-					$("#filters_text").delay(300).fadeOut(600);
-					PRES.filtershelp = false;					
-	
-					PRES.update(); 
-					PRES.force.start();
-				};
-				
-				tdspace = document.createElement("td");
-				tdspace.style.width = "25px";
-				
-				if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow) {
-					tdspace.style.width = "5px";
-				}
-				
-				spaces = Visualisations.makeText(" ");
-				
-				tdimage.appendChild(spaces);
-	            tdname.appendChild(Visualisations.makeText(filter.name));
-				tdspace.appendChild(spaces);
-				
-				spaces = Visualisations.makeText(" ");
-	
-				tr.appendChild(tdimage);
-				tr.appendChild(tdname);
-				tr.appendChild(tdspace);
-				     
-	            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
-					tb.appendChild(tr);
-					table.appendChild(tb);
-				}
-	        }
-			column.appendChild(table);
-	    };
-		
-	
-		
-	    function initSizeFilters(PRES, columnId, filterlist) {
-	
-	    var column = document.getElementById(columnId);
-	
-		var table  = document.createElement("table");
-		table.style.width = "100%";
-		table.setAttribute('border','0');
-		table.setAttribute('cellpadding','0');
-		table.setAttribute('cellspacing','2');
-		tb = document.createElement("tbody");
-		
-	    var filter = filterlist.evaluations;
-		
-		tr = document.createElement("tr");
-		
-		tdname = document.createElement("td");
-		tdname.setAttribute("style","cursor: pointer");
-				
-		tdname.onclick = function () {		
-			filterlist.evaluations.state = !filterlist.evaluations.state; 	
-	
-			var textcolor = (filterlist.evaluations.state) ? "#000" : "#777";	
-			this.setAttribute("style","cursor: pointer; color: " + textcolor);
-			
-			$("#filters_text").delay(300).fadeOut(600);
-			PRES.filtershelp = false;				
-				
-			PRES.update(); 
-			PRES.force.start();
-		};	
-		
-		tdname.appendChild(Visualisations.makeText(filter.name));
-		tr.appendChild(tdname);
-		tb.appendChild(tr);
-		
-		table.appendChild(tb);
-		column.appendChild(table);
-	
-	    };
-		
-	
-		
-	    function initNodeLegend(PRES, columnId, filterlist) {	
-	    };
-		
-		
-	
-	    function initLinkLegend(PRES, columnId, filterlist) {
-	    };
-		
-		   
 			//functions that define the attributes for nodes and links, depending on the filter states.
 	    function LiveAttributes(ABSTR, PRES) {
 	
 	        this.nodeRadius = function (d) {
-	            if (ABSTR.sizeFilters.evaluations.state) {
+	            if (ABSTR.filters.sizeFilter == 'evaluations') {
 					return PRES.renormalizednode(d.evalpos-d.evalneg);
 	            } else {
 	                return PRES.nodeSizeDefault;
@@ -1053,7 +743,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	        };
 		
 	        this.nodeRadiusCount = function (d) {
-	            if (ABSTR.sizeFilters.evaluations.state) {
+	            if (ABSTR.filters.sizeFilter == 'evaluations') {
 					return PRES.renormalizednode(d.evalpos-d.evalneg);
 	            } else {
 	                return PRES.nodeSizeDefault;
@@ -1075,7 +765,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	        };		
 	
 	        this.nodeStrokeWidth = function (d) {
-	            if (ABSTR.nodeFilters[d.type].state) {
+	            if (ABSTR.filters.nodeFilters[d.type]) {
 					if ((ABSTR.clickednodehash == d.hash) || (ABSTR.overnodehash == d.hash)){
 						return "3px";
 					} else {
@@ -1087,7 +777,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	        };
 			
 			this.nodeFillOpacity = function (d) {
-	            if (ABSTR.nodeFilters[d.type].state) {
+	            if (ABSTR.filters.nodeFilters[d.type]) {
 	                return PRES.nodeOpacityDefault;
 	            } else {
 					return "0";
@@ -1095,7 +785,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	        };
 	
 			this.textFillOpacity = function (d) {
-	            if (ABSTR.nodeFilters[d.node.type].state) {
+	            if (ABSTR.filters.nodeFilters[d.node.type]) {
 	                return "1";
 	            } else {
 					return "0";
@@ -1109,7 +799,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 	        this.seedRadius = function (d) {
 	
-			            if (ABSTR.nodeFilters[d.homenode.type].state) {
+			            if (ABSTR.filters.nodeFilters[d.homenode.type]) {
 					return PRES.seedSizeDefault *d.seedtype;
 			            } else {
 			                return 0;
@@ -1122,7 +812,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			
 			
 	        this.linkArrow = function (d) {
-	            if (ABSTR.linkFilters[d.type].state && !(ABSTR.treeview && d.direct == 1)) {
+	            if (ABSTR.filters.linkFilters[d.type] && !(ABSTR.treeview && d.direct == 1)) {
 					if ( d.type != 5 && d.type != 6 ) {                
 						//  alternative and equivalence have no direction
 						if (d.type == 2 && d.direct==1){
@@ -1160,8 +850,8 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 				
 	
 	        this.linkStrokeWidth = function (d) {
-	            if (ABSTR.linkFilters[d.type].state) {
-	                if (ABSTR.sizeFilters.evaluations.state){
+	            if (ABSTR.filters.linkFilters[d.type]) {
+	                if (ABSTR.filters.sizeFilter == 'evaluations'){
 						return PRES.renormalizedlink(d.evalpos-d.evalneg);
 					}else{
 	                    return PRES.linkStrokeWidthDefault;
@@ -1182,7 +872,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			
 	
 			this.linkStrokeOpacity = function (d) {
-	            if ((!ABSTR.linkFilters[d.type].state) || (ABSTR.treeview && d.direct == 1 && d.source.hash != ABSTR.overnodehash && d.target.hash != ABSTR.overnodehash && d.source.hash != ABSTR.clickednodehash && d.target.hash != ABSTR.clickednodehash)) {
+	            if ((!ABSTR.filters.linkFilters[d.type]) || (ABSTR.treeview && d.direct == 1 && d.source.hash != ABSTR.overnodehash && d.target.hash != ABSTR.overnodehash && d.source.hash != ABSTR.clickednodehash && d.target.hash != ABSTR.clickednodehash)) {
 	                if (ABSTR.selectedlink == d) hidelinkselect();
 	                return "0";
 	            } else {
@@ -1192,7 +882,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			
 			
 	        this.relatedNodesOpacity = function (d) {
-	            if (!ABSTR.linkFilters[d.type].state) {		
+	            if (!ABSTR.filters.linkFilters[d.type]) {		
 					affectednodes = PRES.svg.selectAll(".node")
 									.filter(function(e){return ((e.hash == d.source.hash)||(e.hash == d.target.hash));})
 					for (i=0;i<affectednodes[0].length;i++){
@@ -1224,7 +914,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 	
 	        this.relatedSeedRadius = function (d) {
-	            if (!ABSTR.linkFilters[d.type].state) {		
+	            if (!ABSTR.filters.linkFilters[d.type]) {		
 				// Look for all the seeds in nodes connected to the link that is going to be hidden
 					affectedseeds = PRES.svg.selectAll(".seed")
 									.filter(function(e){return ((e.homenode.hash == d.source.hash)||(e.homenode.hash == d.target.hash));})
@@ -1254,7 +944,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 	
 	        this.relatedLinksOpacity = function (d) {
-	            if (!ABSTR.nodeFilters[d.type].state) {
+	            if (!ABSTR.filters.nodeFilters[d.type]) {
 				
 					PRES.svg.selectAll(".link")
 	                    .filter(function (e) {return e.source.hash == d.hash;})
@@ -1349,11 +1039,11 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 							document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
 							
 							$("#contbox").stop().slideDown(0);
-							document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");
+							document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.nodecolor[d.type],0.5) +";");
 						    if (d.seed == 2){
 					 	              document.getElementById("contentlabel").innerHTML = "<b>" +Webtext.tx_initial_thought+ "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";			
 						    } else {
-		    				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";
+		    				document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.filters.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";
 						    };
 						
 							document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
@@ -1398,9 +1088,9 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 						document.getElementById("linkneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
 	
 						
-						document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[d.type].typeId],0.5) +";");
+						document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.over, 0.6) + "; background: "+  hex2rgb(PRES.linkcolor[d.type],0.5) +";");
 	
-					        document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";
+					        document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.filters.linkFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";
 	
 						
 						$("#right_bar").height($("#right_bar").height());
@@ -1460,11 +1150,11 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			
 					
 					if(ABSTR.clickednodehash !== ""){
-							document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[ABSTR.clickednode.type].typeId],0.5) +";");
+							document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.clickednode.type],0.5) +";");
 						    if (ABSTR.clickednode.seed == 2){
 						                                 document.getElementById("contentlabel").innerHTML = "<b>"  +Webtext.tx_initial_thought+ "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +ABSTR.clickednode.author + " - "+DateTime.timeAgo(ABSTR.clickednode.time)+")";
 						    } else {
-						    document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[ABSTR.clickednode.type].name + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +ABSTR.clickednode.author + " - "+DateTime.timeAgo(ABSTR.clickednode.time)+")";
+						    document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.filters.nodeFilters[ABSTR.clickednode.type].name + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +ABSTR.clickednode.author + " - "+DateTime.timeAgo(ABSTR.clickednode.time)+")";
 						    };
 	
 							document.getElementById("contbox").innerHTML = URLlinks(nl2br(ABSTR.clickednode.content));
@@ -1488,9 +1178,9 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	                var recentnewlink = ($.inArray(ABSTR.selectedlink, PRES.sessionlinks) > -1 && elapsedtime < 300);
 	                (recentnewlink || Model.editable == "1") ? $("#showeditlink").show() : $("#showeditlink").hide();
 	
-				document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[clickedlink2.type].typeId],0.5) +";");
+				document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.linkcolor[clickedlink2.type],0.5) +";");
 	
-			document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[clickedlink2.type].name + " " + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +clickedlink2.author + " - "+DateTime.timeAgo(clickedlink2.time)+")";
+			document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.filters.linkFilters[clickedlink2.type].name + " " + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +clickedlink2.author + " - "+DateTime.timeAgo(clickedlink2.time)+")";
 	
 						
 						document.getElementById("linkpos").innerHTML = "+" + clickedlink2.evalpos;
@@ -1671,11 +1361,11 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 							$('#right_bar').stop().fadeTo(200, 1);
 								$("#contbox").stop().slideDown(0);
 								
-	                        document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[ABSTR.nodeFilters[d.type].typeId],0.5) +";");	
+	                        document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.nodecolor[d.type],0.5) +";");	
 						   if (d.seed == 2){
 							  document.getElementById("contentlabel").innerHTML = "<b>" +Webtext.tx_initial_thought+ "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";			
 						   } else {
-					            document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";
+					            document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.filters.nodeFilters[d.type].name + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";
 						   };
 	                        document.getElementById("contbox").innerHTML = URLlinks(nl2br(d.content));
 	                        
@@ -1732,8 +1422,8 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 					
 						if (ABSTR.timevisualization){return;}
 						
-						document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.linkcolor[ABSTR.linkFilters[d.type].typeId],0.5) +";");
-			document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.linkFilters[d.type].name + " " + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";
+						document.getElementById("contentlabel").setAttribute ("style", "border: solid 3px " + hex2rgb(PRES.bordercolor.clicked, 0.7) + "; background: "+  hex2rgb(PRES.linkcolor[d.type],0.5) +";");
+			document.getElementById("contentlabel").innerHTML = "<b>" + ABSTR.filters.linkFilters[d.type].name + " " + "</b>" + "&nbsp&nbsp" + " ("+Webtext.tx_by+" " +d.author + " - "+DateTime.timeAgo(d.time)+")";
 	
 						
 						document.getElementById("linkpos").innerHTML = "+" + d.evalpos;
@@ -1809,38 +1499,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	//shows or hides the filters and legend bars
 	
 	function hideshowlegend() {};
-	
-	
-	function hideshowfilters() {
-	
-	    var PRES = Visualisations.current().presentation;
-		
-		PRES.showfilters = !PRES.showfilters;	
-	
-	//	var str = (PRES.showfilters) ? Webtext.tx_hide : Webtext.tx_show;
-	//	$("#cmd_hideshowfilters").html(str);
-		var arrowstr = (PRES.showfilters) ? "&#8681;" : "&#8679;" ;
-		$("#legendarrow").html(arrowstr);
-	
-	    legendfiltersupdate();	
-	
-	    if (PRES.filtershelp){ 
-		$("#filters_text").show();
-		PRES.filtershelp = false;
-	    } else {
-		$("#filters_text").delay(300).fadeOut(600);
-	    };
-		
-	};
-	
-	function legendfiltersupdate() {
-	
-	    var PRES = Visualisations.current().presentation;
-	    var lower_bar = document.getElementById("lower_bar");
-		
-	    (PRES.showfilters) ? $("#lower_bar").css("height", "105px") : $("#lower_bar").css("height", "25px");
-	
-	};
 	
 	//functions for the rating of nodes and links
 	function evalpos(){
@@ -3952,34 +3610,12 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 	}
 	
-	function filtershowtags(){
-	
-	    var PRES = Visualisations.current().presentation;
-	
-		if (PRES.showingsums){
-		filtershowsums();	
-		}
-	
-		if (PRES.showingauthors){
-		filtershowauthors();	
-		}
-	
-		PRES.showingtags = !PRES.showingtags; 
-	
-		if (PRES.showingtags){
-		    $("#showtags").css("color","#000");
-		    showtags();
-		} else {
-		    $("#showtags").css("color","#777");
-		    hidenodetexts();
-		}
-	
-	}
-	
-	
 	function showtags(){
-	
+		hidenodetexts();
+		var ABSTR = Visualisations.current().abstraction;
 	    var PRES = Visualisations.current().presentation;
+	    
+	    ABSTR.filters.showFilter = 'tags';
 	
 		var textdata = [];
 	
@@ -4003,38 +3639,15 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 		
 	}
 	
-	
-	function filtershowauthors(){
-	
-	    var PRES = Visualisations.current().presentation;
-	
-		if (PRES.showingsums){
-		filtershowsums();	
-		}
-	
-		if (PRES.showingtags){
-		filtershowtags();	
-		}
-	
-		PRES.showingauthors = !PRES.showingauthors; 
-	
-		if (PRES.showingauthors){
-		    $("#showauthors").css("color","#000");
-		    showauthors();
-		} else {
-		    $("#showauthors").css("color","#777");
-		    hidenodetexts();
-		}
-	
-	}
-	
 	function showauthors(){
-	
+		hidenodetexts();
+		var ABSTR = Visualisations.current().abstraction;
 	    var PRES = Visualisations.current().presentation;
+	    
+	    ABSTR.filters.showFilter = 'authors';
 	
 		var textdata3 = [];
-		
-	//	Model.model.nodes.forEach(function(d, i) {		
+			
 	    PRES.force.nodes().forEach(function(d, i) {		
 	
 				textdata3.push({node:d});
@@ -4054,34 +3667,12 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 			
 	}
 	
-	
-	function filtershowsums(){
-	
-	    var PRES = Visualisations.current().presentation;
-	
-		if (PRES.showingtags){
-		filtershowtags();	
-		}
-	
-		if (PRES.showingauthors){
-		filtershowauthors();	
-		}
-	
-		PRES.showingsums = !PRES.showingsums; 
-	
-		if (PRES.showingsums){
-		    $("#showsums").css("color","#000");
-		    showsums();
-		} else {
-		    $("#showsums").css("color","#777");
-		    hidenodetexts();
-		}
-	
-	}
-	
 	function showsums(){
-	
+		hidenodetexts();
+		var ABSTR = Visualisations.current().abstraction;
 	    var PRES = Visualisations.current().presentation;
+	    
+	    ABSTR.filters.showFilter = 'summaries';
 	
 		var textdata2 = [];
 		
@@ -4128,8 +3719,10 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	}
 	
 	function hidenodetexts(){
-	
+		var ABSTR = Visualisations.current().abstraction;
 	    var PRES = Visualisations.current().presentation;
+	    
+		ABSTR.filters.showFilter = 'none';
 		
 			PRES.svg.selectAll("text")
 				.data("")
@@ -4611,83 +4204,29 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	}
 	
 	
-	function ZoomOut_Control(VIS, ABSTR, PRES) {};
+	function ZoomOut_Control(VIS, ABSTR, PRES) {
+		var conversationTools = new ConversationTools();
+		
+		this.init = function() {
+			conversationTools.init();
+			conversationTools.control.onNodesAndLinksChanged = applyNodeChanges;
+			conversationTools.control.onLinksChanged = applyLinkChanges;
+			conversationTools.control.onShowFilterChanged = selectShowFilter;
+			conversationTools.control.onSizeFilterChanged = selectSizeFilter;
+			conversationTools.control.onFilterChanged = selectFilter;
+		}
+	};
 	// End of var ZoomOut
 	
 	
-	function nodeslider (x){
-		console.log('nodeslider');
+	function applyNodeChanges(remainingNodes, remainingLinks){
 		var ABSTR = Visualisations.current().abstraction;
 		var PRES = Visualisations.current().presentation;
-	
-		var nodesdifevalarray = Model.model.nodes.map(function(e){return e.evalpos-e.evalneg;});
-	
-		var nodesmaxeval = d3.max(nodesdifevalarray);
-		var nodesmineval = d3.min(nodesdifevalarray);
 		
-		nodescutvalue = Math.ceil(nodesmineval + (nodesmaxeval-nodesmineval)*x);
+		if (ABSTR.showingevolution) evolutionend();
 		
-		if (!ABSTR.loading){
-			if (oldnodescutvalue == nodescutvalue){return;}
-		};
-		
-	    if (ABSTR.showingevolution) evolutionend();
-		slidersupdatenodes(nodescutvalue);
-	
-		oldnodescutvalue = nodescutvalue;
-	}
-	
-	function linkslider (x){
-	
-		var ABSTR = Visualisations.current().abstraction;
-		var PRES = Visualisations.current().presentation;
-	
-		var linksdifevalarray = Model.model.links.map(function(e){return e.evalpos-e.evalneg;});
-		
-		var linksmaxeval = d3.max(linksdifevalarray);
-		var linksmineval = d3.min(linksdifevalarray);
-	
-		linkscutvalue = Math.ceil(linksmineval + (linksmaxeval-linksmineval)*x);
-		
-		if (!ABSTR.loading){
-			if (oldlinkscutvalue == linkscutvalue){return;}
-		};
-	    
-	    if (ABSTR.showingevolution) evolutionend();
-	    
-		slidersupdatelinks(linkscutvalue);
-	
-		oldlinkscutvalue = linkscutvalue;	
-	
-	}
-	
-	
-	function slidersupdatenodes (nodescutvalue){
-	
-		var ABSTR = Visualisations.current().abstraction;
-		var PRES = Visualisations.current().presentation;
-	
-	    var nodes = Model.model.nodes;
-	    var links = Model.model.links;
-	
-		remainingnodes = [];
-		remaininglinks = [];
-		
-		
-		nodes.forEach(function(d) {
-			if ((d.evalpos-d.evalneg)>=nodescutvalue){
-				remainingnodes.push(d);
-			};
-		});
-		
-	
-		var nodesign = (nodescutvalue>0) ? "+" : "";
-	
-		document.getElementById("handle1").innerHTML = nodesign + nodescutvalue;
-		
-		if (ABSTR.loading){return;}
-		
-		PRES.force.nodes(remainingnodes);
+		PRES.force.nodes(remainingNodes);
+		PRES.force.links(remainingLinks);
 	
 		PRES.drawexplosions = false;
 		PRES.elasticdraw = false;
@@ -4706,33 +4245,19 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 		drawnewnodes();
 	
-		links.forEach(function(d) {
-			if ((d.evalpos-d.evalneg)>=linkscutvalue && $.inArray(d.source, remainingnodes)>=0 && $.inArray(d.target, remainingnodes)>=0){
-				remaininglinks.push(d);
-			};
-		});
-	
-	    if (isNaN(linkscutvalue)){
-		   PRES.force.links(Model.model.links);
-		}else{
-		   PRES.force.links(remaininglinks);   
-		};
-	
-	
 		PRES.svg.selectAll(".link")
 			.data("")
 			.exit().remove();
 	
 		drawnewlinks();
 	
-			PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedNodesOpacity);
-			PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedSeedRadius);
-	        PRES.svg.selectAll(".node").style("fill", PRES.liveAttributes.relatedLinksOpacity);
-	
+		PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedNodesOpacity);
+		PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedSeedRadius);
+        PRES.svg.selectAll(".node").style("fill", PRES.liveAttributes.relatedLinksOpacity);
 	
 		if (PRES.showingsums){
 		var textdata2 = [];	
-		remainingnodes.forEach(function(d, i) {	
+		remainingNodes.forEach(function(d, i) {	
 				//if a node has no summary, an automatic summary is created with the 60 first character of its content
 				var fontcolor = "#000";
 				var fontstyle = "normal";
@@ -4763,7 +4288,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 		if (PRES.showingauthors){
 		var textdata3 = [];	
-		remainingnodes.forEach(function(d, i) {		
+		remainingNodes.forEach(function(d, i) {		
 				textdata3.push({node:d});
 		});
 			PRES.svg.selectAll("text")
@@ -4780,7 +4305,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	
 		if (PRES.showingtags){
 		var textdata = [];	
-		remainingnodes.forEach(function(d, i) {		
+		remainingNodes.forEach(function(d, i) {		
 				textdata.push({node:d, text: findstringsontext(Model.tags, d.content)});
 		});		
 			PRES.svg.selectAll("text")
@@ -4795,11 +4320,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 				.style("fill", "#333");	
 		}
 	
-	
-	//	remainingnodes.forEach(function(d){
-	//		if (d.seed>0){addseed(d);}
-	//	});
-	
 	    updateSeeds();
 	
 		if (!ABSTR.showingevolution) PRES.drawexplosions = true;
@@ -4810,40 +4330,13 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 	}
 	
 	
-	function slidersupdatelinks (linkscutvalue){
-	
+	function applyLinkChanges(remainingLinks){
 		var ABSTR = Visualisations.current().abstraction;
 		var PRES = Visualisations.current().presentation;
-	
-	
-	        var links = Model.model.links;
-	
-		remaininglinks = [];
 		
-		links.forEach(function(d) {
-			if ((d.evalpos-d.evalneg)>=linkscutvalue && $.inArray(d.source, remainingnodes)>=0 && $.inArray(d.target, remainingnodes)>=0){
-				remaininglinks.push(d);
-			};
-		});
-	
-		var linksign = (linkscutvalue>0) ? "+" : "";
-	
-		 	document.getElementById("slider2").setAttribute("style","visibility:visible;");
-	        if (isNaN(linkscutvalue)){
-		 	document.getElementById("slider2").setAttribute("style","visibility:hidden;");
-		};
-	
-		document.getElementById("handle2").innerHTML = linksign + linkscutvalue;
+		if (ABSTR.showingevolution) evolutionend();
 		
-		if (ABSTR.loading){return;}
-		
-	
-	        if (isNaN(linkscutvalue)){
-		PRES.force.links(Model.model.links);
-		}else{
-		PRES.force.links(remaininglinks);
-		};
-	
+		PRES.force.links(remainingLinks);
 		
 		PRES.drawexplosions = false;
 		PRES.elasticdraw = false;
@@ -4856,21 +4349,48 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager) {
 		drawnewlinks();
 	
 	
-			PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedNodesOpacity);
-			PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedSeedRadius);
-	        PRES.svg.selectAll(".node").style("fill", PRES.liveAttributes.relatedLinksOpacity);
-	
+		PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedNodesOpacity);
+		PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedSeedRadius);
+        PRES.svg.selectAll(".node").style("fill", PRES.liveAttributes.relatedLinksOpacity);
 			
 		if (ABSTR.showingevolution) PRES.drawexplosions = true;
 		PRES.elasticdraw = true;
 	
 	    updatetimevisualization();
-	
 	}
 	
+	function selectShowFilter(name) {
+		var ABSTR = Visualisations.current().abstraction;
+		if(ABSTR.filters.showFilter == name) hidenodetexts();
+		else switch(name) {
+			case 'summaries': showsums(); break;
+			case 'authors': showauthors(); break;
+			case 'tags': showtags(); break;
+			case 'none': hidenodetexts(); break;
+		}
+	}
+	
+	function selectSizeFilter(name) {
+		var ABSTR = Visualisations.current().abstraction;
+		ABSTR.filters.sizeFilter = (ABSTR.filters.sizeFilter != name) ? name : 'none';
+		applyAttributeChanges();
+	}
+	
+	function selectFilter(filterListName, name) {
+		console.log('selectFilter', filterListName, name);
+		var ABSTR = Visualisations.current().abstraction;
+		var filterList = ABSTR.filters[filterListName];
+		filterList[name] = !filterList[name];
+		applyAttributeChanges();
+	}
+	
+	function applyAttributeChanges() {
+		var PRES = Visualisations.current().presentation;
+		PRES.update();
+		PRES.force.start();
+	}
 	
 	function checkadvevalnode(){
-	
 	    var ABSTR = Visualisations.current().abstraction;
 	    var PRES = Visualisations.current().presentation;
 	
