@@ -1,4 +1,4 @@
-define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder, Webtext, Model, Visualisations) {
+define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(PacBuilder, Webtext, Model, Visualisations, Events) {
 	
 	function ConversationTools() {
 		PacBuilder(this, ConversationTools_Presentation, ConversationTools_Abstraction, ConversationTools_Control);
@@ -29,6 +29,9 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 			_this.onLinksChanged = function(links) {};
 			_this.onShowFilterChanged = function(name) {};
 			_this.onSizeFilterChanged = function(name) {};
+			_this.onFilterChanged = function(filterListName, id) {};
+			
+			_this.filterChanged = new Events.EventImpl();
 		}
 		
 		function initFilters() {
@@ -103,7 +106,8 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 			var state = list[id].state;
 			state = list[id].state = !state;
 			
-			_this.onFilterChanged(filterListName, id)
+			_this.onFilterChanged(filterListName, id);
+			_this.filterChanged.raise({ filterListName: filterListName, id: id, state: state });
 		}
 		
 		function disableAllFilters(list) {
@@ -177,6 +181,8 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 	function ConversationTools_Presentation(ABSTR) {
 		var _this = this;
 		this.init = function() {
+			ABSTR.filterChanged.subscribe(presentFilterState);
+			
 			$('#lower_bar').html(getLowerBarHtml());
 			
 	        $('#filters_text').fadeOut(0);
@@ -185,29 +191,29 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 				document.getElementById("showtags").setAttribute("style","visibility:hidden; cursor:default;");
 			else
 				$( "#showtags" )[0].onclick = toggleShowTagsFilter;
+				
 			$( "#showsums" )[0].onclick = toggleShowSummariesFilter;
 			$( "#showauthors" )[0].onclick = toggleShowAuthorsFilter;
 			
 	        $( "#cmd_hideshowfilters" )[0].onclick = toggleFilterPanelVisibility;
 	        $( "#filters_title" )[0].onclick = toggleFilterPanelVisibility;
-			
-			console.log('register Dragdealer');
+	        
+	        initSliders();
+	        
+			//Create the filters
+	        initNodeFilters();
+	        initLinkFilters();
+	        initSizeFilters();
+		}
+		
+		function initSliders() {
 			setTimeout(function() { 
 				new Dragdealer('slider1', { animationCallback: nodeslider });
 				new Dragdealer('slider2', { animationCallback: linkslider });
 			}, 0);
-	        
-	        
-			//Create the legend
-		        //initNodeLegend(_this, "legend_nodes", ABSTR.nodeFilters);
-		        //initLinkLegend(_this, "legend_links", ABSTR.linkFilters);
-			//Create the filters
-		        initNodeFilters();
-		        initLinkFilters();
-		        initSizeFilters();
 		}
 		
-		// Start of initLinkFilters = create the html from the filters, appending it (appendChild) to the right div tags
+		// Start of initNodeFilters = create the html from the filters, appending it (appendChild) to the right div tags
 	    function initNodeFilters() {
 			var columnId = "filt_nodes";
 			var filterlist = ABSTR.nodeFilters;
@@ -230,6 +236,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 	
 			var boxeslegend = new Array();
 	
+			_this.nodeFilterTextDoms = {};
 	        for (var i = 1; i < numfilts+1; ++i) {
 				var filter = filterlist[i];
 				
@@ -241,14 +248,15 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 				tdname.setAttribute("style","cursor: pointer");
 				tdname.id = i;
 				
+				_this.nodeFilterTextDoms[i] = tdname;
+				
 				tdname.onclick = function () {
-					ABSTR.toggleFilter('nodeFilters', this.id);	
-	
-					var textcolor = (filterlist[this.id].state) ? "#000" : "#777";	
-					this.setAttribute("style","cursor: pointer; color: " + textcolor);
+					ABSTR.toggleFilter('nodeFilters', this.id);
 					
-					$("#filters_text").delay(300).fadeOut(600);
 					ABSTR.filtershelp = false;
+					$("#filters_text").delay(300).fadeOut(600);
+					
+					//presentNodeFilterState(this.id, filterlist[this.id].state);
 				};
 				
 				tdimage = document.createElement("td");
@@ -263,7 +271,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 			
 				spaces = Visualisations.makeText(" ");
 				
-				var name = Visualisations.makeText(filter.name)
+				var name = Visualisations.makeText(filter.name);
 					
 				tdname.appendChild(name);
 				tdspace.appendChild(spaces);
@@ -277,9 +285,31 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 					table.appendChild(tb);
 				}
 	        }
-			
-		column.appendChild(table);
+			column.appendChild(table);
 	    };
+	    
+	    /*function presentNodeFilterState(id, state) {
+			var textcolor = (state) ? "#000" : "#777";	
+			var domElement = getNodeFilterTextDom(id);
+			domElement.setAttribute("style","cursor: pointer; color: " + textcolor);
+	    }*/
+	    
+	    function presentFilterState(args) {
+	    	var state = args.state;
+	    	var id = args.id;
+	    	var filterListName = args.filterListName;
+	    	
+			var textcolor = (state) ? "#000" : "#777";	
+			var domElement = getFilterTextDom(filterListName, id);
+			domElement.setAttribute("style","cursor: pointer; color: " + textcolor);
+	    }
+	    
+	    function getFilterTextDom(filterListName, id) {
+	    	if(filterListName == 'nodeFilters')
+	    		return _this.nodeFilterTextDoms[id];
+	    	else if(filterListName == 'linkFilters')
+	    		return _this.linkFilterTextDoms[id];
+	    }
 		
 	    function initLinkFilters() {
 			var columnId = "filt_links";
@@ -298,9 +328,11 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 			table.setAttribute('cellpadding','1');
 			table.setAttribute('cellspacing','2');
 			
-			tb = document.createElement("tbody");
+			tb = document.createElement("tbody");	
 	
 			var threadslegend = new Array();
+			
+			_this.linkFilterTextDoms = {};
 	
 	        for (var i = 1; i < numfilts+1; ++i) {
 	            var filter = filterlist[i];
@@ -317,13 +349,10 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 				
 				tdname.onclick = function () {
 					ABSTR.toggleFilter('linkFilters', this.id);	
-	
-					var textcolor = (filterlist[this.id].state) ? "#000" : "#777";	
-					this.setAttribute("style","cursor: pointer; color: " + textcolor);
-					
 					$("#filters_text").delay(300).fadeOut(600);
-					ABSTR.filtershelp = false;		
+					ABSTR.filtershelp = false;
 				};
+				_this.linkFilterTextDoms[i] = tdname;
 				
 				tdspace = document.createElement("td");
 				tdspace.style.width = "25px";
@@ -459,7 +488,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 			}
 		}
 	
-	
 		function toggleShowSummariesFilter(){
 			disableAllShowFilters();
 			if (ABSTR.toggleShowSummariesFilterReturnResult()){
@@ -526,18 +554,21 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 		var _this = this;
 		
 		this.init = function() {
-			_this.pipeEvent("onNodesAndLinksChanged", abstraction);
-			_this.pipeEvent("onLinksChanged", abstraction);
-			_this.pipeEvent("onShowFilterChanged", abstraction);
-			_this.pipeEvent("onSizeFilterChanged", abstraction);
-			_this.pipeEvent("onFilterChanged", abstraction);
+			pipeEvent("onNodesAndLinksChanged", abstraction);
+			pipeEvent("onLinksChanged", abstraction);
+			pipeEvent("onShowFilterChanged", abstraction);
+			pipeEvent("onSizeFilterChanged", abstraction);
+			pipeEvent("onFilterChanged", abstraction);
 		};
 		
 		function pipeEvent(name, parent, parentPropertyName) {
 			_this[name] = function() {};
 			if(parent[parentPropertyName || name])
 				parent[parentPropertyName || name] = function() { _this[name].apply(_this, arguments) };
-			else throw new Error("pipeEvent: property '" + parentPropertyName + "' is empty or does not exist.")
+			else {
+				console.log("error information", parent, parentPropertyName || name);
+				throw new Error("pipeEvent: property does not exist");
+			}
 		}
 	}
 	return ConversationTools;
