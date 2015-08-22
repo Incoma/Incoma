@@ -1,5 +1,5 @@
 define(['webtext', 'visualisation', 'datetime', 'model', 'conversations', 'conversationtools', 'db'], 
-function(Webtext, Visualisations, DateTime, Model, ConversationManager, ConversationTools, Db) {
+function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleConvTools, Db) {
 	
 		//definition of the html code of the right panel bar for different situations:
 	// Reply and Connect buttons
@@ -4306,7 +4306,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	
 	
 	function ZoomOut_Control(VIS, ABSTR, PRES) {
-		var conversationTools = new ConversationTools();
+		var conversationTools = new ModuleConvTools.ConversationTools();
 		
 		this.init = function() {
 			conversationTools.init();
@@ -4460,14 +4460,14 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	    updatetimevisualization();
 	}
 	
-	function selectShowFilter(name) {
+	function selectShowFilter(filter) {
 		var ABSTR = Visualisations.current().abstraction;
 		if(ABSTR.filters.showFilter == name) hidenodetexts();
-		else switch(name) {
-			case 'summaries': showsums(); break;
-			case 'authors': showauthors(); break;
-			case 'tags': showtags(); break;
-			case 'none': hidenodetexts(); break;
+		else switch(filter) {
+			case ModuleConvTools.ShowFilters.Summaries: showsums(); break;
+			case ModuleConvTools.ShowFilters.Authors: showauthors(); break;
+			case ModuleConvTools.ShowFilters.Tags: showtags(); break;
+			case ModuleConvTools.ShowFilters.None: hidenodetexts(); break;
 		}
 	}
 	
@@ -4540,5 +4540,4 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	    };
 	
 	}
-	return { Scaler: Scaler }; //TODO: is this still necessary?
 });
