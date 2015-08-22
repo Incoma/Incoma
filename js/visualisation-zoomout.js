@@ -8,47 +8,133 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	// Reply button clicked
 	// Connect button clicked
 	// No buttons
-	
-	rightpanelhtmlreplyandlink = "<div id='showreply' class='showreplypanel button' onClick='showreplypanel(false)'>"+Webtext.tx_reply+"</div><div id='showconnect' class='showconnectpanel button' onClick='showcreatelink(false)'>"+Webtext.tx_connect+"</div><div id='showeditnode' class='button showedit' onClick='showreplypanel(true)' title='"+Webtext.tx_edit_thought+"'><div id='showediticon'></div></div>";
-	
-	rightpanelhtmleval = "<div style='float:right; width: 105px;'><div style='float:right;'><div id='nodepos' class='evalpos' onClick='evalpos()'>+</div><div id='nodeneg' class='evalneg' onClick='evalneg()'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div><div id='arrowadveval' style='background-image: url(img/nodechangelight.png)'; class='advevalicon' title='"+Webtext.tx_change_category+"' onClick='openadvevalnodepanel()';></div></div>";
-	
-	rightpanelhtmlevalover = "<div style='float:right; width: 105px;'><div style='float:right;'><div id='nodepos' class='evalpos' onClick='evalpos()'>+</div><div id='nodeneg' class='evalneg' onClick='evalneg()'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
-	
-	//rightpanelhtmleval = "<div style='float:right;'><div style='float:right;'><div id='nodepos' class='evalpos' onClick='evalpos()'>+</div><div id='nodeneg' class='evalneg' onClick='evalneg()'>-</div></div><br><div id='arrowadveval' style='background-image: url(img/nodechangelight.png)'; class='advevalicon' title='"+Webtext.tx_change_category+"' onClick='openadvevalnodepanel()';></div><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
-	
-	rightpanelhtmllinkeval = "<div id='showeditlink' class='button showedit' onClick='showeditlink()' style='margin-top:4px;' title='"+Webtext.tx_edit_thought+"'><div id='showediticon'></div></div><div style='float:right;'><div id='evalalert' class='alerttext noselect'></div><div id='linkpos' class='evalpos' onClick='linkevalpos()'>+</div><div id='linkneg' class='evalneg' onClick='linkevalneg()'>-</div></div><br><div id='arrowadveval' style='background-image: url(img/nodechangelight.png)'; class='advevaliconlink' title='"+Webtext.tx_change_category+"' onClick='openadvevallinkpanel()';></div><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
-	
-	rightpanelhtmllinkevalover = "<div id='showeditlink' class='button showedit' style='margin-top:4px;' onClick='showeditlink()' title='"+Webtext.tx_edit_thought+"'><div id='showediticon'></div></div><div style='float:right;'><div id='evalalert' class='alerttext noselect'></div><div id='linkpos' class='evalpos' onClick='linkevalpos()'>+</div><div id='linkneg' class='evalneg' onClick='linkevalneg()'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
-	
-	rightpanelhtmlreply = "<table><tr><td id='tdnodetype'>"+Webtext.tx_type_reply+":&nbsp<select id='replynodetype'></select></td><td>&nbsp&nbsp&nbsp&nbsp</td><td id='tdlinktype'>"+Webtext.tx_type_connection+":&nbsp<select id=\"replylinktype\" style='display:inline-block;'></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false' maxlength='5000'></textarea>"+Webtext.tx_summary_reply+":<textarea id='replyboxsum' class='areareplysum' spellcheck='false' maxlength='100'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='replysavecancel'><center><div class='save button' onClick='savenode()'>"+Webtext.tx_save+"</div><div class='cancel button' onClick='hidereplypanel()'>"+Webtext.tx_cancel+"</div></center><div id='replyalert' class='alerttext noselect' style='text-align:right;'>&nbsp</div></div>";
-	
-	rightpanelhtmllink = "<table><tr><td id='tdconnect'><select id='connectlinktype'></select></td><td><p>&nbsp&nbsp</p></td><td><div class='cancel button' onClick='cancellink()'>"+Webtext.tx_cancel+"</div></td></tr></table><br><div id='connecttext' class='connecttext'>&nbsp</div>";
-	
-	rightpaneleditlink = "<table><tr><td id='tdconnect'><select id='connectlinktype'></select></td><td><p>&nbsp&nbsp</p></td><td><div class='save button' onClick='editlink()'>"+Webtext.tx_save+"</div></td></tr></table><br>";
-	
-	rightpanelhtmlspace = "<div style='float:left;visibility:hidden;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div></div><br></div>"; 
-	
-	timevisinteracthtml = "<div id='evalalert' class='linkalerttext noselect' style='float:left;'></div><div style='float:right;'><div id='showreply' class='smallshowreplypanel justbutton' onClick='showreplypanel(false)'>"+Webtext.tx_reply+"</div><div id='showconnect' class='smallshowconnectpanel justbutton' onClick='showcreatelink(false)'>"+Webtext.tx_connect+"</div><div id='nodepos' class='smallevalpos justbutton' onClick='evalpos()'>+</div><div id='nodeneg' class='smallevalneg justbutton' onClick='evalneg()'>-</div></div>";
-	
-	function insertRightBarHtml(node) {
-		var rightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_show_timeline+'</div></center><div id="right_bar_header" class="right_bar_header "><div id="contentlabel" class="right_bar_title" ondblclick="rbexpand()">&nbsp</div></div><div id="contbox" class="divareacontent"></div><div id="rightpaneleval"></div><div id="rightpanel"></div><div id="rightpanelspace"></div>';
-		insertHtml(rightbarhtml, node);
-		bindTimeVisualisation();
+
+	function insertRightPanelHtmlEval(node, mode) {
+		var rightpanelhtmleval = "<div style='float:right; width: 105px;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div><div id='nodeneg' class='evalneg'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div><div id='arrowadveval' style='background-image: url(img/nodechangelight.png)' class='advevalicon' title='"+Webtext.tx_change_category+"'></div></div>";
+		insertHtml(rightpanelhtmleval, node, mode);
+		bindReactionTools();
 	}
 	
-	function insertTimevisRightBarHtml(node) {
-		var timevisrightbarhtml = '<div id="saving" style="display:none;"><div id="savingicon"></div><div id="savingtext">'+Webtext.tx_saving+'</div></div><center><div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">'+Webtext.tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
-		insertHtml(timevisrightbarhtml, node);
-		bindTimeVisualisation();
+	function insertRightPanelHtmlEvalOver(node, mode) {
+		rightpanelhtmlevalover = "<div style='float:right; width: 105px;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div><div id='nodeneg' class='evalneg'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
+		insertHtml(rightpanelhtmlevalover, node, mode);
+		bindReactionTools();
+	}
+	
+	function insertRightPanelHtmlLinkEval(node, mode) {
+		var rightpanelhtmllinkeval = "<div id='showeditlink' class='button showedit' style='margin-top:4px;' title='"+Webtext.tx_edit_thought+"'><div id='showediticon'></div></div><div style='float:right;'><div id='evalalert' class='alerttext noselect'></div><div id='linkpos' class='evalpos'>+</div><div id='linkneg' class='evalneg'>-</div></div><br><div id='arrowadveval' style='background-image: url(img/nodechangelight.png)'; class='advevaliconlink' title='"+Webtext.tx_change_category+"'></div><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
+		insertHtml(rightpanelhtmllinkeval, node, mode);
+		bindLinkReactionTools();
+	}
+	
+	function insertRightPanelHtmlLinkEvalOver(node, mode) {
+		var rightpanelhtmllinkevalover = "<div id='showeditlink' class='button showedit' style='margin-top:4px;' title='"+Webtext.tx_edit_thought+"'><div id='showediticon'></div></div><div style='float:right;'><div id='evalalert' class='alerttext noselect'></div><div id='linkpos' class='evalpos'>+</div><div id='linkneg' class='evalneg'>-</div></div><br><div id='evalalert' class='linkalerttext noselect' style='float:right;'></div></div>";
+		insertHtml(rightpanelhtmllinkevalover, node, mode);
+		bindLinkReactionTools();
+	}
+	
+	function insertRightPanelHtmlReply(node, mode) {
+		var rightpanelhtmlreply = "<table><tr><td id='tdnodetype'>"+Webtext.tx_type_reply+":&nbsp<select id='replynodetype'></select></td><td>&nbsp&nbsp&nbsp&nbsp</td><td id='tdlinktype'>"+Webtext.tx_type_connection+":&nbsp<select id=\"replylinktype\" style='display:inline-block;'></select></td></tr></table><textarea id='replybox' class='areareply' spellcheck='false' maxlength='5000'></textarea>"+Webtext.tx_summary_reply+":<textarea id='replyboxsum' class='areareplysum' spellcheck='false' maxlength='100'></textarea>&nbsp&nbsp&nbsp&nbsp<div class='replysavecancel'><center><div id='savenode' class='save button'>"+Webtext.tx_save+"</div><div id='hidereplypanel' class='cancel button'>"+Webtext.tx_cancel+"</div></center><div id='replyalert' class='alerttext noselect' style='text-align:right;'>&nbsp</div></div>";
+		insertHtml(rightpanelhtmlreply, node, mode);
+		bindReplyPanelTools();
+	}
+	
+	function bindReplyPanelTools() {
+		$('#savenode, #hidereplypanel').off('click');
+		$('#savenode').click(savenode);
+		$('#hidereplypanel').click(hidereplypanel);
+	}
+	
+	function insertRightPanelHtmlLink(node, mode) {
+		var rightpanelhtmllink = "<table><tr><td id='tdconnect'><select id='connectlinktype'></select></td><td><p>&nbsp&nbsp</p></td><td><div id='cancellink' class='cancel button' onClick='cancellink()'>"+Webtext.tx_cancel+"</div></td></tr></table><br><div id='connecttext' class='connecttext'>&nbsp</div>";
+		insertHtml(rightpanelhtmllink, node, mode);
+		bindLinkPanelTools();
+	}
+	
+	function bindLinkPanelTools() {
+		$('#cancellink').off('click');
+		$('#cancellink').click(cancellink);
+	}
+	
+	function insertRightPanelEditLink(node, mode) {
+		var rightpaneleditlink = "<table><tr><td id='tdconnect'><select id='connectlinktype'></select></td><td><p>&nbsp&nbsp</p></td><td><div id='editlink' class='save button' onClick='editlink()'>"+Webtext.tx_save+"</div></td></tr></table><br>";
+		insertHtml(rightpaneleditlink, node, mode);
+		bindEditLinkPanel();
+	}
+	
+	function bindEditLinkPanel() {
+		$('#editlink').off('click');
+		$('#editlink').click(editlink);
+	}
+	
+	function insertRightPanelHtmlSpace(node, mode) {
+		var rightpanelhtmlspace = "<div style='float:left;visibility:hidden;'><div style='float:right;'><div id='nodepos' class='evalpos'>+</div></div><br></div>"; 
+		insertHtml(rightpanelhtmlspace, node, mode);
+	}
+	
+	function insertTimevisInteractHtml(node, mode) {
+		var timevisinteracthtml = "<div id='evalalert' class='linkalerttext noselect' style='float:left;'></div><div style='float:right;'><div id='showreply' class='smallshowreplypanel justbutton'>"+Webtext.tx_reply+"</div><div id='showconnect' class='smallshowconnectpanel justbutton'>"+Webtext.tx_connect+"</div><div id='nodepos' class='smallevalpos justbutton'>+</div><div id='nodeneg' class='smallevalneg justbutton'>-</div></div>";
+		insertHtml(timevisinteracthtml, node, mode);
+		bindReactionTools();
+	}
+	
+	function insertRightPanelHtmlReplyAndLink(node, mode) {
+		var rightpanelhtmlreplyandlink = "<div id='showreply' class='showreplypanel button'>"+Webtext.tx_reply+"</div><div id='showconnect' class='showconnectpanel button'>"+Webtext.tx_connect+"</div><div id='showeditnode' class='button showedit' title='"+Webtext.tx_edit_thought+"'><div id='showediticon'></div></div>";
+		insertHtml(rightpanelhtmlreplyandlink, node, mode);
+		bindReactionTools();
+	}
+	
+	function bindLinkReactionTools() {
+		$('#showeditlink, #linkpos, #linkneg, #arrowadveval').off('click');
+		$('#showeditlink').click(showeditlink);
+		$('#linkpos').click(linkevalpos);
+		$('#linkneg').click(linkevalneg);
+		$('#arrowadveval').click(openadvevallinkpanel);
+	}
+	
+	function bindReactionTools() {
+		$('#showreply, #showeditnode, #showconnect, #nodepos, #nodeneg, #arrowadveval').off('click');
+		$('#showreply').click(function() { showreplypanel(false) });
+		$('#showeditnode').click(function() { showreplypanel(true) });
+		$('#showconnect').click(function() { showcreatelink(false) });
+		$('#nodepos').click(evalpos);
+		$('#nodeneg').click(evalneg);
+		$('#arrowadveval').click(openadvevalnodepanel);
+	}
+	
+	function insertRightBarHtml(node, mode) {
+		var rightbarhtml = '<center><div id="changevisualization" class="changevisualization justbutton">'+Webtext.tx_show_timeline+'</div></center><div id="right_bar_header" class="right_bar_header "><div id="contentlabel" class="right_bar_title">&nbsp</div></div><div id="contbox" class="divareacontent"></div><div id="rightpaneleval"></div><div id="rightpanel"></div><div id="rightpanelspace"></div>';
+		insertHtml(rightbarhtml, node, mode);
+		bindRightPanel();
+	}
+	
+	function insertTimevisRightBarHtml(node, mode) {
+		var timevisrightbarhtml = '<div id="saving" style="display:none;"><div id="savingicon"></div><div id="savingtext">'+Webtext.tx_saving+'</div></div><center><div id="changevisualization" class="changevisualization justbutton">'+Webtext.tx_hide_timeline+'</div></center><div id="timevisdiv" class="timevisdiv"></div>';
+		insertHtml(timevisrightbarhtml, node, mode);
+		bindRightPanel();
+	}
+	
+	function bindRightPanel() {
+		$('#changevisualization').off('click');
+		$('#changevisualization').click(changevisualization);
+		
+		$('#contentlabel').off('dblclick');
+		$('#contentlabel').dblclick(rbexpand);
+	}
+	
+	function insertNewline(node) {
+		insertHtml('<br />', node, 'append');
 	}
 	                     
-	function insertHtml(html, node) {
-		node.innerHTML = html;
-	}
-	
-	function bindTimeVisualisation() {
-		$('#changevisualization')[0].onclick = changevisualization;
+	function insertHtml(html, node, mode) {
+		switch(mode) {
+			case 'append':
+				node.html(node.html()+html)
+				break;
+			case 'replace':
+			default:
+				node.html(html);
+		}
 	}
 	
 	Visualisations.register(new ZoomOut()); //adds the ZoomOut visualization to the Visualizations array
@@ -221,9 +307,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	        this.scaler = new Scaler(this);
 	        this.container = html5node;
 	
-			//db_gettitle();
-			//db_gettags();
-	
 			//defines the html content of the visualization (except the header, defined in index)
 	        html5node.innerHTML =
 	            '   \
@@ -272,7 +355,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	                        <div id="savingtext">'+Webtext.tx_saving+'</div>  \
 	                    </div>  \
 						<center>  \
-						  <div id="changevisualization" class="changevisualization justbutton" onclick="changevisualization();">  \
+						  <div id="changevisualization" class="changevisualization justbutton">  \
 							'+Webtext.tx_show_timeline+'  \
 						  </div>  \
 						</center>  \
@@ -331,7 +414,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 			nodescutvalue = -1000;
 			linkscutvalue = -1000;
 	        
-			$('#rightpanelspace').html(rightpanelhtmlspace);
+			insertRightPanelHtmlSpace($('#rightpanelspace'));
 			
 			//stablish the onclick functions for the html elements of html5node
 			$( "#cmd_zoomin" )[0].onclick = this.scaler.zoomin;
@@ -349,11 +432,10 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	        $( "#showevolution" )[0].onclick = bigevolutionclick;
 			$( "#evolutionplay" )[0].onclick = evolutionplay;
 			$( "#evolutionpause" )[0].onclick = evolutionpause;
-	//		$( "#rbexpand" )[0].onclick = rbexpand;
 			$( "#treeview" )[0].onclick = treeview;
 			$( "#treeview" )[0].onmouseover = treeviewover;
 			$( "#treeview" )[0].onmouseout = treeviewout;
-			bindTimeVisualisation();
+			bindRightPanel();
 	        
 			
 			//$("#completeview").addClass('active');
@@ -1033,7 +1115,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 						} else {
 						
 							$("#right_bar").height('auto');
-							$('#rightpaneleval').html(rightpanelhtmlevalover);
+							insertRightPanelHtmlEvalOver($('#rightpaneleval'));
 							$('#rightpanelspace').html("");
 							document.getElementById("nodepos").innerHTML = "+" + d.evalpos;
 							document.getElementById("nodeneg").innerHTML = ((d.evalneg===0) ? "" : "-") + d.evalneg;	
@@ -1081,7 +1163,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 					
 						if (ABSTR.timevisualization){return;}
 						
-						$('#rightpaneleval').html(rightpanelhtmllinkevalover);
+						insertRightPanelHtmlLinkEvalOver($('#rightpaneleval'));
 	                    $("#showeditlink").hide();
 						$('#rightpanelspace').html("");
 						document.getElementById("linkpos").innerHTML = "+" + d.evalpos;
@@ -1171,7 +1253,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	                var links2 = PRES.force.links();
 	                var targetindex2 = searchhash(links2, ABSTR.clickedlinkhash);
 	                clickedlink2 = links2[targetindex2];
-					$('#rightpaneleval').html(rightpanelhtmllinkeval);
+					insertRightPanelHtmlLinkEval($('#rightpaneleval'));
 					$('#rightpanel').html("");
 					$('#rightpanelspace').html("");
 	                var elapsedtime = (new Date().getTime() / 1000) - ABSTR.selectedlink.time;
@@ -1335,8 +1417,8 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 			
 					if (!ABSTR.timevisualization){
 						$("#right_bar").height('auto');
-						$('#rightpaneleval').html(rightpanelhtmleval);
-						$('#rightpanel').html(rightpanelhtmlreplyandlink);
+						insertRightPanelHtmlEval($('#rightpaneleval'));
+						insertRightPanelHtmlReplyAndLink($('#rightpanel'));
 	                    var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
 	                    var recentnewnode = ($.inArray(ABSTR.clickednode, PRES.sessionnodes) > -1 && elapsedtime < 300);
 	                    (recentnewnode || Model.editable == "1") ? $("#showeditnode").show() : $("#showeditnode").hide();
@@ -1410,7 +1492,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 						.style("stroke", PRES.liveAttributes.nodeStroke);
 						
 					
-					$('#rightpaneleval').html(rightpanelhtmllinkeval);
+					insertRightPanelHtmlLinkEval($('#rightpaneleval'));
 					$('#rightpanel').html("");
 					$('#rightpanelspace').html("");
 	                var elapsedtime = (new Date().getTime() / 1000) - ABSTR.selectedlink.time;
@@ -1741,9 +1823,12 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		}
 		
 		if (ABSTR.timevisualization){
-	
-			$("#nodeinteract"+oldindex).height("auto");
-			$("#nodeinteract"+oldindex).html(timevisinteracthtml +  "<br></br>" + rightpanelhtmlreply + "<br></br><br>"); 
+			$nodeInteract = $("#nodeinteract"+oldindex);
+			$nodeInteract.height("auto");
+			insertTimevisInteractHtml($nodeInteract);
+			insertNewline($nodeInteract, 'append');
+			insertRightPanelHtmlReply($nodeInteract, 'append');
+			insertNewline($nodeInteract, 'append');
 			
 			$('#timevisdiv').animate({
 				scrollTop: $('#timevisdiv').scrollTop()+$("#nodecontent"+oldindex).position().top-60
@@ -1752,7 +1837,9 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		} else {
 		
 			var brornot = ($(window).height()<486) ? "" : "<br><br>";
-			$('#rightpanel').html(rightpanelhtmlreplyandlink + brornot+ rightpanelhtmlreply);
+			insertRightPanelHtmlReplyAndLink($('#rightpanel'));
+			insertHtml(brornot, $('#rightpanel'), 'append');
+			insertRightPanelHtmlReply($('#rightpanel'), 'append');
 	        
 	        $("#showeditnode").hide();
 	        if (editing){
@@ -1787,10 +1874,11 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		
 		if (ABSTR.timevisualization){
 			$("#nodeinteract"+oldindex).height("24px");
-			$("#nodeinteract"+oldindex).html(timevisinteracthtml); 
+			insertTimevisInteractHtml($('#nodeinteract'+oldindex));
+			//$("#nodeinteract"+oldindex).html(timevisinteracthtml); 
 		} else {
 				
-			 $('#rightpanel').html(rightpanelhtmlreplyandlink);	
+			insertRightPanelHtmlReplyAndLink($('#rightpanel'));
 	        var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
 	        var recentnewnode = ($.inArray(ABSTR.clickednode, PRES.sessionnodes) > -1 && elapsedtime < 300);
 	        (recentnewnode || Model.editable == "1") ? $("#showeditnode").show() : $("#showeditnode").hide();
@@ -1818,10 +1906,13 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		}
 	
 		if (ABSTR.timevisualization){
-	
-			$("#nodeinteract"+oldindex).height("auto");
-			$("#nodeinteract"+oldindex).html(timevisinteracthtml +  "<br></br>" + rightpanelhtmllink + "<br>"); 
-			
+			var $nodeInteract = $('#nodeinteract'+oldindex);
+			$nodeInteract.height("auto");
+			insertTimevisInteractHtml($nodeInteract);
+			insertNewline($nodeInteract, 'append');
+			insertRightPanelHtmlLink($nodeInteract, 'append');
+			insertNewline($nodeInteract, 'append');
+			//TODO: do this animation into insert*() function?
 			$('#timevisdiv').animate({
 				scrollTop: $('#timevisdiv').scrollTop()+$("#nodecontent"+oldindex).position().top-60
 			}, 400);
@@ -1829,12 +1920,17 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		} else {
 	
 			var brornot = ($(window).height()<486) ? "" : "<br><br>";
-			(editing) ? $('#rightpanel').html(rightpanelhtmllink) : $('#rightpanel').html(rightpanelhtmlreplyandlink + brornot + rightpanelhtmllink);
-	        var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
+			if(editing) 
+				insertRightPanelHtmlLink($('#rightpanel'));
+			else {
+				insertRightPanelHtmlReplyAndLink($('#rightpanel'));
+				insertHtml(brornot, $('#rightpanel'), 'append');
+				insertRightPanelHtmlLink($('#rightpanel'), 'append');
+			}
+			var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
 	        var recentnewnode = ($.inArray(ABSTR.clickednode, PRES.sessionnodes) > -1 && elapsedtime < 300);
 	        (recentnewnode || Model.editable == "1") ? $("#showeditnode").show() : $("#showeditnode").hide();
 			$('#rightpanelspace').html("");
-			
 		}
 		
 		ABSTR.creatinglink = true;
@@ -1863,9 +1959,12 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		}
 	
 		if (ABSTR.timevisualization){
-	
-			$("#nodeinteract"+oldindex).height("auto");
-			$("#nodeinteract"+oldindex).html(timevisinteracthtml +  "<br></br>" + rightpaneleditlink + "<br>"); 
+			var $nodeInteract = $("#nodeinteract"+oldindex);
+			$nodeInteract.height("auto");
+			insertTimevisInteractHtml($nodeInteract);
+			insertNewline($nodeInteract, 'append');
+			insertRightPanelEditLink($nodeInteract, 'append');
+			insertNewline($nodeInteract, 'append');
 			
 			$('#timevisdiv').animate({
 				scrollTop: $('#timevisdiv').scrollTop()+$("#nodecontent"+oldindex).position().top-60
@@ -1894,10 +1993,11 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		
 		if (ABSTR.timevisualization){
 			$("#nodeinteract"+oldindex).height("24px");
-			$("#nodeinteract"+oldindex).html(timevisinteracthtml); 
+			insertTimevisInteractHtml($('#nodeinteract'+oldindex));
+			//$("#nodeinteract"+oldindex).html(timevisinteracthtml); 
 		} else {
-		
-			$('#rightpanel').html(rightpanelhtmlreplyandlink);
+			insertRightPanelHtmlReplyAndLink($('#rightpanel'));
+			//$('#rightpanel').html(rightpanelhtmlreplyandlink);
 	        var elapsedtime = (new Date().getTime() / 1000) - ABSTR.clickednode.time;
 	        var recentnewnode = ($.inArray(ABSTR.clickednode, PRES.sessionnodes) > -1 && elapsedtime < 300);
 	        (recentnewnode || Model.editable == "1") ? $("#showeditnode").show() : $("#showeditnode").hide();
@@ -2073,7 +2173,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 				"time": time
 			};
 			
-	       	db_saveandchecknode(newnode, newlinkfordb);	
+	       	db_saveandchecknode(newnode, newlinkfordb);	//TODO: db_* functions
 		    update_hash_lookup([newnode], []);
 			
 			drawnewlinks();
@@ -2506,7 +2606,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	
 	
 	function rbexpand(){
-	
 		var currentrbwidth = $("#right_bar").width();
 		var currentcbheight = $("#contbox").height();
 			
@@ -2576,7 +2675,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		document.getElementById("contbox").innerHTML = "";
 		$('#rightpaneleval').html(" ");
 		$('#rightpanel').html(" ");
-		$('#rightpanelspace').html(rightpanelhtmlspace);
+		insertRightPanelHtmlSpace($('#rightpanelspace'));
 		
 		ABSTR.clickednodehash = "";
 		ABSTR.clickedlinkhash = "";
@@ -3136,7 +3235,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	
 	
 	function openadvevalnodepanel(){
-	
+		console.log('open');
 	    prepareadvevalnodetype();
 	
 	    var ABSTR = Visualisations.current().abstraction;
@@ -3778,7 +3877,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 				"padding": "0px 10px 12px 10px",
 			});
 			
-			$('#rightpanelspace').html(rightpanelhtmlspace);
+			insertRightPanelHtmlSpace($('#rightpanelspace'));
 			
 			if (oldindex !== ""){
 				PRES.liveAttributes.click(timednodes[oldindex]);
@@ -3798,7 +3897,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		
 		$(".right_bar").resizable( "destroy" )
 		
-		insertTimevisRightBarHtml($("#right_bar")[0]);
+		insertTimevisRightBarHtml($("#right_bar"));
 		$("#rbexpand").css("margin-right", "8px");
 		
 		$(".right_bar").resizable({
@@ -4006,7 +4105,9 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 		});
 		
 		$("#nodeinteract"+oldindex).height("24px");
-		$("#nodeinteract"+index).html(timevisinteracthtml);
+		
+		insertTimevisInteractHtml($('#nodeinteract'+index));
+		//$("#nodeinteract"+index).html(timevisinteracthtml);
 	
 		document.getElementById("nodepos").innerHTML = "+" + selnode.evalpos;
 		document.getElementById("nodeneg").innerHTML = ((selnode.evalneg===0) ? "" : "-") + selnode.evalneg;	
