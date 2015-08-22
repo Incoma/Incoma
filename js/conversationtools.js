@@ -521,26 +521,24 @@ define(['pac-builder', 'webtext', 'model', 'visualisation'], function(PacBuilder
 			</div>';
 		}
 	}
+	
 	function ConversationTools_Control(abstraction, presentation) {
 		var _this = this;
 		
 		this.init = function() {
-			_this.onNodesAndLinksChanged = function(nodes, links) {};
-			_this.onLinksChanged = function(links) {};
-			_this.onShowFilterChanged = function(name) {};
-			_this.onSizeFilterChanged = function(name) {};
-			_this.onFilterChanged = function(filterListName, name) {};
-			
-			abstraction.onNodesAndLinksChanged = function(nodes, links) {
-				_this.onNodesAndLinksChanged(nodes, links);
-			};
-			abstraction.onLinksChanged = function(links) {
-				_this.onLinksChanged(links);
-			};
-			abstraction.onShowFilterChanged = function(name) { _this.onShowFilterChanged(name) };
-			abstraction.onSizeFilterChanged = function(name) { _this.onSizeFilterChanged(name) };
-			abstraction.onFilterChanged = function(filterListName, name) { _this.onFilterChanged(filterListName, name) };
+			_this.pipeEvent("onNodesAndLinksChanged", abstraction);
+			_this.pipeEvent("onLinksChanged", abstraction);
+			_this.pipeEvent("onShowFilterChanged", abstraction);
+			_this.pipeEvent("onSizeFilterChanged", abstraction);
+			_this.pipeEvent("onFilterChanged", abstraction);
 		};
+		
+		function pipeEvent(name, parent, parentPropertyName) {
+			_this[name] = function() {};
+			if(parent[parentPropertyName || name])
+				parent[parentPropertyName || name] = function() { _this[name].apply(_this, arguments) };
+			else throw new Error("pipeEvent: property '" + parentPropertyName + "' is empty or does not exist.")
+		}
 	}
 	return ConversationTools;
 });
