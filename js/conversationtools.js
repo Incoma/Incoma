@@ -208,7 +208,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			var tableBuilder = new TableBuilder(cellsPerRow);
 	
 			_this.nodeFilterTextDoms = {};
-	        for (var i = 1; i <= numfilts; ++i) {
+	        for (var i = 1; i <= numFilts; ++i) {
 				var filter = filterlist[i];
 				
 				var nameCell;
