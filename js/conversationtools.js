@@ -215,77 +215,78 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 				
 	            initNodeImageCell(tableBuilder.newItem(), filter);
 				initNodeNameCell(nameCell = tableBuilder.newItem(), filter);
-				initNodeSpaceCell(tableBuilder.newItem());
+				initSpaceCell(tableBuilder.newItem());
 				
 				_this.nodeFilterTextDoms[i] = nameCell;
 	        }
 	
-			var table = tableBuilder.getTableNode();
 	    	var column = $('#filt_nodes')[0];
-			column.appendChild(table);
+			column.appendChild(tableBuilder.getTableNode());
+	    };
+		
+	    function initLinkFilters() {
+			var filterlist = ABSTR.linkFilters;
+			
+			// 6 filters with 2 per column for the links
+	        var numFilts = 6 ;
+	        var filtsPerCol = 2 ;
+	        var filtsPerRow = Math.ceil(numFilts/filtsPerCol);
+	        var cellsPerRow = filtsPerRow * 3;
+	
+			var tableBuilder = new TableBuilder(cellsPerRow);	
+	
+			_this.linkFilterTextDoms = {};
+	        for (var i = 1; i <= numFilts; ++i) {
+	            var filter = filterlist[i];
+				var nameCell;
+				
+				initLinkImageCell(tableBuilder.newItem(), filter);
+				initLinkNameCell(nameCell = tableBuilder.newItem(), filter);
+				initSpaceCell(tableBuilder.newItem());
+				
+				_this.linkFilterTextDoms[i] = nameCell;
+	        }
+	        
+	    	var column = $('#filt_links')[0];
+			column.appendChild(tableBuilder.getTableNode());
 	    };
 	    
 	    function initNodeImageCell(cell, filter) {
 	    	cell.setAttribute("style","width: 32px; height: 20px; background:url('img/node" + filter.typeId + ".png') no-repeat;");
 	    }
 	    
+	    function initLinkImageCell(cell, filter) {
+	    	initImageCell(cell, { width: '20px', url: 'img/link' + filter.typeId + '.png' });
+	    	cell.appendChild(Visualisations.makeText(' '));
+	    }
+	    
+	    function initImageCell(cell, args) { //args: { url; width (don't forget 'px'!); }
+	    	cell.setAttribute("style","width: " + args.width + "; height: 20px; background:url('" + args.url + "') no-repeat;");
+	    }
+	    
 	    function initNodeNameCell(cell, filter) {
+	    	initNameCell(cell, { name: filter.name, filterId: filter.typeId, filterListName: 'nodeFilters' });
+	    }
+	    
+	    function initLinkNameCell(cell, filter) {
+	    	initNameCell(cell, { name: filter.name, filterId: filter.typeId, filterListName: 'linkFilters' });
+	    }
+	    
+	    function initNameCell(cell, args) {
 	    	cell.setAttribute("style","cursor: pointer");
-			cell.appendChild(Visualisations.makeText(filter.name));
+			cell.appendChild(Visualisations.makeText(args.name));
 			cell.onclick = function () {
-				ABSTR.toggleFilter('nodeFilters', filter.typeId);
+				ABSTR.toggleFilter(args.filterListName, args.filterId);
 				
 				ABSTR.filtershelp = false;
 				updateFiltersHelpVisibility();
 			};
 	    }
 	    
-	    function initNodeSpaceCell(cell) {
+	    function initSpaceCell(cell) {
 			cell.style.width = "25px";
 			cell.appendChild(Visualisations.makeText(' '));
 	    }
-	    
-	    function TableBuilder(cellsPerRow) {
-	    	var _this = this;
-	    	var i = 0;
-	    	var row = null;
-	    	var table = document.createElement("table");
-			table.style.width = "100%";
-			table.setAttribute('border','0');
-			table.setAttribute('cellpadding','1');
-			table.setAttribute('cellspacing','2');
-			table.setAttribute("style", "padding-right: -20px");
-			
-			body = document.createElement("tbody");
-			table.appendChild(body);
-			
-			_this.newItem = function() {
-				if(shallCreateNewRow()) {
-					row = document.createElement('tr');
-					body.appendChild(row);
-				}
-				
-				var cell = document.createElement('td');
-				row.appendChild(cell);
-				
-				++i;
-				return cell;
-			}
-			
-			function shallCreateNewRow() {
-				return (i%cellsPerRow) == 0;
-			}
-			
-			_this.getTableNode = function() {
-		    	return table;
-		    }
-	    }
-	    
-	    /*function presentNodeFilterState(id, state) {
-			var textcolor = (state) ? "#000" : "#777";	
-			var domElement = getNodeFilterTextDom(id);
-			domElement.setAttribute("style","cursor: pointer; color: " + textcolor);
-	    }*/
 	    
 	    function presentFilterState(args) {
 	    	var state = args.state;
@@ -303,76 +304,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 	    	else if(filterListName == 'linkFilters')
 	    		return _this.linkFilterTextDoms[id];
 	    }
-		
-	    function initLinkFilters() {
-			var columnId = "filt_links";
-			var filterlist = ABSTR.linkFilters;
-			
-			// 9 filters with 3 per column for the links
-	        var numfilts = 6 ;
-	        var filtspercol = 2 ;
-	        var filtsperrow = Math.ceil(numfilts/filtspercol);
-	
-	    	var column = document.getElementById(columnId);
-	
-			var table  = document.createElement("table");
-			table.style.width = "100%";
-			table.setAttribute('border','0');
-			table.setAttribute('cellpadding','1');
-			table.setAttribute('cellspacing','2');
-			
-			tb = document.createElement("tbody");	
-	
-			var threadslegend = new Array();
-			
-			_this.linkFilterTextDoms = {};
-	
-	        for (var i = 1; i < numfilts+1; ++i) {
-	            var filter = filterlist[i];
-	            if (i == 1 || i == 1+1*filtsperrow || i == 1+2*filtsperrow) {
-					tr = document.createElement("tr");
-				}
-				
-				tdimage = document.createElement("td");
-				tdimage.setAttribute("style","width: 20px; height: 20px; background:url('img/link" + filter.typeId + ".png') no-repeat;");
-				
-				tdname = document.createElement("td");
-				tdname.setAttribute("style","cursor: pointer");
-				tdname.id = i;
-				
-				tdname.onclick = function () {
-					ABSTR.toggleFilter('linkFilters', this.id);	
-					$("#filters_text").delay(300).fadeOut(600);
-					ABSTR.filtershelp = false;
-				};
-				_this.linkFilterTextDoms[i] = tdname;
-				
-				tdspace = document.createElement("td");
-				tdspace.style.width = "25px";
-				
-				if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow) {
-					tdspace.style.width = "5px";
-				}
-				
-				spaces = Visualisations.makeText(" ");
-				
-				tdimage.appendChild(spaces);
-	            tdname.appendChild(Visualisations.makeText(filter.name));
-				tdspace.appendChild(spaces);
-				
-				spaces = Visualisations.makeText(" ");
-	
-				tr.appendChild(tdimage);
-				tr.appendChild(tdname);
-				tr.appendChild(tdspace);
-				     
-	            if (i == 1*filtsperrow || i == 2*filtsperrow || i == 3*filtsperrow || i == numfilts) {
-					tb.appendChild(tr);
-					table.appendChild(tb);
-				}
-	        }
-			column.appendChild(table);
-	    };
 		
 	    function initSizeFilters() {
 			var columnId = "filt_sizes";
@@ -557,7 +488,43 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			}
 		}
 	}
-	
+	 
+    function TableBuilder(cellsPerRow) {
+    	var _this = this;
+    	var i = 0;
+    	var row = null;
+    	var table = document.createElement("table");
+		table.style.width = "100%";
+		table.setAttribute('border','0');
+		table.setAttribute('cellpadding','1');
+		table.setAttribute('cellspacing','2');
+		table.setAttribute("style", "padding-right: -20px");
+		
+		body = document.createElement("tbody");
+		table.appendChild(body);
+		
+		_this.newItem = function() {
+			if(shallCreateNewRow()) {
+				row = document.createElement('tr');
+				body.appendChild(row);
+			}
+			
+			var cell = document.createElement('td');
+			row.appendChild(cell);
+			
+			++i;
+			return cell;
+		}
+		
+		function shallCreateNewRow() {
+			return (i%cellsPerRow) == 0;
+		}
+		
+		_this.getTableNode = function() {
+	    	return table;
+	    }
+    }
+
 	var MultiSelectFilters = {
 		Nodes: 0,
 		Connections: 1,
