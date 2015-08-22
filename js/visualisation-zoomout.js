@@ -1,5 +1,5 @@
-define(['webtext', 'visualisation', 'datetime', 'model', 'conversations', 'conversationtools'], 
-function(Webtext, Visualisations, DateTime, Model, ConversationManager, ConversationTools) {
+define(['webtext', 'visualisation', 'datetime', 'model', 'conversations', 'conversationtools', 'db'], 
+function(Webtext, Visualisations, DateTime, Model, ConversationManager, ConversationTools, Db) {
 	
 		//definition of the html code of the right panel bar for different situations:
 	// Reply and Connect buttons
@@ -1633,7 +1633,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	
 	    if (targetnode.advevalby[advevalnodevote][0] == ""){targetnode.advevalby[advevalnodevote].splice(0,1);};
 	
-		db_update_adveval_node();
+		Db.update_adveval_node();
 	
 		explode(targetnode.x, targetnode.y, "blue");
 		
@@ -1673,7 +1673,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	
 	    if (targetlink.advevalby[advevallinkvote][0] == ""){targetlink.advevalby[advevallinkvote].splice(0,1);};
 	
-		db_update_adveval_link();
+		Db.update_adveval_link();
 	
 		var coordx = (targetlink.source.x + targetlink.target.x)/2;
 		var coordy = (targetlink.source.y + targetlink.target.y)/2;
@@ -1730,7 +1730,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 			var color = "red";
 		}
 		
-		db_update_eval_node(variable,value);
+		Db.update_eval_node(variable,value);
 	
 		PRES.svg.selectAll(".node")
 			.filter(function (d) {return d.hash == ABSTR.clickednodehash;})
@@ -1791,7 +1791,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	
 		drawlinkselect(targetlink, PRES.bordercolor.clicked, 0, 0);	
 	
-		db_update_eval_link(variable,value);
+		Db.update_eval_link(variable,value);
 		
 		var coordx = (targetlink.source.x + targetlink.target.x)/2;
 		var coordy = (targetlink.source.y + targetlink.target.y)/2;
@@ -2035,7 +2035,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	    var ABSTR = Visualisations.current().abstraction;
 	    var index = $.inArray(ABSTR.clickednode, Model.model.nodes);
 	    
-	    db_editnode(ABSTR.clickednode.hash, $("#replybox").val(), $("#replyboxsum").val(), selectedreplynodetype);
+	    Db.editnode(ABSTR.clickednode.hash, $("#replybox").val(), $("#replyboxsum").val(), selectedreplynodetype);
 	    
 	    ABSTR.clickednode.content = $("#replybox").val();
 	    ABSTR.clickednode.contentsum = $("#replyboxsum").val();
@@ -2057,7 +2057,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	    var ABSTR = Visualisations.current().abstraction;
 	    var index = $.inArray(ABSTR.clickednode, Model.model.nodes);
 	    
-	    db_editlink(ABSTR.selectedlink.hash, selectedconnectlinktype);
+	    Db.editlink(ABSTR.selectedlink.hash, selectedconnectlinktype);
 	    
 	    ABSTR.selectedlink.type = selectedconnectlinktype;
 	    
@@ -2173,12 +2173,12 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 				"time": time
 			};
 			
-	       	db_saveandchecknode(newnode, newlinkfordb);	//TODO: db_* functions
+	       	Db.saveandchecknode(newnode, newlinkfordb);
 		    update_hash_lookup([newnode], []);
 			
 			drawnewlinks();
 		}else{
-	       	db_saveandcheckonlynode(newnode);	
+	       	Db.saveandcheckonlynode(newnode);	
 		    update_hash_lookup([newnode], []);
 	
 		};
@@ -2383,7 +2383,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 				"time": time
 			};
 			
-			db_saveandchecklink(newlinkfordb);
+			Db.saveandchecklink(newlinkfordb);
 		
 	    var link = PRES.svg.selectAll(".link")
 	        .data(links)
@@ -4500,7 +4500,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	    if (nodevotes[0]-nodevotes[1]>=3){
 		var newtype=$.inArray(nodevotes[0], ABSTR.clickednode.adveval)+1;
 		if (newtype !== ABSTR.clickednode.type){
-		    db_editnode(ABSTR.clickednode.hash, ABSTR.clickednode.content, ABSTR.clickednode.contentsum, newtype);
+		    Db.editnode(ABSTR.clickednode.hash, ABSTR.clickednode.content, ABSTR.clickednode.contentsum, newtype);
 		    ABSTR.clickednode.type = newtype;
 		    PRES.svg.selectAll(".node")
 			.style("fill",PRES.liveAttributes.nodeFill);
@@ -4524,7 +4524,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, Conversa
 	    if (linkvotes[0]-linkvotes[1]>=3){
 		var newtype=$.inArray(linkvotes[0], ABSTR.selectedlink.adveval)+1;
 		if (newtype !== ABSTR.selectedlink.type){
-		    db_editlink(ABSTR.selectedlink.hash, newtype);
+		    Db.editlink(ABSTR.selectedlink.hash, newtype);
 		    ABSTR.selectedlink.type = newtype;
 	    
 		    PRES.svg.selectAll(".link")

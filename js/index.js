@@ -54,48 +54,6 @@ define(["opensave", "jsonmodels", "webtext", "model", "visualisation", "visualis
 	} else {
 		ConversationManager.loadConversation();
 	};
-
-
-	
-
-    
-    function checkifsaved(type, hash, checktime, newlink){
-        $.post("php/checkifsaved.php", {conversation: conversation, type: type, hash: hash}, function(data){
-            if (data == hash){
-                if (typeof newlink != "undefined") {
-                    db_savelink(newlink);
-                } else {
-                    if (showingsavingicon) setTimeout( function() {$("#saving").fadeOut(300)}, 400);
-                    showingsavingicon = false;
-                }
-            } else {
-                var actualtime = new Date().getTime();
-                if (actualtime - checktime < 10000){
-                    setTimeout(function(){checkifsaved(type, hash, checktime, newlink)}, 400);
-                } else {
-                    alert(webtextModule.tx_an_error);
-                    location.reload(true);
-                }
-            }
-        });
-    }
-
-    function checkifsavedonlynode(type, hash, checktime){
-        $.post("php/checkifsaved.php", {conversation: conversation, type: type, hash: hash}, function(data){
-            if (data == hash){
-                if (showingsavingicon) setTimeout( function() {$("#saving").fadeOut(300)}, 400);
-                showingsavingicon = false;
-            } else {
-                var actualtime = new Date().getTime();
-                if (actualtime - checktime < 10000){
-                    setTimeout(function(){checkifsavedonlynode(type, hash, checktime)}, 200);
-                } else {
-                    alert(webtextModule.tx_an_error);
-                    location.reload(true);
-                }
-            }
-        });
-    }
 	
 
 // end of dbcode ***

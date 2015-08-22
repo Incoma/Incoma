@@ -1,4 +1,4 @@
-define(['promise', 'model'], function(Promise, Model) { //TODO: remove Model dependency!!!
+define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) { //TODO: remove Model dependency!!!
 	var Db = {};
 	
 	Db.loadconversation = function(){
@@ -65,7 +65,45 @@ define(['promise', 'model'], function(Promise, Model) { //TODO: remove Model dep
 			console.log('reject 2');
 			return (new Promise()).reject();
 		}
-	}
+	}    
+	
+	function checkifsaved(type, hash, checktime, newlink){
+        $.post("php/checkifsaved.php", {conversation: conversation, type: type, hash: hash}, function(data){
+            if (data == hash){
+                if (typeof newlink != "undefined") {
+                    Db.savelink(newlink);
+                } else {
+                    if (showingsavingicon) setTimeout( function() {$("#saving").fadeOut(300)}, 400);
+                    showingsavingicon = false;
+                }
+            } else {
+                var actualtime = new Date().getTime();
+                if (actualtime - checktime < 10000){
+                    setTimeout(function(){checkifsaved(type, hash, checktime, newlink)}, 400);
+                } else {
+                    alert(webtextModule.tx_an_error);
+                    location.reload(true);
+                }
+            }
+        });
+    }
+
+    function checkifsavedonlynode(type, hash, checktime){
+        $.post("php/checkifsaved.php", {conversation: conversation, type: type, hash: hash}, function(data){
+            if (data == hash){
+                if (showingsavingicon) setTimeout( function() {$("#saving").fadeOut(300)}, 400);
+                showingsavingicon = false;
+            } else {
+                var actualtime = new Date().getTime();
+                if (actualtime - checktime < 10000){
+                    setTimeout(function(){checkifsavedonlynode(type, hash, checktime)}, 200);
+                } else {
+                    alert(webtextModule.tx_an_error);
+                    location.reload(true);
+                }
+            }
+        });
+    }
 	
     Db.checkifsavedinitialnode = function(hash, checktime, newnode){
     	var promise = new Promise();
@@ -210,7 +248,7 @@ define(['promise', 'model'], function(Promise, Model) { //TODO: remove Model dep
         if(conversation == "sandbox" || conversation == "sandbox_es") return;
         showingsavingicon = true;
         $("#saving").show();
-        db_savenode(newnode);
+        Db.savenode(newnode);
         var actualtime = new Date().getTime();
         setTimeout(function(){checkifsaved("node", newnode.hash, actualtime, newlink)}, 300);
     }
@@ -219,7 +257,7 @@ define(['promise', 'model'], function(Promise, Model) { //TODO: remove Model dep
         if(conversation == "sandbox" || conversation == "sandbox_es") return;
         showingsavingicon = true;
         $("#saving").show();
-        db_savenode(newnode);
+        Db.savenode(newnode);
         var actualtime = new Date().getTime();
         setTimeout(function(){checkifsavedonlynode("node", newnode.hash, actualtime)}, 300);
     }
@@ -228,7 +266,7 @@ define(['promise', 'model'], function(Promise, Model) { //TODO: remove Model dep
         if(conversation == "sandbox" || conversation == "sandbox_es") return;
         $("#saving").show();
         showingsavingicon = true;
-        db_savelink(newlink);
+        Db.savelink(newlink);
     }
 
     
