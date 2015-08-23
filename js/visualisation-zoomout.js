@@ -210,7 +210,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	        this.namepanelparameter="";
 	        this.freezelink=false;
 	        this.filters = {
-	        	sizeFilter: 'none',
+	        	sizeFilter: ModuleConvTools.SizeFilters.Evaluations, //TODO: initialize from the ConversationTools values
 	        	showFilter: 'none',
 	        	nodeFilters: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true },
 	        	linkFilters: { 1: true, 2: true, 3: true, 4: true },
@@ -817,18 +817,12 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	    function LiveAttributes(ABSTR, PRES) {
 	
 	        this.nodeRadius = function (d) {
-	            if (ABSTR.filters.sizeFilter == 'evaluations') {
-					return PRES.renormalizednode(d.evalpos-d.evalneg);
-	            } else {
-	                return PRES.nodeSizeDefault;
-	            }
-	        };
-		
-	        this.nodeRadiusCount = function (d) {
-	            if (ABSTR.filters.sizeFilter == 'evaluations') {
-					return PRES.renormalizednode(d.evalpos-d.evalneg);
-	            } else {
-	                return PRES.nodeSizeDefault;
+	            switch(ABSTR.filters.sizeFilter) {
+	            	case ModuleConvTools.SizeFilters.Evaluations:
+						return PRES.renormalizednode(d.evalpos-d.evalneg);
+	            	case ModuleConvTools.SizeFilters.None:
+	            	default:
+	                	return PRES.nodeSizeDefault;
 	            }
 	        };
 	
@@ -933,14 +927,15 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	
 	        this.linkStrokeWidth = function (d) {
 	            if (ABSTR.filters.linkFilters[d.type]) {
-	                if (ABSTR.filters.sizeFilter == 'evaluations'){
-						return PRES.renormalizedlink(d.evalpos-d.evalneg);
-					}else{
-	                    return PRES.linkStrokeWidthDefault;
+	                switch(ABSTR.filters.sizeFilter) {
+	                	case ModuleConvTools.SizeFilters.Evaluations:
+							return PRES.renormalizedlink(d.evalpos-d.evalneg);
+						case ModuleConvTools.SizeFilters.None:
+						default:
+	                    	return PRES.linkStrokeWidthDefault;
 					}
-	            } else {
-	                return 0;
 	            }
+	            else return 0;
 	        };
 			
 			
@@ -4312,8 +4307,8 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 			conversationTools.init();
 			conversationTools.control.onNodesAndLinksChanged = applyNodeChanges;
 			conversationTools.control.onLinksChanged = applyLinkChanges;
-			conversationTools.control.onShowFilterChanged = selectShowFilter;
-			conversationTools.control.onSizeFilterChanged = selectSizeFilter;
+			conversationTools.control.showFilterChanged.subscribe(selectShowFilter);
+			conversationTools.control.sizeFilterChanged.subscribe(selectSizeFilter);
 			conversationTools.control.onFilterChanged = selectFilter;
 		}
 	};
@@ -4460,7 +4455,8 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	    updatetimevisualization();
 	}
 	
-	function selectShowFilter(filter) {
+	function selectShowFilter(args) {
+		var filter = args.state;
 		var ABSTR = Visualisations.current().abstraction;
 		if(ABSTR.filters.showFilter == name) hidenodetexts();
 		else switch(filter) {
@@ -4471,9 +4467,10 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 		}
 	}
 	
-	function selectSizeFilter(name) {
+	function selectSizeFilter(args) {
+		var filter = args.state;
 		var ABSTR = Visualisations.current().abstraction;
-		ABSTR.filters.sizeFilter = (ABSTR.filters.sizeFilter != name) ? name : 'none';
+		ABSTR.filters.sizeFilter = filter; //TODO: encapsulate (ABSTR)
 		applyAttributeChanges();
 	}
 	

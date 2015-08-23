@@ -27,11 +27,9 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			
 			_this.onNodesAndLinksChanged = function(nodes, links) {};
 			_this.onLinksChanged = function(links) {};
-			_this.onShowFilterChanged = function(filter) {};
-			_this.onSizeFilterChanged = function(name) {};
-			_this.onFilterChanged = function(filterListName, id) {};
+			_this.onFilterChanged = function(filterListName, id) {}; //TODO: replace it with the Event
 			
-			_this.filterChanged = new Events.EventImpl();
+			_this.filterChanged = new Events.EventImpl(); //TODO: disposing routines
 		}
 		
 		function initFilters() {
@@ -51,12 +49,14 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 				4: {name: Webtext.tx_info, state: true, typeId: 4},
 			};
 			
-			
-			_this.sizeFilters = {
-				evaluations: {name: Webtext.tx_evaluations, state: true},
-			};
-			
-			_this.showFilter = ShowFilters.None;
+			_this.showFilterCategory = new SingleSelectFilterCategory_Abstraction({
+				possibleStates: ShowFilters,
+				initState: ShowFilters.None,
+			});
+			_this.sizeFilterCategory = new SingleSelectFilterCategory_Abstraction({
+				possibleStates: SizeFilters,
+				initState: SizeFilters.Evaluations,
+			});
 			
 			_this.nodeEvalFilter = {
 				value: 0,
@@ -67,14 +67,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 				value: 0,
 				old: -1000,
 			};
-		}
-		
-		_this.toggleShowFilterReturnResult = function(filter) {
-			if(_this.showFilter == filter) _this.showFilter = ShowFilters.None;
-			else _this.showFilter = filter;
-			_this.onShowFilterChanged(_this.showFilter);
-			
-			return _this.showFilter == filter;
 		}
 		
 		_this.toggleFilter = function(filterListName, id) {
@@ -91,12 +83,8 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			keys.forEach(function(key) { list[key].state = false });
 		}
 		
-		_this.toggleEvaluationsSizeFilter = function() {
-			var state = _this.sizeFilters.evaluations.state = !_this.sizeFilters.evaluations.state;
-			_this.onSizeFilterChanged(state ? 'evaluations' : 'none');
-		}
-		
 		_this.nodeEvalFilterChanged = function(newValue) {
+			//TODO: hidenodetexts!!!
 			_this.nodeEvalFilter.value = newValue;
 			if ((_this.nodeEvalFilter.value == _this.nodeEvalFilter.old)) return;
 			_this.nodeEvalFilter.old = _this.nodeEvalFilter.new;
@@ -150,18 +138,37 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		}
 	}
 	
+	function SingleSelectFilterCategory_Abstraction(args) {
+		var _this = this;
+		
+		this.stateChanged = new Events.EventImpl();
+		init(args);
+		
+		function init(args) {
+			_this.possibleStates = args.possibleStates;
+			_this.state = args.initState;
+		}
+		
+		this.toggleState = function(state) {
+			if(_this.state == state) _this.state = _this.possibleStates.None;
+			else _this.state = state;
+			
+			_this.stateChanged.raise({ state: _this.state });
+		}
+	}
+	
 	function ConversationTools_Presentation(ABSTR) {
 		var _this = this;
 		var showFilterInfo = null;
+		var sizeFilterInfo = null;
 		this.init = function() {
 			ABSTR.filterChanged.subscribe(presentFilterState);
+			ABSTR.showFilterCategory.stateChanged.subscribe(function(args) { disableAllShowFilters(); presentShowFilterItemState(args.state, true) });
+			ABSTR.sizeFilterCategory.stateChanged.subscribe(function(args) { disableAllSizeFilters(); presentSizeFilterItemState(args.state, true) });
 			
 			$('#lower_bar').html(getLowerBarHtml());
 			
 	        $('#filters_text').fadeOut(0);
-			
-			initShowFilters();
-			
 	        $( "#cmd_hideshowfilters" )[0].onclick = toggleFilterPanelVisibility;
 	        $( "#filters_title" )[0].onclick = toggleFilterPanelVisibility;
 	        
@@ -170,6 +177,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			//Create the filters
 	        initNodeFilters();
 	        initLinkFilters();
+			initShowFilters();
 	        initSizeFilters();
 		}
 		
@@ -250,6 +258,22 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 	    	var column = $('#filt_links')[0];
 			column.appendChild(tableBuilder.getTableNode());
 	    };
+		
+	    function initSizeFilters() {
+	    	sizeFilterInfo = [];
+	    	sizeFilterInfo[SizeFilters.None] = { name: 'None' };
+	    	sizeFilterInfo[SizeFilters.Evaluations] = { name: Webtext.tx_evaluations };
+		
+			var tableBuilder  = new TableBuilder(1);
+		    
+			nameCell = tableBuilder.newItem();
+			sizeFilterInfo[SizeFilters.Evaluations].node = $(nameCell);
+			initSizeNameCell(nameCell, SizeFilters.Evaluations);
+			
+			var columnId = "filt_sizes";
+		    var column = $("#filt_sizes")[0];
+			column.appendChild(tableBuilder.getTableNode());
+	    };
 	    
 	    function initNodeImageCell(cell, filter) {
 	    	cell.setAttribute("style","width: 32px; height: 20px; background:url('img/node" + filter.typeId + ".png') no-repeat;");
@@ -265,23 +289,42 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 	    }
 	    
 	    function initNodeNameCell(cell, filter) {
-	    	initNameCell(cell, { name: filter.name, filterId: filter.typeId, filterListName: 'nodeFilters' });
+	    	initLinkOrNodeNameCell(cell, { name: filter.name, filterId: filter.typeId, filterListName: 'nodeFilters' });
 	    }
 	    
 	    function initLinkNameCell(cell, filter) {
-	    	initNameCell(cell, { name: filter.name, filterId: filter.typeId, filterListName: 'linkFilters' });
+	    	initLinkOrNodeNameCell(cell, { name: filter.name, filterId: filter.typeId, filterListName: 'linkFilters' });
+	    }
+	    
+	    function initLinkOrNodeNameCell(cell, args) {
+	    	initNameCell(cell, {
+	    		name: args.name,
+		    	onClick: function() {
+					ABSTR.toggleFilter(args.filterListName, args.filterId);
+				}
+			});
+	    }
+	    
+	    function initSizeNameCell(cell, filter) {
+			initNameCell(nameCell, {
+				name: sizeFilterInfo[filter].name,
+				onClick: function() {
+					toggleSizeFilter(filter);
+				}
+			});	    	
 	    }
 	    
 	    function initNameCell(cell, args) {
 	    	cell.setAttribute("style","cursor: pointer");
 			cell.appendChild(Visualisations.makeText(args.name));
 			cell.onclick = function () {
-				ABSTR.toggleFilter(args.filterListName, args.filterId);
+				args.onClick(cell);
 				
 				ABSTR.filtershelp = false;
 				updateFiltersHelpVisibility();
 			};
 	    }
+
 	    
 	    function initSpaceCell(cell) {
 			cell.style.width = "25px";
@@ -304,43 +347,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 	    	else if(filterListName == 'linkFilters')
 	    		return _this.linkFilterTextDoms[id];
 	    }
-		
-	    function initSizeFilters() {
-			var columnId = "filt_sizes";
-			var filterlist = ABSTR.sizeFilters;
-		    var column = document.getElementById(columnId);
-		
-			var table  = document.createElement("table");
-			table.style.width = "100%";
-			table.setAttribute('border','0');
-			table.setAttribute('cellpadding','0');
-			table.setAttribute('cellspacing','2');
-			tb = document.createElement("tbody");
-			
-		    var filter = filterlist.evaluations;
-			
-			tr = document.createElement("tr");
-			
-			tdname = document.createElement("td");
-			tdname.setAttribute("style","cursor: pointer");
-					
-			tdname.onclick = function () {
-				ABSTR.toggleEvaluationsSizeFilter();
-		
-				var textcolor = (filterlist.evaluations.state) ? "#000" : "#777";	
-				this.setAttribute("style","cursor: pointer; color: " + textcolor);
-				
-				$("#filters_text").delay(300).fadeOut(600);
-				ABSTR.filtershelp = false;		
-			};	
-			
-			tdname.appendChild(Visualisations.makeText(filter.name));
-			tr.appendChild(tdname);
-			tb.appendChild(tr);
-			
-			table.appendChild(tb);
-			column.appendChild(table);
-	    };
 		
 		function nodeslider (x){
 			console.log('nodeslider');
@@ -398,23 +404,38 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			$("#legendarrow").html(arrowstr);
 		};
 		
-		function toggleShowFilter(filter) {
-			disableAllShowFilters();
-			if(ABSTR.toggleShowFilterReturnResult(filter))
-				presentShowFilterState(filter, true);
+		function toggleShowFilter(state) {
+			ABSTR.showFilterCategory.toggleState(state);
+		}
+	    
+	    function toggleSizeFilter(state) {
+	    	ABSTR.sizeFilterCategory.toggleState(state);
+	    }
+		
+		function presentShowFilterItemState(state, value) {
+			if(state == ShowFilters.None) return;
+			getShowFilterNode(state).css("color", value ? "#000": "#777");
+		}
+		
+		function presentSizeFilterItemState(state, value) {
+			if(state == SizeFilters.None) return;
+			getSizeFilterNode(state).css("color", value ? "#000" : "#777");
 		}
 		
 		function disableAllShowFilters() {
-			for(key in ShowFilters) presentShowFilterState(ShowFilters[key], false);
+			for(key in ShowFilters) presentShowFilterItemState(ShowFilters[key], false);
 		}
 		
-		function presentShowFilterState(filter, state) {
-			if(filter == 0) return;
-			getShowFilterNode(filter).css("color", state ? "#000": "#777");
+		function disableAllSizeFilters() {
+			for(key in SizeFilters) presentSizeFilterItemState(SizeFilters[key], false);
 		}
 		
 		function getShowFilterNode(filter) {
 			return showFilterInfo[filter].node;
+		}
+		
+		function getSizeFilterNode(filter) {
+			return sizeFilterInfo[filter].node;
 		}
 		
 		function getLowerBarHtml() {
@@ -473,9 +494,12 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		this.init = function() {
 			pipeEvent("onNodesAndLinksChanged", abstraction);
 			pipeEvent("onLinksChanged", abstraction);
-			pipeEvent("onShowFilterChanged", abstraction);
-			pipeEvent("onSizeFilterChanged", abstraction);
+			//pipeEvent("onShowFilterChanged", abstraction);
+			//pipeEvent("onSizeFilterChanged", abstraction);
 			pipeEvent("onFilterChanged", abstraction);
+			
+			_this.showFilterChanged = abstraction.showFilterCategory.stateChanged;
+			_this.sizeFilterChanged = abstraction.sizeFilterCategory.stateChanged;
 		};
 		
 		function pipeEvent(name, parent, parentPropertyName) {
@@ -537,5 +561,10 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		Tags: 3,
 	};
 	
-	return { ConversationTools: ConversationTools, ShowFilters: ShowFilters };
+	var SizeFilters = {
+		None: 0,
+		Evaluations: 1,
+	};
+	
+	return { ConversationTools: ConversationTools, ShowFilters: ShowFilters, SizeFilters: SizeFilters };
 });
