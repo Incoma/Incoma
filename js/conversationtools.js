@@ -138,33 +138,12 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		}
 	}
 	
-	function SingleSelectFilterCategory_Abstraction(args) {
-		var _this = this;
-		
-		this.stateChanged = new Events.EventImpl();
-		init(args);
-		
-		function init(args) {
-			_this.possibleStates = args.possibleStates;
-			_this.state = args.initState;
-		}
-		
-		this.toggleState = function(state) {
-			if(_this.state == state) _this.state = _this.possibleStates.None;
-			else _this.state = state;
-			
-			_this.stateChanged.raise({ state: _this.state });
-		}
-	}
-	
 	function ConversationTools_Presentation(ABSTR) {
 		var _this = this;
 		var showFilterInfo = null;
 		var sizeFilterInfo = null;
 		this.init = function() {
 			ABSTR.filterChanged.subscribe(presentFilterState);
-			ABSTR.showFilterCategory.stateChanged.subscribe(function(args) { disableAllShowFilters(); presentShowFilterItemState(args.state, true) });
-			ABSTR.sizeFilterCategory.stateChanged.subscribe(function(args) { disableAllSizeFilters(); presentSizeFilterItemState(args.state, true) });
 			
 			$('#lower_bar').html(getLowerBarHtml());
 			
@@ -183,17 +162,14 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		
 		function initShowFilters() {
 			showFilterInfo = [];
-			showFilterInfo[ShowFilters.Tags] = { node: $("#showtags") };
-			showFilterInfo[ShowFilters.Summaries] = { node: $("#showsums") };
-			showFilterInfo[ShowFilters.Authors] = { node: $("#showauthors") };
+			showFilterInfo[ShowFilters.Tags] = { node: $("#showtags"), id: ShowFilters.Tags };
+			showFilterInfo[ShowFilters.Summaries] = { node: $("#showsums"), id: ShowFilters.Summaries };
+			showFilterInfo[ShowFilters.Authors] = { node: $("#showauthors"), id: ShowFilters.Authors };
+			
+			_this.showFilter = new SingleSelectFilterCategory_Presentation(ABSTR.showFilterCategory, showFilterInfo);
 			
 			if (Model.tags == null)
-				getShowFilterNode(ShowFilters.Tags).attr("style","visibility:hidden; cursor:default;");
-			else
-				getShowFilterNode(ShowFilters.Tags).click(toggleShowFilter.bind(_this, ShowFilters.Tags));
-				
-			getShowFilterNode(ShowFilters.Summaries).click(toggleShowFilter.bind(_this, ShowFilters.Summaries));
-			getShowFilterNode(ShowFilters.Authors).click(toggleShowFilter.bind(_this, ShowFilters.Authors));
+				$("#showtags").attr("style","visibility:hidden; cursor:default;");
 		}
 		
 		function initSliders() {
@@ -261,8 +237,8 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		
 	    function initSizeFilters() {
 	    	sizeFilterInfo = [];
-	    	sizeFilterInfo[SizeFilters.None] = { name: 'None' };
-	    	sizeFilterInfo[SizeFilters.Evaluations] = { name: Webtext.tx_evaluations };
+	    	sizeFilterInfo[SizeFilters.None] = { name: 'None', id: SizeFilters.None };
+	    	sizeFilterInfo[SizeFilters.Evaluations] = { name: Webtext.tx_evaluations, id: SizeFilters.Evaluations };
 		
 			var tableBuilder  = new TableBuilder(1);
 		    
@@ -273,6 +249,8 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			var columnId = "filt_sizes";
 		    var column = $("#filt_sizes")[0];
 			column.appendChild(tableBuilder.getTableNode());
+			
+			_this.sizeFilter = new SingleSelectFilterCategory_Presentation(ABSTR.sizeFilterCategory, sizeFilterInfo);
 	    };
 	    
 	    function initNodeImageCell(cell, filter) {
@@ -307,25 +285,21 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 	    
 	    function initSizeNameCell(cell, filter) {
 			initNameCell(nameCell, {
-				name: sizeFilterInfo[filter].name,
-				onClick: function() {
-					toggleSizeFilter(filter);
-				}
+				name: sizeFilterInfo[filter].name
 			});	    	
 	    }
 	    
 	    function initNameCell(cell, args) {
 	    	cell.setAttribute("style","cursor: pointer");
 			cell.appendChild(Visualisations.makeText(args.name));
-			cell.onclick = function () {
-				args.onClick(cell);
+			$(cell).click(function () {
+				args.onClick && args.onClick(cell);
 				
 				ABSTR.filtershelp = false;
 				updateFiltersHelpVisibility();
-			};
+			});
 	    }
 
-	    
 	    function initSpaceCell(cell) {
 			cell.style.width = "25px";
 			cell.appendChild(Visualisations.makeText(' '));
@@ -404,40 +378,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			$("#legendarrow").html(arrowstr);
 		};
 		
-		function toggleShowFilter(state) {
-			ABSTR.showFilterCategory.toggleState(state);
-		}
-	    
-	    function toggleSizeFilter(state) {
-	    	ABSTR.sizeFilterCategory.toggleState(state);
-	    }
-		
-		function presentShowFilterItemState(state, value) {
-			if(state == ShowFilters.None) return;
-			getShowFilterNode(state).css("color", value ? "#000": "#777");
-		}
-		
-		function presentSizeFilterItemState(state, value) {
-			if(state == SizeFilters.None) return;
-			getSizeFilterNode(state).css("color", value ? "#000" : "#777");
-		}
-		
-		function disableAllShowFilters() {
-			for(key in ShowFilters) presentShowFilterItemState(ShowFilters[key], false);
-		}
-		
-		function disableAllSizeFilters() {
-			for(key in SizeFilters) presentSizeFilterItemState(SizeFilters[key], false);
-		}
-		
-		function getShowFilterNode(filter) {
-			return showFilterInfo[filter].node;
-		}
-		
-		function getSizeFilterNode(filter) {
-			return sizeFilterInfo[filter].node;
-		}
-		
 		function getLowerBarHtml() {
 			return '<div class="lower_bar_elems">   \
 				<div id="filters_title" class="lower_title" style="Float:left" >   \
@@ -494,8 +434,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		this.init = function() {
 			pipeEvent("onNodesAndLinksChanged", abstraction);
 			pipeEvent("onLinksChanged", abstraction);
-			//pipeEvent("onShowFilterChanged", abstraction);
-			//pipeEvent("onSizeFilterChanged", abstraction);
 			pipeEvent("onFilterChanged", abstraction);
 			
 			_this.showFilterChanged = abstraction.showFilterCategory.stateChanged;
@@ -510,6 +448,54 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 				console.log("error information", parent, parentPropertyName || name);
 				throw new Error("pipeEvent: property does not exist");
 			}
+		}
+	}
+	
+	function SingleSelectFilterCategory_Abstraction(args) {
+		var _this = this;
+		
+		this.stateChanged = new Events.EventImpl();
+		init(args);
+		
+		function init(args) {
+			_this.possibleStates = args.possibleStates;
+			_this.state = args.initState;
+		}
+		
+		this.toggleState = function(state) {
+			if(_this.state == state) _this.state = _this.possibleStates.None;
+			else _this.state = state;
+			
+			console.log('state changed', _this.state)
+			_this.stateChanged.raise({ state: _this.state });
+		}
+	}
+	
+	function SingleSelectFilterCategory_Presentation(ABSTR, filterInfos) {
+		var _this = this;
+		
+		console.log(filterInfos);
+		for(key in filterInfos) {
+			console.log('bind', filterInfos, key);
+			var filterItem = filterInfos[key];
+			filterItem.node && filterItem.node.click(ABSTR.toggleState.bind(ABSTR, filterItem.id));
+		}
+		
+		ABSTR.stateChanged.subscribe(function(args) { disableAllShowFilters(); presentItemState(args.state, true) });
+		ABSTR.stateChanged.subscribe(function(args) { console.log('klick', args) });
+		
+		function presentItemState(state, value) {
+			var filterItem = filterInfos[state];
+			if(filterItem != null && filterItem.node != null)
+				presentItemStateFromNode(filterItem.node, value);
+		}
+		
+		function presentItemStateFromNode(node, value) {
+			node && node.css("color", value ? "#000" : "#777");
+		}
+		
+		function disableAllShowFilters() {
+			for(key in filterInfos) presentItemStateFromNode(filterInfos[key].node, false);
 		}
 	}
 	 
@@ -548,11 +534,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 	    	return table;
 	    }
     }
-
-	var MultiSelectFilters = {
-		Nodes: 0,
-		Connections: 1,
-	};
 	
 	var ShowFilters = {
 		None: 0,
