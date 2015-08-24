@@ -1,5 +1,12 @@
 define(['event'], function(Events) {
+	function SelectBase_Abstraction() {
+		this.toggleItem = function(itemId) {
+			throw new Error('not implemented');
+		}
+	}
+	
 	function MultiSelect_Abstraction(args) {
+		SelectBase_Abstraction.call(this);
 		var _this = this;
 		var state;
 		var itemIds;
@@ -18,27 +25,8 @@ define(['event'], function(Events) {
 		}
 	}
 	
-	function MultiSelect_Presentation(ABSTR, items) {
-		var _this = this;
-		
-		for(key in items) {
-			var item = items[key];
-			item.node && item.node.click(ABSTR.toggleItem.bind(ABSTR, item.id));
-		}
-		
-		ABSTR.itemChanged.subscribe(function(args) { presentItemState(args.itemId, args.state) });
-		
-		function presentItemState(itemId, state) {
-			var item = items[itemId];
-			item && presentItemStateFromNode(item.node, state);
-		}
-		
-		function presentItemStateFromNode(node, value) {
-			node && node.css("color", value ? "#000" : "#777");
-		}
-	}
-	
 	function SingleSelect_Abstraction(args) {
+		SelectBase_Abstraction.call(this);
 		var _this = this;
 		
 		this.stateChanged = new Events.EventImpl();
@@ -49,7 +37,7 @@ define(['event'], function(Events) {
 			_this.state = args.initState;
 		}
 		
-		this.toggleState = function(state) {
+		this.toggleItem = function(item) {
 			if(_this.state == state) _this.state = _this.possibleStates.None;
 			else _this.state = state;
 			
@@ -57,28 +45,38 @@ define(['event'], function(Events) {
 		}
 	}
 	
-	function SingleSelect_Presentation(ABSTR, filterInfos) {
+	function MultiSelect_Presentation(ABSTR, items) {
 		var _this = this;
+		var core = new Select_PresentationCore(ABSTR, items);
+		ABSTR.itemChanged.subscribe(function(args) { core.presentItemState(args.itemId, args.state) });
+	}
+	
+	function SingleSelect_Presentation(ABSTR, items) {
+		var _this = this;
+		var core = new Select_PresentationCore(ABSTR, items);
 		
-		for(key in filterInfos) {
-			var filterItem = filterInfos[key];
-			filterItem.node && filterItem.node.click(ABSTR.toggleState.bind(ABSTR, filterItem.id));
-		}
-		
-		ABSTR.stateChanged.subscribe(function(args) { disableAllShowFilters(); presentItemState(args.state, true) });
-		
-		function presentItemState(state, value) {
-			var filterItem = filterInfos[state];
-			if(filterItem != null && filterItem.node != null)
-				presentItemStateFromNode(filterItem.node, value);
-		}
-		
-		function presentItemStateFromNode(node, value) {
-			node && node.css("color", value ? "#000" : "#777");
-		}
+		ABSTR.stateChanged.subscribe(function(args) { disableAllShowFilters(); core.presentItemState(args.state, true) });
 		
 		function disableAllShowFilters() {
-			for(key in filterInfos) presentItemStateFromNode(filterInfos[key].node, false);
+			for(key in items) core.presentItemStateFromNode(items[key].node, false);
+		}
+	}
+	
+	function Select_PresentationCore(ABSTR, items) {
+		var _this = this;
+		
+		for(key in items) {
+			var item = items[key];
+			item.node && item.node.click(ABSTR.toggleItem.bind(ABSTR, item.id));
+		}
+		
+		this.presentItemState = function(itemId, state) {
+			var item = items[itemId];
+			item && _this.presentItemStateFromNode(item.node, state);
+		}
+		
+		this.presentItemStateFromNode = function(node, value) {
+			node && node.css("color", value ? "#000" : "#777");
 		}
 	}
 	
