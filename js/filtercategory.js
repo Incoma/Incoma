@@ -1,6 +1,10 @@
-define(['event'], function(Events) {
+define(['event', 'visualisation'], function(Events, Visualisations) {
 	function SelectBase_Abstraction() {
 		this.toggleItem = function(itemId) {
+			throw new Error('not implemented');
+		}
+		
+		this.getItemState = function(itemId) {
 			throw new Error('not implemented');
 		}
 	}
@@ -23,6 +27,10 @@ define(['event'], function(Events) {
 			state[itemId] = !state[itemId];
 			_this.itemChanged.raise({ itemId: itemId, state: state[itemId] });
 		}
+		
+		this.getItemState = function(itemId) {
+			return state[itemId];
+		}
 	}
 	
 	function SingleSelect_Abstraction(args) {
@@ -38,22 +46,26 @@ define(['event'], function(Events) {
 		}
 		
 		this.toggleItem = function(item) {
-			if(_this.state == state) _this.state = _this.possibleStates.None;
-			else _this.state = state;
+			if(_this.state == item) _this.state = _this.possibleStates.None;
+			else _this.state = item;
 			
 			_this.stateChanged.raise({ state: _this.state });
 		}
+		
+		this.getItemState = function(itemId) {
+			return _this.state == itemId;
+		}
 	}
 	
-	function MultiSelect_Presentation(ABSTR, items) {
+	function MultiSelect_Presentation(ABSTR, items, tableArgs) {
 		var _this = this;
-		var core = new Select_PresentationCore(ABSTR, items);
+		var core = new Select_PresentationCore(ABSTR, items, tableArgs);
 		ABSTR.itemChanged.subscribe(function(args) { core.presentItemState(args.itemId, args.state) });
 	}
 	
-	function SingleSelect_Presentation(ABSTR, items) {
+	function SingleSelect_Presentation(ABSTR, items, tableArgs) {
 		var _this = this;
-		var core = new Select_PresentationCore(ABSTR, items);
+		var core = new Select_PresentationCore(ABSTR, items, tableArgs);
 		
 		ABSTR.stateChanged.subscribe(function(args) { disableAllShowFilters(); core.presentItemState(args.state, true) });
 		
@@ -62,12 +74,57 @@ define(['event'], function(Events) {
 		}
 	}
 	
-	function Select_PresentationCore(ABSTR, items) {
+	function Select_PresentationCore(ABSTR, items, tableArgs) {
 		var _this = this;
 		
-		for(key in items) {
-			var item = items[key];
-			item.node && item.node.click(ABSTR.toggleItem.bind(ABSTR, item.id));
+		function createTable() {
+			var colsPerItem = tableArgs.useImages ? 3 : 1;
+			var colsPerRow = tableArgs.itemsPerRow * colsPerItem;
+			var tableBuilder = new TableBuilder(colsPerRow);
+			
+			for(var key in items) {
+				var item = items[key];
+				
+				if(tableArgs.useImages) initImageCell(tableBuilder.newItem(), item.getImagePath(), item.imageWidth);
+				item.node = initNameCell(tableBuilder.newItem(), item.name, item.onClick);
+				if(tableArgs.useImages) initSpaceCell(tableBuilder.newItem());
+			}
+			
+			tableArgs.parent.appendChild(tableBuilder.getTableNode());
+		}
+		
+		function initImageCell(cell, path, width) { //args: { url; width (don't forget 'px'!); }
+	    	cell.setAttribute("style","width: " + width + "; height: 20px; background:url('" + path + "') no-repeat;");
+	    }
+	    
+	    function initNameCell(cell, caption, onClick) {
+	    	cell.setAttribute("style","cursor: pointer");
+			cell.appendChild(Visualisations.makeText(caption));
+			$(cell).click(function () {
+				onClick();
+				//ABSTR.filtershelp = false;
+				//updateFiltersHelpVisibility();
+			});
+			return $(cell);
+	    }
+
+	    function initSpaceCell(cell) {
+			cell.style.width = "25px";
+			cell.appendChild(Visualisations.makeText(' '));
+	    }
+		
+		function registerDomEvents() {
+			for(var key in items) {
+				var item = items[key];
+				item.node && item.node.click(ABSTR.toggleItem.bind(ABSTR, item.id));
+			}
+		}
+		
+		function presentItemStates() {
+			for(var key in items) {
+				var item = items[key];
+				_this.presentItemState(item.id, ABSTR.getItemState(item.id));
+			}
 		}
 		
 		this.presentItemState = function(itemId, state) {
@@ -78,7 +135,47 @@ define(['event'], function(Events) {
 		this.presentItemStateFromNode = function(node, value) {
 			node && node.css("color", value ? "#000" : "#777");
 		}
+		
+		createTable();
+		registerDomEvents();
+		presentItemStates();
 	}
+	
+    function TableBuilder(cellsPerRow) {
+    	var _this = this;
+    	var i = 0;
+    	var row = null;
+    	var table = document.createElement("table");
+		table.style.width = "100%";
+		table.setAttribute('border','0');
+		table.setAttribute('cellpadding','1');
+		table.setAttribute('cellspacing','2');
+		table.setAttribute("style", "padding-right: -20px");
+		
+		body = document.createElement("tbody");
+		table.appendChild(body);
+		
+		_this.newItem = function() {
+			if(shallCreateNewRow()) {
+				row = document.createElement('tr');
+				body.appendChild(row);
+			}
+			
+			var cell = document.createElement('td');
+			row.appendChild(cell);
+			
+			++i;
+			return cell;
+		}
+		
+		function shallCreateNewRow() {
+			return (i%cellsPerRow) == 0;
+		}
+		
+		_this.getTableNode = function() {
+	    	return table;
+	    }
+    }
 	
 	return {
 		MultiSelect_Abstraction: MultiSelect_Abstraction,

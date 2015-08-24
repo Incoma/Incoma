@@ -145,8 +145,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 	
 	function ConversationTools_Presentation(ABSTR) {
 		var _this = this;
-		var showFilterInfo = null;
-		var sizeFilterInfo = null;
+		
 		this.init = function() {
 			//ABSTR.filterChanged.subscribe(presentFilterState);
 			
@@ -165,18 +164,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 	        initSizeFilters();
 		}
 		
-		function initShowFilters() {
-			showFilterInfo = [];
-			showFilterInfo[ShowFilters.Tags] = { node: $("#showtags"), id: ShowFilters.Tags };
-			showFilterInfo[ShowFilters.Summaries] = { node: $("#showsums"), id: ShowFilters.Summaries };
-			showFilterInfo[ShowFilters.Authors] = { node: $("#showauthors"), id: ShowFilters.Authors };
-			
-			_this.showFilter = new FilterCategories.SingleSelect_Presentation(ABSTR.showFilterCategory, showFilterInfo);
-			
-			if (Model.tags == null)
-				$("#showtags").attr("style","visibility:hidden; cursor:default;");
-		}
-		
 		function initSliders() {
 			setTimeout(function() { 
 				new Dragdealer('slider1', { animationCallback: nodeslider });
@@ -186,118 +173,81 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 		
 		// Start of initNodeFilters = create the html from the filters, appending it (appendChild) to the right div tags
 	    function initNodeFilters() {
-			var filterlist = ABSTR.nodeFilters;
+			var filterItems = [];
+			for(var key in NodeFilters) {
+				var id = NodeFilters[key];
+				filterItems[id] = {
+					//node: _this.nodeFilterTextDoms[id], 
+					id: id, name: ABSTR.nodeFilters[id].name, imageWidth: '32px', onClick: onClickFilterItem, 
+					getImagePath: function() { return "img/node" + this.id + ".png"},
+				};
+			}
 			
 			// 4 filters with 2 per column for the nodes
 	        var numFilts = 4;
 	        var filtsPerCol = 2;
 	        var filtsPerRow = Math.ceil(numFilts/filtsPerCol);
-	        var cellsPerRow = filtsPerRow * 3;
-	
-			var tableBuilder = new TableBuilder(cellsPerRow);
-	
-			_this.nodeFilterTextDoms = {};
-	        for (var key in NodeFilters) {
-	        	var i = NodeFilters[key];
-				var filter = filterlist[i];
-				
-				var nameCell;
-				
-	            initNodeImageCell(tableBuilder.newItem(), filter);
-				initNameCell(nameCell = tableBuilder.newItem(), filter.name);
-				initSpaceCell(tableBuilder.newItem());
-				
-				_this.nodeFilterTextDoms[i] = $(nameCell);
-	        }
-	
-	    	var column = $('#filt_nodes')[0];
-			column.appendChild(tableBuilder.getTableNode());
+			_this.nodeFilterCategory = new FilterCategories.MultiSelect_Presentation(ABSTR.nodeFilterCategory, filterItems, {
+				itemsPerRow: filtsPerRow,
+				useImages: true,
+				parent: $('#filt_nodes')[0]
+			});
+	    }
+		
+		function initShowFilters() {
+			var showFilterInfo = [];
+			showFilterInfo[ShowFilters.Tags] = { /*node: $("#showtags"),*/ id: ShowFilters.Tags, name: Webtext.tx_tags, onClick: onClickFilterItem };
+			showFilterInfo[ShowFilters.Summaries] = { /*node: $("#showsums"),*/ id: ShowFilters.Summaries, name: Webtext.tx_summaries, onClick: onClickFilterItem };
+			showFilterInfo[ShowFilters.Authors] = { /*node: $("#showauthors"),*/ id: ShowFilters.Authors, name: Webtext.tx_authors, onClick: onClickFilterItem };
 			
-			var filterItems = [];
-			for(var key in NodeFilters) {
-				var id = NodeFilters[key];
-				filterItems[id] = { node: _this.nodeFilterTextDoms[id], id: id };
-			}
-			_this.nodeFilterCategory = new FilterCategories.MultiSelect_Presentation(ABSTR.nodeFilterCategory, filterItems);
-	    };
+			if (Model.tags == null)
+				delete showFilterInfo[ShowFilters.Tags];
+				
+			_this.showFilter = new FilterCategories.SingleSelect_Presentation(ABSTR.showFilterCategory, showFilterInfo, {
+				itemsPerRow: 1,
+				useImages: false,
+				parent: $('#filt_show')[0]
+			});
+		}
 		
 	    function initLinkFilters() {
-			var filterlist = ABSTR.linkFilters;
-			
 			// 6 filters with 2 per column for the links
 	        var numFilts = 6 ;
 	        var filtsPerCol = 2 ;
 	        var filtsPerRow = Math.ceil(numFilts/filtsPerCol);
 	        var cellsPerRow = filtsPerRow * 3;
-	
-			var tableBuilder = new TableBuilder(cellsPerRow);	
-	
-			_this.linkFilterTextDoms = {};
-	        for (var i = 1; i <= numFilts; ++i) {
-	            var filter = filterlist[i];
-				var nameCell;
-				
-				initLinkImageCell(tableBuilder.newItem(), filter);
-				initNameCell(nameCell = tableBuilder.newItem(), filter.name);
-				initSpaceCell(tableBuilder.newItem());
-				
-				_this.linkFilterTextDoms[i] = $(nameCell);
-	        }
-	        
-	    	var column = $('#filt_links')[0];
-			column.appendChild(tableBuilder.getTableNode());
 			
 			var filterItems = [];
 			for(var key in LinkFilters) {
 				var id = LinkFilters[key];
-				filterItems[id] = { node: _this.linkFilterTextDoms[id], id: id };
+				filterItems[id] = {
+					//node: _this.linkFilterTextDoms[id],
+					id: id, name: ABSTR.linkFilters[id].name, onClick: onClickFilterItem, imageWidth: '20px',
+					getImagePath: function() { return "img/link" + this.id + ".png"},
+				};
 			}
-			_this.linkFilterCategory = new FilterCategories.MultiSelect_Presentation(ABSTR.linkFilterCategory, filterItems);
+			_this.linkFilterCategory = new FilterCategories.MultiSelect_Presentation(ABSTR.linkFilterCategory, filterItems, {
+				itemsPerRow: filtsPerRow,
+				useImages: true,
+				parent: $('#filt_links')[0]
+			});
 	    };
 		
 	    function initSizeFilters() {
-	    	sizeFilterInfo = [];
-	    	sizeFilterInfo[SizeFilters.None] = { name: 'None', id: SizeFilters.None };
-	    	sizeFilterInfo[SizeFilters.Evaluations] = { name: Webtext.tx_evaluations, id: SizeFilters.Evaluations };
-		
-			var tableBuilder  = new TableBuilder(1);
-		    
-			nameCell = tableBuilder.newItem();
-			sizeFilterInfo[SizeFilters.Evaluations].node = $(nameCell);
-			initNameCell(nameCell, sizeFilterInfo[SizeFilters.Evaluations].name);
+	    	var sizeFilterInfo = [];
+	    	sizeFilterInfo[SizeFilters.Evaluations] = 
+	    		{ name: Webtext.tx_evaluations, id: SizeFilters.Evaluations, onClick: onClickFilterItem };
 			
-			var columnId = "filt_sizes";
-		    var column = $("#filt_sizes")[0];
-			column.appendChild(tableBuilder.getTableNode());
-			
-			_this.sizeFilter = new FilterCategories.SingleSelect_Presentation(ABSTR.sizeFilterCategory, sizeFilterInfo);
+			_this.sizeFilter = new FilterCategories.SingleSelect_Presentation(ABSTR.sizeFilterCategory, sizeFilterInfo, {
+				itemsPerRow: 1,
+				useImages: false,
+				parent: $('#filt_sizes')[0]
+			});
 	    };
 	    
-	    function initNodeImageCell(cell, filter) {
-	    	cell.setAttribute("style","width: 32px; height: 20px; background:url('img/node" + filter.typeId + ".png') no-repeat;");
-	    }
-	    
-	    function initLinkImageCell(cell, filter) {
-	    	initImageCell(cell, { width: '20px', url: 'img/link' + filter.typeId + '.png' });
-	    	cell.appendChild(Visualisations.makeText(' '));
-	    }
-	    
-	    function initImageCell(cell, args) { //args: { url; width (don't forget 'px'!); }
-	    	cell.setAttribute("style","width: " + args.width + "; height: 20px; background:url('" + args.url + "') no-repeat;");
-	    }
-	    
-	    function initNameCell(cell, caption) {
-	    	cell.setAttribute("style","cursor: pointer");
-			cell.appendChild(Visualisations.makeText(caption));
-			$(cell).click(function () {
-				ABSTR.filtershelp = false;
-				updateFiltersHelpVisibility();
-			});
-	    }
-
-	    function initSpaceCell(cell) {
-			cell.style.width = "25px";
-			cell.appendChild(Visualisations.makeText(' '));
+	    function onClickFilterItem() {
+			ABSTR.filtershelp = false;
+			updateFiltersHelpVisibility();
 	    }
 	    
 		function nodeslider (x){
@@ -379,15 +329,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 			   \
 				<div id="filt_show" class="lower_show" style="Float:left;">   \
 					<u><b>'+Webtext.tx_show+'</b></u>    \
-					<div id="showtags" class="lower_showtexts noselect">   \
-						'+Webtext.tx_tags+'    \
-					</div>   \
-					<div id="showauthors" class="lower_showauthors">   \
-						'+Webtext.tx_authors+'    \
-					</div>   \
-					<div id="showsums" class="lower_showsums">   \
-						'+Webtext.tx_summaries+'    \
-					</div>   \
 			    </div>   \
 			\
 				<div id="sliderpanel" class="sliderpanel noselect">  \
@@ -431,42 +372,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 			}
 		}
 	}
-	 
-    function TableBuilder(cellsPerRow) {
-    	var _this = this;
-    	var i = 0;
-    	var row = null;
-    	var table = document.createElement("table");
-		table.style.width = "100%";
-		table.setAttribute('border','0');
-		table.setAttribute('cellpadding','1');
-		table.setAttribute('cellspacing','2');
-		table.setAttribute("style", "padding-right: -20px");
-		
-		body = document.createElement("tbody");
-		table.appendChild(body);
-		
-		_this.newItem = function() {
-			if(shallCreateNewRow()) {
-				row = document.createElement('tr');
-				body.appendChild(row);
-			}
-			
-			var cell = document.createElement('td');
-			row.appendChild(cell);
-			
-			++i;
-			return cell;
-		}
-		
-		function shallCreateNewRow() {
-			return (i%cellsPerRow) == 0;
-		}
-		
-		_this.getTableNode = function() {
-	    	return table;
-	    }
-    }
 	
 	var ShowFilters = {
 		None: 0,
