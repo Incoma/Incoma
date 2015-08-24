@@ -212,9 +212,13 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	        this.filters = {
 	        	sizeFilter: ModuleConvTools.SizeFilters.Evaluations, //TODO: initialize from the ConversationTools values
 	        	showFilter: 'none',
-	        	nodeFilters: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true },
-	        	linkFilters: { 1: true, 2: true, 3: true, 4: true },
+	        	nodeFilters: [],
+	        	linkFilters: [],
 	        }
+	        for(var id in ModuleConvTools.NodeFilters) this.filters.nodeFilters[ModuleConvTools.NodeFilters[id]] = true;
+	        for(var id in ModuleConvTools.LinkFilters) this.filters.linkFilters[ModuleConvTools.LinkFilters[id]] = true;
+	        
+	        console.log(this.filters);
 	    }
 	};
 	// End of this == abstraction
@@ -4309,7 +4313,9 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 			conversationTools.control.onLinksChanged = applyLinkChanges;
 			conversationTools.control.showFilterChanged.subscribe(selectShowFilter);
 			conversationTools.control.sizeFilterChanged.subscribe(selectSizeFilter);
-			conversationTools.control.onFilterChanged = selectFilter;
+			conversationTools.control.nodeFilterChanged.subscribe(selectNodeFilter);
+			conversationTools.control.linkFilterChanged.subscribe(selectLinkFilter);
+			//conversationTools.control.onFilterChanged = selectFilter;
 		}
 	};
 	// End of var ZoomOut
@@ -4474,11 +4480,19 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 		applyAttributeChanges();
 	}
 	
-	function selectFilter(filterListName, name) {
-		console.log('selectFilter', filterListName, name);
+	function selectNodeFilter(args) {
+		console.log('selectNodeFilter');
 		var ABSTR = Visualisations.current().abstraction;
-		var filterList = ABSTR.filters[filterListName];
-		filterList[name] = !filterList[name];
+		var filterList = ABSTR.filters.nodeFilters;
+		filterList[args.itemId] = args.state;
+		applyAttributeChanges();
+	}
+	
+	function selectLinkFilter(args) {
+		console.log('selectLinkFilter');
+		var ABSTR = Visualisations.current().abstraction;
+		var filterList = ABSTR.filters.linkFilters;
+		filterList[args.itemId] = args.state;
 		applyAttributeChanges();
 	}
 	

@@ -1,4 +1,4 @@
-define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(PacBuilder, Webtext, Model, Visualisations, Events) {
+define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercategory'], function(PacBuilder, Webtext, Model, Visualisations, Events, FilterCategories) {
 	
 	function ConversationTools() {
 		PacBuilder(this, ConversationTools_Presentation, ConversationTools_Abstraction, ConversationTools_Control);
@@ -29,7 +29,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			_this.onLinksChanged = function(links) {};
 			_this.onFilterChanged = function(filterListName, id) {}; //TODO: replace it with the Event
 			
-			_this.filterChanged = new Events.EventImpl(); //TODO: disposing routines
+			//_this.filterChanged = new Events.EventImpl(); //TODO: disposing routines
 		}
 		
 		function initFilters() {
@@ -49,11 +49,25 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 				4: {name: Webtext.tx_info, state: true, typeId: 4},
 			};
 			
-			_this.showFilterCategory = new SingleSelectFilterCategory_Abstraction({
+			var initState = [];
+			for(id in NodeFilters) initState[NodeFilters[id]] = true;
+			_this.nodeFilterCategory = new FilterCategories.MultiSelect_Abstraction({
+				itemIds: NodeFilters,
+				initState: initState,
+			});
+			
+			initState = [];
+			for(id in LinkFilters) initState[LinkFilters[id]] = true;
+			_this.linkFilterCategory = new FilterCategories.MultiSelect_Abstraction({
+				itemIds: LinkFilters,
+				initState: initState,
+			});
+			
+			_this.showFilterCategory = new FilterCategories.SingleSelect_Abstraction({
 				possibleStates: ShowFilters,
 				initState: ShowFilters.None,
 			});
-			_this.sizeFilterCategory = new SingleSelectFilterCategory_Abstraction({
+			_this.sizeFilterCategory = new FilterCategories.SingleSelect_Abstraction({
 				possibleStates: SizeFilters,
 				initState: SizeFilters.Evaluations,
 			});
@@ -67,15 +81,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 				value: 0,
 				old: -1000,
 			};
-		}
-		
-		_this.toggleFilter = function(filterListName, id) {
-			var list = _this[filterListName];
-			var state = list[id].state;
-			state = list[id].state = !state;
-			
-			_this.onFilterChanged(filterListName, id);
-			_this.filterChanged.raise({ filterListName: filterListName, id: id, state: state });
 		}
 		
 		function disableAllFilters(list) {
@@ -143,7 +148,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		var showFilterInfo = null;
 		var sizeFilterInfo = null;
 		this.init = function() {
-			ABSTR.filterChanged.subscribe(presentFilterState);
+			//ABSTR.filterChanged.subscribe(presentFilterState);
 			
 			$('#lower_bar').html(getLowerBarHtml());
 			
@@ -166,7 +171,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			showFilterInfo[ShowFilters.Summaries] = { node: $("#showsums"), id: ShowFilters.Summaries };
 			showFilterInfo[ShowFilters.Authors] = { node: $("#showauthors"), id: ShowFilters.Authors };
 			
-			_this.showFilter = new SingleSelectFilterCategory_Presentation(ABSTR.showFilterCategory, showFilterInfo);
+			_this.showFilter = new FilterCategories.SingleSelect_Presentation(ABSTR.showFilterCategory, showFilterInfo);
 			
 			if (Model.tags == null)
 				$("#showtags").attr("style","visibility:hidden; cursor:default;");
@@ -192,20 +197,28 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			var tableBuilder = new TableBuilder(cellsPerRow);
 	
 			_this.nodeFilterTextDoms = {};
-	        for (var i = 1; i <= numFilts; ++i) {
+	        for (var key in NodeFilters) {
+	        	var i = NodeFilters[key];
 				var filter = filterlist[i];
 				
 				var nameCell;
 				
 	            initNodeImageCell(tableBuilder.newItem(), filter);
-				initNodeNameCell(nameCell = tableBuilder.newItem(), filter);
+				initNameCell(nameCell = tableBuilder.newItem(), filter.name);
 				initSpaceCell(tableBuilder.newItem());
 				
-				_this.nodeFilterTextDoms[i] = nameCell;
+				_this.nodeFilterTextDoms[i] = $(nameCell);
 	        }
 	
 	    	var column = $('#filt_nodes')[0];
 			column.appendChild(tableBuilder.getTableNode());
+			
+			var filterItems = [];
+			for(var key in NodeFilters) {
+				var id = NodeFilters[key];
+				filterItems[id] = { node: _this.nodeFilterTextDoms[id], id: id };
+			}
+			_this.nodeFilterCategory = new FilterCategories.MultiSelect_Presentation(ABSTR.nodeFilterCategory, filterItems);
 	    };
 		
 	    function initLinkFilters() {
@@ -225,14 +238,21 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 				var nameCell;
 				
 				initLinkImageCell(tableBuilder.newItem(), filter);
-				initLinkNameCell(nameCell = tableBuilder.newItem(), filter);
+				initNameCell(nameCell = tableBuilder.newItem(), filter.name);
 				initSpaceCell(tableBuilder.newItem());
 				
-				_this.linkFilterTextDoms[i] = nameCell;
+				_this.linkFilterTextDoms[i] = $(nameCell);
 	        }
 	        
 	    	var column = $('#filt_links')[0];
 			column.appendChild(tableBuilder.getTableNode());
+			
+			var filterItems = [];
+			for(var key in LinkFilters) {
+				var id = LinkFilters[key];
+				filterItems[id] = { node: _this.linkFilterTextDoms[id], id: id };
+			}
+			_this.linkFilterCategory = new FilterCategories.MultiSelect_Presentation(ABSTR.linkFilterCategory, filterItems);
 	    };
 		
 	    function initSizeFilters() {
@@ -244,13 +264,13 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		    
 			nameCell = tableBuilder.newItem();
 			sizeFilterInfo[SizeFilters.Evaluations].node = $(nameCell);
-			initSizeNameCell(nameCell, SizeFilters.Evaluations);
+			initNameCell(nameCell, sizeFilterInfo[SizeFilters.Evaluations].name);
 			
 			var columnId = "filt_sizes";
 		    var column = $("#filt_sizes")[0];
 			column.appendChild(tableBuilder.getTableNode());
 			
-			_this.sizeFilter = new SingleSelectFilterCategory_Presentation(ABSTR.sizeFilterCategory, sizeFilterInfo);
+			_this.sizeFilter = new FilterCategories.SingleSelect_Presentation(ABSTR.sizeFilterCategory, sizeFilterInfo);
 	    };
 	    
 	    function initNodeImageCell(cell, filter) {
@@ -266,35 +286,10 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 	    	cell.setAttribute("style","width: " + args.width + "; height: 20px; background:url('" + args.url + "') no-repeat;");
 	    }
 	    
-	    function initNodeNameCell(cell, filter) {
-	    	initLinkOrNodeNameCell(cell, { name: filter.name, filterId: filter.typeId, filterListName: 'nodeFilters' });
-	    }
-	    
-	    function initLinkNameCell(cell, filter) {
-	    	initLinkOrNodeNameCell(cell, { name: filter.name, filterId: filter.typeId, filterListName: 'linkFilters' });
-	    }
-	    
-	    function initLinkOrNodeNameCell(cell, args) {
-	    	initNameCell(cell, {
-	    		name: args.name,
-		    	onClick: function() {
-					ABSTR.toggleFilter(args.filterListName, args.filterId);
-				}
-			});
-	    }
-	    
-	    function initSizeNameCell(cell, filter) {
-			initNameCell(nameCell, {
-				name: sizeFilterInfo[filter].name
-			});	    	
-	    }
-	    
-	    function initNameCell(cell, args) {
+	    function initNameCell(cell, caption) {
 	    	cell.setAttribute("style","cursor: pointer");
-			cell.appendChild(Visualisations.makeText(args.name));
+			cell.appendChild(Visualisations.makeText(caption));
 			$(cell).click(function () {
-				args.onClick && args.onClick(cell);
-				
 				ABSTR.filtershelp = false;
 				updateFiltersHelpVisibility();
 			});
@@ -305,23 +300,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 			cell.appendChild(Visualisations.makeText(' '));
 	    }
 	    
-	    function presentFilterState(args) {
-	    	var state = args.state;
-	    	var id = args.id;
-	    	var filterListName = args.filterListName;
-	    	
-			var textcolor = (state) ? "#000" : "#777";	
-			var domElement = getFilterTextDom(filterListName, id);
-			domElement.setAttribute("style","cursor: pointer; color: " + textcolor);
-	    }
-	    
-	    function getFilterTextDom(filterListName, id) {
-	    	if(filterListName == 'nodeFilters')
-	    		return _this.nodeFilterTextDoms[id];
-	    	else if(filterListName == 'linkFilters')
-	    		return _this.linkFilterTextDoms[id];
-	    }
-		
 		function nodeslider (x){
 			console.log('nodeslider');
 			var nodesdifevalarray = Model.model.nodes.map(function(e){return e.evalpos-e.evalneg;});
@@ -358,6 +336,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		function toggleFilterPanelVisibility() {
 			ABSTR.showfilters = !ABSTR.showfilters;
 		
+			console.log('filtershelp', ABSTR.filtershelp);
 		    updateFilterPanelVisibility();	
 		    updateFiltersHelpVisibility();
 			ABSTR.filtershelp = false;
@@ -434,8 +413,10 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		this.init = function() {
 			pipeEvent("onNodesAndLinksChanged", abstraction);
 			pipeEvent("onLinksChanged", abstraction);
-			pipeEvent("onFilterChanged", abstraction);
+			//pipeEvent("onFilterChanged", abstraction);
 			
+			_this.nodeFilterChanged = abstraction.nodeFilterCategory.itemChanged;
+			_this.linkFilterChanged = abstraction.linkFilterCategory.itemChanged;
 			_this.showFilterChanged = abstraction.showFilterCategory.stateChanged;
 			_this.sizeFilterChanged = abstraction.sizeFilterCategory.stateChanged;
 		};
@@ -448,54 +429,6 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 				console.log("error information", parent, parentPropertyName || name);
 				throw new Error("pipeEvent: property does not exist");
 			}
-		}
-	}
-	
-	function SingleSelectFilterCategory_Abstraction(args) {
-		var _this = this;
-		
-		this.stateChanged = new Events.EventImpl();
-		init(args);
-		
-		function init(args) {
-			_this.possibleStates = args.possibleStates;
-			_this.state = args.initState;
-		}
-		
-		this.toggleState = function(state) {
-			if(_this.state == state) _this.state = _this.possibleStates.None;
-			else _this.state = state;
-			
-			console.log('state changed', _this.state)
-			_this.stateChanged.raise({ state: _this.state });
-		}
-	}
-	
-	function SingleSelectFilterCategory_Presentation(ABSTR, filterInfos) {
-		var _this = this;
-		
-		console.log(filterInfos);
-		for(key in filterInfos) {
-			console.log('bind', filterInfos, key);
-			var filterItem = filterInfos[key];
-			filterItem.node && filterItem.node.click(ABSTR.toggleState.bind(ABSTR, filterItem.id));
-		}
-		
-		ABSTR.stateChanged.subscribe(function(args) { disableAllShowFilters(); presentItemState(args.state, true) });
-		ABSTR.stateChanged.subscribe(function(args) { console.log('klick', args) });
-		
-		function presentItemState(state, value) {
-			var filterItem = filterInfos[state];
-			if(filterItem != null && filterItem.node != null)
-				presentItemStateFromNode(filterItem.node, value);
-		}
-		
-		function presentItemStateFromNode(node, value) {
-			node && node.css("color", value ? "#000" : "#777");
-		}
-		
-		function disableAllShowFilters() {
-			for(key in filterInfos) presentItemStateFromNode(filterInfos[key].node, false);
 		}
 	}
 	 
@@ -547,5 +480,27 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event'], function(P
 		Evaluations: 1,
 	};
 	
-	return { ConversationTools: ConversationTools, ShowFilters: ShowFilters, SizeFilters: SizeFilters };
+	var NodeFilters = {
+		General: 1,
+		Question: 2,
+		Proposal: 3,
+		Info: 4,
+	};
+	
+	var LinkFilters = {
+		General: 1,
+		Agreement: 2,
+		Disagreement: 3,
+		Consequence: 4,
+		Alternative: 5,
+		Equivalence: 6,
+	};
+	
+	return { 
+		ConversationTools: ConversationTools, 
+		ShowFilters: ShowFilters, 
+		SizeFilters: SizeFilters, 
+		NodeFilters: NodeFilters, 
+		LinkFilters: LinkFilters
+	};
 });
