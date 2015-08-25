@@ -8,6 +8,7 @@ define(["opensave", "jsonmodels", "webtext", "model", "visualisation", "visualis
 	};
 	
 	$("#headerlangselect").val(weblang);
+	$("#headerlangselect").change(function() { changelanguage(this) });
 	
 	
 	// Set the text for the elements in the header
@@ -60,10 +61,11 @@ define(["opensave", "jsonmodels", "webtext", "model", "visualisation", "visualis
 
 	function changelanguage(selection){
 	
-        var path = "/"+window.location.pathname.match(/_[A-Za-z0-9-_]+/)+"/";
+        /*var path = "/"+window.location.pathname.match(/_[A-Za-z0-9-_]+/)+"/";
         if (window.location.pathname.match(/_[A-Za-z0-9-_]+/) == "") {		
         path="/";
-        };
+        };*/ //TODO
+        path = window.location.pathname;
 
 		switch (selection.value){	
 			case "eng":
@@ -74,11 +76,26 @@ define(["opensave", "jsonmodels", "webtext", "model", "visualisation", "visualis
 				$("#headerlangselect").val(weblang);
 				openlanguagepanel();
 				break;
-
 			default:
-				var str = (conversation == "") ? path+selection.value+"/" : path+selection.value+"/?c=" + conversation;
+				var str = (conversation == "") ? path+"?lang="+selection.value : path+"?c=" + conversation+"&lang="+selection.value;
+				alert(str);
 				window.location.href = str;				
 		}
+	}
+	
+	
+	function openlanguagepanel(){
+		var width = 400;
+		var height = 150;
+		
+		$('#language_panel').css({ 
+			"width": width,
+			"height": height,
+			"top": ($(window).height()-height-150)/2, 
+			"left": ($(window).width()-width-$('#right_bar').width())/2
+		});
+		
+		$('#language_panel').fadeIn(200);
 	}
 	
 	function loadmenu(){

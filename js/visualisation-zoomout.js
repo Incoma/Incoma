@@ -3213,21 +3213,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 		    return reg.style[prop];
 	}
 	
-	
-	function openlanguagepanel(){
-		var width = 400;
-		var height = 150;
-		
-		$('#language_panel').css({ 
-			"width": width,
-			"height": height,
-			"top": ($(window).height()-height-150)/2, 
-			"left": ($(window).width()-width-$('#right_bar').width())/2
-		});
-		
-		$('#language_panel').fadeIn(200);
-	}
-	
 	function closelanguagepanel(){
 		$('#language_panel').fadeOut(300);
 	}	

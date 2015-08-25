@@ -26,7 +26,7 @@
         </a>
      </div>
      <div id="headerLangSelection" class="header noselect">
-         <select id="headerlangselect" class="header noselect" onchange="changelanguage(this)">
+         <select id="headerlangselect" class="header noselect">
 				<option value="eng" selected="selected">English</option>
 				<option value="es">Spanish</option>
 				<option value="fra">French</option>
@@ -76,7 +76,10 @@
 	
 	
 	// This script loads all the text for the website in the proper language (English by default)
-	<?php $weblangphp= isset($_GET['lang']) && $_GET['lang']; ?>
+	<?php
+		if(isset($_GET['lang'])) $weblangphp = $_GET['lang'];
+		else $weblangphp = "";
+	?>
 	weblangphp="<?php echo $weblangphp; ?>"; 
 	weblang = (weblangphp == "") ? "eng" : weblangphp;
 </script>
