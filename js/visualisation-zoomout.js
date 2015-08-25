@@ -215,10 +215,16 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	        	nodeFilters: [],
 	        	linkFilters: [],
 	        }
-	        for(var id in ModuleConvTools.NodeFilters) this.filters.nodeFilters[ModuleConvTools.NodeFilters[id]] = true;
-	        for(var id in ModuleConvTools.LinkFilters) this.filters.linkFilters[ModuleConvTools.LinkFilters[id]] = true;
-	        
-	        console.log(this.filters);
+	        this.filters.nodeFilters[ModuleConvTools.NodeFilters.General] = { state: true, name: Webtext.tx_general };
+	        this.filters.nodeFilters[ModuleConvTools.NodeFilters.Question] = { state: true, name: Webtext.tx_question };
+	        this.filters.nodeFilters[ModuleConvTools.NodeFilters.Proposal] = { state: true, name: Webtext.tx_proposal };
+	        this.filters.nodeFilters[ModuleConvTools.NodeFilters.Info] = { state: true, name: Webtext.tx_info };
+	        this.filters.linkFilters[ModuleConvTools.LinkFilters.General] = { state: true, name: Webtext.tx_general };
+	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Agreement] = { state: true, name: Webtext.tx_agreement };
+	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Disagreement] = { state: true, name: Webtext.tx_disagreement };
+	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Consequence] = { state: true, name: Webtext.tx_consequence };
+	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Alternative] = { state: true, name: Webtext.tx_alternative };
+	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Equivalence] = { state: true, name: Webtext.tx_equivalence };
 	    }
 	};
 	// End of this == abstraction
@@ -845,7 +851,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	        };		
 	
 	        this.nodeStrokeWidth = function (d) {
-	            if (ABSTR.filters.nodeFilters[d.type]) {
+	            if (ABSTR.filters.nodeFilters[d.type].state) {
 					if ((ABSTR.clickednodehash == d.hash) || (ABSTR.overnodehash == d.hash)){
 						return "3px";
 					} else {
@@ -857,7 +863,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	        };
 			
 			this.nodeFillOpacity = function (d) {
-	            if (ABSTR.filters.nodeFilters[d.type]) {
+	            if (ABSTR.filters.nodeFilters[d.type].state) {
 	                return PRES.nodeOpacityDefault;
 	            } else {
 					return "0";
@@ -865,7 +871,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	        };
 	
 			this.textFillOpacity = function (d) {
-	            if (ABSTR.filters.nodeFilters[d.node.type]) {
+	            if (ABSTR.filters.nodeFilters[d.node.type].state) {
 	                return "1";
 	            } else {
 					return "0";
@@ -879,7 +885,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	
 	        this.seedRadius = function (d) {
 	
-			            if (ABSTR.filters.nodeFilters[d.homenode.type]) {
+			            if (ABSTR.filters.nodeFilters[d.homenode.type].state) {
 					return PRES.seedSizeDefault *d.seedtype;
 			            } else {
 			                return 0;
@@ -892,7 +898,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 			
 			
 	        this.linkArrow = function (d) {
-	            if (ABSTR.filters.linkFilters[d.type] && !(ABSTR.treeview && d.direct == 1)) {
+	            if (ABSTR.filters.linkFilters[d.type].state && !(ABSTR.treeview && d.direct == 1)) {
 					if ( d.type != 5 && d.type != 6 ) {                
 						//  alternative and equivalence have no direction
 						if (d.type == 2 && d.direct==1){
@@ -930,7 +936,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 				
 	
 	        this.linkStrokeWidth = function (d) {
-	            if (ABSTR.filters.linkFilters[d.type]) {
+	            if (ABSTR.filters.linkFilters[d.type].state) {
 	                switch(ABSTR.filters.sizeFilter) {
 	                	case ModuleConvTools.SizeFilters.Evaluations:
 							return PRES.renormalizedlink(d.evalpos-d.evalneg);
@@ -953,7 +959,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 			
 	
 			this.linkStrokeOpacity = function (d) {
-	            if ((!ABSTR.filters.linkFilters[d.type]) || (ABSTR.treeview && d.direct == 1 && d.source.hash != ABSTR.overnodehash && d.target.hash != ABSTR.overnodehash && d.source.hash != ABSTR.clickednodehash && d.target.hash != ABSTR.clickednodehash)) {
+	            if ((!ABSTR.filters.linkFilters[d.type].state) || (ABSTR.treeview && d.direct == 1 && d.source.hash != ABSTR.overnodehash && d.target.hash != ABSTR.overnodehash && d.source.hash != ABSTR.clickednodehash && d.target.hash != ABSTR.clickednodehash)) {
 	                if (ABSTR.selectedlink == d) hidelinkselect();
 	                return "0";
 	            } else {
@@ -963,7 +969,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 			
 			
 	        this.relatedNodesOpacity = function (d) {
-	            if (!ABSTR.filters.linkFilters[d.type]) {		
+	            if (!ABSTR.filters.linkFilters[d.type].state) {		
 					affectednodes = PRES.svg.selectAll(".node")
 									.filter(function(e){return ((e.hash == d.source.hash)||(e.hash == d.target.hash));})
 					for (i=0;i<affectednodes[0].length;i++){
@@ -995,7 +1001,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	
 	
 	        this.relatedSeedRadius = function (d) {
-	            if (!ABSTR.filters.linkFilters[d.type]) {		
+	            if (!ABSTR.filters.linkFilters[d.type].state) {		
 				// Look for all the seeds in nodes connected to the link that is going to be hidden
 					affectedseeds = PRES.svg.selectAll(".seed")
 									.filter(function(e){return ((e.homenode.hash == d.source.hash)||(e.homenode.hash == d.target.hash));})
@@ -1025,7 +1031,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	
 	
 	        this.relatedLinksOpacity = function (d) {
-	            if (!ABSTR.filters.nodeFilters[d.type]) {
+	            if (!ABSTR.filters.nodeFilters[d.type].state) {
 				
 					PRES.svg.selectAll(".link")
 	                    .filter(function (e) {return e.source.hash == d.hash;})
@@ -4469,7 +4475,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 		console.log('selectNodeFilter');
 		var ABSTR = Visualisations.current().abstraction;
 		var filterList = ABSTR.filters.nodeFilters;
-		filterList[args.itemId] = args.state;
+		filterList[args.itemId].state = args.state;
 		applyAttributeChanges();
 	}
 	
@@ -4477,7 +4483,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 		console.log('selectLinkFilter');
 		var ABSTR = Visualisations.current().abstraction;
 		var filterList = ABSTR.filters.linkFilters;
-		filterList[args.itemId] = args.state;
+		filterList[args.itemId].state = args.state;
 		applyAttributeChanges();
 	}
 	
