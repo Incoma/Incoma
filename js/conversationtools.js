@@ -291,6 +291,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 		    updateFiltersHelpVisibility();
 			ABSTR.filtershelp = false;
 		};
+		_this.toggleFilterPanelVisibility = toggleFilterPanelVisibility;
 		
 		function updateFiltersHelpVisibility() {
 			if (ABSTR.filtershelp){ 
@@ -361,6 +362,8 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 			_this.showFilterChanged = abstraction.showFilterCategory.stateChanged;
 			_this.sizeFilterChanged = abstraction.sizeFilterCategory.stateChanged;
 		};
+		
+		this.hideShowFilters = presentation.toggleFilterPanelVisibility;
 		
 		function pipeEvent(name, parent, parentPropertyName) {
 			_this[name] = function() {};

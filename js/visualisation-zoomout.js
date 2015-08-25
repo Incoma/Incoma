@@ -1,5 +1,5 @@
-define(['webtext', 'visualisation', 'datetime', 'model', 'conversations', 'conversationtools', 'db'], 
-function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleConvTools, Db) {
+define(['webtext', 'visualisation', 'datetime', 'model', 'conversations', 'conversationtools', 'db', 'event'], 
+function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleConvTools, Db, Events) {
 	
 		//definition of the html code of the right panel bar for different situations:
 	// Reply and Connect buttons
@@ -232,6 +232,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	//*****************************************************************************************************************************
 	// Start of this == presentation [initialized passing it (html5node, abstraction)]
 	function ZoomOut_Presentation(VIS, ABSTR) {
+	var _this = this;
 	    // public interface
 	
 	// There are two sets of nodes and links with different ways to call them
@@ -273,6 +274,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	    this.sessionnodes = [];
 	    this.sessionlinks = [];
 	    this.editingnode = false;
+	    this.hideShowFilters = new Events.EventImpl();
 		
 	    this.bordercolor = {
 	        "normal": "#888",
@@ -1578,6 +1580,226 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 			PRES.svg.selectAll(".link").style("stroke", PRES.liveAttributes.relatedSeedRadius);
 	        PRES.svg.selectAll(".node").style("fill", PRES.liveAttributes.relatedLinksOpacity);
 		};
+		
+		//Defines the tutorial of the Sandbox
+		function changetutorialpanel(){
+		
+		    var PRES = Visualisations.current().presentation;
+			var ABSTR = Visualisations.current().abstraction;
+			
+			if (!ABSTR.tutorialopened){return}
+			
+			var text= "";
+			var textclose = "<div id='tutorial_panel_close' class='tutorial_panel_close noselect'>&times</div>";
+			var textclick = "<div class='tutorial_panel_click'>("+Webtext.tx_click_cont+")</div>";
+			
+			switch (ABSTR.tutorialstep){
+			
+				case -1:
+				text = Webtext.tx_tut1+"  &nbsp;&nbsp; ヽ(^。^)ノ ヽ(^。^)ノ  <br>&nbsp;&nbsp;&nbsp;&nbsp; (ﾉ^ ヮ^)ﾉ *:･ﾟ✧ <br><br>"+Webtext.tx_tut2+" <i>"+Webtext.tx_tut3+"</i>";
+				break;
+				
+				
+				case 0:
+			        text = Webtext.tx_tut4+" <br><br>"+Webtext.tx_tut5;
+				break;
+			
+				
+				case 1:
+				text = Webtext.tx_tut6;
+				
+				PRES.liveAttributes.mouseover(Model.model.nodes[0]);
+				ABSTR.overnode = false;
+				$("#right_bar").css({"border-left": "solid 1px red", "border-bottom": "solid 1px red"});
+				break;
+				
+				
+				case 2:
+				text = Webtext.tx_tut7;
+		
+				$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
+				break;
+				
+				
+				case 3:
+				text = Webtext.tx_tut8+"<br><br>"+Webtext.tx_tut9;
+				
+			    if (!PRES.showfilters) _this.hideShowFilters.raise();
+				$("#lower_bar").css("border", "solid 2px red");
+		            
+				break;
+				
+		
+				case 4:
+				text = Webtext.tx_tut10+"<br><br> "+Webtext.tx_tut11;
+				
+				break;
+		
+				
+				case 5:
+				text = Webtext.tx_tut12;
+		            
+			    if (PRES.showfilters) _this.hideShowFilters.raise();
+				$("#lower_bar").css({"border": "solid 1px #bbb", "border-bottom": "none"});
+				
+				$("#right_bar").css({"border-left": "solid 2px red", "border-bottom": "solid 2px red"});
+				PRES.liveAttributes.click(Model.model.nodes[0]);
+				break;
+				
+				
+				case 6:
+				text = Webtext.tx_tut13;
+				
+			
+				$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
+				showreplypanel(false);
+				$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
+				$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");	
+				break;
+				
+				
+				case 7:
+			        text = Webtext.tx_tut14+" <br>"+Webtext.tx_tut15;
+				
+				$("#tdnodetype").css("border", "solid 2px red");
+				$("#tdlinktype").css("border", "solid 2px red");
+		
+				break;
+				
+				
+				case 8:
+				text = Webtext.tx_tut16+" <br><br>"+Webtext.tx_tut17;
+				
+				$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
+				$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");		
+				
+				$("#replybox").css("border-color", "red");
+				$("#replyboxsum").css("border-color", "red");
+				break;
+				
+				
+				case 9:
+				text = Webtext.tx_tut18;
+				
+				$("#replybox").css("border-color", "#bbb");
+				$("#replyboxsum").css("border-color", "#bbb");
+				
+				showcreatelink(false);
+				$("#tdconnect").css("border", "solid 2px red");
+				break;
+				
+				
+				case 10:
+				text = Webtext.tx_tut19;
+				
+				$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");
+				$("#nodepos").css("border", "solid 2px red");
+				$("#nodeneg").css("border", "solid 2px red");
+				cancellink();
+				break;
+				
+				
+				case 11:
+				text = Webtext.tx_tut20+"<br><br>"+Webtext.tx_tut21;
+				
+				ABSTR.overnode = false;
+				PRES.liveAttributes.backgroundclick();
+				
+				$("#left_bar").css("border-color", "red");
+				$("#nodepos").css("border", "solid 2px rgba(0,0,0,0)");
+				$("#nodeneg").css("border", "solid 2px rgba(0,0,0,0)");
+				break;
+		
+				
+				case 12: 
+				text = Webtext.tx_tut22;
+				
+				$("#left_bar").css("border-color", "rgba(0,0,0,0)");
+				$("#headerMenu").css("color", "#f53d3d");
+				break;
+				
+				
+				case 13:
+				text = Webtext.tx_tut23+" <br><br>"+Webtext.tx_tut24;
+				
+				$("#headerMenu").css("color", "#ddd");
+				$("#headerUrl").css("color", "#f53d3d");
+				break;
+			
+			
+				case 14:
+				text = Webtext.tx_tut25+"<br><br>"+Webtext.tx_tut26;
+				
+				$("#headerUrl").css("color", "#ddd");
+				textclick = "<div class='tutorial_panel_click'>("+Webtext.tx_tut27+")</div>";
+				break;		
+				
+				
+				case 15:
+				closetutorialpanel();
+				return;
+				break;
+			}
+			
+			$("#tutorial_panel").html(textclose + text + textclick);
+			$('#tutorial_panel_close')[0].onclick = closetutorialpanel;
+			ABSTR.tutorialstep++;
+		}
+		
+		
+		function closetutorialpanel(){
+		
+		    var PRES = Visualisations.current().presentation;
+			var ABSTR = Visualisations.current().abstraction;
+		
+			tutorialfont=$("#tutorial_panel").css("font-size");
+		
+			//restore all the possible modifications made at different steps in the tutorial
+			$("#lower_bar").css("border", "solid 1px rgba(51,51,153, 0.6)");
+			$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
+			$("#left_bar").css("border-color", "rgba(0,0,0,0)");
+			$("#headerMenu").css("color", "#ddd");
+			$("#headerUrl").css("color", "#ddd");
+			
+			ABSTR.overnode = false;
+			
+			
+			if (!ABSTR.timevisualization){
+				PRES.liveAttributes.backgroundclick();	
+				$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
+				$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");	
+				$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");		
+				$("#replybox").css("border-color", "#bbb");
+				$("#replyboxsum").css("border-color", "#bbb");
+			}
+			
+			//closes the tutorial panel
+			$("#tutorial_panel").html("").animate({height: 20},300).animate({width: 100},300);
+			
+			setTimeout(function(){
+				$("#tutorial_panel").css({"font-size":"11pt", "cursor":"pointer", "text-align":"center"}).html(Webtext.tx_watch_tutorial);
+				$("#tutorial_panel")[0].onclick = opentutorialpanel;
+			},700);
+			
+			ABSTR.tutorialopened=false;
+		}
+		
+		
+		function opentutorialpanel(){
+		
+		    var PRES = Visualisations.current().presentation;
+			var ABSTR = Visualisations.current().abstraction;
+			
+			$("#tutorial_panel").html("").css({"font-size":tutorialfont, "cursor":"default", "text-align":"left"}).animate({width: searchCssProp('.tutorial_panel','width')},300).animate({height: searchCssProp('.tutorial_panel','height')},300);
+			
+			ABSTR.tutorialopened = true;
+			ABSTR.tutorialstep = 0;
+			
+			setTimeout(function(){
+				changetutorialpanel();
+				$("#tutorial_panel")[0].onclick = changetutorialpanel;
+			},700);
+		}
 		
 	};
 	// End of this == presentation
@@ -2965,227 +3187,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 			
 	}
 	
-	//Defines the tutorial of the Sandbox
-	function changetutorialpanel(){
-	
-	    var PRES = Visualisations.current().presentation;
-		var ABSTR = Visualisations.current().abstraction;
-		
-		if (!ABSTR.tutorialopened){return}
-		
-		var text= "";
-		var textclose = "<div id='tutorial_panel_close' class='tutorial_panel_close noselect'>&times</div>";
-		var textclick = "<div class='tutorial_panel_click'>("+Webtext.tx_click_cont+")</div>";
-		
-		switch (ABSTR.tutorialstep){
-		
-			case -1:
-			text = Webtext.tx_tut1+"  &nbsp;&nbsp; ヽ(^。^)ノ ヽ(^。^)ノ  <br>&nbsp;&nbsp;&nbsp;&nbsp; (ﾉ^ ヮ^)ﾉ *:･ﾟ✧ <br><br>"+Webtext.tx_tut2+" <i>"+Webtext.tx_tut3+"</i>";
-			break;
-			
-			
-			case 0:
-		        text = Webtext.tx_tut4+" <br><br>"+Webtext.tx_tut5;
-			break;
-		
-			
-			case 1:
-			text = Webtext.tx_tut6;
-			
-			PRES.liveAttributes.mouseover(Model.model.nodes[0]);
-			ABSTR.overnode = false;
-			$("#right_bar").css({"border-left": "solid 1px red", "border-bottom": "solid 1px red"});
-			break;
-			
-			
-			case 2:
-			text = Webtext.tx_tut7;
-	
-			$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
-			break;
-			
-			
-			case 3:
-			text = Webtext.tx_tut8+"<br><br>"+Webtext.tx_tut9;
-			
-		    if (!PRES.showfilters) hideshowfilters();
-			$("#lower_bar").css("border", "solid 2px red");
-	            
-			break;
-			
-	
-			case 4:
-			text = Webtext.tx_tut10+"<br><br> "+Webtext.tx_tut11;
-			
-			break;
-	
-			
-			case 5:
-			text = Webtext.tx_tut12;
-	            
-		    if (PRES.showfilters) hideshowfilters();
-			$("#lower_bar").css({"border": "solid 1px #bbb", "border-bottom": "none"});
-			
-			$("#right_bar").css({"border-left": "solid 2px red", "border-bottom": "solid 2px red"});
-			PRES.liveAttributes.click(Model.model.nodes[0]);
-			break;
-			
-			
-			case 6:
-			text = Webtext.tx_tut13;
-			
-		
-			$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
-			showreplypanel(false);
-			$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
-			$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");	
-			break;
-			
-			
-			case 7:
-		        text = Webtext.tx_tut14+" <br>"+Webtext.tx_tut15;
-			
-			$("#tdnodetype").css("border", "solid 2px red");
-			$("#tdlinktype").css("border", "solid 2px red");
-	
-			break;
-			
-			
-			case 8:
-			text = Webtext.tx_tut16+" <br><br>"+Webtext.tx_tut17;
-			
-			$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
-			$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");		
-			
-			$("#replybox").css("border-color", "red");
-			$("#replyboxsum").css("border-color", "red");
-			break;
-			
-			
-			case 9:
-			text = Webtext.tx_tut18;
-			
-			$("#replybox").css("border-color", "#bbb");
-			$("#replyboxsum").css("border-color", "#bbb");
-			
-			showcreatelink(false);
-			$("#tdconnect").css("border", "solid 2px red");
-			break;
-			
-			
-			case 10:
-			text = Webtext.tx_tut19;
-			
-			$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");
-			$("#nodepos").css("border", "solid 2px red");
-			$("#nodeneg").css("border", "solid 2px red");
-			cancellink();
-			break;
-			
-			
-			case 11:
-			text = Webtext.tx_tut20+"<br><br>"+Webtext.tx_tut21;
-			
-			ABSTR.overnode = false;
-			PRES.liveAttributes.backgroundclick();
-			
-			$("#left_bar").css("border-color", "red");
-			$("#nodepos").css("border", "solid 2px rgba(0,0,0,0)");
-			$("#nodeneg").css("border", "solid 2px rgba(0,0,0,0)");
-			break;
-	
-			
-			case 12: 
-			text = Webtext.tx_tut22;
-			
-			$("#left_bar").css("border-color", "rgba(0,0,0,0)");
-			$("#headerMenu").css("color", "#f53d3d");
-			break;
-			
-			
-			case 13:
-			text = Webtext.tx_tut23+" <br><br>"+Webtext.tx_tut24;
-			
-			$("#headerMenu").css("color", "#ddd");
-			$("#headerUrl").css("color", "#f53d3d");
-			break;
-		
-		
-			case 14:
-			text = Webtext.tx_tut25+"<br><br>"+Webtext.tx_tut26;
-			
-			$("#headerUrl").css("color", "#ddd");
-			textclick = "<div class='tutorial_panel_click'>("+Webtext.tx_tut27+")</div>";
-			break;		
-			
-			
-			case 15:
-			closetutorialpanel();
-			return;
-			break;
-		}
-		
-		$("#tutorial_panel").html(textclose + text + textclick);
-		$('#tutorial_panel_close')[0].onclick = closetutorialpanel;
-		ABSTR.tutorialstep++;
-	}
-	
-	
-	function closetutorialpanel(){
-	
-	    var PRES = Visualisations.current().presentation;
-		var ABSTR = Visualisations.current().abstraction;
-	
-		tutorialfont=$("#tutorial_panel").css("font-size");
-	
-		//restore all the possible modifications made at different steps in the tutorial
-		$("#lower_bar").css("border", "solid 1px rgba(51,51,153, 0.6)");
-		$("#right_bar").css({"border-left": "solid 1px #bbb", "border-bottom": "solid 1px #bbb"});
-		$("#left_bar").css("border-color", "rgba(0,0,0,0)");
-		$("#headerMenu").css("color", "#ddd");
-		$("#headerUrl").css("color", "#ddd");
-		
-		ABSTR.overnode = false;
-		
-		
-		if (!ABSTR.timevisualization){
-			PRES.liveAttributes.backgroundclick();	
-			$("#tdnodetype").css("border", "solid 2px rgba(0,0,0,0)");
-			$("#tdlinktype").css("border", "solid 2px rgba(0,0,0,0)");	
-			$("#tdconnect").css("border", "solid 2px rgba(0,0,0,0)");		
-			$("#replybox").css("border-color", "#bbb");
-			$("#replyboxsum").css("border-color", "#bbb");
-		}
-		
-		//closes the tutorial panel
-		$("#tutorial_panel").html("").animate({height: 20},300).animate({width: 100},300);
-		
-		setTimeout(function(){
-			$("#tutorial_panel").css({"font-size":"11pt", "cursor":"pointer", "text-align":"center"}).html(Webtext.tx_watch_tutorial);
-			$("#tutorial_panel")[0].onclick = opentutorialpanel;
-		},700);
-		
-		ABSTR.tutorialopened=false;
-	}
-	
-	
-	function opentutorialpanel(){
-	
-	    var PRES = Visualisations.current().presentation;
-		var ABSTR = Visualisations.current().abstraction;
-		
-		$("#tutorial_panel").html("").css({"font-size":tutorialfont, "cursor":"default", "text-align":"left"}).animate({width: searchCssProp('.tutorial_panel','width')},300).animate({height: searchCssProp('.tutorial_panel','height')},300);
-		
-		ABSTR.tutorialopened = true;
-		ABSTR.tutorialstep = 0;
-		
-		setTimeout(function(){
-			changetutorialpanel();
-			$("#tutorial_panel")[0].onclick = changetutorialpanel;
-		},700);
-	}
-	
-	
 	// Search in the zoomout css file for the value of a property inside a field
 	function searchCssProp(selector,prop) {
 			indcss = -1;
@@ -4306,7 +4307,8 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 			conversationTools.control.sizeFilterChanged.subscribe(selectSizeFilter);
 			conversationTools.control.nodeFilterChanged.subscribe(selectNodeFilter);
 			conversationTools.control.linkFilterChanged.subscribe(selectLinkFilter);
-			//conversationTools.control.onFilterChanged = selectFilter;
+			
+			PRES.hideShowFilters.subscribe(function() { conversationTools.control.hideShowFilters() });
 		}
 	};
 	// End of var ZoomOut
