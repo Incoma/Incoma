@@ -4551,4 +4551,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	    };
 	
 	}
+	
+	return { Scaler: Scaler };
 });
