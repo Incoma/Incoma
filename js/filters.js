@@ -1,7 +1,7 @@
 define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercategory'], function(PacBuilder, Webtext, Model, Visualisations, Events, FilterCategories) {
 	
-	function ConversationTools() {
-		PacBuilder(this, ConversationTools_Presentation, ConversationTools_Abstraction, ConversationTools_Control);
+	function FilterPanel() {
+		PacBuilder(this, FilterPanel_Presentation, FilterPanel_Abstraction, FilterPanel_Control);
 		
 		this.init = function() {
 			this.abstraction.init();
@@ -10,7 +10,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 		}
 	}
 	
-	function ConversationTools_Abstraction() {
+	function FilterPanel_Abstraction() {
 		var _this = this;
 		
 		this.init = function() {
@@ -143,7 +143,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 		}
 	}
 	
-	function ConversationTools_Presentation(ABSTR) {
+	function FilterPanel_Presentation(ABSTR) {
 		var _this = this;
 		
 		this.init = function() {
@@ -349,7 +349,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 		}
 	}
 	
-	function ConversationTools_Control(abstraction, presentation) {
+	function FilterPanel_Control(abstraction, presentation) {
 		var _this = this;
 		
 		this.init = function() {
@@ -405,7 +405,7 @@ define(['pac-builder', 'webtext', 'model', 'visualisation', 'event', 'filtercate
 	};
 	
 	return { 
-		ConversationTools: ConversationTools, 
+		FilterPanel: FilterPanel, 
 		ShowFilters: ShowFilters, 
 		SizeFilters: SizeFilters, 
 		NodeFilters: NodeFilters, 

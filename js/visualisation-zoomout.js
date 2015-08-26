@@ -1,5 +1,5 @@
-define(['webtext', 'visualisation', 'datetime', 'model', 'conversations', 'conversationtools', 'db', 'event'], 
-function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleConvTools, Db, Events) {
+define(['webtext', 'visualisation', 'datetime', 'model', 'conversations', 'filters', 'db', 'event'], 
+function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFilters, Db, Events) {
 	
 		//definition of the html code of the right panel bar for different situations:
 	// Reply and Connect buttons
@@ -210,21 +210,21 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	        this.namepanelparameter="";
 	        this.freezelink=false;
 	        this.filters = {
-	        	sizeFilter: ModuleConvTools.SizeFilters.Evaluations, //TODO: initialize from the ConversationTools values
+	        	sizeFilter: ModuleFilters.SizeFilters.Evaluations, //TODO: initialize from the ConversationTools values
 	        	showFilter: 'none',
 	        	nodeFilters: [],
 	        	linkFilters: [],
 	        }
-	        this.filters.nodeFilters[ModuleConvTools.NodeFilters.General] = { state: true, name: Webtext.tx_general };
-	        this.filters.nodeFilters[ModuleConvTools.NodeFilters.Question] = { state: true, name: Webtext.tx_question };
-	        this.filters.nodeFilters[ModuleConvTools.NodeFilters.Proposal] = { state: true, name: Webtext.tx_proposal };
-	        this.filters.nodeFilters[ModuleConvTools.NodeFilters.Info] = { state: true, name: Webtext.tx_info };
-	        this.filters.linkFilters[ModuleConvTools.LinkFilters.General] = { state: true, name: Webtext.tx_general };
-	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Agreement] = { state: true, name: Webtext.tx_agreement };
-	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Disagreement] = { state: true, name: Webtext.tx_disagreement };
-	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Consequence] = { state: true, name: Webtext.tx_consequence };
-	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Alternative] = { state: true, name: Webtext.tx_alternative };
-	        this.filters.linkFilters[ModuleConvTools.LinkFilters.Equivalence] = { state: true, name: Webtext.tx_equivalence };
+	        this.filters.nodeFilters[ModuleFilters.NodeFilters.General] = { state: true, name: Webtext.tx_general };
+	        this.filters.nodeFilters[ModuleFilters.NodeFilters.Question] = { state: true, name: Webtext.tx_question };
+	        this.filters.nodeFilters[ModuleFilters.NodeFilters.Proposal] = { state: true, name: Webtext.tx_proposal };
+	        this.filters.nodeFilters[ModuleFilters.NodeFilters.Info] = { state: true, name: Webtext.tx_info };
+	        this.filters.linkFilters[ModuleFilters.LinkFilters.General] = { state: true, name: Webtext.tx_general };
+	        this.filters.linkFilters[ModuleFilters.LinkFilters.Agreement] = { state: true, name: Webtext.tx_agreement };
+	        this.filters.linkFilters[ModuleFilters.LinkFilters.Disagreement] = { state: true, name: Webtext.tx_disagreement };
+	        this.filters.linkFilters[ModuleFilters.LinkFilters.Consequence] = { state: true, name: Webtext.tx_consequence };
+	        this.filters.linkFilters[ModuleFilters.LinkFilters.Alternative] = { state: true, name: Webtext.tx_alternative };
+	        this.filters.linkFilters[ModuleFilters.LinkFilters.Equivalence] = { state: true, name: Webtext.tx_equivalence };
 	    }
 	};
 	// End of this == abstraction
@@ -830,9 +830,9 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	
 	        this.nodeRadius = function (d) {
 	            switch(ABSTR.filters.sizeFilter) {
-	            	case ModuleConvTools.SizeFilters.Evaluations:
+	            	case ModuleFilters.SizeFilters.Evaluations:
 						return PRES.renormalizednode(d.evalpos-d.evalneg);
-	            	case ModuleConvTools.SizeFilters.None:
+	            	case ModuleFilters.SizeFilters.None:
 	            	default:
 	                	return PRES.nodeSizeDefault;
 	            }
@@ -940,9 +940,9 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	        this.linkStrokeWidth = function (d) {
 	            if (ABSTR.filters.linkFilters[d.type].state) {
 	                switch(ABSTR.filters.sizeFilter) {
-	                	case ModuleConvTools.SizeFilters.Evaluations:
+	                	case ModuleFilters.SizeFilters.Evaluations:
 							return PRES.renormalizedlink(d.evalpos-d.evalneg);
-						case ModuleConvTools.SizeFilters.None:
+						case ModuleFilters.SizeFilters.None:
 						default:
 	                    	return PRES.linkStrokeWidthDefault;
 					}
@@ -4297,18 +4297,18 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 	
 	
 	function ZoomOut_Control(VIS, ABSTR, PRES) {
-		var conversationTools = new ModuleConvTools.ConversationTools();
+		var filterPanel = new ModuleFilters.FilterPanel();
 		
 		this.init = function() {
-			conversationTools.init();
-			conversationTools.control.onNodesAndLinksChanged = applyNodeChanges;
-			conversationTools.control.onLinksChanged = applyLinkChanges;
-			conversationTools.control.showFilterChanged.subscribe(selectShowFilter);
-			conversationTools.control.sizeFilterChanged.subscribe(selectSizeFilter);
-			conversationTools.control.nodeFilterChanged.subscribe(selectNodeFilter);
-			conversationTools.control.linkFilterChanged.subscribe(selectLinkFilter);
+			filterPanel.init();
+			filterPanel.control.onNodesAndLinksChanged = applyNodeChanges;
+			filterPanel.control.onLinksChanged = applyLinkChanges;
+			filterPanel.control.showFilterChanged.subscribe(selectShowFilter);
+			filterPanel.control.sizeFilterChanged.subscribe(selectSizeFilter);
+			filterPanel.control.nodeFilterChanged.subscribe(selectNodeFilter);
+			filterPanel.control.linkFilterChanged.subscribe(selectLinkFilter);
 			
-			PRES.hideShowFilters.subscribe(function() { conversationTools.control.hideShowFilters() });
+			PRES.hideShowFilters.subscribe(function() { filterPanel.control.hideShowFilters() });
 		}
 	};
 	// End of var ZoomOut
@@ -4459,10 +4459,10 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleCo
 		var ABSTR = Visualisations.current().abstraction;
 		if(ABSTR.filters.showFilter == name) hidenodetexts();
 		else switch(filter) {
-			case ModuleConvTools.ShowFilters.Summaries: showsums(); break;
-			case ModuleConvTools.ShowFilters.Authors: showauthors(); break;
-			case ModuleConvTools.ShowFilters.Tags: showtags(); break;
-			case ModuleConvTools.ShowFilters.None: hidenodetexts(); break;
+			case ModuleFilters.ShowFilters.Summaries: showsums(); break;
+			case ModuleFilters.ShowFilters.Authors: showauthors(); break;
+			case ModuleFilters.ShowFilters.Tags: showtags(); break;
+			case ModuleFilters.ShowFilters.None: hidenodetexts(); break;
 		}
 	}
 	
