@@ -42,7 +42,6 @@ define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) 
 		$.post("php/createconversation.php", {conversation: conversation, title:safejstringsfordb(title), time:time, ispublic:ispublic, language:language, editable: editable})
 			.done(function(){
 				setTimeout(function(){
-					console.log('step 3');
 					_this.saveinitialnode(Model.model.nodes[0]).transferTo(promise);
 				},200);
 			});
@@ -62,7 +61,6 @@ define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) 
 			return this.checkifsavedinitialnode(newnode.hash, actualtime, newnode);
 		}
 		else {
-			console.log('reject 2');
 			return (new Promise()).reject();
 		}
 	}    
@@ -109,14 +107,12 @@ define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) 
     	var promise = new Promise();
         $.post("php/checkifsaved.php", {conversation: conversation, type: "node", hash: hash}, function(data){
             if (data == hash){
-            	console.log('fulfill');
                 promise.fulfill();
             } else {
                 var actualtime = new Date().getTime();
                 if (actualtime - checktime < 10000){
                     setTimeout(function(){this.checkifsavedinitialnode(hash, checktime, newnode).transferTo(promise)}, 400);
                 } else {
-                	console.log('reject');
                     promise.reject();
                 }
             }

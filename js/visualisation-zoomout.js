@@ -3226,7 +3226,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 	
 	
 	function openadvevalnodepanel(){
-		console.log('open');
 	    prepareadvevalnodetype();
 	
 	    var ABSTR = Visualisations.current().abstraction;
@@ -4474,7 +4473,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 	}
 	
 	function selectNodeFilter(args) {
-		console.log('selectNodeFilter');
 		var ABSTR = Visualisations.current().abstraction;
 		var filterList = ABSTR.filters.nodeFilters;
 		filterList[args.itemId].state = args.state;
@@ -4482,7 +4480,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 	}
 	
 	function selectLinkFilter(args) {
-		console.log('selectLinkFilter');
 		var ABSTR = Visualisations.current().abstraction;
 		var filterList = ABSTR.filters.linkFilters;
 		filterList[args.itemId].state = args.state;
