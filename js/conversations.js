@@ -3,21 +3,22 @@ define(['model', 'visualisation', 'db', 'webtext'], function(Model, Visualisatio
 		var self = this;
 		var conversationList;
 		var completeConversationList;
+		this.onNoConversation = function() { console.log('no conversation') };
 		
 		this.reInit = function(newVisualisation) {
 	    	if (newVisualisation) {
 	        	newVisualisation.init( $( "#visualisationMain" )[0], Model.model);
 	    	}
-   	};
+   		};
 		this.reInit1 = function() {
 			this.reInit(Visualisations.select(1));
 		};
 		this.loadConversation = function() {
-			Db.loadconversation();
+			Db.loadconversation(this.onNoConversation);
 			this.reInit1();
 		};
 		this.reloadConversation = function() {
-			Db.reloadconversation();
+			Db.reloadconversation(this.onNoConversation);
 			this.reInit1();
 		};
 		this.loadSandbox = function() {

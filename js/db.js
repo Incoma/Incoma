@@ -1,14 +1,14 @@
 define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) { //TODO: remove Model dependency!!!
 	var Db = {};
 	
-	Db.loadconversation = function(){
+	Db.loadconversation = function(onNoConversation){
 		//Update the tags from the conversation
         $.post("php/updatetags.php", {conversation: conversation});
 
 
 		//Get the conversation from the DB
-		Db.getmodel();
-      Db.getinfo();
+		Db.getmodel(onNoConversation);
+      	Db.getinfo(onNoConversation);
 		Db.gettags();
         
 		//From the previous DB conversation generate a valid JS conversation
@@ -148,7 +148,7 @@ define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) 
 		//},0);
 	}
 	
-	Db.getinfo = function(){
+	Db.getinfo = function(onNoConversation){
 		$.ajax({
 		dataType: 'json',
 		url: 'php/getinfo.php',
@@ -156,7 +156,7 @@ define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) 
 		async: false,
 		}).done(function(data) {
 			if (typeof data.title[0].title == "undefined") {
-				opennoconversationpanel();
+				onNoConversation(); //opennoconversationpanel();
 				return;
 			}
 			data.title.pop()
@@ -182,7 +182,7 @@ define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) 
     }
 
 	
-	Db.getmodel = function(){
+	Db.getmodel = function(onNoConversation){
 	//Get the conversation from the DB
 
 		$.ajax({
@@ -196,7 +196,7 @@ define(['promise', 'model', 'webtext'], function(Promise, Model, webtextModule) 
 		data.links.pop();
             
         if (data.nodes == ""){
-			opennoconversationpanel();
+			onNoConversation(); //opennoconversationpanel();
 			return;
 		}
 		modelfromdb =  { nodes: data.nodes, links: data.links, authors: []};

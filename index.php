@@ -50,7 +50,7 @@
      	<div id="noconversation_panel_text">
 			<!--  There is no conversation with this URL.    (text defined in the javascript)-->
 			</div>
-		<div id="noconversation_button" class="language_button button" onclick="bt_menu();">
+		<div id="noconversation_button" class="language_button button">
      		<!--  Go to menu    (text defined in the javascript)-->
 		</div>
 	</div>

@@ -1,5 +1,7 @@
 define(["opensave", "jsonmodels", "webtext", "model", "visualisation", "visualisation-zoomout", "visualisation-initialmenu", "conversations"]
 , function(OpenSave, JsonModels, webtextModule,Model,Visualisations, Zoomout, InitialMenu, ConversationManager) {
+	ConversationManager.onNoConversation = opennoconversationpanel;
+	
 	// Add trailing slash to the url to avoid problems with the .htaccess redirection
 	url = window.location.href;
 	if ((url.slice(-9) !== "index.php") && (url.slice(-1) !== "/") && (url.indexOf("?") == -1)) {
@@ -7,6 +9,7 @@ define(["opensave", "jsonmodels", "webtext", "model", "visualisation", "visualis
 	} else {
 	};
 	
+	$("#noconversation_button").click(bt_menu);
 	$("#headerlangselect").val(weblang);
 	$("#headerlangselect").change(function() { changelanguage(this) });
 	
@@ -115,6 +118,24 @@ define(["opensave", "jsonmodels", "webtext", "model", "visualisation", "visualis
 			//window.location.href = "?";
 		},10);
 		
+	}
+	
+	function opennoconversationpanel(){
+		var width = 300;
+		var height = 100;
+		
+		document.getElementById("noconversation_panel").setAttribute("style","visibility:visible;");
+		
+		$('#noconversation_panel').css({ 
+			"width": width,
+			"height": height,
+			"top": ($(window).height()-height-200)/2,
+			"left": ($(window).width()-width)/2
+		});
+		
+		$('#noconversation_button').width(90);
+		
+		autoupdate = "";
 	}
 	
 	function bt_menu() {

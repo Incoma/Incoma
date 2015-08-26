@@ -3406,25 +3406,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 		$('#name_panel').fadeOut(100);
 	}	
 	
-	function opennoconversationpanel(){
-		var width = 300;
-		var height = 100;
-		
-		document.getElementById("noconversation_panel").setAttribute("style","visibility:visible;");
-		
-		$('#noconversation_panel').css({ 
-			"width": width,
-			"height": height,
-			"top": ($(window).height()-height-200)/2,
-			"left": ($(window).width()-width)/2
-		});
-		
-		$('#noconversation_button').width(90);
-		
-		autoupdate = "";
-	}
-	
-	
 	// Defines a renormaliztion for the size of nodes and links depending on the votes of all of them
 	function definerenormalization(){
 	
