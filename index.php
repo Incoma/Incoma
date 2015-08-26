@@ -83,10 +83,10 @@
 	weblangphp="<?php echo $weblangphp; ?>"; 
 	weblang = (weblangphp == "") ? "eng" : weblangphp;
 </script>
-<script type="text/javascript" src="js/require.js" data-main="js/index"></script>
 
 
 <!-- Javascript -->
+<!-- require: loads js/index.js as initial script -->
 <!-- opensave: Open and save conversations -->
 <!-- jsonmodels: Some example conversations (or "Models") -->
 <!-- languageslist: Language list for setting the conversation lang -->
@@ -94,13 +94,7 @@
 <!-- visualisation: keeps track of the visualisations -->
 <!-- visualisation-zoomout: visualise a conversation as circles and lines -->
 <!-- visualisation-initialmenu: visualise the initial menu (Sandbox, Create, Participate) -->
-<!--script src="js/opensave.js"></script>
-<script src="js/jsonmodels.js"></script>
-<script src="js/languageslist.js"></script>
-<script src="js/model.js"></script>
-<script src="js/visualisation.js"></script>
-<script src="js/visualisation-zoomout.js"></script>
-<script src="js/visualisation-initialmenu.js"></script-->
+<script type="text/javascript" src="js/require.js" data-main="js/index"></script>
 
 </body>
 </html>
