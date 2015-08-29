@@ -204,7 +204,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 			this.timevisualization=false;
 			this.youarenotalone=false;
 			this.treeview=false;
-			//this.loading=true; //TODO: yes or no?
 	        this.name="";
 	        this.namepanelcaller="";
 	        this.namepanelparameter="";
@@ -287,10 +286,10 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 		
 	//arrays of colors for nodes and links
 		
-	//  CODE   	   = ["#000000", "General", "Questio", "Proposa", "Info   "];
+		//  CODE   	   = ["#000000", "General", "Questio", "Proposa", "Info   "];
 	    this.nodecolor = ["#000000", "#f9c8a4", "#a2b0e7", "#e7a2dd", "#bae59a"];
 	
-	//  CODE           = ["#000000", "General", "Agreeme", "Disagre", "Consequ", "Alterna", "Equival"]; 
+		//  CODE       = ["#000000", "General", "Agreeme", "Disagre", "Consequ", "Alterna", "Equival"]; 
 	    this.linkcolor = ["#000000", "#f9c8a4", "#7adc7c", "#e85959", "#b27de8", "#c87b37", "#ecaa41"];
 	                                           
 	    
@@ -422,9 +421,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 				  </div>   \
 		\
 	        '; // end of innerHTML
-	
-			nodescutvalue = -1000;
-			linkscutvalue = -1000;
 	        
 			insertRightPanelHtmlSpace($('#rightpanelspace'));
 			
@@ -563,12 +559,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 				}		
 				
 			});
-	
-			//initial position of the nodes
-			// graph.nodes.forEach(function(d, i) {		
-					 // d.x = d.y = width / graph.nodes.length * i;
-			// });
-	
 			
 			//definition of the renormalization for nodes and links sizes
 			definerenormalization();
@@ -781,7 +771,6 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 			PRES.force.linkStrength(1);
 			// startevolution();		
 			treeview();
-			ABSTR.loading = false; //TODO
 			
 			//defines the movement of the nodes and links
 	        force.on("tick", function () {
@@ -825,7 +814,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 	    };
 	    // End of initSVG
 	
-			//functions that define the attributes for nodes and links, depending on the filter states.
+		//functions that define the attributes for nodes and links, depending on the filter states.
 	    function LiveAttributes(ABSTR, PRES) {
 	
 	        this.nodeRadius = function (d) {
@@ -3120,7 +3109,7 @@ function(Webtext, Visualisations, DateTime, Model, ConversationManager, ModuleFi
 	
 	function showconnecttext(){
 	
-		switch (selectedconnectlinktype){
+		switch (selectedconnectlinktype){ //TODO: replace indices by Enum elemens (like LinkFilters)
 			case 1:
 				str = Webtext.tx_select_related_thought;
 				break;
