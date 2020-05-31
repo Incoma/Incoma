@@ -1,4 +1,4 @@
-<?
+<?php
 $conversation = $_POST['conversation'];
 $type = $_POST['type'];
 $hash = $_POST['hash'];
@@ -16,9 +16,6 @@ $table="links_".$conversation;
 $sqlupdate = 'UPDATE '.$table.' SET type="'.$type.'" WHERE hash="'.$hash.'"';
 
 mysql_query($sqlupdate);
-
 mysql_close();
-
 echo $sqlupdate;
-
 ?>

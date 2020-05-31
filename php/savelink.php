@@ -1,4 +1,4 @@
-<?
+<?php
 $newlinkphp = $_POST['newlinkphp'];
 $conversation = $_POST['conversation'];
 

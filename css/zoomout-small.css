@@ -242,7 +242,7 @@ div.zoombutton:active{
   left: 30px;
   width:30px;
   height:30px;
-  background: url(img/wait.gif) no-repeat;
+  background: url(../img/wait.gif) no-repeat;
 }
 
 #loading_conv_text {
@@ -434,7 +434,7 @@ div.zoombutton:active{
     position:absolute;
     width: 30px;
     height: 30px;
-    background: url("img/wait.gif") no-repeat;
+    background: url("../img/wait.gif") no-repeat;
 }
 
 #savingtext{
@@ -661,7 +661,7 @@ div.showconnectpanel{
 }
 
 #showediticon{
-    background: url("img/icon_edit.png") no-repeat;
+    background: url("../img/icon_edit.png") no-repeat;
     background-size: contain;   
     width: 20px;
 	height: 20px;

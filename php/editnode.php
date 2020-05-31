@@ -1,4 +1,4 @@
-<?
+<?php
 $conversation = $_POST['conversation'];
 $content = $_POST['content'];
 $contentsum = $_POST['contentsum'];

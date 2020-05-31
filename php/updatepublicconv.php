@@ -1,4 +1,4 @@
-<?
+<?php
 $lines = file('incomadb.conf');
 $username = rtrim(str_replace(array("\$username=\"", "\";"), "", $lines[0]));
 $password = rtrim(str_replace(array("\$password=\"", "\";"), "", $lines[1]));
